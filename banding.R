@@ -23,6 +23,8 @@ file_df <- data.frame(
 file_df$url <- paste0('https://www.sciencebase.gov', file_df$url)
 file_df <- file_df %>% filter(grepl('\\.csv', name))
 
+# exclude CANG and MALL
+file_df <- file_df[c(49),]
 
 # download files, filter CSVs for encountered bands -----------------------
 # 
@@ -38,17 +40,17 @@ file_df <- file_df %>% filter(grepl('\\.csv', name))
 # }
 
 ### DOWNLOAD FILE:  NEW
-
-for (i in seq_len(nrow(file_df))){
-  file_path <- file.path('data', file_df$name[i])
-  gc()
-  download.file(file_df$url[i], file_path, method = 'wget', extra = '--progress=bar:force')
-  if (grepl('\\.csv$', file_path)){
-    fread(file_path, data.table = FALSE) %>%
-    group_by(BAND) %>% filter(n() > 1) %>% ungroup %>%
-    write.csv(file.path('data', file_df$name))
-  }
-}
+# 
+# for (i in seq_len(nrow(file_df))){
+#   file_path <- file.path('data', file_df$name[i])
+#   gc()
+#   download.file(file_df$url[i], file_path, method = 'wget', extra = '--progress=bar:force')
+#   if (grepl('\\.csv$', file_path)){
+#     fread(file_path, data.table = FALSE) %>%
+#     group_by(BAND) %>% filter(n() > 1) %>% ungroup %>%
+#     write.csv(file.path('data', file_df$name))
+#   }
+# }
 
 
 
@@ -187,10 +189,10 @@ for (filename in file_df$name){
       summary_df_row$nrow_dist_gr_0 <- 0L
       summary_df_row$nrow_dist_gr_15 <- 0L
     }
+    summary_df <- rbind(summary_df, summary_df_row)
+    # write csv after species, for troubleshooting
+    write.csv(summary_df, 'summary_df.csv', row.names = FALSE)
   }
-  summary_df <- rbind(summary_df, summary_df_row)
-  # write csv after species, for troubleshooting
-  write.csv(summary_df, summary_df.csv)
 }
 
 ## Work on:  Having date1 and date2 in the sf object with each BAND_TRACK
