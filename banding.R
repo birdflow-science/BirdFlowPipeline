@@ -1,0 +1,216 @@
+library(data.table)
+library(dplyr)
+library(rvest)
+library(rebird)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(BirdFlowR)
+library(tidyr)
+library(ebirdst)
+
+# path management ---------------------------------------------------------
+
+if (!dir.exists('data')) {dir.create('data')}
+
+# get datafile info -------------------------------------------------------
+
+#read_html('https://www.sciencebase.gov/catalog/item/632b2d7bd34e71c6d67bc161')
+file_info <- read_html('htmlpage.htm') %>% html_nodes('td span.sb-download-link')
+file_df <- data.frame(
+  url = html_attr(file_info, 'data-url'),
+  name = html_text(file_info))
+file_df$url <- paste0('https://www.sciencebase.gov', file_df$url)
+file_df <- file_df %>% filter(grepl('\\.csv', name))
+
+
+# download files, filter CSVs for encountered bands -----------------------
+# 
+# for (i in seq_len(nrow(file_df))){
+#   file_path <- file.path('data', file_df$name[i])
+#   gc()
+#   download.file(file_df$url[i], file_path, method = 'wget', extra = '--progress=bar:force')
+#   if (grepl('\\.csv$', file_path)){
+#     fread(file_path, data.table = FALSE) %>%
+#     group_by(BAND) %>% filter(any(EVENT_TYPE == 'E')) %>% ungroup %>% arrange(BAND, EVENT_TYPE) %>%
+#     write.csv(file_path)
+#   }
+# }
+
+### DOWNLOAD FILE:  NEW
+
+for (i in seq_len(nrow(file_df))){
+  file_path <- file.path('data', file_df$name[i])
+  gc()
+  download.file(file_df$url[i], file_path, method = 'wget', extra = '--progress=bar:force')
+  if (grepl('\\.csv$', file_path)){
+    fread(file_path, data.table = FALSE) %>%
+    group_by(BAND) %>% filter(n() > 1) %>% ungroup %>%
+    write.csv(file.path('data', file_df$name))
+  }
+}
+
+
+
+# summarize taxa ----------------------------------------------------------
+
+files <- list.files('data', pattern = '\\.csv$', full.names = TRUE)
+taxa_list <- lapply(files, function(file){
+  fread(file) %>% filter(EVENT_TYPE == 'E') %>% pull(SPECIES_ID)
+})
+taxa_vec <- Reduce(c, taxa_list)
+taxa_df <- data.frame(SPECIES_ID = taxa_vec)
+species_csv <- fread('data/NABBP_Lookups_2022/species.csv')
+taxa_df <- left_join(taxa_df, species_csv[,c('SPECIES_ID', 'SPECIES_NAME', 'SCI_NAME')])
+taxa_df <- taxa_df %>% group_by(SPECIES_ID, SPECIES_NAME, SCI_NAME) %>% summarize(N = n()) %>% arrange(-N) 
+taxa_df %>% write.csv('taxa_summary.csv')
+eb_tax <- rebird::ebirdtaxonomy()
+eb_tax <- eb_tax %>% select(sciName, comName, speciesCode, category, taxonOrder, reportAs)
+left_join(taxa_df, eb_tax, by = c('SPECIES_NAME' = 'comName', 'SCI_NAME' = 'sciName')) %>% write.csv('join_tax.csv')
+
+# test using rwbl data ----------------------------------------------------
+
+species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
+for (filename in file_df$name){
+  multispecies_df <- fread(file.path('data',filename),
+                           colClasses = c(BIRD_STATUS = 'character',
+                                          EXTRA_INFO = 'character'))
+  multispecies_df$BIRD_INFO <- suppressWarnings(as.integer(multispecies_df$BIRD_INFO))
+  multispecies_df$EXTRA_INFO <- suppressWarnings(as.integer(multispecies_df$EXTRA_INFO))
+  species_tbl <- data.frame(SPECIES_ID = unique(multispecies_df$SPECIES_ID)) %>%
+    left_join(species_lookup[,c('SPECIES_ID', 'SPECIES_NAME')], by = 'SPECIES_ID')
+  for (species_tbl_row in seq_len(nrow(species_tbl))){
+    df <- multispecies_df %>% filter(SPECIES_ID == species_tbl[species_tbl_row, 'SPECIES_ID'])
+    species_name <- species_tbl[species_tbl_row, 'SPECIES_NAME']
+    # if (species_name != 'Blue-headed Vireo') next
+    # stop()
+    message(species_name)
+    original_rows <- nrow(df)
+    print(nrow(df))
+    # convert codes for 1st, 2nd, and last 10 days of month to their midpoint
+    # note these are not present in the database!
+    # df$EVENT_DATE <- sub('[/]41[/]', '/05/', df$EVENT_DATE)
+    # df$EVENT_DATE <- sub('[/]42[/]', '/15/', df$EVENT_DATE)
+    # df$EVENT_DATE <- sub('[/]43[/]', '/25/', df$EVENT_DATE)
+    # convert all other imprecise date codes to NA, then exlucde
+    df$EVENT_DATE <- as.Date(df$EVENT_DATE, format = '%m/%d/%Y')
+    df <- filter(df, !is.na(EVENT_DATE))
+    # sort by date
+    df <- df %>% arrange(BAND, EVENT_DATE)
+    # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead)
+    df <- filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
+    # exclude state or country level locations
+    df <- filter(df, ! CP %in% c(12, 72))
+    # exclude records with longitude of 0 (might be real records with 0 latitude)
+    df <- filter(df, LON_DD != 0)
+    # exclude records with missing latitude or longitude
+    df <- filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
+    # delete exluded records
+    df <- df %>% group_by(BAND) %>% filter(n() >= 2) %>% ungroup
+    # report row attrition
+    print(nrow(df) / original_rows)
+    # skip if no more rows
+    if (nrow(df) == 0) next
+    # record nrows
+    pre_expand <- nrow(df)
+    # exclude bands that no longer have at least 2 timepoints
+    # and expand data to separate BAND_TRACKs (two consecutive points)
+    df <- df %>% group_by(BAND) %>%
+      mutate(count = c(1, rep(2, n() - 2), 1)) %>%
+      uncount(count) %>%
+      mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
+      ungroup
+    # report expansion factor
+    print(nrow(df) / pre_expand)
+    # report number of linestring-able pairs
+    print(nrow(df)/2)
+    # get rid of same start and stop coordinates (multipoint filter also does it)
+    df <- df %>%
+      st_as_sf(coords = c('LON_DD', 'LAT_DD'), remove = FALSE, crs = 'wgs84') %>%
+      group_by(BAND_TRACK) %>%
+      filter(n_distinct(LON_DD) > 1 | n_distinct(LAT_DD) > 1) %>%
+      ungroup
+    if (nrow(df) > 0){
+      # skip rest if no rows of data
+      df <- df %>%
+        group_by(BAND_TRACK) %>%
+        summarise(start_date = min(EVENT_DATE),
+                  stop_date = max(EVENT_DATE)) %>%
+        #filter(st_geometry_type(.) == "MULTIPOINT") %>%
+        st_cast("LINESTRING") %>%
+        mutate(distance = as.numeric(st_length(.)))
+      # this line gets rid of anything less than 15000 meters
+      df <- df[as.numeric(st_length(df)) > 15000,]
+      # check length of data.frame after filtering
+      print(nrow(df))
+      # make plot
+      if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
+        try({
+          pdf(paste0('pdf/', species_name, '.pdf'), 6, 6)
+          coastline <- get_coastline(select(df, BAND_TRACK), buffer = 5)
+          my_main <- paste0(species_name, '\n(n = ', nrow(df), ')')
+          if (nrow(coastline) > 1){
+            plot(coastline, main = my_main)
+            plot(select(df, BAND_TRACK), add = TRUE)
+          } else {
+            # don't plot coastline if there isn't any
+            plot(select(df, BAND_TRACK), main = my_main)
+          }
+          dev.off()
+        })
+      }
+    }
+  }
+}
+
+## Work on:  Having date1 and date2 in the sf object with each BAND_TRACK
+
+# Species matching
+
+# ## Taxonomy notes from XML file: <taxonpro>expert advice;;identification
+# keys</taxonpro> <taxoncom>Taxonomic revisions by the American Ornithological
+# Society (AOS) have resulted in many changes in bird classification over the
+# past several decades. The Banding Offices acknowledge these changes and use
+# common names assigned by AOS. AOS discontinued species numbers with the 7th
+# edition of the checklist, and BBL continues to use numbers from the 6th
+# edition with modifications. However, BBL maintains common names and species
+# numbers where AOS has combined formerly acknowledged species. For a list of
+# BBL species designations with 4-character alpha and numeric codes, and
+# scientific and common names, refer to the species.csv lookup table included
+# with the data release bundle for a particular year/version.</taxoncom>
+# </taxonsys> <taxongen>Most birds are identified to species in the data, some
+# to subspecies. For some species, there is an "unidentified" category, to be
+# used only for truly unidentifiable or intergrade individuals - not in place of
+# subspecific designation. For the most part, federal bands are used on species
+# included in the Migratory Bird Treaty Act (MBTA). The taxa for which we have
+# included formerly recognized species are: Townsend's Shearwater, Green-winged
+# Teal, Snow Goose, Canada Goose, Brant, Tundra Swan, Great Blue Heron,
+# Red-tailed Hawk, Northern Flicker, Savannah Sparrow, Seaside Sparrow,
+# White-crowned Sparrow, Dark-eyed Junco, Yellow-rumped Warbler, and Palm
+# Warbler. Some bird species are not banded with federal bands, and therefore
+# are not represented in this dataset. These include gallinaceous birds (quail,
+# turkey, grouse), and rock dove, or introduced species.</taxongen>
+
+# Banding or encounter locations from United States or Canada include
+# subdivisions (state/province); all other countries are reported as country
+# only. Restrictions are applied to protect exact locations of gamebirds and
+# sensitive species. Gamebirds, as defined in lookup table species.csv have
+# locations generalized to country, state or 1-degree block. For raptors and
+# endangered species, locations are generalized to a 10-minute block minimum
+# resolution. All other species locations have coordinate precisions as
+# reported.</enttypd>
+
+# <attrdef>coordinates_precision.csv lookup table includes numeric codes for 13
+# coordinate precision categories. All banding and encounter records for
+# sensitive species are released at a 10-minute block coordinate precision (CP).
+# Game birds include waterfowl, cranes, rails, woodcock, doves, crows and
+# ravens. All bandings are released at a 1-degree block coordinate precision,
+# encounters are released at coordinate precisions as they were originally
+# provided.<
+# 
+# big_df <- lapply(file_df$name, function(i){
+#   file.path('data', i) %>% fread
+# }) %>% rbindlist
+
+## Week cutoffs for S&T
+#ebirdst::ebirdst_weeks
