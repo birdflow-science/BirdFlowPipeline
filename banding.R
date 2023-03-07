@@ -75,6 +75,7 @@ for (filename in file_df$name){
   multispecies_df <- fread(file.path('data',filename),
                            colClasses = c(BIRD_STATUS = 'character',
                                           EXTRA_INFO = 'character'))
+  # fields contain both NAs and empty strings, so make sure to do the below
   multispecies_df$BIRD_INFO <- suppressWarnings(as.integer(multispecies_df$BIRD_INFO))
   multispecies_df$EXTRA_INFO <- suppressWarnings(as.integer(multispecies_df$EXTRA_INFO))
   species_tbl <- data.frame(SPECIES_ID = unique(multispecies_df$SPECIES_ID)) %>%
