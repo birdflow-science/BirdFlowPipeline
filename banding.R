@@ -71,6 +71,13 @@ left_join(taxa_df, eb_tax, by = c('SPECIES_NAME' = 'comName', 'SCI_NAME' = 'sciN
 # test using rwbl data ----------------------------------------------------
 
 species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
+summary_df <- data.frame(SPECIES_ID = integer(0),
+                         species_name = character(0),
+                         nrow_start_div2 = integer(0),
+                         nrow_pre_expand_div2 = integer(0),
+                         nrow_post_expand_div2 = integer(0),
+                         nrow_dist_gr_0 = integer(0),
+                         nrow_dist_gr_15 = integer(0))
 for (filename in file_df$name){
   multispecies_df <- fread(file.path('data',filename),
                            colClasses = c(BIRD_STATUS = 'character',
@@ -86,7 +93,15 @@ for (filename in file_df$name){
     # if (species_name != 'Blue-headed Vireo') next
     # stop()
     message(species_name)
+    summary_df_row <- data.frame(SPECIES_ID = species_tbl[species_tbl_row, 'SPECIES_ID'],
+                                  species_name = species_name,
+                                  nrow_start_div2 = NA_integer_,
+                                  nrow_pre_expand_div2 = NA_integer_,
+                                  nrow_post_expand_div2 = NA_integer_,
+                                  nrow_dist_gr_0 = NA_integer_,
+                                  nrow_dist_gr_15 = NA_integer_)
     original_rows <- nrow(df)
+    summary_df_row$nrow_start_div2 <- as.integer(original_rows / 2)
     print(nrow(df))
     # convert codes for 1st, 2nd, and last 10 days of month to their midpoint
     # note these are not present in the database!
@@ -111,9 +126,14 @@ for (filename in file_df$name){
     # report row attrition
     print(nrow(df) / original_rows)
     # skip if no more rows
-    if (nrow(df) == 0) next
+    if (nrow(df) == 0){
+      summary_df_row$nrow_pre_expand_div2 <- 0L
+      summary_df_row$nrow_post_expand_div2 <- 0L
+      next
+    }
     # record nrows
     pre_expand <- nrow(df)
+    summary_df_row$nrow_pre_expand_div2 <- as.integer(pre_expand / 2)
     # exclude bands that no longer have at least 2 timepoints
     # and expand data to separate BAND_TRACKs (two consecutive points)
     df <- df %>% group_by(BAND) %>%
@@ -125,6 +145,7 @@ for (filename in file_df$name){
     print(nrow(df) / pre_expand)
     # report number of linestring-able pairs
     print(nrow(df)/2)
+    summary_df_row$nrow_post_expand_div2 <- as.integer(nrow(df) / 2)
     # get rid of same start and stop coordinates (multipoint filter also does it)
     df <- df %>%
       st_as_sf(coords = c('LON_DD', 'LAT_DD'), remove = FALSE, crs = 'wgs84') %>%
@@ -140,10 +161,12 @@ for (filename in file_df$name){
         #filter(st_geometry_type(.) == "MULTIPOINT") %>%
         st_cast("LINESTRING") %>%
         mutate(distance = as.numeric(st_length(.)))
+      summary_df_row$nrow_dist_gr_0 <- nrow(df)
       # this line gets rid of anything less than 15000 meters
       df <- df[as.numeric(st_length(df)) > 15000,]
       # check length of data.frame after filtering
       print(nrow(df))
+      summary_df_row$nrow_dist_gr_15 <- nrow(df)
       # make plot
       if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
         try({
@@ -160,8 +183,14 @@ for (filename in file_df$name){
           dev.off()
         })
       }
+    } else {
+      summary_df_row$nrow_dist_gr_0 <- 0L
+      summary_df_row$nrow_dist_gr_15 <- 0L
     }
   }
+  summary_df <- rbind(summary_df, summary_df_row)
+  # write csv after species, for troubleshooting
+  write.csv(summary_df, summary_df.csv)
 }
 
 ## Work on:  Having date1 and date2 in the sf object with each BAND_TRACK
