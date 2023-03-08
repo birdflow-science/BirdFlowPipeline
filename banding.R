@@ -53,19 +53,19 @@ file_df <- file_df %>% filter(grepl('\\.csv', name))
 
 # summarize taxa ----------------------------------------------------------
 
-files <- list.files('data', pattern = '\\.csv$', full.names = TRUE)
-taxa_list <- lapply(files, function(file){
-  fread(file) %>% filter(EVENT_TYPE == 'E') %>% pull(SPECIES_ID)
-})
-taxa_vec <- Reduce(c, taxa_list)
-taxa_df <- data.frame(SPECIES_ID = taxa_vec)
-species_csv <- fread('data/NABBP_Lookups_2022/species.csv')
-taxa_df <- left_join(taxa_df, species_csv[,c('SPECIES_ID', 'SPECIES_NAME', 'SCI_NAME')])
-taxa_df <- taxa_df %>% group_by(SPECIES_ID, SPECIES_NAME, SCI_NAME) %>% summarize(N = n()) %>% arrange(-N) 
-taxa_df %>% write.csv('taxa_summary.csv')
-eb_tax <- rebird::ebirdtaxonomy()
-eb_tax <- eb_tax %>% select(sciName, comName, speciesCode, category, taxonOrder, reportAs)
-left_join(taxa_df, eb_tax, by = c('SPECIES_NAME' = 'comName', 'SCI_NAME' = 'sciName')) %>% write.csv('join_tax.csv')
+# files <- list.files('data', pattern = '\\.csv$', full.names = TRUE)
+# taxa_list <- lapply(files, function(file){
+#   fread(file) %>% filter(EVENT_TYPE == 'E') %>% pull(SPECIES_ID)
+# })
+# taxa_vec <- Reduce(c, taxa_list)
+# taxa_df <- data.frame(SPECIES_ID = taxa_vec)
+# species_csv <- fread('data/NABBP_Lookups_2022/species.csv')
+# taxa_df <- left_join(taxa_df, species_csv[,c('SPECIES_ID', 'SPECIES_NAME', 'SCI_NAME')])
+# taxa_df <- taxa_df %>% group_by(SPECIES_ID, SPECIES_NAME, SCI_NAME) %>% summarize(N = n()) %>% arrange(-N) 
+# taxa_df %>% write.csv('taxa_summary.csv')
+# eb_tax <- rebird::ebirdtaxonomy()
+# eb_tax <- eb_tax %>% select(sciName, comName, speciesCode, category, taxonOrder, reportAs)
+# left_join(taxa_df, eb_tax, by = c('SPECIES_NAME' = 'comName', 'SCI_NAME' = 'sciName')) %>% write.csv('join_tax.csv')
 
 # test using rwbl data ----------------------------------------------------
 
