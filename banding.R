@@ -23,9 +23,6 @@ file_df <- data.frame(
 file_df$url <- paste0('https://www.sciencebase.gov', file_df$url)
 file_df <- file_df %>% filter(grepl('\\.csv', name))
 
-# exclude CANG and MALL
-file_df <- file_df[c(49),]
-
 # download files, filter CSVs for encountered bands -----------------------
 # 
 # for (i in seq_len(nrow(file_df))){
@@ -48,7 +45,7 @@ file_df <- file_df[c(49),]
 #   if (grepl('\\.csv$', file_path)){
 #     fread(file_path, data.table = FALSE) %>%
 #     group_by(BAND) %>% filter(n() > 1) %>% ungroup %>%
-#     write.csv(file.path('data', file_df$name))
+#     write.csv(file.path('data', file_df$name, row.names = FALSE))
 #   }
 # }
 
