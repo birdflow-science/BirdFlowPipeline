@@ -11,6 +11,7 @@ library(ebirdst)
 
 # path management ---------------------------------------------------------
 
+if (!dir.exists('pdf')) {dir.create('pdf')}
 if (!dir.exists('data')) {dir.create('data')}
 
 # get datafile info -------------------------------------------------------
