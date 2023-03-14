@@ -13,6 +13,7 @@ install_github('birdflow-science/BirdFlowModels')
 install_github('birdflow-science/BirdFlowR', build_vignettes = TRUE, upgrade = 'never')
 library(BirdFlowR)
 library(BirdFlowModels)
+library(geodist)
 
 # path management ---------------------------------------------------------
 
@@ -35,6 +36,63 @@ if (!dir.exists('pdf')) {dir.create('pdf')}
 # left_join(taxa_df, eb_tax, by = c('SPECIES_NAME' = 'comName', 'SCI_NAME' = 'sciName')) %>% write.csv('join_tax.csv')
 
 # test using rwbl data ----------------------------------------------------
+
+preprocess_data_types <- function(df){
+  # coerce ambiguous dates to NAs
+  # convert codes for 1st, 2nd, and last 10 days of month to their midpoint
+  # note these are not present in the database!
+  # df$EVENT_DATE <- sub('[/]41[/]', '/05/', df$EVENT_DATE)
+  # df$EVENT_DATE <- sub('[/]42[/]', '/15/', df$EVENT_DATE)
+  # df$EVENT_DATE <- sub('[/]43[/]', '/25/', df$EVENT_DATE)
+  # convert all other imprecise date codes to NA
+  df$EVENT_DATE <- as.Date(df$EVENT_DATE, format = '%m/%d/%Y')
+  # fields contain both NAs and empty strings, so make sure to do the below
+  df$BIRD_INFO <- suppressWarnings(as.integer(df$BIRD_INFO))
+  df$EXTRA_INFO <- suppressWarnings(as.integer(df$EXTRA_INFO))
+  df
+}
+
+preprocess_exclusions <- function(df){
+  # exclude invalid dates
+  df <- filter(df, !is.na(EVENT_DATE))
+  # sort by date
+  df <- df %>% arrange(BAND, EVENT_DATE)
+  # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead
+  df <- filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
+  # exclude state or country level locations
+  df <- filter(df, ! CP %in% c(12, 72))
+  # exclude records with longitude of 0 (might be real records with 0 latitude)
+  df <- filter(df, LON_DD != 0)
+  # exclude records with missing latitude or longitude
+  df <- filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
+  df
+}
+
+preprocess_with_recovery <- function(df){
+  # delete exluded records
+  df <- df %>% group_by(BAND) %>% filter(n() >= 2) %>% ungroup
+  df
+}
+
+preprocess_sort_band_date <- function(df){
+  df %>% arrange(BAND, EVENT_DATE)
+}
+
+preprocess_calc_distance_days <- function(df){
+  df %>%
+    group_by(BAND) %>%
+    mutate(distance = geodist::geodist(data.frame(lon = LON_DD, lat = LAT_DD),
+                                       sequential = TRUE, measure = 'geodesic', pad = TRUE) / 1000) %>%
+    mutate(days = as.integer(EVENT_DATE - lag(EVENT_DATE))) %>%
+    ungroup
+}
+
+df <- preprocess_data_types(df)
+df <- preprocess_exclusions(df)
+df <- preprocess_with_recovery(df)
+df <- preprocess_sort_band_date(df)
+df <- preprocess_calc_distance_days(df)
+#df[100:120,c(1:10, 28:30)] %>% as.data.frame()
 
 species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
 summary_df <- data.frame(SPECIES_ID = integer(0),
@@ -69,26 +127,9 @@ for (filename in file_df$name){
     original_rows <- nrow(df)
     summary_df_row$nrow_start_div2 <- as.integer(original_rows / 2)
     print(nrow(df))
-    # convert codes for 1st, 2nd, and last 10 days of month to their midpoint
-    # note these are not present in the database!
-    # df$EVENT_DATE <- sub('[/]41[/]', '/05/', df$EVENT_DATE)
-    # df$EVENT_DATE <- sub('[/]42[/]', '/15/', df$EVENT_DATE)
-    # df$EVENT_DATE <- sub('[/]43[/]', '/25/', df$EVENT_DATE)
-    # convert all other imprecise date codes to NA, then exlucde
-    df$EVENT_DATE <- as.Date(df$EVENT_DATE, format = '%m/%d/%Y')
-    df <- filter(df, !is.na(EVENT_DATE))
-    # sort by date
-    df <- df %>% arrange(BAND, EVENT_DATE)
-    # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead)
-    df <- filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
-    # exclude state or country level locations
-    df <- filter(df, ! CP %in% c(12, 72))
-    # exclude records with longitude of 0 (might be real records with 0 latitude)
-    df <- filter(df, LON_DD != 0)
-    # exclude records with missing latitude or longitude
-    df <- filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
-    # delete exluded records
-    df <- df %>% group_by(BAND) %>% filter(n() >= 2) %>% ungroup
+    df <- preprocess_data_types(df)
+    df <- preprocess_exclusions(df)
+    df <- preprocess_with_recovery(df)
     # report row attrition
     print(nrow(df) / original_rows)
     # skip if no more rows
