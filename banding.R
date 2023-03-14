@@ -17,45 +17,6 @@ library(BirdFlowModels)
 # path management ---------------------------------------------------------
 
 if (!dir.exists('pdf')) {dir.create('pdf')}
-if (!dir.exists('data')) {dir.create('data')}
-
-# get datafile info -------------------------------------------------------
-
-#read_html('https://www.sciencebase.gov/catalog/item/632b2d7bd34e71c6d67bc161')
-file_info <- read_html('htmlpage.htm') %>% html_nodes('td span.sb-download-link')
-file_df <- data.frame(
-  url = html_attr(file_info, 'data-url'),
-  name = html_text(file_info))
-file_df$url <- paste0('https://www.sciencebase.gov', file_df$url)
-file_df <- file_df %>% filter(grepl('\\.csv', name))
-
-# download files, filter CSVs for encountered bands -----------------------
-# 
-# for (i in seq_len(nrow(file_df))){
-#   file_path <- file.path('data', file_df$name[i])
-#   gc()
-#   download.file(file_df$url[i], file_path, method = 'wget', extra = '--progress=bar:force')
-#   if (grepl('\\.csv$', file_path)){
-#     fread(file_path, data.table = FALSE) %>%
-#     group_by(BAND) %>% filter(any(EVENT_TYPE == 'E')) %>% ungroup %>% arrange(BAND, EVENT_TYPE) %>%
-#     write.csv(file_path)
-#   }
-# }
-
-### DOWNLOAD FILE:  NEW
-# 
-# for (i in seq_len(nrow(file_df))){
-#   file_path <- file.path('data', file_df$name[i])
-#   gc()
-#   download.file(file_df$url[i], file_path, method = 'wget', extra = '--progress=bar:force')
-#   if (grepl('\\.csv$', file_path)){
-#     fread(file_path, data.table = FALSE) %>%
-#     group_by(BAND) %>% filter(n() > 1) %>% ungroup %>%
-#     write.csv(file.path('data', file_df$name, row.names = FALSE))
-#   }
-# }
-
-
 
 # summarize taxa ----------------------------------------------------------
 
