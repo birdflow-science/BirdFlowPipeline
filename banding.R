@@ -5,9 +5,14 @@ library(rebird)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(remotes)
 library(BirdFlowR)
 library(tidyr)
 library(ebirdst)
+install_github('birdflow-science/BirdFlowModels')
+install_github('birdflow-science/BirdFlowR', build_vignettes = TRUE, upgrade = 'never')
+library(BirdFlowR)
+library(BirdFlowModels)
 
 # path management ---------------------------------------------------------
 
