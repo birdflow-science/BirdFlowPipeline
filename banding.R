@@ -47,16 +47,15 @@ preprocess_data_types <- function(df){
   # convert all other imprecise date codes to NA
   df$EVENT_DATE <- as.Date(df$EVENT_DATE, format = '%m/%d/%Y')
   # fields contain both NAs and empty strings, so make sure to do the below
-  df$BIRD_INFO <- suppressWarnings(as.integer(df$BIRD_INFO))
+  #df$BIRD_INFO <- suppressWarnings(as.integer(df$BIRD_INFO))
   df$EXTRA_INFO <- suppressWarnings(as.integer(df$EXTRA_INFO))
+  df$BIRD_STATUS <- suppressWarnings(as.integer(df$BIRD_STATUS))
   df
 }
 
 preprocess_exclusions <- function(df){
   # exclude invalid dates
   df <- filter(df, !is.na(EVENT_DATE))
-  # sort by date
-  df <- df %>% arrange(BAND, EVENT_DATE)
   # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead
   df <- filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
   # exclude state or country level locations
@@ -87,12 +86,61 @@ preprocess_calc_distance_days <- function(df){
     ungroup
 }
 
-df <- preprocess_data_types(df)
-df <- preprocess_exclusions(df)
-df <- preprocess_with_recovery(df)
-df <- preprocess_sort_band_date(df)
-df <- preprocess_calc_distance_days(df)
-#df[100:120,c(1:10, 28:30)] %>% as.data.frame()
+preprocess_filter_days <- function(df, ndays){
+  # something seems wrong with this filtering still, currently not using
+  browser()
+  df <- df %>% filter((days < {{ndays}}) | (lead(days) < {{ndays}}))
+  df <- df %>% filter((days > 0) | (lead(days) > 0 ))
+  df
+}
+
+## NEW process
+
+species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
+# slashes cause problems later for file.path()
+species_lookup$SPECIES_NAME <- gsub('[/]', '_', species_lookup$SPECIES_NAME)
+summary_df <- data.frame(SPECIES_ID = integer(0),
+                         species_name = character(0),
+                         n_filtered_tracks = integer(0))
+pdf(file = file.path('pdf', 'distance_days.pdf'), onefile = TRUE)
+for (filename in filter(file_df, grepl('\\.csv$', name))$name){
+  multispecies_df <- fread(file.path('data',filename),
+                           colClasses = c(BIRD_STATUS = 'character',
+                                          EXTRA_INFO = 'character'))
+  species_tbl <- data.frame(SPECIES_ID = unique(multispecies_df$SPECIES_ID)) %>%
+    left_join(species_lookup[,c('SPECIES_ID', 'SPECIES_NAME')], by = 'SPECIES_ID')
+  for (species_tbl_row in seq_len(nrow(species_tbl))){
+    df <- multispecies_df %>% filter(SPECIES_ID == species_tbl[species_tbl_row, 'SPECIES_ID'])
+    species_name <- species_tbl[species_tbl_row, 'SPECIES_NAME']
+    message(species_name)
+    summary_df_row <- data.frame(SPECIES_ID = species_tbl[species_tbl_row, 'SPECIES_ID'],
+                                 species_name = species_name,
+                                 n_filtered_tracks = NA_integer_)
+    print(nrow(df))
+    df <- preprocess_data_types(df)
+    df <- preprocess_exclusions(df)
+    df <- preprocess_with_recovery(df)
+    df <- preprocess_sort_band_date(df)
+    df <- preprocess_calc_distance_days(df)
+    #df <- preprocess_filter_days(df, 365/2)
+    df <- drop_na(df, distance, days)
+    df <- filter(df, days > 0 & days < 365/2)
+    print(nrow(df))
+    n_filtered_tracks <- nrow(df)
+    summary_df_row$n_filtered_tracks <- n_filtered_tracks
+    summary_df <- rbind(summary_df, summary_df_row)
+    write.csv(summary_df, 'summary_df.csv', row.names = FALSE)
+    if (n_filtered_tracks < 20){
+      next
+    }
+    plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
+         main = paste0(species_name, '\n', '(n = ', n_filtered_tracks, ')'))
+  }
+}
+dev.off()
+
+## OLD process
+
 
 species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
 summary_df <- data.frame(SPECIES_ID = integer(0),
@@ -106,16 +154,11 @@ for (filename in file_df$name){
   multispecies_df <- fread(file.path('data',filename),
                            colClasses = c(BIRD_STATUS = 'character',
                                           EXTRA_INFO = 'character'))
-  # fields contain both NAs and empty strings, so make sure to do the below
-  multispecies_df$BIRD_INFO <- suppressWarnings(as.integer(multispecies_df$BIRD_INFO))
-  multispecies_df$EXTRA_INFO <- suppressWarnings(as.integer(multispecies_df$EXTRA_INFO))
   species_tbl <- data.frame(SPECIES_ID = unique(multispecies_df$SPECIES_ID)) %>%
     left_join(species_lookup[,c('SPECIES_ID', 'SPECIES_NAME')], by = 'SPECIES_ID')
   for (species_tbl_row in seq_len(nrow(species_tbl))){
     df <- multispecies_df %>% filter(SPECIES_ID == species_tbl[species_tbl_row, 'SPECIES_ID'])
     species_name <- species_tbl[species_tbl_row, 'SPECIES_NAME']
-    # if (species_name != 'Blue-headed Vireo') next
-    # stop()
     message(species_name)
     summary_df_row <- data.frame(SPECIES_ID = species_tbl[species_tbl_row, 'SPECIES_ID'],
                                   species_name = species_name,
