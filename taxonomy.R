@@ -150,4 +150,4 @@ joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_
       is.na(EBIRD_SPECIES_CODE),
       'NA',
       EBIRD_SPECIES_CODE))) %>%
-  write.csv('taxonomy_crosswalk.csv', row.names = FALSE)
+  write.csv('tax/taxonomy_crosswalk.csv', row.names = FALSE)
