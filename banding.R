@@ -101,7 +101,9 @@ species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
 species_lookup$SPECIES_NAME <- gsub('[/]', '_', species_lookup$SPECIES_NAME)
 summary_df <- data.frame(SPECIES_ID = integer(0),
                          species_name = character(0),
-                         n_filtered_tracks = integer(0))
+                         n_day180 = integer(0),
+                         n_day180_dist0 = integer(0),
+                         n_day180_dist15 = integer(0))
 pdf(file = file.path('pdf', 'distance_days.pdf'), onefile = TRUE)
 for (filename in filter(file_df, grepl('\\.csv$', name))$name){
   multispecies_df <- fread(file.path('data',filename),
@@ -115,7 +117,7 @@ for (filename in filter(file_df, grepl('\\.csv$', name))$name){
     message(species_name)
     summary_df_row <- data.frame(SPECIES_ID = species_tbl[species_tbl_row, 'SPECIES_ID'],
                                  species_name = species_name,
-                                 n_filtered_tracks = NA_integer_)
+                                 n_day180 = NA_integer_)
     print(nrow(df))
     df <- preprocess_data_types(df)
     df <- preprocess_exclusions(df)
@@ -126,15 +128,17 @@ for (filename in filter(file_df, grepl('\\.csv$', name))$name){
     df <- drop_na(df, distance, days)
     df <- filter(df, days > 0 & days < 365/2)
     print(nrow(df))
-    n_filtered_tracks <- nrow(df)
-    summary_df_row$n_filtered_tracks <- n_filtered_tracks
+    n_day180 <- nrow(df)
+    summary_df_row$n_day180_dist0 <- filter(df, distance > 0) %>% pull(distance) %>% na.omit %>% length
+    summary_df_row$n_day180_dist15 <- filter(df, distance > 15) %>% pull(distance) %>% na.omit %>% length
+    summary_df_row$n_day180 <- n_day180
     summary_df <- rbind(summary_df, summary_df_row)
     write.csv(summary_df, 'summary_df.csv', row.names = FALSE)
-    if (n_filtered_tracks < 20){
+    if (n_day180 < 20){
       next
     }
     plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
-         main = paste0(species_name, '\n', '(n = ', n_filtered_tracks, ')'))
+         main = paste0(species_name, '\n', '(n = ', n_day180, ')'))
   }
 }
 dev.off()
