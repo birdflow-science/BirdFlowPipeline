@@ -1,0 +1,1073 @@
+"BBL_SPECIES_ID","BBL_SPECIES_NAME","BBL_SCI_NAME","EBIRD_SPECIES_CODE","EBIRD_PRIMARY_COM_NAME","EBIRD_SCI_NAME","EBIRD_CATEGORY","EBIRDST_CODE"
+1770,"Black-bellied Whistling-Duck","Dendrocygna autumnalis","bbwduc","Black-bellied Whistling-Duck","Dendrocygna autumnalis","species","bbwduc"
+1771,"West Indian Whistling-Duck","Dendrocygna arborea","wiwduc1","West Indian Whistling-Duck","Dendrocygna arborea","species","wiwduc1"
+1780,"Fulvous Whistling-Duck","Dendrocygna bicolor","fuwduc","Fulvous Whistling-Duck","Dendrocygna bicolor","species","fuwduc"
+1710,"Greater White-fronted Goose","Anser albifrons","gwfgoo","Greater White-fronted Goose","Anser albifrons","species","gwfgoo"
+1719,"Tule White-fronted Goose","Anser albifrons elgasi","gwfgoo","Greater White-fronted Goose","Anser albifrons","species","gwfgoo"
+1760,"Emperor Goose","Anser canagicus","empgoo","Emperor Goose","Anser canagicus","species","empgoo"
+1690,"Lesser Snow Goose","Anser caerulescens caerulescens","snogoo","Snow Goose","Anser caerulescens","species","snogoo"
+1691,"Blue Goose","Anser caerulescens","snogoo","Snow Goose","Anser caerulescens","species","snogoo"
+1695,"Snow X Blue Goose Intergrade","Anser caerulescens","snogoo","Snow Goose","Anser caerulescens","species","snogoo"
+1698,"Blue Greater Snow Goose","Anser caerulescens atlantica","snogoo","Snow Goose","Anser caerulescens","species","snogoo"
+1699,"Greater Snow Goose","Anser caerulescens atlantica","snogoo","Snow Goose","Anser caerulescens","species","snogoo"
+1703,"Snow X Ross's Goose Hybrid","Anser caerulescens x rossii","sxrgoo1","Snow x Ross's Goose (hybrid)","Anser caerulescens x rossii","hybrid",NA
+1700,"Ross's Goose","Anser rossii","rosgoo","Ross's Goose","Anser rossii","species","rosgoo"
+1730,"Atlantic Brant","Branta bernicla hrota","brant","Brant","Branta bernicla","species","brant"
+1731,"Black X Atlantic Brant Intergrade","Branta bernicla hrota x bernicla nigricans","brant","Brant","Branta bernicla","species","brant"
+1740,"Black Brant","Branta bernicla nigricans","brant","Brant","Branta bernicla","species","brant"
+1750,"Barnacle Goose","Branta leucopsis","bargoo","Barnacle Goose","Branta leucopsis","species","bargoo"
+1722,"Cackling Goose","Branta hutchinsii","cacgoo1","Cackling Goose","Branta hutchinsii","species","cacgoo1"
+1721,"Aleutian Canada Goose","Branta hutchinsii leucopareia","cacgoo1","Cackling Goose","Branta hutchinsii","species","cacgoo1"
+1720,"Canada Goose","Branta canadensis","cangoo","Canada Goose","Branta canadensis","species","cangoo"
+1723,"Large Canada Goose","Branta canadensis maxima","cangoo","Canada Goose","Branta canadensis","species","cangoo"
+1729,"Small Canada Goose","Branta canadensis parvipes","cangoo","Canada Goose","Branta canadensis","species","cangoo"
+1751,"Hawaiian Goose","Branta sandvicensis","hawgoo","Hawaiian Goose","Branta sandvicensis","species",NA
+1716,"Other Hybrid Goose","",NA,NA,NA,NA,NA
+1782,"Mute Swan","Cygnus olor","mutswa","Mute Swan","Cygnus olor","species","mutswa"
+1810,"Trumpeter Swan","Cygnus buccinator","truswa","Trumpeter Swan","Cygnus buccinator","species","truswa"
+1800,"Whistling Swan","Cygnus columbianus columbianus","tunswa","Tundra Swan","Cygnus columbianus","species","tunswa"
+1801,"Bewick's Swan","Cygnus columbianus bewickii","tunswa","Tundra Swan","Cygnus columbianus","species","tunswa"
+1790,"Whooper Swan","Cygnus cygnus","whoswa","Whooper Swan","Cygnus cygnus","species","whoswa"
+1440,"Wood Duck","Aix sponsa","wooduc","Wood Duck","Aix sponsa","species","wooduc"
+1392,"Garganey","Spatula querquedula","gargan","Garganey","Spatula querquedula","species",NA
+1400,"Blue-winged Teal","Spatula discors","buwtea","Blue-winged Teal","Spatula discors","species","buwtea"
+1410,"Cinnamon Teal","Spatula cyanoptera","cintea","Cinnamon Teal","Spatula cyanoptera","species","cintea"
+1420,"Northern Shoveler","Spatula clypeata","norsho","Northern Shoveler","Spatula clypeata","species","norsho"
+1350,"Gadwall","Mareca strepera","gadwal","Gadwall","Mareca strepera","species","gadwal"
+1360,"Eurasian Wigeon","Mareca penelope","eurwig","Eurasian Wigeon","Mareca penelope","species","eurwig"
+1370,"American Wigeon","Mareca americana","amewig","American Wigeon","Mareca americana","species","amewig"
+1322,"Laysan Duck","Anas laysanensis","layduc","Laysan Duck","Anas laysanensis","species",NA
+1321,"Hawaiian Duck","Anas wyvilliana","hawduc","Hawaiian Duck","Anas wyvilliana","species",NA
+1320,"Mallard","Anas platyrhynchos","mallar3","Mallard","Anas platyrhynchos","species","mallar3"
+1337,"American Black Duck Dominant X Mallard Hybrid","Anas rubripes x platyrhynchos",NA,NA,NA,NA,NA
+1325,"Mallard X American Black Duck Intermediate","Anas platyrhynchos x rubripes","x00004","Mallard x American Black Duck (hybrid)","Anas platyrhynchos x rubripes","hybrid",NA
+1326,"Mallard X American Black Duck Hybrid","Anas platyrhynchos x rubripes","x00004","Mallard x American Black Duck (hybrid)","Anas platyrhynchos x rubripes","hybrid",NA
+1327,"Mallard Dominant X American Black Duck Hybrid","Anas platyrhynchos x rubripes","x00004","Mallard x American Black Duck (hybrid)","Anas platyrhynchos x rubripes","hybrid",NA
+1323,"Mallard X Hawaiian Duck Hybrid","Anas platyrhynchos x wyvilliana","x00423","Mallard x Hawaiian Duck (hybrid)","Anas platyrhynchos x wyvilliana","hybrid",NA
+1331,"Mexican Duck","Anas diazi","mexduc","Mexican Duck","Anas diazi","species","mexduc"
+1330,"American Black Duck","Anas rubripes","ambduc","American Black Duck","Anas rubripes","species","ambduc"
+1340,"Mottled Duck","Anas fulvigula","motduc","Mottled Duck","Anas fulvigula","species","motduc"
+1431,"White-cheeked Pintail","Anas bahamensis","whcpin","White-cheeked Pintail","Anas bahamensis","species","whcpin"
+1430,"Northern Pintail","Anas acuta","norpin","Northern Pintail","Anas acuta","species","norpin"
+1390,"Green-winged Teal","Anas crecca","gnwtea","Green-winged Teal","Anas crecca","species","gnwtea"
+1380,"European Green-winged Teal","Anas crecca crecca","gnwtea","Green-winged Teal","Anas crecca","species","gnwtea"
+1401,"Unidentified Teal","Anas sp. or Spatula sp.",NA,NA,NA,NA,NA
+1470,"Canvasback","Aythya valisineria","canvas","Canvasback","Aythya valisineria","species","canvas"
+1460,"Redhead","Aythya americana","redhea","Redhead","Aythya americana","species","redhea"
+1500,"Ring-necked Duck","Aythya collaris","rinduc","Ring-necked Duck","Aythya collaris","species","rinduc"
+1491,"Tufted Duck","Aythya fuligula","tufduc","Tufted Duck","Aythya fuligula","species","tufduc"
+1480,"Greater Scaup","Aythya marila","gresca","Greater Scaup","Aythya marila","species","gresca"
+1490,"Lesser Scaup","Aythya affinis","lessca","Lesser Scaup","Aythya affinis","species","lessca"
+1570,"Steller's Eider","Polysticta stelleri","steeid","Steller's Eider","Polysticta stelleri","species","steeid"
+1580,"Spectacled Eider","Somateria fischeri","speeid","Spectacled Eider","Somateria fischeri","species","speeid"
+1620,"King Eider","Somateria spectabilis","kineid","King Eider","Somateria spectabilis","species","kineid"
+1590,"Common Eider","Somateria mollissima","comeid","Common Eider","Somateria mollissima","species","comeid"
+1550,"Harlequin Duck","Histrionicus histrionicus","harduc","Harlequin Duck","Histrionicus histrionicus","species","harduc"
+1660,"Surf Scoter","Melanitta perspicillata","sursco","Surf Scoter","Melanitta perspicillata","species","sursco"
+1650,"White-winged Scoter","Melanitta deglandi","whwsco2","White-winged Scoter","Melanitta deglandi","species","whwsco2"
+1630,"Black Scoter","Melanitta americana","blksco2","Black Scoter","Melanitta americana","species","blksco2"
+1540,"Long-tailed Duck","Clangula hyemalis","lotduc","Long-tailed Duck","Clangula hyemalis","species","lotduc"
+1530,"Bufflehead","Bucephala albeola","buffle","Bufflehead","Bucephala albeola","species","buffle"
+1510,"Common Goldeneye","Bucephala clangula","comgol","Common Goldeneye","Bucephala clangula","species","comgol"
+1520,"Barrow's Goldeneye","Bucephala islandica","bargol","Barrow's Goldeneye","Bucephala islandica","species","bargol"
+1310,"Hooded Merganser","Lophodytes cucullatus","hoomer","Hooded Merganser","Lophodytes cucullatus","species","hoomer"
+1290,"Common Merganser","Mergus merganser","commer","Common Merganser","Mergus merganser","species","commer"
+1300,"Red-breasted Merganser","Mergus serrator","rebmer","Red-breasted Merganser","Mergus serrator","species","rebmer"
+1680,"Masked Duck","Nomonyx dominicus","masduc","Masked Duck","Nomonyx dominicus","species","masduc"
+1670,"Ruddy Duck","Oxyura jamaicensis","rudduc","Ruddy Duck","Oxyura jamaicensis","species","rudduc"
+1436,"Other Hybrid Duck","",NA,NA,NA,NA,NA
+8600,"Micronesian Megapode","Megapodius laperouse","micscr1","Micronesian Scrubfowl","Megapodius laperouse","species",NA
+1820,"American Flamingo","Phoenicopterus ruber","grefla2","American Flamingo","Phoenicopterus ruber","species","grefla2"
+50,"Least Grebe","Tachybaptus dominicus","leagre","Least Grebe","Tachybaptus dominicus","species","leagre"
+60,"Pied-billed Grebe","Podilymbus podiceps","pibgre","Pied-billed Grebe","Podilymbus podiceps","species","pibgre"
+30,"Horned Grebe","Podiceps auritus","horgre","Horned Grebe","Podiceps auritus","species","horgre"
+20,"Red-necked Grebe","Podiceps grisegena","rengre","Red-necked Grebe","Podiceps grisegena","species","rengre"
+40,"Eared Grebe","Podiceps nigricollis","eargre","Eared Grebe","Podiceps nigricollis","species","eargre"
+10,"Western Grebe","Aechmophorus occidentalis","wesgre","Western Grebe","Aechmophorus occidentalis","species","wesgre"
+12,"Western/Clark's Grebe","Aechmophorus sp.","y00012","Western/Clark's Grebe","Aechmophorus occidentalis/clarkii","slash",NA
+11,"Clark's Grebe","Aechmophorus clarkii","clagre","Clark's Grebe","Aechmophorus clarkii","species","clagre"
+3141,"Scaly-naped Pigeon","Patagioenas squamosa","scnpig1","Scaly-naped Pigeon","Patagioenas squamosa","species","scnpig1"
+3140,"White-crowned Pigeon","Patagioenas leucocephala","whcpig2","White-crowned Pigeon","Patagioenas leucocephala","species","whcpig2"
+3130,"Red-billed Pigeon","Patagioenas flavirostris","rebpig1","Red-billed Pigeon","Patagioenas flavirostris","species","rebpig1"
+3121,"Plain Pigeon","Patagioenas inornata","plapig","Plain Pigeon","Patagioenas inornata","species",NA
+3120,"Band-tailed Pigeon","Patagioenas fasciata","batpig1","Band-tailed Pigeon","Patagioenas fasciata","species","batpig1"
+3158,"Philippine Turtle-Dove","Streptopelia bitorquata","iscdov1","Sunda Collared-Dove","Streptopelia bitorquata","species",NA
+3152,"African Collared-Dove","Streptopelia roseogrisea","afcdov1","African Collared-Dove","Streptopelia roseogrisea","species",NA
+3159,"Eurasian Collared-Dove","Streptopelia decaocto","eucdov","Eurasian Collared-Dove","Streptopelia decaocto","species","eucdov"
+3151,"Spotted Dove","Streptopelia chinensis","spodov","Spotted Dove","Streptopelia chinensis","species","spodov"
+8780,"Shy Ground Dove","Alopecoenas stairi","frgdov1","Shy Ground Dove","Alopecoenas stairi","species",NA
+3154,"White-throated Ground Dove","Alopecoenas xanthonurus","wtgdov1","White-throated Ground Dove","Alopecoenas xanthonurus","species",NA
+3153,"Zebra Dove","Geopelia striata","zebdov","Zebra Dove","Geopelia striata","species",NA
+3210,"Inca Dove","Columbina inca","incdov","Inca Dove","Columbina inca","species","incdov"
+3200,"Common Ground Dove","Columbina passerina","cogdov","Common Ground Dove","Columbina passerina","species","cogdov"
+3201,"Ruddy Ground Dove","Columbina talpacoti","rugdov","Ruddy Ground Dove","Columbina talpacoti","species","rugdov"
+3221,"Ruddy Quail-Dove","Geotrygon montana","ruqdov","Ruddy Quail-Dove","Geotrygon montana","species","ruqdov"
+3220,"Key West Quail-Dove","Geotrygon chrysia","kwqdov","Key West Quail-Dove","Geotrygon chrysia","species",NA
+3222,"Bridled Quail-Dove","Geotrygon mystacea","brqdov1","Bridled Quail-Dove","Geotrygon mystacea","species",NA
+3180,"White-tipped Dove","Leptotila verreauxi","whtdov","White-tipped Dove","Leptotila verreauxi","species","whtdov"
+3181,"Caribbean Dove","Leptotila jamaicensis","cardov1","Caribbean Dove","Leptotila jamaicensis","species","cardov1"
+3190,"White-winged Dove","Zenaida asiatica","whwdov","White-winged Dove","Zenaida asiatica","species","whwdov"
+3170,"Zenaida Dove","Zenaida aurita","zendov","Zenaida Dove","Zenaida aurita","species","zendov"
+3161,"Eared Dove","Zenaida auriculata","eardov1","Eared Dove","Zenaida auriculata","species","eardov1"
+3160,"Mourning Dove","Zenaida macroura","moudov","Mourning Dove","Zenaida macroura","species","moudov"
+8760,"Many-colored Fruit Dove","Ptilinopus perousii","mcfdov1","Many-colored Fruit-Dove","Ptilinopus perousii","species",NA
+8620,"Purple-capped Fruit Dove","Ptilinopus porphyraceus","ccfdov1","Crimson-crowned Fruit-Dove","Ptilinopus porphyraceus","species",NA
+3155,"Mariana Fruit Dove","Ptilinopus roseicapilla","mafdov2","Mariana Fruit-Dove","Ptilinopus roseicapilla","species",NA
+8770,"Pacific Pigeon","Ducula pacifica","paipig1","Pacific Imperial-Pigeon","Ducula pacifica","species",NA
+3830,"Smooth-billed Ani","Crotophaga ani","smbani","Smooth-billed Ani","Crotophaga ani","species","smbani"
+3840,"Groove-billed Ani","Crotophaga sulcirostris","grbani","Groove-billed Ani","Crotophaga sulcirostris","species","grbani"
+3850,"Greater Roadrunner","Geococcyx californianus","greroa","Greater Roadrunner","Geococcyx californianus","species","greroa"
+3870,"Yellow-billed Cuckoo","Coccyzus americanus","yebcuc","Yellow-billed Cuckoo","Coccyzus americanus","species","yebcuc"
+3871,"Western Yellow-billed Cuckoo","Coccyzus americanus","yebcuc","Yellow-billed Cuckoo","Coccyzus americanus","species","yebcuc"
+3860,"Mangrove Cuckoo","Coccyzus minor","mancuc","Mangrove Cuckoo","Coccyzus minor","species","mancuc"
+3880,"Black-billed Cuckoo","Coccyzus erythropthalmus","bkbcuc","Black-billed Cuckoo","Coccyzus erythropthalmus","species","bkbcuc"
+3851,"Puerto Rican Lizard-Cuckoo","Coccyzus vieilloti","purlic1","Puerto Rican Lizard-Cuckoo","Coccyzus vieilloti","species",NA
+8750,"Long-tailed Cuckoo","Eudynamys taitensis",NA,NA,NA,NA,NA
+4210,"Lesser Nighthawk","Chordeiles acutipennis","lesnig","Lesser Nighthawk","Chordeiles acutipennis","species","lesnig"
+4200,"Common Nighthawk","Chordeiles minor","comnig","Common Nighthawk","Chordeiles minor","species","comnig"
+4190,"Common Pauraque","Nyctidromus albicollis","compau","Common Pauraque","Nyctidromus albicollis","species","compau"
+4180,"Common Poorwill","Phalaenoptilus nuttallii","compoo","Common Poorwill","Phalaenoptilus nuttallii","species","compoo"
+4160,"Chuck-will's-widow","Antrostomus carolinensis","chwwid","Chuck-will's-widow","Antrostomus carolinensis","species","chwwid"
+4161,"Buff-collared Nightjar","Antrostomus ridgwayi","bucnig","Buff-collared Nightjar","Antrostomus ridgwayi","species","bucnig"
+4170,"Eastern Whip-poor-will","Antrostomus vociferus","easwpw1","Eastern Whip-poor-will","Antrostomus vociferus","species","easwpw1"
+4172,"Mexican Whip-poor-will","Antrostomus arizonae","souwpw1","Mexican Whip-poor-will","Antrostomus arizonae","species","souwpw1"
+4171,"Puerto Rican Nightjar","Antrostomus noctitherus","purnig1","Puerto Rican Nightjar","Antrostomus noctitherus","species",NA
+4220,"Black Swift","Cypseloides niger","blkswi","Black Swift","Cypseloides niger","species","blkswi"
+4230,"Chimney Swift","Chaetura pelagica","chiswi","Chimney Swift","Chaetura pelagica","species","chiswi"
+4240,"Vaux's Swift","Chaetura vauxi","vauswi","Vaux's Swift","Chaetura vauxi","species","vauswi"
+8610,"White-rumped Swiftlet","Aerodramus spodiopygius","whrswi2","White-rumped Swiftlet","Aerodramus spodiopygius","species",NA
+4250,"White-throated Swift","Aeronautes saxatalis","whtswi","White-throated Swift","Aeronautes saxatalis","species","whtswi"
+4271,"Green Violetear","Colibri thalassinus","grnvie1","Mexican Violetear","Colibri thalassinus","species","grnvie1"
+4366,"Green-breasted Mango","Anthracothorax prevostii","gnbman","Green-breasted Mango","Anthracothorax prevostii","species",NA
+9067,"Puerto Rican Mango","Anthracothorax dominicus","antman1","Antillean Mango","Anthracothorax dominicus","species",NA
+4362,"Green Mango","Anthracothorax viridis","greman1","Green Mango","Anthracothorax viridis","species",NA
+4361,"Jamaican Mango","Anthracothorax mango","jamman1","Jamaican Mango","Anthracothorax mango","species",NA
+4363,"Green-throated Carib","Eulampis holosericeus","grtcar1","Green-throated Carib","Eulampis holosericeus","species","grtcar1"
+4260,"Rivoli's Hummingbird","Eugenes fulgens","maghum1","Rivoli's Hummingbird","Eugenes fulgens","species","maghum1"
+4261,"Plain-capped Starthroat","Heliomaster constantii","plcsta","Plain-capped Starthroat","Heliomaster constantii","species","plcsta"
+4270,"Blue-throated Hummingbird","Lampornis clemenciae","buthum","Blue-throated Mountain-gem","Lampornis clemenciae","species","buthum"
+4370,"Lucifer Hummingbird","Calothorax lucifer","luchum","Lucifer Hummingbird","Calothorax lucifer","species","luchum"
+4280,"Ruby-throated Hummingbird","Archilochus colubris","rthhum","Ruby-throated Hummingbird","Archilochus colubris","species","rthhum"
+4290,"Black-chinned Hummingbird","Archilochus alexandri","bkchum","Black-chinned Hummingbird","Archilochus alexandri","species","bkchum"
+4371,"Bahama Woodstar","Nesophlox evelynae","bahwoo","Bahama Woodstar","Nesophlox evelynae","species",NA
+4310,"Anna's Hummingbird","Calypte anna","annhum","Anna's Hummingbird","Calypte anna","species","annhum"
+4300,"Costa's Hummingbird","Calypte costae","coshum","Costa's Hummingbird","Calypte costae","species","coshum"
+4360,"Calliope Hummingbird","Selasphorus calliope","calhum","Calliope Hummingbird","Selasphorus calliope","species","calhum"
+4330,"Rufous Hummingbird","Selasphorus rufus","rufhum","Rufous Hummingbird","Selasphorus rufus","species","rufhum"
+4340,"Allen's Hummingbird","Selasphorus sasin","allhum","Allen's Hummingbird","Selasphorus sasin","species","allhum"
+4320,"Broad-tailed Hummingbird","Selasphorus platycercus","brthum","Broad-tailed Hummingbird","Selasphorus platycercus","species","brthum"
+4350,"Bumblebee Hummingbird","Selasphorus heloisa","bumhum","Bumblebee Hummingbird","Selasphorus heloisa","species",NA
+4410,"Broad-billed Hummingbird","Cynanthus latirostris","brbhum","Broad-billed Hummingbird","Cynanthus latirostris","species","brbhum"
+4402,"Puerto Rican Emerald","Chlorostilbon maugaeus","pureme1","Puerto Rican Emerald","Riccordia maugaeus","species",NA
+4364,"Antillean Crested Hummingbird","Orthorhyncus cristatus","anchum1","Antillean Crested Hummingbird","Orthorhyncus cristatus","species",NA
+9071,"Streamertail","Trochilus polytmus","stream1","Streamertail","Trochilus polytmus","species",NA
+4391,"Violet-crowned Hummingbird","Leucolia violiceps","vichum","Violet-crowned Hummingbird","Leucolia violiceps","species","vichum"
+4381,"Berylline Hummingbird","Saucerottia beryllina","berhum","Berylline Hummingbird","Saucerottia beryllina","species","berhum"
+4390,"Buff-bellied Hummingbird","Amazilia yucatanensis","bubhum","Buff-bellied Hummingbird","Amazilia yucatanensis","species","bubhum"
+4380,"Rufous-tailed Hummingbird","Amazilia tzacatl","rtlhum","Rufous-tailed Hummingbird","Amazilia tzacatl","species","rtlhum"
+4401,"White-eared Hummingbird","Hylocharis leucotis","whehum","White-eared Hummingbird","Basilinna leucotis","species","whehum"
+4408,"Hybrid Hummingbird","",NA,NA,NA,NA,NA
+4409,"Unidentified Hummingbird","",NA,NA,NA,NA,NA
+2111,"California Ridgway's Rail","Rallus obsoletus obsoletus","ridrai1","Ridgway's Rail","Rallus obsoletus","species","ridrai1"
+2112,"Light-footed Ridgway's Rail","Rallus obsoletus levipes","ridrai1","Ridgway's Rail","Rallus obsoletus","species","ridrai1"
+2113,"Yuma Ridgway's Rail","Rallus obsoletus yumanensis","ridrai1","Ridgway's Rail","Rallus obsoletus","species","ridrai1"
+2080,"King Rail","Rallus elegans","kinrai4","King Rail","Rallus elegans","species","kinrai4"
+2110,"Clapper Rail","Rallus longirostris","clarai11","Clapper Rail","Rallus crepitans","species","clarai11"
+2120,"Virginia Rail","Rallus limicola","virrai","Virginia Rail","Rallus limicola","species","virrai"
+2161,"Buff-banded Rail","Gallirallus philippensis","bubrai1","Buff-banded Rail","Gallirallus philippensis","species","bubrai1"
+2140,"Sora","Porzana carolina","sora","Sora","Porzana carolina","species","sora"
+2190,"Common Gallinule","Gallinula galeata","comgal1","Common Gallinule","Gallinula galeata","species","comgal1"
+2191,"Hawaiian Gallinule","Gallinula galeata sandvicensis","comgal1","Common Gallinule","Gallinula galeata","species","comgal1"
+2201,"Hawaiian Coot","Fulica alai","hawcoo","Hawaiian Coot","Fulica alai","species",NA
+2210,"American Coot","Fulica americana","y00475","American Coot","Fulica americana","species","y00475"
+2180,"Purple Gallinule","Porphyrio martinicus","purgal2","Purple Gallinule","Porphyrio martinica","species","purgal2"
+2150,"Yellow Rail","Coturnicops noveboracensis","yelrai","Yellow Rail","Coturnicops noveboracensis","species","yelrai"
+2160,"Black Rail","Laterallus jamaicensis","blkrai","Black Rail","Laterallus jamaicensis","species","blkrai"
+2163,"Eastern Black Rail","Laterallus jamaicensis jamaicensis","blkrai","Black Rail","Laterallus jamaicensis","species","blkrai"
+2070,"Limpkin","Aramus guarauna","limpki","Limpkin","Aramus guarauna","species","limpki"
+2060,"Sandhill Crane","Antigone canadensis","sancra","Sandhill Crane","Antigone canadensis","species","sancra"
+2061,"Mississippi Sandhill Crane","Antigone canadensis pulla","sancra","Sandhill Crane","Antigone canadensis","species","sancra"
+2040,"Whooping Crane","Grus americana","whocra","Whooping Crane","Grus americana","species","whocra"
+8543,"Snowy Sheathbill","Chionis albus","snoshe2","Snowy Sheathbill","Chionis albus","species",NA
+2262,"Black-winged Stilt","Himantopus himantopus","bkwsti","Black-winged Stilt","Himantopus himantopus","species","bkwsti"
+2260,"Black-necked Stilt","Himantopus mexicanus","bknsti","Black-necked Stilt","Himantopus mexicanus","species","bknsti"
+2261,"Hawaiian Stilt","Himantopus mexicanus knudseni","bknsti","Black-necked Stilt","Himantopus mexicanus","species","bknsti"
+2250,"American Avocet","Recurvirostra americana","ameavo","American Avocet","Recurvirostra americana","species","ameavo"
+2860,"American Oystercatcher","Haematopus palliatus","ameoys","American Oystercatcher","Haematopus palliatus","species","ameoys"
+2870,"Black Oystercatcher","Haematopus bachmani","blkoys","Black Oystercatcher","Haematopus bachmani","species","blkoys"
+2700,"Black-bellied Plover","Pluvialis squatarola","bkbplo","Black-bellied Plover","Pluvialis squatarola","species","bkbplo"
+2720,"American Golden-Plover","Pluvialis dominica","amgplo","American Golden-Plover","Pluvialis dominica","species","amgplo"
+2721,"Pacific Golden-Plover","Pluvialis fulva","pagplo","Pacific Golden-Plover","Pluvialis fulva","species","pagplo"
+2729,"Lesser Golden-Plover","Pluvialus dominica/ P. fulva","y00222","American/Pacific Golden-Plover (Lesser Golden-Plover)","Pluvialis dominica/fulva","slash",NA
+2730,"Killdeer","Charadrius vociferus","killde","Killdeer","Charadrius vociferus","species","killde"
+2750,"Common Ringed Plover","Charadrius hiaticula","corplo","Common Ringed Plover","Charadrius hiaticula","species","corplo"
+2740,"Semipalmated Plover","Charadrius semipalmatus","semplo","Semipalmated Plover","Charadrius semipalmatus","species","semplo"
+2770,"Piping Plover","Charadrius melodus","pipplo","Piping Plover","Charadrius melodus","species","pipplo"
+2790,"Lesser Sand-Plover","Charadrius mongolus","lesplo","Lesser Sand-Plover","Charadrius mongolus","species","lesplo"
+2800,"Wilson's Plover","Charadrius wilsonia","wilplo","Wilson's Plover","Charadrius wilsonia","species","wilplo"
+2810,"Mountain Plover","Charadrius montanus","mouplo","Mountain Plover","Charadrius montanus","species","mouplo"
+2780,"Snowy Plover","Charadrius nivosus","snoplo5","Snowy Plover","Charadrius nivosus","species","snoplo5"
+2781,"Western Snowy Plover","Charadrius nivosus nivosus","snoplo5","Snowy Plover","Charadrius nivosus","species","snoplo5"
+2880,"Northern Jacana","Jacana spinosa","norjac","Northern Jacana","Jacana spinosa","species","norjac"
+2610,"Upland Sandpiper","Bartramia longicauda","uplsan","Upland Sandpiper","Bartramia longicauda","species","uplsan"
+2680,"Bristle-thighed Curlew","Numenius tahitiensis","brtcur","Bristle-thighed Curlew","Numenius tahitiensis","species","brtcur"
+2650,"Whimbrel","Numenius phaeopus","whimbr","Whimbrel","Numenius phaeopus","species","whimbr"
+2640,"Long-billed Curlew","Numenius americanus","lobcur","Long-billed Curlew","Numenius americanus","species","lobcur"
+2500,"Bar-tailed Godwit","Limosa lapponica","batgod","Bar-tailed Godwit","Limosa lapponica","species","batgod"
+2510,"Hudsonian Godwit","Limosa haemastica","hudgod","Hudsonian Godwit","Limosa haemastica","species","hudgod"
+2490,"Marbled Godwit","Limosa fedoa","margod","Marbled Godwit","Limosa fedoa","species","margod"
+2830,"Ruddy Turnstone","Arenaria interpres","rudtur","Ruddy Turnstone","Arenaria interpres","species","rudtur"
+2840,"Black Turnstone","Arenaria melanocephala","blktur","Black Turnstone","Arenaria melanocephala","species","blktur"
+2340,"Red Knot","Calidris canutus","redkno","Red Knot","Calidris canutus","species","redkno"
+2341,"Rufa Red Knot","Calidris canutus rufa","redkno","Red Knot","Calidris canutus","species","redkno"
+2820,"Surfbird","Calidris virgata","surfbi","Surfbird","Calidris virgata","species","surfbi"
+2600,"Ruff","Calidris pugnax","ruff","Ruff","Calidris pugnax","species","ruff"
+2380,"Sharp-tailed Sandpiper","Calidris acuminata","shtsan","Sharp-tailed Sandpiper","Calidris acuminata","species","shtsan"
+2330,"Stilt Sandpiper","Calidris himantopus","stisan","Stilt Sandpiper","Calidris himantopus","species","stisan"
+2440,"Curlew Sandpiper","Calidris ferruginea","cursan","Curlew Sandpiper","Calidris ferruginea","species","cursan"
+2423,"Long-toed Stint","Calidris subminuta","lotsti","Long-toed Stint","Calidris subminuta","species","lotsti"
+2422,"Red-necked Stint","Calidris ruficollis","rensti","Red-necked Stint","Calidris ruficollis","species","rensti"
+2480,"Sanderling","Calidris alba","sander","Sanderling","Calidris alba","species","sander"
+2430,"Dunlin","Calidris alpina","dunlin","Dunlin","Calidris alpina","species","dunlin"
+2360,"Rock Sandpiper","Calidris ptilocnemis","rocsan","Rock Sandpiper","Calidris ptilocnemis","species","rocsan"
+2350,"Purple Sandpiper","Calidris maritima","pursan","Purple Sandpiper","Calidris maritima","species","pursan"
+2410,"Baird's Sandpiper","Calidris bairdii","baisan","Baird's Sandpiper","Calidris bairdii","species","baisan"
+2420,"Least Sandpiper","Calidris minutilla","leasan","Least Sandpiper","Calidris minutilla","species","leasan"
+2400,"White-rumped Sandpiper","Calidris fuscicollis","whrsan","White-rumped Sandpiper","Calidris fuscicollis","species","whrsan"
+2620,"Buff-breasted Sandpiper","Calidris  subruficollis","bubsan","Buff-breasted Sandpiper","Calidris subruficollis","species","bubsan"
+2390,"Pectoral Sandpiper","Calidris melanotos","pecsan","Pectoral Sandpiper","Calidris melanotos","species","pecsan"
+2460,"Semipalmated Sandpiper","Calidris pusilla","semsan","Semipalmated Sandpiper","Calidris pusilla","species","semsan"
+2470,"Western Sandpiper","Calidris mauri","wessan","Western Sandpiper","Calidris mauri","species","wessan"
+2310,"Short-billed Dowitcher","Limnodromus griseus","shbdow","Short-billed Dowitcher","Limnodromus griseus","species","shbdow"
+2320,"Long-billed Dowitcher","Limnodromus scolopaceus","lobdow","Long-billed Dowitcher","Limnodromus scolopaceus","species","lobdow"
+2280,"American Woodcock","Scolopax minor","amewoo","American Woodcock","Scolopax minor","species","amewoo"
+2301,"Pin-tailed Snipe","Gallinago stenura","pitsni","Pin-tailed Snipe","Gallinago stenura","species",NA
+2290,"Common Snipe","Gallinago gallinago","comsni","Common Snipe","Gallinago gallinago","species","comsni"
+2300,"Wilson's Snipe","Gallinago delicata","wilsni1","Wilson's Snipe","Gallinago delicata","species","wilsni1"
+2302,"Swinhoe's Snipe","Gallinago megala","swisni1","Swinhoe's Snipe","Gallinago megala","species",NA
+2631,"Common Sandpiper","Actitis hypoleucos","comsan","Common Sandpiper","Actitis hypoleucos","species","comsan"
+2630,"Spotted Sandpiper","Actitis macularius","sposan","Spotted Sandpiper","Actitis macularius","species","sposan"
+2560,"Solitary Sandpiper","Tringa solitaria","solsan","Solitary Sandpiper","Tringa solitaria","species","solsan"
+2591,"Gray-tailed Tattler","Tringa brevipes","gyttat1","Gray-tailed Tattler","Tringa brevipes","species","gyttat1"
+2590,"Wandering Tattler","Tringa incana","wantat1","Wandering Tattler","Tringa incana","species","wantat1"
+2550,"Lesser Yellowlegs","Tringa flavipes","lesyel","Lesser Yellowlegs","Tringa flavipes","species","lesyel"
+2580,"Willet","Tringa semipalmata","willet1","Willet","Tringa semipalmata","species","willet1"
+2532,"Common Greenshank","Tringa nebularia","comgre","Common Greenshank","Tringa nebularia","species","comgre"
+2540,"Greater Yellowlegs","Tringa melanoleuca","greyel","Greater Yellowlegs","Tringa melanoleuca","species","greyel"
+2561,"Wood Sandpiper","Tringa glareola","woosan","Wood Sandpiper","Tringa glareola","species","woosan"
+2562,"Marsh Sandpiper","Tringa stagnatilis","marsan","Marsh Sandpiper","Tringa stagnatilis","species",NA
+2240,"Wilson's Phalarope","Phalaropus tricolor","wilpha","Wilson's Phalarope","Phalaropus tricolor","species","wilpha"
+2230,"Red-necked Phalarope","Phalaropus lobatus","renpha","Red-necked Phalarope","Phalaropus lobatus","species","renpha"
+2220,"Red Phalarope","Phalaropus fulicarius","redpha1","Red Phalarope","Phalaropus fulicarius","species",NA
+352,"South Polar Skua","Stercorarius maccormicki","sopsku1","South Polar Skua","Stercorarius maccormicki","species",NA
+8554,"Brown Skua","Stercorarius antarcticus","brnsku3","Brown Skua","Stercorarius antarcticus","species",NA
+8552,"Hybrid Skua","Stercorarius sp.","y00615","jaeger/skua sp.","Stercorarius sp.","spuh",NA
+360,"Pomarine Jaeger","Stercorarius pomarinus","pomjae","Pomarine Jaeger","Stercorarius pomarinus","species","pomjae"
+370,"Parasitic Jaeger","Stercorarius parasiticus","parjae","Parasitic Jaeger","Stercorarius parasiticus","species","parjae"
+380,"Long-tailed Jaeger","Stercorarius longicaudus","lotjae","Long-tailed Jaeger","Stercorarius longicaudus","species","lotjae"
+340,"Dovekie","Alle alle","doveki","Dovekie","Alle alle","species",NA
+300,"Common Murre","Uria aalge","commur","Common Murre","Uria aalge","species",NA
+310,"Thick-billed Murre","Uria lomvia","thbmur","Thick-billed Murre","Uria lomvia","species",NA
+320,"Razorbill","Alca torda","razorb","Razorbill","Alca torda","species",NA
+270,"Black Guillemot","Cepphus grylle","blkgui","Black Guillemot","Cepphus grylle","species",NA
+290,"Pigeon Guillemot","Cepphus columba","piggui","Pigeon Guillemot","Cepphus columba","species","piggui"
+230,"Marbled Murrelet","Brachyramphus marmoratus","marmur","Marbled Murrelet","Brachyramphus marmoratus","species","marmur"
+232,"Alaska Marbled Murrelet","Brachyramphus marmoratus","marmur","Marbled Murrelet","Brachyramphus marmoratus","species","marmur"
+240,"Kittlitz's Murrelet","Brachyramphus brevirostris","kitmur","Kittlitz's Murrelet","Brachyramphus brevirostris","species",NA
+251,"Scripps's Murrelet","Synthliboramphus scrippsi","xanmur2","Scripps's Murrelet","Synthliboramphus scrippsi","species",NA
+252,"Guadalupe Murrelet","Synthliboramphus hypoleucus","xanmur1","Guadalupe Murrelet","Synthliboramphus hypoleucus","species",NA
+250,"Xantus's Murrelet","Synthliboramphus scrippsi/ S. hypoleucus","xanmur","Scripps's/Guadalupe Murrelet (Xantus's Murrelet)","Synthliboramphus scrippsi/hypoleucus","slash",NA
+260,"Craveri's Murrelet","Synthliboramphus craveri","cramur","Craveri's Murrelet","Synthliboramphus craveri","species",NA
+210,"Ancient Murrelet","Synthliboramphus antiquus","ancmur","Ancient Murrelet","Synthliboramphus antiquus","species",NA
+160,"Cassin's Auklet","Ptychoramphus aleuticus","casauk","Cassin's Auklet","Ptychoramphus aleuticus","species",NA
+170,"Parakeet Auklet","Aethia psittacula","parauk","Parakeet Auklet","Aethia psittacula","species",NA
+200,"Least Auklet","Aethia pusilla","leaauk","Least Auklet","Aethia pusilla","species",NA
+190,"Whiskered Auklet","Aethia pygmaea","whiauk","Whiskered Auklet","Aethia pygmaea","species",NA
+180,"Crested Auklet","Aethia cristatella","creauk","Crested Auklet","Aethia cristatella","species",NA
+150,"Rhinoceros Auklet","Cerorhinca monocerata","rhiauk","Rhinoceros Auklet","Cerorhinca monocerata","species",NA
+130,"Atlantic Puffin","Fratercula arctica","atlpuf","Atlantic Puffin","Fratercula arctica","species",NA
+140,"Horned Puffin","Fratercula corniculata","horpuf","Horned Puffin","Fratercula corniculata","species",NA
+120,"Tufted Puffin","Fratercula cirrhata","tufpuf","Tufted Puffin","Fratercula cirrhata","species",NA
+400,"Black-legged Kittiwake","Rissa tridactyla","bklkit","Black-legged Kittiwake","Rissa tridactyla","species",NA
+410,"Red-legged Kittiwake","Rissa brevirostris","relkit","Red-legged Kittiwake","Rissa brevirostris","species",NA
+390,"Ivory Gull","Pagophila eburnea","ivogul","Ivory Gull","Pagophila eburnea","species","ivogul"
+620,"Sabine's Gull","Xema sabini","sabgul","Sabine's Gull","Xema sabini","species","sabgul"
+600,"Bonaparte's Gull","Chroicocephalus philadelphia","bongul","Bonaparte's Gull","Chroicocephalus philadelphia","species","bongul"
+601,"Little Gull","Hydrocoloeus minutus","litgul","Little Gull","Hydrocoloeus minutus","species","litgul"
+610,"Ross's Gull","Rhodostethia rosea","rosgul","Ross's Gull","Rhodostethia rosea","species","rosgul"
+391,"Dolphin Gull","Leucophaeus scoresbii","dolgul2","Dolphin Gull","Leucophaeus scoresbii","species",NA
+580,"Laughing Gull","Leucophaeus atricilla","laugul","Laughing Gull","Leucophaeus atricilla","species","laugul"
+590,"Franklin's Gull","Leucophaeus pipixcan","fragul","Franklin's Gull","Leucophaeus pipixcan","species","fragul"
+570,"Heermann's Gull","Larus heermanni","heegul","Heermann's Gull","Larus heermanni","species","heegul"
+550,"Unidentified Mew Gull","Larus canus/ L. brachyrhynchus","mewgul2","Short-billed Gull","Larus brachyrhynchus","species","mewgul2"
+540,"Ring-billed Gull","Larus delawarensis","ribgul","Ring-billed Gull","Larus delawarensis","species","ribgul"
+490,"Western Gull","Larus occidentalis","wesgul","Western Gull","Larus occidentalis","species","wesgul"
+530,"California Gull","Larus californicus","calgul","California Gull","Larus californicus","species","calgul"
+510,"Herring Gull","Larus argentatus","hergul","Herring Gull","Larus argentatus","species","hergul"
+430,"Iceland Gull","Larus glaucoides","y00478","Iceland Gull","Larus glaucoides","species","y00478"
+431,"Thayer's Gull","Larus glaucoides thayeri","y00478","Iceland Gull","Larus glaucoides","species","y00478"
+500,"Lesser Black-backed Gull","Larus fuscus","lbbgul","Lesser Black-backed Gull","Larus fuscus","species","lbbgul"
+440,"Glaucous-winged Gull","Larus glaucescens","glwgul","Glaucous-winged Gull","Larus glaucescens","species","glwgul"
+420,"Glaucous Gull","Larus hyperboreus","glagul","Glaucous Gull","Larus hyperboreus","species","glagul"
+470,"Great Black-backed Gull","Larus marinus","gbbgul","Great Black-backed Gull","Larus marinus","species","gbbgul"
+8546,"Kelp Gull","Larus dominicanus","kelgul","Kelp Gull","Larus dominicanus","species",NA
+446,"Hybrid Gull","",NA,NA,NA,NA,NA
+534,"Unidentified Gull","",NA,NA,NA,NA,NA
+790,"Brown Noddy","Anous stolidus","brnnod","Brown Noddy","Anous stolidus","species",NA
+791,"Black Noddy","Anous minutus","blknod","Black Noddy","Anous minutus","species",NA
+792,"Blue-gray Noddy","Anous ceruleus","bugnod","Blue-gray Noddy","Anous ceruleus","species",NA
+793,"White Tern","Gygis alba","whiter","White Tern","Gygis alba","species",NA
+750,"Sooty Tern","Onychoprion fuscatus","sooter1","Sooty Tern","Onychoprion fuscatus","species",NA
+761,"Gray-backed Tern","Onychoprion lunatus","gybter1","Gray-backed Tern","Onychoprion lunatus","species",NA
+760,"Bridled Tern","Onychoprion anaethetus","briter1","Bridled Tern","Onychoprion anaethetus","species",NA
+730,"Aleutian Tern","Onychoprion aleuticus","aleter1","Aleutian Tern","Onychoprion aleuticus","species","aleter1"
+740,"Least Tern","Sternula antillarum","leater1","Least Tern","Sternula antillarum","species","leater1"
+742,"Interior Least Tern","Sternula antillarum athalassos","leater1","Least Tern","Sternula antillarum","species","leater1"
+743,"California Least Tern","Sternula antillarum browni","leater1","Least Tern","Sternula antillarum","species","leater1"
+630,"Gull-billed Tern","Gelochelidon nilotica","gubter1","Gull-billed Tern","Gelochelidon nilotica","species","gubter1"
+640,"Caspian Tern","Hydroprogne caspia","caster1","Caspian Tern","Hydroprogne caspia","species","caster1"
+770,"Black Tern","Chlidonias niger","blkter","Black Tern","Chlidonias niger","species","blkter"
+780,"White-winged Tern","Chlidonias leucopterus","whwter","White-winged Tern","Chlidonias leucopterus","species","whwter"
+720,"Roseate Tern","Sterna dougallii","roster","Roseate Tern","Sterna dougallii","species","roster"
+731,"Black-naped Tern","Sterna sumatrana","blnter1","Black-naped Tern","Sterna sumatrana","species",NA
+700,"Common Tern","Sterna hirundo","comter","Common Tern","Sterna hirundo","species","comter"
+725,"Common Tern X Roseate Tern Hybrid","Sterna dougallii x hirundo","x00735","Roseate x Common Tern (hybrid)","Sterna dougallii x hirundo","hybrid",NA
+710,"Arctic Tern","Sterna paradisaea","arcter","Arctic Tern","Sterna paradisaea","species","arcter"
+8548,"Antarctic Tern","Sterna vittata","antter1","Antarctic Tern","Sterna vittata","species",NA
+690,"Forster's Tern","Sterna forsteri","forter","Forster's Tern","Sterna forsteri","species","forter"
+650,"Royal Tern","Thalasseus maximus","royter1","Royal Tern","Thalasseus maximus","species","royter1"
+652,"Crested Tern","Thalasseus bergii","grcter1","Great Crested Tern","Thalasseus bergii","species","grcter1"
+670,"Sandwich Tern","Thalasseus sandvicensis","santer1","Sandwich Tern","Thalasseus sandvicensis","species","santer1"
+671,"Cayenne Tern","Thalasseus acuflavidus eurygnathus","santer1","Sandwich Tern","Thalasseus sandvicensis","species","santer1"
+660,"Elegant Tern","Thalasseus elegans","eleter1","Elegant Tern","Thalasseus elegans","species","eleter1"
+706,"Hybrid Tern","",NA,NA,NA,NA,NA
+800,"Black Skimmer","Rynchops niger","blkski","Black Skimmer","Rynchops niger","species","blkski"
+1120,"White-tailed Tropicbird","Phaethon lepturus","whttro","White-tailed Tropicbird","Phaethon lepturus","species",NA
+1130,"Red-billed Tropicbird","Phaethon aethereus","rebtro","Red-billed Tropicbird","Phaethon aethereus","species",NA
+1131,"Red-tailed Tropicbird","Phaethon rubricauda","rettro","Red-tailed Tropicbird","Phaethon rubricauda","species",NA
+110,"Red-throated Loon","Gavia stellata","retloo","Red-throated Loon","Gavia stellata","species","retloo"
+90,"Arctic Loon","Gavia arctica","arcloo","Arctic Loon","Gavia arctica","species","arcloo"
+100,"Pacific Loon","Gavia pacifica","pacloo","Pacific Loon","Gavia pacifica","species","pacloo"
+70,"Common Loon","Gavia immer","comloo","Common Loon","Gavia immer","species","comloo"
+80,"Yellow-billed Loon","Gavia adamsii","yebloo","Yellow-billed Loon","Gavia adamsii","species","yebloo"
+8502,"Emperor Penguin","Aptenodytes forsteri","emppen1","Emperor Penguin","Aptenodytes forsteri","species",NA
+8504,"Adelie Penguin","Pygoscelis adeliae","adepen1","Adelie Penguin","Pygoscelis adeliae","species",NA
+8503,"Gentoo Penguin","Pygoscelis papua","genpen1","Gentoo Penguin","Pygoscelis papua","species",NA
+8505,"Chinstrap Penguin","Pygoscelis antarcticus","chipen2","Chinstrap Penguin","Pygoscelis antarcticus","species",NA
+8510,"Macaroni Penguin","Eudyptes chrysolophus","macpen1","Macaroni Penguin","Eudyptes chrysolophus","species",NA
+8509,"Royal Penguin","Eudyptes schlegeli","roypen1","Royal Penguin","Eudyptes schlegeli","species",NA
+8508,"Rockhopper Penguin","Eudyptes chrysocome","rocpen1","Southern Rockhopper Penguin","Eudyptes chrysocome","species",NA
+830,"Yellow-nosed Albatross","Thalassarche chlororhynchos","yenalb","Yellow-nosed Albatross","Thalassarche chlororhynchos","species",NA
+822,"Black-browed Albatross","Thalassarche melanophris","bkbalb","Black-browed Albatross","Thalassarche melanophris","species",NA
+8522,"Gray-headed Albatross","Thalassarche chrysostoma","gyhalb","Gray-headed Albatross","Thalassarche chrysostoma","species",NA
+8524,"Light-mantled Albatross","Phoebetria palpebrata","limalb1","Light-mantled Albatross","Phoebetria palpebrata","species",NA
+811,"Wandering Albatross","Diomedea exulans","wanalb","Wandering Albatross","Diomedea exulans","species",NA
+821,"Laysan Albatross","Phoebastria immutabilis","layalb","Laysan Albatross","Phoebastria immutabilis","species",NA
+810,"Black-footed Albatross","Phoebastria nigripes","bkfalb","Black-footed Albatross","Phoebastria nigripes","species",NA
+824,"Waved Albatross","Phoebastria irrorata","wavalb","Waved Albatross","Phoebastria irrorata","species",NA
+820,"Short-tailed Albatross","Phoebastria albatrus","shtalb","Short-tailed Albatross","Phoebastria albatrus","species",NA
+816,"Hybrid Albatross","",NA,NA,NA,NA,NA
+1090,"Wilson's Storm-Petrel","Oceanites oceanicus","wispet","Wilson's Storm-Petrel","Oceanites oceanicus","species",NA
+8538,"Gray-backed Storm-Petrel","Garrodia nereis","gybstp1","Gray-backed Storm-Petrel","Garrodia nereis","species",NA
+1101,"White-throated Storm-Petrel","Nesofregetta fuliginosa","pospet1","Polynesian Storm-Petrel","Nesofregetta fuliginosa","species",NA
+1050,"Fork-tailed Storm-Petrel","Hydrobates furcatus","ftspet","Fork-tailed Storm-Petrel","Hydrobates furcatus","species",NA
+1060,"Leach's Storm-Petrel","Hydrobates leucorhous","lcspet","Leach's Storm-Petrel","Hydrobates leucorhous","species",NA
+1080,"Ashy Storm-Petrel","Hydrobates homochroa","asspet","Ashy Storm-Petrel","Hydrobates homochroa","species",NA
+1062,"Band-rumped Storm-Petrel","Hydrobates castro","barpet","Band-rumped Storm-Petrel","Hydrobates castro","species",NA
+1063,"Wedge-rumped Storm-Petrel","Hydrobates tethys","wrspet","Wedge-rumped Storm-Petrel","Hydrobates tethys","species",NA
+1070,"Black Storm-Petrel","Hydrobates melania","bkspet","Black Storm-Petrel","Hydrobates melania","species",NA
+1071,"Tristram's Storm-Petrel","Hydrobates tristrami","trspet","Tristram's Storm-Petrel","Hydrobates tristrami","species",NA
+1030,"Least Storm-Petrel","Hydrobates microsoma","lsspet","Least Storm-Petrel","Hydrobates microsoma","species",NA
+8525,"Southern Giant-Petrel","Macronectes giganteus","angpet1","Southern Giant-Petrel","Macronectes giganteus","species",NA
+8553,"Northern Giant-Petrel","Macronectes halli","norgip1","Northern Giant-Petrel","Macronectes halli","species",NA
+860,"Northern Fulmar","Fulmarus glacialis","norful","Northern Fulmar","Fulmarus glacialis","species",NA
+8526,"Southern Fulmar","Fulmarus glacialoides","souful1","Southern Fulmar","Fulmarus glacialoides","species",NA
+1020,"Cape Petrel","Daption capense","cappet","Cape Petrel","Daption capense","species",NA
+8537,"Snow Petrel","Pagodroma nivea","snopet1","Snow Petrel","Pagodroma nivea","species",NA
+8536,"Kerguelen Petrel","Aphrodroma brevirostris","kerpet2","Kerguelen Petrel","Aphrodroma brevirostris","species",NA
+986,"Trindade Petrel","Pterodroma arminjoniana","tripet1","Trindade Petrel","Pterodroma arminjoniana","species",NA
+980,"Black-capped Petrel","Pterodroma hasitata","bkcpet","Black-capped Petrel","Pterodroma hasitata","species",NA
+987,"Juan Fernandez Petrel","Pterodroma externa","jufpet","Juan Fernandez Petrel","Pterodroma externa","species",NA
+985,"Hawaiian Petrel","Pterodroma sandwichensis","hawpet1","Hawaiian Petrel","Pterodroma sandwichensis","species",NA
+991,"Bonin Petrel","Pterodroma hypoleuca","bonpet","Bonin Petrel","Pterodroma hypoleuca","species",NA
+992,"Black-winged Petrel","Pterodroma nigripennis","bkwpet","Black-winged Petrel","Pterodroma nigripennis","species",NA
+983,"Cook's Petrel","Pterodroma cookii","coopet","Cook's Petrel","Pterodroma cookii","species",NA
+988,"Phoenix Petrel","Pterodroma alba","phopet1","Phoenix Petrel","Pterodroma alba","species",NA
+1004,"Tahiti Petrel","Pseudobulweria rostrata","tahpet1","Tahiti Petrel","Pseudobulweria rostrata","species",NA
+1010,"Bulwer's Petrel","Bulweria bulwerii","bulpet","Bulwer's Petrel","Bulweria bulwerii","species",NA
+8533,"White-chinned Petrel","Procellaria aequinoctialis","whcpet1","White-chinned Petrel","Procellaria aequinoctialis","species",NA
+881,"Streaked Shearwater","Calonectris leucomelas","strshe","Streaked Shearwater","Calonectris leucomelas","species",NA
+880,"Cory's Shearwater","Calonectris diomedea","corshe","Cory's Shearwater","Calonectris diomedea","species",NA
+961,"Wedge-tailed Shearwater","Ardenna pacifica","wetshe","Wedge-tailed Shearwater","Ardenna pacifica","species",NA
+962,"Buller's Shearwater","Ardenna bulleri","bulshe","Buller's Shearwater","Ardenna bulleri","species",NA
+960,"Short-tailed Shearwater","Ardenna tenuirostris","shtshe","Short-tailed Shearwater","Ardenna tenuirostris","species",NA
+950,"Sooty Shearwater","Ardenna grisea","sooshe","Sooty Shearwater","Ardenna grisea","species",NA
+890,"Great Shearwater","Ardenna gravis","greshe","Great Shearwater","Ardenna gravis","species",NA
+910,"Pink-footed Shearwater","Ardenna creatopus","pifshe","Pink-footed Shearwater","Ardenna creatopus","species",NA
+963,"Christmas Shearwater","Puffinus nativitatis","chrshe","Christmas Shearwater","Puffinus nativitatis","species",NA
+900,"Manx Shearwater","Puffinus puffinus","manshe","Manx Shearwater","Puffinus puffinus","species",NA
+932,"Newell's Shearwater","Puffinus newelli","towshe2","Newell's Shearwater","Puffinus newelli","species",NA
+930,"Black-vented Shearwater","Puffinus opisthomelas","bkvshe","Black-vented Shearwater","Puffinus opisthomelas","species","bkvshe"
+920,"Audubon's Shearwater","Puffinus lherminieri","audshe","Audubon's Shearwater","Puffinus lherminieri","species",NA
+922,"Tropical Shearwater","Puffinus bailloni","troshe5","Tropical Shearwater","Puffinus bailloni","species",NA
+1880,"Wood Stork","Mycteria americana","woosto","Wood Stork","Mycteria americana","species","woosto"
+1282,"Lesser Frigatebird","Fregata ariel","lesfri","Lesser Frigatebird","Fregata ariel","species",NA
+1281,"Great Frigatebird","Fregata minor","grefri","Great Frigatebird","Fregata minor","species",NA
+1280,"Magnificent Frigatebird","Fregata magnificens","magfri","Magnificent Frigatebird","Fregata magnificens","species","magfri"
+1140,"Masked Booby","Sula dactylatra","masboo","Masked Booby","Sula dactylatra","species",NA
+1160,"Red-footed Booby","Sula sula","refboo","Red-footed Booby","Sula sula","species",NA
+1141,"Blue-footed Booby","Sula nebouxii","bfoboo","Blue-footed Booby","Sula nebouxii","species",NA
+1170,"Northern Gannet","Morus bassanus","norgan","Northern Gannet","Morus bassanus","species","norgan"
+1150,"Brown Booby","Sula leucogaster","brnboo","Brown Booby","Sula leucogaster","species",NA
+1180,"Anhinga","Anhinga anhinga","anhing","Anhinga","Anhinga anhinga","species","anhing"
+1220,"Brandt's Cormorant","Urile penicillatus","bracor","Brandt's Cormorant","Urile penicillatus","species","bracor"
+1240,"Red-faced Cormorant","Urile urile","refcor","Red-faced Cormorant","Urile urile","species","refcor"
+1230,"Pelagic Cormorant","Urile pelagicus","pelcor","Pelagic Cormorant","Urile pelagicus","species","pelcor"
+1190,"Great Cormorant","Phalacrocorax carbo","grecor","Great Cormorant","Phalacrocorax carbo","species","grecor"
+1200,"Double-crested Cormorant","Nannopterum auritum","doccor","Double-crested Cormorant","Nannopterum auritum","species","doccor"
+1210,"Neotropic Cormorant","Nannopterum brasilianum","neocor","Neotropic Cormorant","Nannopterum brasilianum","species","neocor"
+8541,"Blue-eyed Cormorant","Leucocarbo atriceps","impcor1","Imperial Cormorant","Leucocarbo atriceps","species","impcor1"
+1250,"American White Pelican","Pelecanus erythrorhynchos","amwpel","American White Pelican","Pelecanus erythrorhynchos","species","amwpel"
+1260,"Brown Pelican","Pelecanus occidentalis","brnpel","Brown Pelican","Pelecanus occidentalis","species","brnpel"
+1900,"American Bittern","Botaurus lentiginosus","amebit","American Bittern","Botaurus lentiginosus","species","amebit"
+1911,"Yellow Bittern","Ixobrychus sinensis","yelbit","Yellow Bittern","Ixobrychus sinensis","species",NA
+1910,"Least Bittern","Ixobrychus exilis","leabit","Least Bittern","Ixobrychus exilis","species","leabit"
+1940,"Great Blue Heron","Ardea herodias","grbher3","Great Blue Heron","Ardea herodias","species","grbher3"
+1920,"Great White Heron","Ardea herodias occidentalis","grbher3","Great Blue Heron","Ardea herodias","species","grbher3"
+1960,"Great Egret","Ardea alba","greegr","Great Egret","Ardea alba","species","greegr"
+1969,"Pacific Reef Heron","Egretta sacra","pacreh1","Pacific Reef-Heron","Egretta sacra","species",NA
+1970,"Snowy Egret","Egretta thula","snoegr","Snowy Egret","Egretta thula","species","snoegr"
+2000,"Little Blue Heron","Egretta caerulea","libher","Little Blue Heron","Egretta caerulea","species","libher"
+1990,"Tricolored Heron","Egretta tricolor","triher","Tricolored Heron","Egretta tricolor","species","triher"
+1980,"Reddish Egret","Egretta rufescens","redegr","Reddish Egret","Egretta rufescens","species","redegr"
+2001,"Cattle Egret","Bubulcus ibis","categr","Cattle Egret","Bubulcus ibis","species","categr"
+2010,"Green Heron","Butorides virescens","grnher","Green Heron","Butorides virescens","species","grnher"
+2020,"Black-crowned Night-Heron","Nycticorax nycticorax","bcnher","Black-crowned Night-Heron","Nycticorax nycticorax","species","bcnher"
+2030,"Yellow-crowned Night-Heron","Nyctanassa violacea","ycnher","Yellow-crowned Night-Heron","Nyctanassa violacea","species","ycnher"
+1840,"White Ibis","Eudocimus albus","whiibi","White Ibis","Eudocimus albus","species","whiibi"
+1850,"Scarlet Ibis","Eudocimus ruber","scaibi","Scarlet Ibis","Eudocimus ruber","species",NA
+1860,"Glossy Ibis","Plegadis falcinellus","gloibi","Glossy Ibis","Plegadis falcinellus","species","gloibi"
+1870,"White-faced Ibis","Plegadis chihi","whfibi","White-faced Ibis","Plegadis chihi","species","whfibi"
+1830,"Roseate Spoonbill","Platalea ajaja","rosspo1","Roseate Spoonbill","Platalea ajaja","species","rosspo1"
+3260,"Black Vulture","Coragyps atratus","blkvul","Black Vulture","Coragyps atratus","species","blkvul"
+3250,"Turkey Vulture","Cathartes aura","turvul","Turkey Vulture","Cathartes aura","species","turvul"
+3640,"Osprey","Pandion haliaetus","osprey","Osprey","Pandion haliaetus","species","osprey"
+3280,"White-tailed Kite","Elanus leucurus","whtkit","White-tailed Kite","Elanus leucurus","species","whtkit"
+3271,"Hook-billed Kite","Chondrohierax uncinatus","hobkit","Hook-billed Kite","Chondrohierax uncinatus","species","hobkit"
+3270,"Swallow-tailed Kite","Elanoides forficatus","swtkit","Swallow-tailed Kite","Elanoides forficatus","species","swtkit"
+3490,"Golden Eagle","Aquila chrysaetos","goleag","Golden Eagle","Aquila chrysaetos","species","goleag"
+3310,"Northern Harrier","Circus hudsonius","norhar2","Northern Harrier","Circus hudsonius","species","norhar2"
+3320,"Sharp-shinned Hawk","Accipiter striatus","shshaw","Sharp-shinned Hawk","Accipiter striatus","species","shshaw"
+3321,"Puerto Rican Sharp-shinned Hawk","Accipiter striatus venator","shshaw","Sharp-shinned Hawk","Accipiter striatus","species","shshaw"
+3330,"Cooper's Hawk","Accipiter cooperii","coohaw","Cooper's Hawk","Accipiter cooperii","species","coohaw"
+3340,"Northern Goshawk","Accipiter gentilis","norgos","Northern Goshawk","Accipiter gentilis","species","norgos"
+3520,"Bald Eagle","Haliaeetus leucocephalus","baleag","Bald Eagle","Haliaeetus leucocephalus","species","baleag"
+3290,"Mississippi Kite","Ictinia mississippiensis","miskit","Mississippi Kite","Ictinia mississippiensis","species","miskit"
+3300,"Snail Kite","Rostrhamus sociabilis","snakit","Snail Kite","Rostrhamus sociabilis","species","snakit"
+3450,"Common Black Hawk","Buteogallus anthracinus","comblh1","Common Black Hawk","Buteogallus anthracinus","species","comblh1"
+3431,"Roadside Hawk","Rupornis magnirostris","roahaw","Roadside Hawk","Rupornis magnirostris","species","roahaw"
+3350,"Harris's Hawk","Parabuteo unicinctus","hrshaw","Harris's Hawk","Parabuteo unicinctus","species","hrshaw"
+3410,"White-tailed Hawk","Geranoaetus albicaudatus","whthaw","White-tailed Hawk","Geranoaetus albicaudatus","species","whthaw"
+3460,"Gray Hawk","Buteo plagiatus","gryhaw2","Gray Hawk","Buteo plagiatus","species","gryhaw2"
+3390,"Red-shouldered Hawk","Buteo lineatus","reshaw","Red-shouldered Hawk","Buteo lineatus","species","reshaw"
+3430,"Broad-winged Hawk","Buteo platypterus","brwhaw","Broad-winged Hawk","Buteo platypterus","species","brwhaw"
+3432,"Puerto Rican Broad-winged Hawk","Buteo platypterus brunnescens","brwhaw","Broad-winged Hawk","Buteo platypterus","species","brwhaw"
+3441,"Hawaiian Hawk","Buteo solitarius","hawhaw","Hawaiian Hawk","Buteo solitarius","species",NA
+3440,"Short-tailed Hawk","Buteo brachyurus","shthaw","Short-tailed Hawk","Buteo brachyurus","species","shthaw"
+3420,"Swainson's Hawk","Buteo swainsoni","swahaw","Swainson's Hawk","Buteo swainsoni","species","swahaw"
+3400,"Zone-tailed Hawk","Buteo albonotatus","zothaw","Zone-tailed Hawk","Buteo albonotatus","species","zothaw"
+3370,"Red-tailed Hawk","Buteo jamaicensis","rethaw","Red-tailed Hawk","Buteo jamaicensis","species","rethaw"
+3380,"Harlan's Hawk","Buteo jamaicensis harlani","rethaw","Red-tailed Hawk","Buteo jamaicensis","species","rethaw"
+3470,"Rough-legged Hawk","Buteo lagopus","rolhaw","Rough-legged Hawk","Buteo lagopus","species","rolhaw"
+3480,"Ferruginous Hawk","Buteo regalis","ferhaw","Ferruginous Hawk","Buteo regalis","species","ferhaw"
+3650,"Barn Owl","Tyto alba","brnowl","Barn Owl","Tyto alba","species","brnowl"
+3740,"Flammulated Owl","Psiloscops flammeolus","flaowl","Flammulated Owl","Psiloscops flammeolus","species","flaowl"
+3734,"Puerto Rican Owl","Gymnasio nudipes","prsowl","Puerto Rican Owl","Gymnasio nudipes","species",NA
+3731,"Whiskered Screech-Owl","Megascops trichopsis","whsowl1","Whiskered Screech-Owl","Megascops trichopsis","species","whsowl1"
+3732,"Western Screech-Owl","Megascops kennicottii","wesowl1","Western Screech-Owl","Megascops kennicottii","species","wesowl1"
+3730,"Eastern Screech-Owl","Megascops asio","easowl1","Eastern Screech-Owl","Megascops asio","species","easowl1"
+3750,"Great Horned Owl","Bubo virginianus","grhowl","Great Horned Owl","Bubo virginianus","species","grhowl"
+3760,"Snowy Owl","Bubo scandiacus","snoowl1","Snowy Owl","Bubo scandiacus","species","snoowl1"
+3770,"Northern Hawk Owl","Surnia ulula","nohowl","Northern Hawk Owl","Surnia ulula","species","nohowl"
+3790,"Northern Pygmy-Owl","Glaucidium gnoma","nopowl","Northern Pygmy-Owl","Glaucidium gnoma","species","nopowl"
+3800,"Ferruginous Pygmy-Owl","Glaucidium brasilianum","fepowl","Ferruginous Pygmy-Owl","Glaucidium brasilianum","species","fepowl"
+3810,"Elf Owl","Micrathene whitneyi","elfowl","Elf Owl","Micrathene whitneyi","species",NA
+3780,"Burrowing Owl","Athene cunicularia","burowl","Burrowing Owl","Athene cunicularia","species","burowl"
+3690,"Spotted Owl","Strix occidentalis","spoowl","Spotted Owl","Strix occidentalis","species","spoowl"
+3692,"Northern Spotted Owl","Strix occidentalis caurina","spoowl","Spotted Owl","Strix occidentalis","species","spoowl"
+3691,"California Spotted Owl","Strix occidentalis occidentalis","spoowl","Spotted Owl","Strix occidentalis","species","spoowl"
+3693,"Mexican Spotted Owl","Strix occidentalis lucida","spoowl","Spotted Owl","Strix occidentalis","species","spoowl"
+3686,"Spotted X Barred Owl Hybrid","Strix occidentalis x varia","x00439","Spotted x Barred Owl (hybrid)","Strix occidentalis x varia","hybrid",NA
+3680,"Barred Owl","Strix varia","brdowl","Barred Owl","Strix varia","species","brdowl"
+3700,"Great Gray Owl","Strix nebulosa","grgowl","Great Gray Owl","Strix nebulosa","species",NA
+3660,"Long-eared Owl","Asio otus","loeowl","Long-eared Owl","Asio otus","species","loeowl"
+3670,"Short-eared Owl","Asio flammeus","sheowl","Short-eared Owl","Asio flammeus","species","sheowl"
+3710,"Boreal Owl","Aegolius funereus","borowl","Boreal Owl","Aegolius funereus","species",NA
+3720,"Northern Saw-whet Owl","Aegolius acadicus","nswowl","Northern Saw-whet Owl","Aegolius acadicus","species","nswowl"
+3890,"Elegant Trogon","Trogon elegans","eletro","Elegant Trogon","Trogon elegans","species","eletro"
+9081,"Jamaican Tody","Todus todus","jamtod1","Jamaican Tody","Todus todus","species",NA
+3912,"Puerto Rican Tody","Todus mexicanus","purtod1","Puerto Rican Tody","Todus mexicanus","species","purtod1"
+3901,"Ringed Kingfisher","Megaceryle torquata","rinkin1","Ringed Kingfisher","Megaceryle torquata","species","rinkin1"
+3900,"Belted Kingfisher","Megaceryle alcyon","belkin1","Belted Kingfisher","Megaceryle alcyon","species","belkin1"
+3910,"Green Kingfisher","Chloroceryle americana","grnkin","Green Kingfisher","Chloroceryle americana","species","grnkin"
+8790,"Micronesian Kingfisher","Todiramphus cinnamominus","mickin1","Guam Kingfisher","Todiramphus cinnamominus","species",NA
+8630,"Collared Kingfisher","Todiramphus chloris","colkin1","Collared Kingfisher","Todiramphus chloris","species",NA
+4080,"Lewis's Woodpecker","Melanerpes lewis","lewwoo","Lewis's Woodpecker","Melanerpes lewis","species","lewwoo"
+4071,"Puerto Rican Woodpecker","Melanerpes portoricensis","purwoo1","Puerto Rican Woodpecker","Melanerpes portoricensis","species","purwoo1"
+4060,"Red-headed Woodpecker","Melanerpes erythrocephalus","rehwoo","Red-headed Woodpecker","Melanerpes erythrocephalus","species","rehwoo"
+4070,"Acorn Woodpecker","Melanerpes formicivorus","acowoo","Acorn Woodpecker","Melanerpes formicivorus","species","acowoo"
+4110,"Gila Woodpecker","Melanerpes uropygialis","gilwoo","Gila Woodpecker","Melanerpes uropygialis","species","gilwoo"
+4100,"Golden-fronted Woodpecker","Melanerpes aurifrons","gofwoo","Golden-fronted Woodpecker","Melanerpes aurifrons","species","gofwoo"
+4090,"Red-bellied Woodpecker","Melanerpes carolinus","rebwoo","Red-bellied Woodpecker","Melanerpes carolinus","species","rebwoo"
+4092,"West Indian Woodpecker","Melanerpes superciliaris","weiwoo1","West Indian Woodpecker","Melanerpes superciliaris","species","weiwoo1"
+4040,"Williamson's Sapsucker","Sphyrapicus thyroideus","wilsap","Williamson's Sapsucker","Sphyrapicus thyroideus","species","wilsap"
+4020,"Yellow-bellied Sapsucker","Sphyrapicus varius","yebsap","Yellow-bellied Sapsucker","Sphyrapicus varius","species","yebsap"
+4021,"Red-naped Sapsucker","Sphyrapicus nuchalis","rensap","Red-naped Sapsucker","Sphyrapicus nuchalis","species","rensap"
+4030,"Red-breasted Sapsucker","Sphyrapicus ruber","rebsap","Red-breasted Sapsucker","Sphyrapicus ruber","species","rebsap"
+4023,"Hybrid Sapsucker","Sphyrapicus x",NA,NA,NA,NA,NA
+4010,"American Three-toed Woodpecker","Picoides dorsalis","attwoo1","American Three-toed Woodpecker","Picoides dorsalis","species","attwoo1"
+4000,"Black-backed Woodpecker","Picoides arcticus","bkbwoo","Black-backed Woodpecker","Picoides arcticus","species","bkbwoo"
+3940,"Downy Woodpecker","Dryobates pubescens","dowwoo","Downy Woodpecker","Dryobates pubescens","species","dowwoo"
+3970,"Nuttall's Woodpecker","Dryobates nuttallii","nutwoo","Nuttall's Woodpecker","Dryobates nuttallii","species","nutwoo"
+3960,"Ladder-backed Woodpecker","Dryobates scalaris","labwoo","Ladder-backed Woodpecker","Dryobates scalaris","species","labwoo"
+3950,"Red-cockaded Woodpecker","Dryobates borealis","recwoo","Red-cockaded Woodpecker","Dryobates borealis","species","recwoo"
+3930,"Hairy Woodpecker","Dryobates villosus","haiwoo","Hairy Woodpecker","Dryobates villosus","species","haiwoo"
+3990,"White-headed Woodpecker","Dryobates albolarvatus","whhwoo","White-headed Woodpecker","Dryobates albolarvatus","species","whhwoo"
+3980,"Arizona Woodpecker","Dryobates arizonae","ariwoo","Arizona Woodpecker","Dryobates arizonae","species","ariwoo"
+4120,"Yellow-shafted Flicker","Colaptes auratus auratus","norfli","Northern Flicker","Colaptes auratus","species","norfli"
+4130,"Red-shafted Flicker","Colaptes auratus cafer","norfli","Northern Flicker","Colaptes auratus","species","norfli"
+4123,"Flicker Intergrade","Colaptes auratus","norfli","Northern Flicker","Colaptes auratus","species","norfli"
+4140,"Gilded Flicker","Colaptes chrysoides","gilfli","Gilded Flicker","Colaptes chrysoides","species","gilfli"
+4050,"Pileated Woodpecker","Dryocopus pileatus","pilwoo","Pileated Woodpecker","Dryocopus pileatus","species","pilwoo"
+3620,"Crested Caracara","Caracara plancus","y00678","Crested Caracara","Caracara plancus","species","y00678"
+3621,"Audubon's Crested Caracara","Caracara plancus audubonii","y00678","Crested Caracara","Caracara plancus","species","y00678"
+3591,"Eurasian Kestrel","Falco tinnunculus","eurkes","Eurasian Kestrel","Falco tinnunculus","species",NA
+3600,"American Kestrel","Falco sparverius","amekes","American Kestrel","Falco sparverius","species","amekes"
+3570,"Merlin","Falco columbarius","merlin","Merlin","Falco columbarius","species","merlin"
+3590,"Aplomado Falcon","Falco femoralis","aplfal","Aplomado Falcon","Falco femoralis","species","aplfal"
+3540,"Gyrfalcon","Falco rusticolus","gyrfal","Gyrfalcon","Falco rusticolus","species",NA
+3560,"Peregrine Falcon","Falco peregrinus","perfal","Peregrine Falcon","Falco peregrinus","species","perfal"
+3550,"Prairie Falcon","Falco mexicanus","prafal","Prairie Falcon","Falco mexicanus","species","prafal"
+3815,"Blue-crowned Lorikeet","Vini australis","blclor2","Blue-crowned Lorikeet","Vini australis","species",NA
+3824,"Monk Parakeet","Myiopsitta monachus","monpar","Monk Parakeet","Myiopsitta monachus","species","monpar"
+3813,"Orange-fronted Parakeet","Eupsittula canicularis","orfpar","Orange-fronted Parakeet","Eupsittula canicularis","species","orfpar"
+3814,"Brown-throated Parakeet","Eupsittula pertinax","brtpar1","Brown-throated Parakeet","Eupsittula pertinax","species","brtpar1"
+3827,"Hispaniolan Parrot","Amazona ventralis","hispar1","Hispaniolan Parrot","Amazona ventralis","species",NA
+9986,"Hybrid Nonpasserine","",NA,NA,NA,NA,NA
+4411,"Rose-throated Becard","Pachyramphus aglaiae","rotbec","Rose-throated Becard","Pachyramphus aglaiae","species","rotbec"
+4720,"Northern Beardless-Tyrannulet","Camptostoma imberbe","nobtyr","Northern Beardless-Tyrannulet","Camptostoma imberbe","species","nobtyr"
+9102,"Jamaican Elaenia","Myiopagis cotta","jamela1","Jamaican Elaenia","Myiopagis cotta","species",NA
+4711,"Greenish Elaenia","Myiopagis viridicata","greela","Greenish Elaenia","Myiopagis viridicata","species","greela"
+4721,"Caribbean Elaenia","Elaenia martinica","carela1","Caribbean Elaenia","Elaenia martinica","species","carela1"
+9099,"Yellow-bellied Elaenia","Elaenia flavogaster","yebela1","Yellow-bellied Elaenia","Elaenia flavogaster","species","yebela1"
+9101,"Greater Antillean Elaenia","Elaenia fallax","graela1","Greater Antillean Elaenia","Elaenia fallax","species",NA
+9094,"Sad Flycatcher","Myiarchus barbirostris","sadfly1","Sad Flycatcher","Myiarchus barbirostris","species",NA
+4550,"Dusky-capped Flycatcher","Myiarchus tuberculifer","ducfly","Dusky-capped Flycatcher","Myiarchus tuberculifer","species","ducfly"
+4540,"Ash-throated Flycatcher","Myiarchus cinerascens","astfly","Ash-throated Flycatcher","Myiarchus cinerascens","species","astfly"
+4531,"Nutting's Flycatcher","Myiarchus nuttingi","nutfly","Nutting's Flycatcher","Myiarchus nuttingi","species","nutfly"
+4520,"Great Crested Flycatcher","Myiarchus crinitus","grcfly","Great Crested Flycatcher","Myiarchus crinitus","species","grcfly"
+4530,"Brown-crested Flycatcher","Myiarchus tyrannulus","bncfly","Brown-crested Flycatcher","Myiarchus tyrannulus","species","bncfly"
+4551,"La Sagra's Flycatcher","Myiarchus sagrae","lasfly","La Sagra's Flycatcher","Myiarchus sagrae","species","lasfly"
+4553,"Stolid Flycatcher","Myiarchus stolidus","stofly1","Stolid Flycatcher","Myiarchus stolidus","species",NA
+4552,"Puerto Rican Flycatcher","Myiarchus antillarum","purfly1","Puerto Rican Flycatcher","Myiarchus antillarum","species","purfly1"
+4554,"Lesser Antillean Flycatcher","Myiarchus oberi","leafly1","Lesser Antillean Flycatcher","Myiarchus oberi","species",NA
+4490,"Great Kiskadee","Pitangus sulphuratus","grekis","Great Kiskadee","Pitangus sulphuratus","species","grekis"
+4510,"Sulphur-bellied Flycatcher","Myiodynastes luteiventris","subfly","Sulphur-bellied Flycatcher","Myiodynastes luteiventris","species","subfly"
+4460,"Tropical Kingbird","Tyrannus melancholicus","trokin","Tropical Kingbird","Tyrannus melancholicus","species","trokin"
+4461,"Couch's Kingbird","Tyrannus couchii","coukin","Couch's Kingbird","Tyrannus couchii","species","coukin"
+4480,"Cassin's Kingbird","Tyrannus vociferans","caskin","Cassin's Kingbird","Tyrannus vociferans","species","caskin"
+4451,"Thick-billed Kingbird","Tyrannus crassirostris","thbkin","Thick-billed Kingbird","Tyrannus crassirostris","species","thbkin"
+4470,"Western Kingbird","Tyrannus verticalis","weskin","Western Kingbird","Tyrannus verticalis","species","weskin"
+4440,"Eastern Kingbird","Tyrannus tyrannus","easkin","Eastern Kingbird","Tyrannus tyrannus","species","easkin"
+4450,"Gray Kingbird","Tyrannus dominicensis","grykin","Gray Kingbird","Tyrannus dominicensis","species","grykin"
+4452,"Loggerhead Kingbird","Tyrannus caudifasciatus","logkin","Loggerhead Kingbird","Tyrannus caudifasciatus","species","logkin"
+4430,"Scissor-tailed Flycatcher","Tyrannus forficatus","sctfly","Scissor-tailed Flycatcher","Tyrannus forficatus","species","sctfly"
+4420,"Fork-tailed Flycatcher","Tyrannus savana","fotfly","Fork-tailed Flycatcher","Tyrannus savana","species","fotfly"
+4590,"Olive-sided Flycatcher","Contopus cooperi","olsfly","Olive-sided Flycatcher","Contopus cooperi","species","olsfly"
+4600,"Greater Pewee","Contopus pertinax","grepew","Greater Pewee","Contopus pertinax","species","grepew"
+4620,"Western Wood-Pewee","Contopus sordidulus","wewpew","Western Wood-Pewee","Contopus sordidulus","species","wewpew"
+4610,"Eastern Wood-Pewee","Contopus virens","eawpew","Eastern Wood-Pewee","Contopus virens","species","eawpew"
+4621,"Cuban Pewee","Contopus caribaeus","cubpew1","Cuban Pewee","Contopus caribaeus","species","cubpew1"
+4623,"Jamaican Pewee","Contopus pallidus","jampew1","Jamaican Pewee","Contopus pallidus","species",NA
+4624,"Hispaniolan Pewee","Contopus hispaniolensis","hispew1","Hispaniolan Pewee","Contopus hispaniolensis","species",NA
+4622,"Lesser Antillean Pewee","Contopus latirostris","leapew1","Lesser Antillean Pewee","Contopus latirostris","species",NA
+4630,"Yellow-bellied Flycatcher","Empidonax flaviventris","yebfly","Yellow-bellied Flycatcher","Empidonax flaviventris","species","yebfly"
+4650,"Acadian Flycatcher","Empidonax virescens","acafly","Acadian Flycatcher","Empidonax virescens","species","acafly"
+4661,"Alder Flycatcher","Empidonax alnorum","aldfly","Alder Flycatcher","Empidonax alnorum","species","aldfly"
+4669,"Traill's Flycatcher","Empidonax alnorum/ E. traillii","y00324","Alder/Willow Flycatcher (Traill's Flycatcher)","Empidonax alnorum/traillii","slash",NA
+4660,"Willow Flycatcher","Empidonax traillii","wilfly","Willow Flycatcher","Empidonax traillii","species","wilfly"
+4664,"Southwestern Willow Flycatcher","Empidonax traillii extimus","wilfly","Willow Flycatcher","Empidonax traillii","species","wilfly"
+4670,"Least Flycatcher","Empidonax minimus","leafly","Least Flycatcher","Empidonax minimus","species","leafly"
+4680,"Hammond's Flycatcher","Empidonax hammondii","hamfly","Hammond's Flycatcher","Empidonax hammondii","species","hamfly"
+4691,"Gray Flycatcher","Empidonax wrightii","gryfly","Gray Flycatcher","Empidonax wrightii","species","gryfly"
+4690,"Dusky Flycatcher","Empidonax oberholseri","dusfly","Dusky Flycatcher","Empidonax oberholseri","species","dusfly"
+4641,"Pacific-slope Flycatcher","Empidonax difficilis","pasfly","Pacific-slope Flycatcher","Empidonax difficilis","species","pasfly"
+4649,"Western Flycatcher","Empidonax difficilis/ E. occidentalis","wesfly","Pacific-slope/Cordilleran Flycatcher (Western Flycatcher)","Empidonax difficilis/occidentalis","slash",NA
+4640,"Cordilleran Flycatcher","Empidonax occidentalis","corfly","Cordilleran Flycatcher","Empidonax occidentalis","species","corfly"
+4700,"Buff-breasted Flycatcher","Empidonax fulvifrons","bubfly","Buff-breasted Flycatcher","Empidonax fulvifrons","species","bubfly"
+4679,"Unidentified Empidonax","Empidonax sp.","empido","Empidonax sp.","Empidonax sp.","spuh",NA
+4580,"Black Phoebe","Sayornis nigricans","blkpho","Black Phoebe","Sayornis nigricans","species","blkpho"
+4560,"Eastern Phoebe","Sayornis phoebe","easpho","Eastern Phoebe","Sayornis phoebe","species","easpho"
+4570,"Say's Phoebe","Sayornis saya","saypho","Say's Phoebe","Sayornis saya","species","saypho"
+4710,"Vermilion Flycatcher","Pyrocephalus rubinus","verfly","Vermilion Flycatcher","Pyrocephalus rubinus","species","verfly"
+8680,"Micronesian Honeyeater","Myzomela rubratra","micmyz1","Micronesian Myzomela","Myzomela rubratra","species",NA
+8660,"Cardinal Honeyeater","Myzomela cardinalis","carmyz1","Cardinal Myzomela","Myzomela cardinalis","species",NA
+8670,"Wattled Honeyeater","Foulehaio carunculatus","easwah1","Eastern Wattled-Honeyeater","Foulehaio carunculatus","species",NA
+6300,"Black-capped Vireo","Vireo atricapilla","bkcvir1","Black-capped Vireo","Vireo atricapilla","species","bkcvir1"
+6310,"White-eyed Vireo","Vireo griseus","whevir","White-eyed Vireo","Vireo griseus","species","whevir"
+9130,"Thick-billed Vireo","Vireo crassirostris","thbvir","Thick-billed Vireo","Vireo crassirostris","species","thbvir"
+9132,"Jamaican Vireo","Vireo modestus","jamvir1","Jamaican Vireo","Vireo modestus","species",NA
+6331,"Puerto Rican Vireo","Vireo latimeri","purvir1","Puerto Rican Vireo","Vireo latimeri","species",NA
+6330,"Bell's Vireo","Vireo bellii","belvir","Bell's Vireo","Vireo bellii","species","belvir"
+6334,"Least Bell's Vireo","Vireo bellii pusillus","belvir","Bell's Vireo","Vireo bellii","species","belvir"
+6340,"Gray Vireo","Vireo vicinior","gryvir","Gray Vireo","Vireo vicinior","species","gryvir"
+6320,"Hutton's Vireo","Vireo huttoni","hutvir","Hutton's Vireo","Vireo huttoni","species","hutvir"
+6280,"Yellow-throated Vireo","Vireo flavifrons","yetvir","Yellow-throated Vireo","Vireo flavifrons","species","yetvir"
+6292,"Cassin's Vireo","Vireo cassinii","casvir","Cassin's Vireo","Vireo cassinii","species","casvir"
+6290,"Blue-headed Vireo","Vireo solitarius","buhvir","Blue-headed Vireo","Vireo solitarius","species","buhvir"
+6299,"Solitary Vireo","Vireo solitarius/ V. plumbeus","solvir1","solitary vireo sp.","Vireo cassinii/solitarius/plumbeus","spuh",NA
+6291,"Plumbeous Vireo","Vireo plumbeus","plsvir","Plumbeous Vireo","Vireo plumbeus","species","plsvir"
+6260,"Philadelphia Vireo","Vireo philadelphicus","phivir","Philadelphia Vireo","Vireo philadelphicus","species","phivir"
+6270,"Warbling Vireo","Vireo gilvus","warvir","Warbling Vireo","Vireo gilvus","species","warvir"
+6240,"Red-eyed Vireo","Vireo olivaceus","reevir1","Red-eyed Vireo","Vireo olivaceus","species","reevir1"
+6250,"Yellow-green Vireo","Vireo flavoviridis","yegvir","Yellow-green Vireo","Vireo flavoviridis","species","yegvir"
+6230,"Black-whiskered Vireo","Vireo altiloquus","bkwvir","Black-whiskered Vireo","Vireo altiloquus","species","bkwvir"
+8690,"Rufous Fantail","Rhipidura rufifrons","ruffan1","Rufous Fantail","Rhipidura rufifrons","species","ruffan1"
+8740,"Black Drongo","Dicrurus macrocercus","bladro1","Black Drongo","Dicrurus macrocercus","species","bladro1"
+8691,"Fiji Shrikebill","Clytorhynchus vitiensis","fijshr1","Fiji Shrikebill","Clytorhynchus vitiensis","species",NA
+8560,"Tinian Monarch","Monarcha takatsukasae","tinmon1","Tinian Monarch","Monarcha takatsukasae","species",NA
+7702,"Kauai Elepaio","Chasiempis sclateri","elepai5","Kauai Elepaio","Chasiempis sclateri","species",NA
+7701,"Oahu Elepaio","Chasiempis ibidis","elepai4","Oahu Elepaio","Chasiempis ibidis","species",NA
+7700,"Hawaii Elepaio","Chasiempis sandwichensis","elepai","Hawaii Elepaio","Chasiempis sandwichensis","species",NA
+6211,"Brown Shrike","Lanius cristatus","brnshr","Brown Shrike","Lanius cristatus","species","brnshr"
+6220,"Loggerhead Shrike","Lanius ludovicianus","logshr","Loggerhead Shrike","Lanius ludovicianus","species","logshr"
+6227,"San Clemente Loggerhead Shrike","Lanius ludovicianus mearnsi","logshr","Loggerhead Shrike","Lanius ludovicianus","species","logshr"
+6210,"Northern Shrike","Lanius borealis","norshr4","Northern Shrike","Lanius borealis","species","norshr4"
+4840,"Canada Jay","Perisoreus canadensis","gryjay","Canada Jay","Perisoreus canadensis","species","gryjay"
+4832,"Brown Jay","Psilorhinus morio","brnjay","Brown Jay","Psilorhinus morio","species","brnjay"
+4830,"Green Jay","Cyanocorax yncas","grnjay","Green Jay","Cyanocorax yncas","species","grnjay"
+4920,"Pinyon Jay","Gymnorhinus cyanocephalus","pinjay","Pinyon Jay","Gymnorhinus cyanocephalus","species","pinjay"
+4780,"Steller's Jay","Cyanocitta stelleri","stejay","Steller's Jay","Cyanocitta stelleri","species","stejay"
+4770,"Blue Jay","Cyanocitta cristata","blujay","Blue Jay","Cyanocitta cristata","species","blujay"
+4790,"Florida Scrub-Jay","Aphelocoma coerulescens","flsjay","Florida Scrub-Jay","Aphelocoma coerulescens","species","flsjay"
+4811,"Island Scrub-Jay","Aphelocoma insularis","issjay","Island Scrub-Jay","Aphelocoma insularis","species","issjay"
+4813,"California Scrub-Jay","Aphelocoma californica","cowscj1","California Scrub-Jay","Aphelocoma californica","species","cowscj1"
+4812,"Woodhouse's Scrub-Jay","Aphelocoma woodhouseii","wooscj2","Woodhouse's Scrub-Jay","Aphelocoma woodhouseii","species","wooscj2"
+4810,"Western Scrub-Jay","Aphelocoma californica","wesjay","California/Woodhouse's Scrub-Jay","Aphelocoma californica/woodhouseii","slash",NA
+4820,"Mexican Jay","Aphelocoma wollweberi","mexjay4","Mexican Jay","Aphelocoma wollweberi","species","mexjay4"
+4910,"Clark's Nutcracker","Nucifraga columbiana","clanut","Clark's Nutcracker","Nucifraga columbiana","species","clanut"
+4750,"Black-billed Magpie","Pica hudsonia","bkbmag1","Black-billed Magpie","Pica hudsonia","species","bkbmag1"
+4760,"Yellow-billed Magpie","Pica nuttalli","yebmag","Yellow-billed Magpie","Pica nuttalli","species","yebmag"
+4880,"American Crow","Corvus brachyrhynchos","amecro","American Crow","Corvus brachyrhynchos","species","amecro"
+4890,"Northwestern Crow","Corvus brachyrhynchos caurinus","amecro","American Crow","Corvus brachyrhynchos","species","amecro"
+9107,"Jamaican Crow","Corvus jamaicensis","jamcro1","Jamaican Crow","Corvus jamaicensis","species",NA
+4900,"Fish Crow","Corvus ossifragus","fiscro","Fish Crow","Corvus ossifragus","species","fiscro"
+4892,"Hawaiian Crow","Corvus hawaiiensis","hawcro","Hawaiian Crow","Corvus hawaiiensis","species",NA
+4870,"Chihuahuan Raven","Corvus cryptoleucus","chirav","Chihuahuan Raven","Corvus cryptoleucus","species","chirav"
+4860,"Common Raven","Corvus corax","comrav","Common Raven","Corvus corax","species","comrav"
+8570,"Mariana Crow","Corvus kubaryi","marcro1","Mariana Crow","Corvus kubaryi","species",NA
+7460,"Verdin","Auriparus flaviceps","verdin","Verdin","Auriparus flaviceps","species","verdin"
+7360,"Carolina Chickadee","Poecile carolinensis","carchi","Carolina Chickadee","Poecile carolinensis","species","carchi"
+7350,"Black-capped Chickadee","Poecile atricapillus","bkcchi","Black-capped Chickadee","Poecile atricapillus","species","bkcchi"
+7380,"Mountain Chickadee","Poecile gambeli","mouchi","Mountain Chickadee","Poecile gambeli","species","mouchi"
+7370,"Mexican Chickadee","Poecile sclateri","mexchi","Mexican Chickadee","Poecile sclateri","species","mexchi"
+7410,"Chestnut-backed Chickadee","Poecile rufescens","chbchi","Chestnut-backed Chickadee","Poecile rufescens","species","chbchi"
+7400,"Boreal Chickadee","Poecile hudsonicus","borchi2","Boreal Chickadee","Poecile hudsonicus","species","borchi2"
+7390,"Gray-headed Chickadee","Poecile cinctus","gyhchi","Gray-headed Chickadee","Poecile cinctus","species","gyhchi"
+7356,"Hybrid Chickadee","Poecile sp.","chicka1","chickadee sp.","Poecile sp.","spuh",NA
+7340,"Bridled Titmouse","Baeolophus wollweberi","britit","Bridled Titmouse","Baeolophus wollweberi","species","britit"
+7330,"Oak Titmouse","Baeolophus inornatus","oaktit","Oak Titmouse","Baeolophus inornatus","species","oaktit"
+7331,"Juniper Titmouse","Baeolophus ridgwayi","juntit1","Juniper Titmouse","Baeolophus ridgwayi","species","juntit1"
+7339,"Plain Titmouse","Baeolophus inornatus/ B. ridgwayi","y00326","Oak/Juniper Titmouse (Plain Titmouse)","Baeolophus inornatus/ridgwayi","slash",NA
+7310,"Tufted Titmouse","Baeolophus bicolor","tuftit","Tufted Titmouse","Baeolophus bicolor","species","tuftit"
+7320,"Black-crested Titmouse","Baeolophus atricristatus","blctit4","Black-crested Titmouse","Baeolophus atricristatus","species","blctit4"
+4730,"Eurasian Skylark","Alauda arvensis","skylar","Eurasian Skylark","Alauda arvensis","species","skylar"
+4740,"Horned Lark","Eremophila alpestris","horlar","Horned Lark","Eremophila alpestris","species","horlar"
+4741,"Streaked Horned Lark","Eremophila alpestris strigata","horlar","Horned Lark","Eremophila alpestris","species","horlar"
+7462,"Millerbird","Acrocephalus familiaris","miller","Millerbird","Acrocephalus familiaris","species",NA
+8590,"Nightingale Reed Warbler","Acrocephalus luscinius","nigrew1","Nightingale Reed Warbler","Acrocephalus luscinius","species",NA
+7475,"Lanceolated Warbler","Locustella lanceolata","lanwar","Lanceolated Warbler","Locustella lanceolata","species",NA
+6160,"Bank Swallow","Riparia riparia","banswa","Bank Swallow","Riparia riparia","species","banswa"
+6140,"Tree Swallow","Tachycineta bicolor","treswa","Tree Swallow","Tachycineta bicolor","species","treswa"
+6151,"Bahama Swallow","Tachycineta cyaneoviridis","bahswa","Bahama Swallow","Tachycineta cyaneoviridis","species",NA
+6150,"Violet-green Swallow","Tachycineta thalassina","vigswa","Violet-green Swallow","Tachycineta thalassina","species","vigswa"
+6170,"Northern Rough-winged Swallow","Stelgidopteryx serripennis","nrwswa","Northern Rough-winged Swallow","Stelgidopteryx serripennis","species","nrwswa"
+6110,"Purple Martin","Progne subis","purmar","Purple Martin","Progne subis","species","purmar"
+6112,"Gray-breasted Martin","Progne chalybea","gybmar","Gray-breasted Martin","Progne chalybea","species","gybmar"
+6113,"Caribbean Martin","Progne dominicensis","carmar1","Caribbean Martin","Progne dominicensis","species","carmar1"
+6130,"Barn Swallow","Hirundo rustica","barswa","Barn Swallow","Hirundo rustica","species","barswa"
+6120,"Cliff Swallow","Petrochelidon pyrrhonota","cliswa","Cliff Swallow","Petrochelidon pyrrhonota","species","cliswa"
+6121,"Cave Swallow","Petrochelidon fulva","cavswa","Cave Swallow","Petrochelidon fulva","species","cavswa"
+7430,"Bushtit","Psaltriparus minimus","bushti","Bushtit","Psaltriparus minimus","species","bushti"
+7461,"Japanese Bush-Warbler","Horornis diphone","jabwar","Japanese Bush Warbler","Horornis diphone","species","jabwar"
+7474,"Dusky Warbler","Phylloscopus fuscatus","duswar","Dusky Warbler","Phylloscopus fuscatus","species","duswar"
+7470,"Arctic Warbler","Phylloscopus borealis","arcwar1","Arctic Warbler","Phylloscopus borealis","species","arcwar1"
+7262,"Red-vented Bulbul","Pycnonotus cafer","revbul","Red-vented Bulbul","Pycnonotus cafer","species","revbul"
+7261,"Red-whiskered Bulbul","Pycnonotus jocosus","rewbul","Red-whiskered Bulbul","Pycnonotus jocosus","species","rewbul"
+7420,"Wrentit","Chamaea fasciata","wrenti","Wrentit","Chamaea fasciata","species","wrenti"
+8710,"Golden White-eye","Cleptornis marchei","goweye1","Golden White-eye","Cleptornis marchei","species",NA
+6226,"Japanese White-eye","Zosterops japonicus","warwhe1","Warbling White-eye","Zosterops japonicus","species","warwhe1"
+8700,"Bridled White-eye","Zosterops conspicillatus","brweye1","Bridled White-eye","Zosterops conspicillatus","species",NA
+7422,"Hwamei","Garrulax canorus","melthr","Chinese Hwamei","Garrulax canorus","species","melthr"
+7421,"Red-billed Leiothrix","Leiothrix lutea","reblei","Red-billed Leiothrix","Leiothrix lutea","species","reblei"
+7490,"Ruby-crowned Kinglet","Corthylio calendula","ruckin","Ruby-crowned Kinglet","Corthylio calendula","species","ruckin"
+7480,"Golden-crowned Kinglet","Regulus satrapa","gockin","Golden-crowned Kinglet","Regulus satrapa","species","gockin"
+6180,"Bohemian Waxwing","Bombycilla garrulus","bohwax","Bohemian Waxwing","Bombycilla garrulus","species","bohwax"
+6190,"Cedar Waxwing","Bombycilla cedrorum","cedwax","Cedar Waxwing","Bombycilla cedrorum","species","cedwax"
+6200,"Phainopepla","Phainopepla nitens","phaino","Phainopepla","Phainopepla nitens","species","phaino"
+7280,"Red-breasted Nuthatch","Sitta canadensis","rebnut","Red-breasted Nuthatch","Sitta canadensis","species","rebnut"
+7270,"White-breasted Nuthatch","Sitta carolinensis","whbnut","White-breasted Nuthatch","Sitta carolinensis","species","whbnut"
+7300,"Pygmy Nuthatch","Sitta pygmaea","pygnut","Pygmy Nuthatch","Sitta pygmaea","species","pygnut"
+7290,"Brown-headed Nuthatch","Sitta pusilla","bnhnut","Brown-headed Nuthatch","Sitta pusilla","species","bnhnut"
+7260,"Brown Creeper","Certhia americana","brncre","Brown Creeper","Certhia americana","species","brncre"
+7510,"Blue-gray Gnatcatcher","Polioptila caerulea","buggna","Blue-gray Gnatcatcher","Polioptila caerulea","species","buggna"
+7520,"Black-tailed Gnatcatcher","Polioptila melanura","bktgna","Black-tailed Gnatcatcher","Polioptila melanura","species","bktgna"
+7530,"California Gnatcatcher","Polioptila californica","calgna","California Gnatcatcher","Polioptila californica","species","calgna"
+7531,"Black-capped Gnatcatcher","Polioptila nigriceps","bkcgna","Black-capped Gnatcatcher","Polioptila nigriceps","species","bkcgna"
+7150,"Rock Wren","Salpinctes obsoletus","rocwre","Rock Wren","Salpinctes obsoletus","species","rocwre"
+7170,"Canyon Wren","Catherpes mexicanus","canwre","Canyon Wren","Catherpes mexicanus","species","canwre"
+7210,"House Wren","Troglodytes aedon","houwre","House Wren","Troglodytes aedon","species","houwre"
+9109,"Southern House Wren","Troglodytes aedon musculus","houwre","House Wren","Troglodytes aedon","species","houwre"
+7221,"Pacific Wren","Troglodytes pacificus","pacwre1","Pacific Wren","Troglodytes pacificus","species","pacwre1"
+7220,"Winter Wren","Troglodytes hiemalis","winwre3","Winter Wren","Troglodytes hiemalis","species","winwre3"
+7240,"Sedge Wren","Cistothorus stellaris","sedwre1","Sedge Wren","Cistothorus stellaris","species","sedwre1"
+7250,"Marsh Wren","Cistothorus palustris","marwre","Marsh Wren","Cistothorus palustris","species","marwre"
+7180,"Carolina Wren","Thryothorus ludovicianus","carwre","Carolina Wren","Thryothorus ludovicianus","species","carwre"
+7190,"Bewick's Wren","Thryomanes bewickii","bewwre","Bewick's Wren","Thryomanes bewickii","species","bewwre"
+7130,"Cactus Wren","Campylorhynchus brunneicapillus","cacwre","Cactus Wren","Campylorhynchus brunneicapillus","species","cacwre"
+7121,"Blue Mockingbird","Melanotis caerulescens","blumoc","Blue Mockingbird","Melanotis caerulescens","species","blumoc"
+7040,"Gray Catbird","Dumetella carolinensis","grycat","Gray Catbird","Dumetella carolinensis","species","grycat"
+7111,"Pearly-eyed Thrasher","Margarops fuscatus","peethr1","Pearly-eyed Thrasher","Margarops fuscatus","species","peethr1"
+9116,"Brown Trembler","Cinclocerthia ruficauda","brotre1","Brown Trembler","Cinclocerthia ruficauda","species",NA
+7070,"Curve-billed Thrasher","Toxostoma curvirostre","cubthr","Curve-billed Thrasher","Toxostoma curvirostre","species","cubthr"
+7050,"Brown Thrasher","Toxostoma rufum","brnthr","Brown Thrasher","Toxostoma rufum","species","brnthr"
+7060,"Long-billed Thrasher","Toxostoma longirostre","lobthr","Long-billed Thrasher","Toxostoma longirostre","species","lobthr"
+7080,"Bendire's Thrasher","Toxostoma bendirei","benthr","Bendire's Thrasher","Toxostoma bendirei","species","benthr"
+7100,"California Thrasher","Toxostoma redivivum","calthr","California Thrasher","Toxostoma redivivum","species","calthr"
+7110,"LeConte's Thrasher","Toxostoma lecontei","lecthr","LeConte's Thrasher","Toxostoma lecontei","species","lecthr"
+7120,"Crissal Thrasher","Toxostoma crissale","crithr","Crissal Thrasher","Toxostoma crissale","species","crithr"
+7020,"Sage Thrasher","Oreoscoptes montanus","sagthr","Sage Thrasher","Oreoscoptes montanus","species","sagthr"
+7031,"Bahama Mockingbird","Mimus gundlachii","bahmoc","Bahama Mockingbird","Mimus gundlachii","species",NA
+7032,"Tropical Mockingbird","Mimus gilvus","tromoc","Tropical Mockingbird","Mimus gilvus","species","tromoc"
+7030,"Northern Mockingbird","Mimus polyglottos","normoc","Northern Mockingbird","Mimus polyglottos","species","normoc"
+8720,"Micronesian Starling","Aplonis opaca","micsta1","Micronesian Starling","Aplonis opaca","species",NA
+8650,"Polynesian Starling","Aplonis tabuensis","polsta1","Polynesian Starling","Aplonis tabuensis","species",NA
+8640,"Samoan Starling","Aplonis atrifusca","samsta1","Samoan Starling","Aplonis atrifusca","species",NA
+4930,"European Starling","Sturnus vulgaris","eursta","European Starling","Sturnus vulgaris","species","eursta"
+4932,"Common Myna","Acridotheres tristis","commyn","Common Myna","Acridotheres tristis","species","commyn"
+4935,"Jungle Myna","Acridotheres fuscus","junmyn1","Jungle Myna","Acridotheres fuscus","species","junmyn1"
+4931,"Crested Myna","Acridotheres cristatellus","cremyn","Crested Myna","Acridotheres cristatellus","species",NA
+7010,"American Dipper","Cinclus mexicanus","amedip","American Dipper","Cinclus mexicanus","species","amedip"
+7660,"Eastern Bluebird","Sialia sialis","easblu","Eastern Bluebird","Sialia sialis","species","easblu"
+7670,"Western Bluebird","Sialia mexicana","wesblu","Western Bluebird","Sialia mexicana","species","wesblu"
+7680,"Mountain Bluebird","Sialia currucoides","moublu","Mountain Bluebird","Sialia currucoides","species","moublu"
+7676,"Hybrid Western/Mountain Bluebird","Sialia mexicana x currucoides","x00204","Western x Mountain Bluebird (hybrid)","Sialia mexicana x currucoides","hybrid",NA
+7540,"Townsend's Solitaire","Myadestes townsendi","towsol","Townsend's Solitaire","Myadestes townsendi","species","towsol"
+9127,"Rufous-throated Solitaire","Myadestes genibarbis","rutsol1","Rufous-throated Solitaire","Myadestes genibarbis","species",NA
+7541,"Omao","Myadestes obscurus","omao","Omao","Myadestes obscurus","species",NA
+7542,"Puaiohi","Myadestes palmeri","puaioh","Puaiohi","Myadestes palmeri","species",NA
+7424,"Orange-billed Nightingale-Thrush","Catharus aurantiirostris","obnthr1","Orange-billed Nightingale-Thrush","Catharus aurantiirostris","species","obnthr1"
+7560,"Veery","Catharus fuscescens","veery","Veery","Catharus fuscescens","species","veery"
+7570,"Gray-cheeked Thrush","Catharus minimus","gycthr","Gray-cheeked Thrush","Catharus minimus","species","gycthr"
+7571,"Bicknell's Thrush","Catharus bicknelli","bicthr","Bicknell's Thrush","Catharus bicknelli","species","bicthr"
+7579,"Unidentified Gray-cheeked/Bicknell's Thrush","Catharus sp.","y00225","Gray-cheeked/Bicknell's Thrush","Catharus minimus/bicknelli","slash",NA
+7580,"Swainson's Thrush","Catharus ustulatus","swathr","Swainson's Thrush","Catharus ustulatus","species","swathr"
+7590,"Hermit Thrush","Catharus guttatus","herthr","Hermit Thrush","Catharus guttatus","species","herthr"
+7550,"Wood Thrush","Hylocichla mustelina","woothr","Wood Thrush","Hylocichla mustelina","species","woothr"
+7612,"Fieldfare","Turdus pilaris","fieldf","Fieldfare","Turdus pilaris","species",NA
+7621,"Clay-colored Thrush","Turdus grayi","clcrob","Clay-colored Thrush","Turdus grayi","species","clcrob"
+9120,"White-eyed Thrush","Turdus jamaicensis","whethr1","White-eyed Thrush","Turdus jamaicensis","species",NA
+7622,"Rufous-backed Robin","Turdus rufopalliatus","rubrob","Rufous-backed Robin","Turdus rufopalliatus","species","rubrob"
+7610,"American Robin","Turdus migratorius","amerob","American Robin","Turdus migratorius","species","amerob"
+9122,"White-chinned Thrush","Turdus aurantius","whcthr1","White-chinned Thrush","Turdus aurantius","species",NA
+7623,"Red-legged Thrush","Turdus plumbeus","relthr1","Red-legged Thrush","Turdus plumbeus","species","relthr1"
+7630,"Varied Thrush","Ixoreus naevius","varthr","Varied Thrush","Ixoreus naevius","species","varthr"
+7631,"Aztec Thrush","Ridgwayia pinicola","aztthr","Aztec Thrush","Ridgwayia pinicola","species",NA
+7690,"White-rumped Shama","Copsychus malabaricus","whrsha","White-rumped Shama","Copsychus malabaricus","species","whrsha"
+7640,"Bluethroat","Cyanecula svecica","blueth","Bluethroat","Luscinia svecica","species","blueth"
+7641,"Siberian Rubythroat","Calliope calliope","sibrub","Siberian Rubythroat","Calliope calliope","species","sibrub"
+7642,"Red-flanked Bluetail","Tarsiger cyanurus","refblu","Red-flanked Bluetail","Tarsiger cyanurus","species",NA
+7650,"Northern Wheatear","Oenanthe oenanthe","norwhe","Northern Wheatear","Oenanthe oenanthe","species","norwhe"
+6510,"Olive Warbler","Peucedramus taeniatus","oliwar","Olive Warbler","Peucedramus taeniatus","species","oliwar"
+8041,"Northern Red Bishop","Euplectes franciscanus","orabis1","Northern Red Bishop","Euplectes franciscanus","species","orabis1"
+8042,"Yellow-crowned Bishop","Euplectes afer","yecbis","Yellow-crowned Bishop","Euplectes afer","species",NA
+8131,"Pin-tailed Whydah","Vidua macroura","pitwhy","Pin-tailed Whydah","Vidua macroura","species","pitwhy"
+8101,"Bronze Mannikin","Spermestes cucullata","broman1","Bronze Mannikin","Spermestes cucullata","species",NA
+8100,"African Silverbill","Euodice cantans","afrsil1","African Silverbill","Euodice cantans","species",NA
+8130,"Java Sparrow","Padda oryzivora","javspa","Java Sparrow","Padda oryzivora","species","javspa"
+8110,"Scaly-breasted Munia","Lonchura punctulata","nutman","Scaly-breasted Munia","Lonchura punctulata","species","nutman"
+8120,"Tricolored Munia","Lonchura malacca","trimun","Tricolored Munia","Lonchura malacca","species","trimun"
+8090,"Red Avadavat","Amandava amandava","redava","Red Avadavat","Amandava amandava","species",NA
+8060,"Lavender Waxbill","Estrilda caerulescens","lavwax","Lavender Waxbill","Glaucestrilda caerulescens","species",NA
+8070,"Orange-cheeked Waxbill","Estrilda melpoda","orcwax","Orange-cheeked Waxbill","Estrilda melpoda","species",NA
+8081,"Common Waxbill","Estrilda astrild","comwax","Common Waxbill","Estrilda astrild","species","comwax"
+6882,"House Sparrow","Passer domesticus","houspa","House Sparrow","Passer domesticus","species","houspa"
+6883,"Eurasian Tree Sparrow","Passer montanus","eutspa","Eurasian Tree Sparrow","Passer montanus","species","eutspa"
+6960,"Eastern Yellow Wagtail","Motacilla tschutschensis","eaywag","Eastern Yellow Wagtail","Motacilla tschutschensis","species","eaywag"
+6983,"Olive-backed Pipit","Anthus hodgsoni","olbpip","Olive-backed Pipit","Anthus hodgsoni","species","olbpip"
+6990,"Red-throated Pipit","Anthus cervinus","retpip","Red-throated Pipit","Anthus cervinus","species","retpip"
+6970,"American Pipit","Anthus rubescens","amepip","American Pipit","Anthus rubescens","species","amepip"
+7000,"Sprague's Pipit","Anthus spragueii","sprpip","Sprague's Pipit","Anthus spragueii","species","sprpip"
+5141,"Brambling","Fringilla montifringilla","brambl","Brambling","Fringilla montifringilla","species","brambl"
+6061,"Antillean Euphonia","Euphonia musica","anteup1","Antillean Euphonia","Chlorophonia musica","species",NA
+9153,"Jamaican Euphonia","Euphonia jamaica","jameup1","Jamaican Euphonia","Euphonia jamaica","species",NA
+5140,"Evening Grosbeak","Coccothraustes vespertinus","evegro","Evening Grosbeak","Coccothraustes vespertinus","species","evegro"
+5161,"Common Rosefinch","Carpodacus erythrinus","comros","Common Rosefinch","Carpodacus erythrinus","species","comros"
+8040,"Poo-uli","Melamprosops phaeosoma","poouli","Poo-uli","Melamprosops phaeosoma","species",NA
+7900,"Akikiki","Oreomystis bairdi","akikik","Akikiki","Oreomystis bairdi","species",NA
+7940,"Oahu Alauahio","Paroreomyza maculata","oahala","Oahu Alauahio","Paroreomyza maculata","species",NA
+7920,"Maui Alauahio","Paroreomyza montana","mauala","Maui Alauahio","Paroreomyza montana","species",NA
+7770,"Palila","Loxioides bailleui","palila","Palila","Loxioides bailleui","species",NA
+7740,"Laysan Finch","Telespiza cantans","layfin","Laysan Finch","Telespiza cantans","species",NA
+7750,"Nihoa Finch","Telespiza ultima","nihfin","Nihoa Finch","Telespiza ultima","species",NA
+8010,"Akohekohe","Palmeria dolei","crehon","Akohekohe","Palmeria dolei","species",NA
+8020,"Apapane","Himatione sanguinea","apapan","Apapane","Himatione sanguinea","species","apapan"
+7980,"Iiwi","Drepanis coccinea","iiwi","Iiwi","Drepanis coccinea","species","iiwi"
+7760,"Ou","Psittirostra psittacea","ou","Ou","Psittirostra psittacea","species",NA
+7810,"Maui Parrotbill","Pseudonestor xanthophrys","maupar","Maui Parrotbill","Pseudonestor xanthophrys","species",NA
+7890,"Akiapolaau","Hemignathus wilsoni","akiapo","Akiapolaau","Hemignathus wilsoni","species",NA
+7870,"Oahu Akialoa","Akialoa ellisiana","greaki2","Oahu Akialoa","Akialoa ellisiana","species",NA
+7840,"Anianiau","Magumma parva","aniani","Anianiau","Magumma parva","species",NA
+7820,"Hawaii Amakihi","Chlorodrepanis virens","hawama","Hawaii Amakihi","Chlorodrepanis virens","species","hawama"
+7821,"Oahu Amakihi","Chlorodrepanis flava","oahama","Oahu Amakihi","Chlorodrepanis flava","species",NA
+7830,"Kauai Amakihi","Chlorodrepanis stejnegeri","kauama","Kauai Amakihi","Chlorodrepanis stejnegeri","species","kauama"
+7910,"Hawaii Creeper","Loxops mana","hawcre","Hawaii Creeper","Loxops mana","species",NA
+7960,"Akekee","Loxops caeruleirostris","akekee","Akekee","Loxops caeruleirostris","species",NA
+7950,"Akepa","Loxops coccineus","akepa1","Hawaii Akepa","Loxops coccineus","species",NA
+5150,"Pine Grosbeak","Pinicola enucleator","pingro","Pine Grosbeak","Pinicola enucleator","species","pingro"
+5240,"Gray-crowned Rosy-Finch","Leucosticte tephrocotis","gcrfin","Gray-crowned Rosy-Finch","Leucosticte tephrocotis","species","gcrfin"
+5250,"Black Rosy-Finch","Leucosticte atrata","bkrfin","Black Rosy-Finch","Leucosticte atrata","species","bkrfin"
+5260,"Brown-capped Rosy-Finch","Leucosticte australis","bcrfin","Brown-capped Rosy-Finch","Leucosticte australis","species","bcrfin"
+5190,"House Finch","Haemorhous mexicanus","houfin","House Finch","Haemorhous mexicanus","species","houfin"
+5170,"Purple Finch","Haemorhous purpureus","purfin","Purple Finch","Haemorhous purpureus","species","purfin"
+5180,"Cassin's Finch","Haemorhous cassinii","casfin","Cassin's Finch","Haemorhous cassinii","species","casfin"
+5332,"Yellow-fronted Canary","Crithagra mozambica","yefcan","Yellow-fronted Canary","Crithagra mozambica","species","yefcan"
+5280,"Common Redpoll","Acanthis flammea","comred","Common Redpoll","Acanthis flammea","species","comred"
+5270,"Hoary Redpoll","Acanthis hornemanni","hoared","Hoary Redpoll","Acanthis hornemanni","species","hoared"
+5276,"Unidentified Common/Hoary Redpoll","Acanthis sp.","redpol","Common/Hoary Redpoll","Acanthis flammea/hornemanni","slash",NA
+5210,"Red Crossbill","Loxia curvirostra","redcro","Red Crossbill","Loxia curvirostra","species","redcro"
+5220,"White-winged Crossbill","Loxia leucoptera","whwcro","White-winged Crossbill","Loxia leucoptera","species","whwcro"
+5261,"European Goldfinch","Carduelis carduelis","eurgol","European Goldfinch","Carduelis carduelis","species",NA
+5330,"Pine Siskin","Spinus pinus","pinsis","Pine Siskin","Spinus pinus","species","pinsis"
+5300,"Lesser Goldfinch","Spinus psaltria","lesgol","Lesser Goldfinch","Spinus psaltria","species","lesgol"
+5310,"Lawrence's Goldfinch","Spinus lawrencei","lawgol","Lawrence's Goldfinch","Spinus lawrencei","species","lawgol"
+5290,"American Goldfinch","Spinus tristis","amegfi","American Goldfinch","Spinus tristis","species","amegfi"
+5331,"Common Canary","Serinus canaria","comcan","Island Canary","Serinus canaria","species",NA
+5360,"Lapland Longspur","Calcarius lapponicus","laplon","Lapland Longspur","Calcarius lapponicus","species","laplon"
+5380,"Chestnut-collared Longspur","Calcarius ornatus","chclon","Chestnut-collared Longspur","Calcarius ornatus","species","chclon"
+5370,"Smith's Longspur","Calcarius pictus","smilon","Smith's Longspur","Calcarius pictus","species","smilon"
+5390,"McCown's Longspur","Rhynchophanes mccownii","mcclon","Thick-billed Longspur","Rhynchophanes mccownii","species","mcclon"
+5340,"Snow Bunting","Plectrophenax nivalis","snobun","Snow Bunting","Plectrophenax nivalis","species","snobun"
+5350,"McKay's Bunting","Plectrophenax hyperboreus","mckbun","McKay's Bunting","Plectrophenax hyperboreus","species","mckbun"
+5351,"Rustic Bunting","Emberiza rustica","rusbun","Rustic Bunting","Emberiza rustica","species","rusbun"
+5790,"Rufous-winged Sparrow","Peucaea carpalis","ruwspa","Rufous-winged Sparrow","Peucaea carpalis","species","ruwspa"
+5760,"Botteri's Sparrow","Peucaea botterii","botspa","Botteri's Sparrow","Peucaea botterii","species","botspa"
+5780,"Cassin's Sparrow","Peucaea cassinii","casspa","Cassin's Sparrow","Peucaea cassinii","species","casspa"
+5750,"Bachman's Sparrow","Peucaea aestivalis","bacspa","Bachman's Sparrow","Peucaea aestivalis","species","bacspa"
+5460,"Grasshopper Sparrow","Ammodramus savannarum","graspa","Grasshopper Sparrow","Ammodramus savannarum","species","graspa"
+5464,"Florida Grasshopper Sparrow","Ammodramus savannarum floridanus","graspa","Grasshopper Sparrow","Ammodramus savannarum","species","graspa"
+5860,"Olive Sparrow","Arremonops rufivirgatus","olispa","Olive Sparrow","Arremonops rufivirgatus","species","olispa"
+5742,"Five-striped Sparrow","Amphispizopsis quinquestriata","fisspa","Five-striped Sparrow","Amphispizopsis quinquestriata","species","fisspa"
+5730,"Black-throated Sparrow","Amphispiza bilineata","bktspa","Black-throated Sparrow","Amphispiza bilineata","species","bktspa"
+5520,"Lark Sparrow","Chondestes grammacus","larspa","Lark Sparrow","Chondestes grammacus","species","larspa"
+6050,"Lark Bunting","Calamospiza melanocorys","larbun","Lark Bunting","Calamospiza melanocorys","species","larbun"
+5600,"Chipping Sparrow","Spizella passerina","chispa","Chipping Sparrow","Spizella passerina","species","chispa"
+5610,"Clay-colored Sparrow","Spizella pallida","clcspa","Clay-colored Sparrow","Spizella pallida","species","clcspa"
+5650,"Black-chinned Sparrow","Spizella atrogularis","bkcspa","Black-chinned Sparrow","Spizella atrogularis","species","bkcspa"
+5630,"Field Sparrow","Spizella pusilla","fiespa","Field Sparrow","Spizella pusilla","species","fiespa"
+5620,"Brewer's Sparrow","Spizella breweri","brespa","Brewer's Sparrow","Spizella breweri","species","brespa"
+5640,"Worthen's Sparrow","Spizella wortheni","worspa","Worthen's Sparrow","Spizella wortheni","species",NA
+5850,"Fox Sparrow","Passerella iliaca","foxspa","Fox Sparrow","Passerella iliaca","species","foxspa"
+5590,"American Tree Sparrow","Spizelloides arborea","amtspa","American Tree Sparrow","Spizelloides arborea","species","amtspa"
+5677,"Unidentified Dark-eyed Junco","Junco hyemalis","daejun","Dark-eyed Junco","Junco hyemalis","species","daejun"
+5660,"White-winged Junco","Junco hyemalis aikeni","daejun","Dark-eyed Junco","Junco hyemalis","species","daejun"
+5690,"Gray-headed Junco","Junco hyemalis caniceps","daejun","Dark-eyed Junco","Junco hyemalis","species","daejun"
+5670,"Slate-colored Junco","Junco hyemalis hyemalis","daejun","Dark-eyed Junco","Junco hyemalis","species","daejun"
+5671,"Oregon Junco","Junco hyemalis oreganus","daejun","Dark-eyed Junco","Junco hyemalis","species","daejun"
+5700,"Yellow-eyed Junco","Junco phaeonotus","yeejun","Yellow-eyed Junco","Junco phaeonotus","species","yeejun"
+5581,"Rufous-collared Sparrow","Zonotrichia capensis","rucspa1","Rufous-collared Sparrow","Zonotrichia capensis","species","rucspa1"
+5540,"White-crowned Sparrow","Zonotrichia leucophrys","whcspa","White-crowned Sparrow","Zonotrichia leucophrys","species","whcspa"
+5550,"Gambel's White-crowned Sparrow","Zonotrichia leucophrys gambelii","whcspa","White-crowned Sparrow","Zonotrichia leucophrys","species","whcspa"
+5541,"Eastern White-crowned Sparrow","Zonotrichia leucophrys leucophrys","whcspa","White-crowned Sparrow","Zonotrichia leucophrys","species","whcspa"
+5560,"Nuttall's White-crowned Sparrow","Zonotrichia leucophrys nuttalli","whcspa","White-crowned Sparrow","Zonotrichia leucophrys","species","whcspa"
+5546,"Mountain White-crowned Sparrow","Zonotrichia leucophrys oriantha","whcspa","White-crowned Sparrow","Zonotrichia leucophrys","species","whcspa"
+5547,"Puget Sound White-crowned Sparrow","Zonotrichia leucophrys pugetensis","whcspa","White-crowned Sparrow","Zonotrichia leucophrys","species","whcspa"
+5570,"Golden-crowned Sparrow","Zonotrichia atricapilla","gocspa","Golden-crowned Sparrow","Zonotrichia atricapilla","species","gocspa"
+5530,"Harris's Sparrow","Zonotrichia querula","harspa","Harris's Sparrow","Zonotrichia querula","species","harspa"
+5580,"White-throated Sparrow","Zonotrichia albicollis","whtspa","White-throated Sparrow","Zonotrichia albicollis","species","whtspa"
+5586,"Zonotrichia Sparrow Hybrid","Zonotrichia sp.","zonotr1","Zonotrichia sp.","Zonotrichia sp.","spuh",NA
+5743,"Sagebrush Sparrow","Artemisiospiza nevadensis","sagspa1","Sagebrush Sparrow","Artemisiospiza nevadensis","species","sagspa1"
+5744,"Bell's Sparrow","Artemisiospiza belli","belspa2","Bell's Sparrow","Artemisiospiza belli","species","belspa2"
+5741,"San Clemente Bell's Sparrow","Artemisiospiza belli belli","belspa2","Bell's Sparrow","Artemisiospiza belli","species","belspa2"
+5740,"Unspecified Sage Sparrow","Artemisiospiza sp.","sagspa","Sagebrush/Bell's Sparrow (Sage Sparrow)","Artemisiospiza nevadensis/belli","slash",NA
+5400,"Vesper Sparrow","Pooecetes gramineus","vesspa","Vesper Sparrow","Pooecetes gramineus","species","vesspa"
+5480,"LeConte's Sparrow","Ammospiza leconteii","lecspa","LeConte's Sparrow","Ammospiza leconteii","species","lecspa"
+5500,"Seaside Sparrow","Ammospiza maritima","seaspa","Seaside Sparrow","Ammospiza maritima","species","seaspa"
+5510,"Dusky Seaside Sparrow","Ammospiza maritima nigrescens","seaspa","Seaside Sparrow","Ammospiza maritima","species","seaspa"
+5511,"Cape Sable Seaside Sparrow","Ammospiza maritima mirabilis","seaspa","Seaside Sparrow","Ammospiza maritima","species","seaspa"
+5491,"Nelson's Sparrow","Ammospiza nelsoni","nstspa","Nelson's Sparrow","Ammospiza nelsoni","species","nstspa"
+5490,"Saltmarsh Sparrow","Ammospiza caudacuta","sstspa","Saltmarsh Sparrow","Ammospiza caudacuta","species","sstspa"
+5499,"Unidentified Sharp-tailed Sparrow","Ammospiza sp.","shtspa","Nelson's/Saltmarsh Sparrow (Sharp-tailed Sparrow)","Ammospiza nelsoni/caudacuta","slash",NA
+5450,"Baird's Sparrow","Centronyx bairdii","baispa","Baird's Sparrow","Centronyx bairdii","species","baispa"
+5470,"Henslow's Sparrow","Centronyx henslowii","henspa","Henslow's Sparrow","Centronyx henslowii","species","henspa"
+5420,"Savannah Sparrow","Passerculus sandwichensis","savspa","Savannah Sparrow","Passerculus sandwichensis","species","savspa"
+5430,"Belding's Savannah Sparrow","Passerculus sandwichensis beldingi","savspa","Savannah Sparrow","Passerculus sandwichensis","species","savspa"
+5410,"Ipswich Sparrow","Passerculus sandwichensis princeps","savspa","Savannah Sparrow","Passerculus sandwichensis","species","savspa"
+5440,"Large-billed Sparrow","Passerculus sandwichensis rostratus","savspa","Savannah Sparrow","Passerculus sandwichensis","species","savspa"
+5810,"Song Sparrow","Melospiza melodia","sonspa","Song Sparrow","Melospiza melodia","species","sonspa"
+5830,"Lincoln's Sparrow","Melospiza lincolnii","linspa","Lincoln's Sparrow","Melospiza lincolnii","species","linspa"
+5840,"Swamp Sparrow","Melospiza georgiana","swaspa","Swamp Sparrow","Melospiza georgiana","species","swaspa"
+5910,"Canyon Towhee","Melozone fusca","cantow","Canyon Towhee","Melozone fusca","species","cantow"
+5920,"Abert's Towhee","Melozone aberti","abetow","Abert's Towhee","Melozone aberti","species","abetow"
+5911,"California Towhee","Melozone crissalis","caltow","California Towhee","Melozone crissalis","species","caltow"
+5912,"Inyo California Towhee","Melozone crissalis eremophilus","caltow","California Towhee","Melozone crissalis","species","caltow"
+5800,"Rufous-crowned Sparrow","Aimophila ruficeps","rucspa","Rufous-crowned Sparrow","Aimophila ruficeps","species","rucspa"
+5900,"Green-tailed Towhee","Pipilo chlorurus","gnttow","Green-tailed Towhee","Pipilo chlorurus","species","gnttow"
+5880,"Spotted Towhee","Pipilo maculatus","spotow","Spotted Towhee","Pipilo maculatus","species","spotow"
+5870,"Eastern Towhee","Pipilo erythrophthalmus","eastow","Eastern Towhee","Pipilo erythrophthalmus","species","eastow"
+5876,"Unidentified Rufous-sided Towhee","Pipilo sp.","y00226","Spotted/Eastern Towhee (Rufous-sided Towhee)","Pipilo maculatus/erythrophthalmus","slash",NA
+6102,"Puerto Rican Tanager","Nesospingus speculiferus","purtan1","Puerto Rican Tanager","Nesospingus speculiferus","species","purtan1"
+6101,"Western Spindalis","Spindalis zena","wesspi","Western Spindalis","Spindalis zena","species","wesspi"
+6105,"Jamaican Spindalis","Spindalis nigricephala","jamspi","Jamaican Spindalis","Spindalis nigricephala","species",NA
+6103,"Hispaniolan Spindalis","Spindalis dominicensis","hisspi","Hispaniolan Spindalis","Spindalis dominicensis","species",NA
+6104,"Puerto Rican Spindalis","Spindalis portoricensis","purspi","Puerto Rican Spindalis","Spindalis portoricensis","species","purspi"
+6830,"Yellow-breasted Chat","Icteria virens","yebcha","Yellow-breasted Chat","Icteria virens","species","yebcha"
+4970,"Yellow-headed Blackbird","Xanthocephalus xanthocephalus","yehbla","Yellow-headed Blackbird","Xanthocephalus xanthocephalus","species","yehbla"
+4940,"Bobolink","Dolichonyx oryzivorus","boboli","Bobolink","Dolichonyx oryzivorus","species","boboli"
+5010,"Eastern Meadowlark","Sturnella magna","easmea","Eastern Meadowlark","Sturnella magna","species","easmea"
+5011,"Western Meadowlark","Sturnella neglecta","wesmea","Western Meadowlark","Sturnella neglecta","species","wesmea"
+5044,"Bahama Oriole","Icterus northropi","graori3","Bahama Oriole","Icterus northropi","species",NA
+5043,"Cuban Oriole","Icterus melanopsis","graori2","Cuban Oriole","Icterus melanopsis","species",NA
+5046,"Hispaniolan Oriole","Icterus dominicensis","graori1","Hispaniolan Oriole","Icterus dominicensis","species",NA
+5045,"Puerto Rican Oriole","Icterus portoricensis","graori4","Puerto Rican Oriole","Icterus portoricensis","species","graori4"
+5041,"Black-vented Oriole","Icterus wagleri","bkvori","Black-vented Oriole","Icterus wagleri","species",NA
+5042,"Black-cowled Oriole","Icterus prosthemelas","bkcori","Black-cowled Oriole","Icterus prosthemelas","species","bkcori"
+5060,"Orchard Oriole","Icterus spurius","orcori","Orchard Oriole","Icterus spurius","species","orcori"
+5050,"Hooded Oriole","Icterus cucullatus","hooori","Hooded Oriole","Icterus cucullatus","species","hooori"
+9166,"Venezuelan Troupial","Icterus icterus","ventro1","Venezuelan Troupial","Icterus icterus","species","ventro1"
+5051,"Streak-backed Oriole","Icterus pustulatus","stbori","Streak-backed Oriole","Icterus pustulatus","species","stbori"
+5080,"Bullock's Oriole","Icterus bullockii","bulori","Bullock's Oriole","Icterus bullockii","species","bulori"
+9169,"Jamaican Oriole","Icterus leucopteryx","jamori1","Jamaican Oriole","Icterus leucopteryx","species",NA
+5032,"Spot-breasted Oriole","Icterus pectoralis","spbori","Spot-breasted Oriole","Icterus pectoralis","species","spbori"
+5031,"Altamira Oriole","Icterus gularis","altori","Altamira Oriole","Icterus gularis","species","altori"
+5030,"Audubon's Oriole","Icterus graduacauda","audori","Audubon's Oriole","Icterus graduacauda","species","audori"
+5070,"Baltimore Oriole","Icterus galbula","balori","Baltimore Oriole","Icterus galbula","species","balori"
+5078,"Baltimore X Bullock's Oriole Hybrid","Icterus galbula x bullockii",NA,NA,NA,NA,NA
+5040,"Scott's Oriole","Icterus parisorum","scoori","Scott's Oriole","Icterus parisorum","species","scoori"
+4980,"Red-winged Blackbird","Agelaius phoeniceus","rewbla","Red-winged Blackbird","Agelaius phoeniceus","species","rewbla"
+5000,"Tricolored Blackbird","Agelaius tricolor","tribla","Tricolored Blackbird","Agelaius tricolor","species","tribla"
+5001,"Tawny-shouldered Blackbird","Agelaius humeralis","tasbla","Tawny-shouldered Blackbird","Agelaius humeralis","species",NA
+5002,"Yellow-shouldered Blackbird","Agelaius xanthomus","yesbla1","Yellow-shouldered Blackbird","Agelaius xanthomus","species",NA
+4961,"Shiny Cowbird","Molothrus bonariensis","shicow","Shiny Cowbird","Molothrus bonariensis","species","shicow"
+4960,"Bronzed Cowbird","Molothrus aeneus","brocow","Bronzed Cowbird","Molothrus aeneus","species","brocow"
+4950,"Brown-headed Cowbird","Molothrus ater","bnhcow","Brown-headed Cowbird","Molothrus ater","species","bnhcow"
+5090,"Rusty Blackbird","Euphagus carolinus","rusbla","Rusty Blackbird","Euphagus carolinus","species","rusbla"
+5100,"Brewer's Blackbird","Euphagus cyanocephalus","brebla","Brewer's Blackbird","Euphagus cyanocephalus","species","brebla"
+5110,"Common Grackle","Quiscalus quiscula","comgra","Common Grackle","Quiscalus quiscula","species","comgra"
+5130,"Boat-tailed Grackle","Quiscalus major","botgra","Boat-tailed Grackle","Quiscalus major","species","botgra"
+5120,"Great-tailed Grackle","Quiscalus mexicanus","grtgra","Great-tailed Grackle","Quiscalus mexicanus","species","grtgra"
+5131,"Greater Antillean Grackle","Quiscalus niger","gragra1","Greater Antillean Grackle","Quiscalus niger","species","gragra1"
+6740,"Ovenbird","Seiurus aurocapilla","ovenbi1","Ovenbird","Seiurus aurocapilla","species","ovenbi1"
+6390,"Worm-eating Warbler","Helmitheros vermivorum","woewar1","Worm-eating Warbler","Helmitheros vermivorum","species","woewar1"
+6760,"Louisiana Waterthrush","Parkesia motacilla","louwat","Louisiana Waterthrush","Parkesia motacilla","species","louwat"
+6750,"Northern Waterthrush","Parkesia noveboracensis","norwat","Northern Waterthrush","Parkesia noveboracensis","species","norwat"
+6420,"Golden-winged Warbler","Vermivora chrysoptera","gowwar","Golden-winged Warbler","Vermivora chrysoptera","species","gowwar"
+6410,"Blue-winged Warbler","Vermivora cyanoptera","buwwar","Blue-winged Warbler","Vermivora cyanoptera","species","buwwar"
+6412,"Brewster's Warbler","Vermivora chrysoptera x cyanoptera","x00669","Golden-winged x Blue-winged Warbler (hybrid)","Vermivora chrysoptera x cyanoptera","hybrid",NA
+6413,"Lawrence's Warbler","Vermivora chrysoptera x cyanoptera","x00669","Golden-winged x Blue-winged Warbler (hybrid)","Vermivora chrysoptera x cyanoptera","hybrid",NA
+6416,"Golden-winged x Blue-winged Warbler Hybrid","Vermivora chrysoptera x cyanoptera","x00669","Golden-winged x Blue-winged Warbler (hybrid)","Vermivora chrysoptera x cyanoptera","hybrid",NA
+6360,"Black-and-white Warbler","Mniotilta varia","bawwar","Black-and-white Warbler","Mniotilta varia","species","bawwar"
+6370,"Prothonotary Warbler","Protonotaria citrea","prowar","Prothonotary Warbler","Protonotaria citrea","species","prowar"
+6380,"Swainson's Warbler","Limnothlypis swainsonii","swawar","Swainson's Warbler","Limnothlypis swainsonii","species","swawar"
+6470,"Tennessee Warbler","Leiothlypis peregrina","tenwar","Tennessee Warbler","Leiothlypis peregrina","species","tenwar"
+6460,"Orange-crowned Warbler","Leiothlypis celata","orcwar","Orange-crowned Warbler","Leiothlypis celata","species","orcwar"
+6471,"Colima Warbler","Leiothlypis crissalis","colwar","Colima Warbler","Leiothlypis crissalis","species","colwar"
+6430,"Lucy's Warbler","Leiothlypis luciae","lucwar","Lucy's Warbler","Leiothlypis luciae","species","lucwar"
+6450,"Nashville Warbler","Leiothlypis ruficapilla","naswar","Nashville Warbler","Leiothlypis ruficapilla","species","naswar"
+6440,"Virginia's Warbler","Leiothlypis virginiae","virwar","Virginia's Warbler","Leiothlypis virginiae","species","virwar"
+6780,"Connecticut Warbler","Oporornis agilis","conwar","Connecticut Warbler","Oporornis agilis","species","conwar"
+6821,"Gray-crowned Yellowthroat","Geothlypis poliocephala","gycyel","Gray-crowned Yellowthroat","Geothlypis poliocephala","species","gycyel"
+6800,"MacGillivray's Warbler","Geothlypis tolmiei","macwar","MacGillivray's Warbler","Geothlypis tolmiei","species","macwar"
+6790,"Mourning Warbler","Geothlypis philadelphia","mouwar","Mourning Warbler","Geothlypis philadelphia","species","mouwar"
+6770,"Kentucky Warbler","Geothlypis formosa","kenwar","Kentucky Warbler","Geothlypis formosa","species","kenwar"
+9145,"Bahama Yellowthroat","Geothlypis rostrata","bahyel1","Bahama Yellowthroat","Geothlypis rostrata","species","bahyel1"
+6810,"Common Yellowthroat","Geothlypis trichas","comyel","Common Yellowthroat","Geothlypis trichas","species","comyel"
+6581,"Elfin-woods Warbler","Setophaga angelae","elwwar1","Elfin-woods Warbler","Setophaga angelae","species",NA
+9141,"Arrowhead Warbler","Setophaga pharetra","arrwar1","Arrowhead Warbler","Setophaga pharetra","species","arrwar1"
+6840,"Hooded Warbler","Setophaga  citrina","hoowar","Hooded Warbler","Setophaga citrina","species","hoowar"
+6870,"American Redstart","Setophaga ruticilla","amered","American Redstart","Setophaga ruticilla","species","amered"
+6700,"Kirtland's Warbler","Setophaga kirtlandii","kirwar","Kirtland's Warbler","Setophaga kirtlandii","species","kirwar"
+6500,"Cape May Warbler","Setophaga tigrina","camwar","Cape May Warbler","Setophaga tigrina","species","camwar"
+6580,"Cerulean Warbler","Setophaga cerulea","cerwar","Cerulean Warbler","Setophaga cerulea","species","cerwar"
+6480,"Northern Parula","Setophaga americana","norpar","Northern Parula","Setophaga americana","species","norpar"
+6490,"Tropical Parula","Setophaga pitiayumi","tropar","Tropical Parula","Setophaga pitiayumi","species","tropar"
+6570,"Magnolia Warbler","Setophaga magnolia","magwar","Magnolia Warbler","Setophaga magnolia","species","magwar"
+6600,"Bay-breasted Warbler","Setophaga castanea","babwar","Bay-breasted Warbler","Setophaga castanea","species","babwar"
+6620,"Blackburnian Warbler","Setophaga fusca","bkbwar","Blackburnian Warbler","Setophaga fusca","species","bkbwar"
+6520,"Yellow Warbler","Setophaga petechia","yelwar","Yellow Warbler","Setophaga petechia","species","yelwar"
+6590,"Chestnut-sided Warbler","Setophaga pensylvanica","chswar","Chestnut-sided Warbler","Setophaga pensylvanica","species","chswar"
+6610,"Blackpoll Warbler","Setophaga striata","bkpwar","Blackpoll Warbler","Setophaga striata","species","bkpwar"
+6540,"Black-throated Blue Warbler","Setophaga caerulescens","btbwar","Black-throated Blue Warbler","Setophaga caerulescens","species","btbwar"
+6720,"Western Palm Warbler","Setophaga palmarum palmarum","palwar","Palm Warbler","Setophaga palmarum","species","palwar"
+6729,"Yellow Palm Warbler","Setophaga palmarum hypochrysea","palwar","Palm Warbler","Setophaga palmarum","species","palwar"
+9138,"Olive-capped Warbler","Setophaga pityophila","olcwar1","Olive-capped Warbler","Setophaga pityophila","species","olcwar1"
+6710,"Pine Warbler","Setophaga pinus","pinwar","Pine Warbler","Setophaga pinus","species","pinwar"
+6556,"Unknown Yellow-rumped Warbler","Setophaga coronata","yerwar","Yellow-rumped Warbler","Setophaga coronata","species","yerwar"
+6550,"Myrtle Warbler","Setophaga coronata coronata","yerwar","Yellow-rumped Warbler","Setophaga coronata","species","yerwar"
+6560,"Audubon's Warbler","Setophaga auduboni auduboni","yerwar","Yellow-rumped Warbler","Setophaga coronata","species","yerwar"
+6630,"Yellow-throated Warbler","Setophaga dominica","yetwar","Yellow-throated Warbler","Setophaga dominica","species","yetwar"
+6634,"Sutton's Warbler","Setophaga americana x dominica","sutwar","Northern Parula x Yellow-throated Warbler (hybrid)","Setophaga americana x dominica","hybrid",NA
+6730,"Prairie Warbler","Setophaga discolor","prawar","Prairie Warbler","Setophaga discolor","species","prawar"
+6641,"Adelaide's Warbler","Setophaga adelaidae","adewar1","Adelaide's Warbler","Setophaga adelaidae","species","adewar1"
+6642,"Barbuda Warbler","Setophaga subita","barwar","Barbuda Warbler","Setophaga subita","species","barwar"
+6643,"St. Lucia Warbler","Setophaga delicata","stlwar","St. Lucia Warbler","Setophaga delicata","species","stlwar"
+6640,"Grace's Warbler","Setophaga graciae","grawar","Grace's Warbler","Setophaga graciae","species","grawar"
+6650,"Black-throated Gray Warbler","Setophaga nigrescens","btywar","Black-throated Gray Warbler","Setophaga nigrescens","species","btywar"
+6680,"Townsend's Warbler","Setophaga townsendi","towwar","Townsend's Warbler","Setophaga townsendi","species","towwar"
+6690,"Hermit Warbler","Setophaga occidentalis","herwar","Hermit Warbler","Setophaga occidentalis","species","herwar"
+6686,"Townsend's X Hermit Warbler Hybrid","Setophaga townsendi x occidentalis","x00059","Townsend's x Hermit Warbler (hybrid)","Setophaga townsendi x occidentalis","hybrid",NA
+6660,"Golden-cheeked Warbler","Setophaga chrysoparia","gchwar","Golden-cheeked Warbler","Setophaga chrysoparia","species","gchwar"
+6670,"Black-throated Green Warbler","Setophaga virens","btnwar","Black-throated Green Warbler","Setophaga virens","species","btnwar"
+6881,"Fan-tailed Warbler","Basileuterus lachrymosus","fatwar","Fan-tailed Warbler","Basileuterus lachrymosus","species","fatwar"
+6921,"Rufous-capped Warbler","Basileuterus rufifrons","rucwar","Rufous-capped Warbler","Basileuterus rufifrons","species","rucwar"
+6920,"Golden-crowned Warbler","Basileuterus culicivorus","gcrwar","Golden-crowned Warbler","Basileuterus culicivorus","species","gcrwar"
+6860,"Canada Warbler","Cardellina canadensis","canwar","Canada Warbler","Cardellina canadensis","species","canwar"
+6850,"Wilson's Warbler","Cardellina pusilla","wlswar","Wilson's Warbler","Cardellina pusilla","species","wlswar"
+6900,"Red-faced Warbler","Cardellina rubrifrons","refwar","Red-faced Warbler","Cardellina rubrifrons","species","refwar"
+6880,"Painted Redstart","Myioborus pictus","paired","Painted Redstart","Myioborus pictus","species","paired"
+6890,"Slate-throated Redstart","Myioborus miniatus","sltred","Slate-throated Redstart","Myioborus miniatus","species","sltred"
+6366,"Hybrid Warbler","",NA,NA,NA,NA,NA
+6090,"Hepatic Tanager","Piranga flava","heptan","Hepatic Tanager","Piranga flava","species","heptan"
+6100,"Summer Tanager","Piranga rubra","sumtan","Summer Tanager","Piranga rubra","species","sumtan"
+6080,"Scarlet Tanager","Piranga olivacea","scatan","Scarlet Tanager","Piranga olivacea","species","scatan"
+6070,"Western Tanager","Piranga ludoviciana","westan","Western Tanager","Piranga ludoviciana","species","westan"
+6071,"Flame-colored Tanager","Piranga bidentata","flctan","Flame-colored Tanager","Piranga bidentata","species","flctan"
+5930,"Northern Cardinal","Cardinalis cardinalis","norcar","Northern Cardinal","Cardinalis cardinalis","species","norcar"
+5940,"Pyrrhuloxia","Cardinalis sinuatus","pyrrhu","Pyrrhuloxia","Cardinalis sinuatus","species","pyrrhu"
+5950,"Rose-breasted Grosbeak","Pheucticus ludovicianus","robgro","Rose-breasted Grosbeak","Pheucticus ludovicianus","species","robgro"
+5960,"Black-headed Grosbeak","Pheucticus melanocephalus","bkhgro","Black-headed Grosbeak","Pheucticus melanocephalus","species","bkhgro"
+5971,"Blue Bunting","Cyanocompsa parellina","blubun","Blue Bunting","Cyanocompsa parellina","species","blubun"
+5970,"Blue Grosbeak","Passerina caerulea","blugrb1","Blue Grosbeak","Passerina caerulea","species","blugrb1"
+5990,"Lazuli Bunting","Passerina amoena","lazbun","Lazuli Bunting","Passerina amoena","species","lazbun"
+5980,"Indigo Bunting","Passerina cyanea","indbun","Indigo Bunting","Passerina cyanea","species","indbun"
+5986,"Indigo X Lazuli Bunting Hybrid","Passerina amoena x cyanea","ixlbun","Lazuli x Indigo Bunting (hybrid)","Passerina amoena x cyanea","hybrid",NA
+6000,"Varied Bunting","Passerina versicolor","varbun","Varied Bunting","Passerina versicolor","species","varbun"
+6010,"Painted Bunting","Passerina ciris","paibun","Painted Bunting","Passerina ciris","species","paibun"
+6040,"Dickcissel","Spiza americana","dickci","Dickcissel","Spiza americana","species","dickci"
+5922,"Red-crested Cardinal","Paroaria coronata","reccar","Red-crested Cardinal","Paroaria coronata","species","reccar"
+5923,"Yellow-billed Cardinal","Paroaria capitata","yebcar","Yellow-billed Cardinal","Paroaria capitata","species","yebcar"
+5861,"Saffron Finch","Sicalis flaveola","saffin","Saffron Finch","Sicalis flaveola","species","saffin"
+9184,"Blue-black Grassquit","Volatinia jacarina","blbgra1","Blue-black Grassquit","Volatinia jacarina","species","blbgra1"
+6350,"Bananaquit","Coereba flaveola","banana","Bananaquit","Coereba flaveola","species","banana"
+6032,"Yellow-faced Grassquit","Tiaris olivaceus","yefgra1","Yellow-faced Grassquit","Tiaris olivaceus","species","yefgra1"
+9151,"Orangequit","Euneornis campestris","orange1","Orangequit","Euneornis campestris","species",NA
+6021,"Puerto Rican Bullfinch","Melopyrrha portoricensis","purbul1","Puerto Rican Bullfinch","Melopyrrha portoricensis","species","purbul1"
+9178,"Greater Antillean Bullfinch","Melopyrrha violacea","grabul1","Greater Antillean Bullfinch","Melopyrrha violacea","species","grabul1"
+9176,"Yellow-shouldered Grassquit","Loxipasser anoxanthus","yesgra1","Yellow-shouldered Grassquit","Loxipasser anoxanthus","species",NA
+6031,"Cuban Grassquit","Phonipara canora","cubgra","Cuban Grassquit","Phonipara canora","species",NA
+6022,"Lesser Antillean Bullfinch","Loxigilla noctis","leabul1","Lesser Antillean Bullfinch","Loxigilla noctis","species","leabul1"
+6030,"Black-faced Grassquit","Melanospiza bicolor","bkfgra","Black-faced Grassquit","Melanospiza bicolor","species","bkfgra"
+6020,"White-collared Seedeater","Sporophila torqueola","whcsee","Morelet's/Cinnamon-rumped Seedeater","Sporophila morelleti/torqueola","slash",NA
+9182,"Yellow-bellied Seedeater","Sporophila nigricollis","yebsee1","Yellow-bellied Seedeater","Sporophila nigricollis","species","yebsee1"
+9996,"Hybrid Passerine","",NA,NA,NA,NA,NA
+0,"Unidentified Dead Bird","",NA,NA,NA,NA,NA
