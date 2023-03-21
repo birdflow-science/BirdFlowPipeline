@@ -1,5 +1,4 @@
 .Rproj.user/
-*.csv
 pdf/
 data/
-
+summary_df.csv
