@@ -1,3 +1,6 @@
+## Somewhat messy and highly interactive/iterative code to assist in creating
+## the crosswalk file between BBL and eBird v.2021 taxonomies
+
 suppressPackageStartupMessages(
   {
     library(ebirdst)
