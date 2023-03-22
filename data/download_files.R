@@ -13,7 +13,7 @@ if (!dir.exists('data')) {dir.create('data')}
 # get datafile info -------------------------------------------------------
 
 #read_html('https://www.sciencebase.gov/catalog/item/632b2d7bd34e71c6d67bc161')
-file_info <- read_html('htmlpage.htm') %>% html_nodes('td span.sb-download-link')
+file_info <- read_html('data/htmlpage.htm') %>% html_nodes('td span.sb-download-link')
 file_df <- data.frame(
   url = html_attr(file_info, 'data-url'),
   name = html_text(file_info))
