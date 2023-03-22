@@ -1,5 +1,8 @@
 .Rproj.user/
 pdf/
-data/
 summary_df.csv
 rds/
+*.csv
+*.zip
+*.xml
+README_before_download.txt
