@@ -18,6 +18,11 @@ library(geodist)
 # path management ---------------------------------------------------------
 
 if (!dir.exists('pdf')) {dir.create('pdf')}
+if (!dir.exists('output')) {dir.create('output')}
+
+# taxonomy join ---------
+
+tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
 
 # functions ----------------------------------------------------
 
@@ -38,52 +43,43 @@ preprocess_filter_days <- function(df, ndays){
   df
 }
 
-## NEW process
+## Filtering attrition and days elapsed vs. distance graphs
 
-species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
-# slashes cause problems later for file.path()
-species_lookup$SPECIES_NAME <- gsub('[/]', '_', species_lookup$SPECIES_NAME)
-summary_df <- data.frame(SPECIES_ID = integer(0),
+attrition_df <- data.frame(species_code = character(0),
                          species_name = character(0),
+                         n_i_rows = integer(0),
                          n_day180 = integer(0),
                          n_day180_dist0 = integer(0),
                          n_day180_dist15 = integer(0))
-pdf(file = file.path('pdf', 'distance_days.pdf'), onefile = TRUE)
-for (filename in filter(file_df, grepl('\\.csv$', name))$name){
-  multispecies_df <- fread(file.path('data',filename),
-                           colClasses = c(BIRD_STATUS = 'character',
-                                          EXTRA_INFO = 'character'))
-  species_tbl <- data.frame(SPECIES_ID = unique(multispecies_df$SPECIES_ID)) %>%
-    left_join(species_lookup[,c('SPECIES_ID', 'SPECIES_NAME')], by = 'SPECIES_ID')
-  for (species_tbl_row in seq_len(nrow(species_tbl))){
-    df <- multispecies_df %>% filter(SPECIES_ID == species_tbl[species_tbl_row, 'SPECIES_ID'])
-    species_name <- species_tbl[species_tbl_row, 'SPECIES_NAME']
-    message(species_name)
-    summary_df_row <- data.frame(SPECIES_ID = species_tbl[species_tbl_row, 'SPECIES_ID'],
-                                 species_name = species_name,
-                                 n_day180 = NA_integer_)
-    print(nrow(df))
-    df <- preprocess_data_types(df)
-    df <- preprocess_exclusions(df)
-    df <- preprocess_with_recovery(df)
-    df <- preprocess_sort_band_date(df)
-    df <- preprocess_calc_distance_days(df)
-    #df <- preprocess_filter_days(df, 365/2)
-    df <- drop_na(df, distance, days)
-    df <- filter(df, days > 0 & days < 365/2)
-    print(nrow(df))
-    n_day180 <- nrow(df)
-    summary_df_row$n_day180_dist0 <- filter(df, distance > 0) %>% pull(distance) %>% na.omit %>% length
-    summary_df_row$n_day180_dist15 <- filter(df, distance > 15) %>% pull(distance) %>% na.omit %>% length
-    summary_df_row$n_day180 <- n_day180
-    summary_df <- rbind(summary_df, summary_df_row)
-    write.csv(summary_df, 'summary_df.csv', row.names = FALSE)
-    if (n_day180 < 20){
-      next
-    }
-    plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
-         main = paste0(species_name, '\n', '(n = ', n_day180, ')'))
+pdf(file = file.path('output', 'distance_days.pdf'), onefile = TRUE)
+rds_files <- list.files('rds', full.names = TRUE)
+for (file in rds_files){
+  df <- readRDS(file)
+  species_code <- basename(file) %>% sub('\\.rds$', '', .)
+  species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
+  message(species_name)
+  attrition_df_row <- data.frame(species_code = species_code,
+                               species_name = species_name,
+                               n_i_rows = nrow(df),
+                               n_day180 = NA_integer_,
+                               n_day180_dist0 = NA_integer_,
+                               n_day180_dist15 = NA_integer_)
+  print(nrow(df))
+  df <- preprocess_calc_distance_days(df)
+  df <- drop_na(df, distance, days)
+  df <- filter(df, days > 0 & days < 365/2)
+  print(nrow(df))
+  n_day180 <- nrow(df)
+  attrition_df_row$n_day180_dist0 <- filter(df, distance > 0) %>% pull(distance) %>% na.omit %>% length
+  attrition_df_row$n_day180_dist15 <- filter(df, distance > 15) %>% pull(distance) %>% na.omit %>% length
+  attrition_df_row$n_day180 <- n_day180
+  attrition_df <- rbind(attrition_df, attrition_df_row)
+  write.csv(attrition_df, file.path('output','attrition.csv'), row.names = FALSE)
+  if (n_day180 < 20){
+    next
   }
+  plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
+       main = paste0(species_name, '\n', '(n = ', n_day180, ')'))
 }
 dev.off()
 
@@ -191,10 +187,6 @@ for (filename in file_df$name){
   }
 }
 
-## Work on:  Having date1 and date2 in the sf object with each BAND_TRACK
-
-# Species matching
-
 # ## Taxonomy notes from XML file: <taxonpro>expert advice;;identification
 # keys</taxonpro> <taxoncom>Taxonomic revisions by the American Ornithological
 # Society (AOS) have resulted in many changes in bird classification over the
@@ -234,11 +226,4 @@ for (filename in file_df$name){
 # Game birds include waterfowl, cranes, rails, woodcock, doves, crows and
 # ravens. All bandings are released at a 1-degree block coordinate precision,
 # encounters are released at coordinate precisions as they were originally
-# provided.<
-# 
-# big_df <- lapply(file_df$name, function(i){
-#   file.path('data', i) %>% fread
-# }) %>% rbindlist
-
-## Week cutoffs for S&T
-#ebirdst::ebirdst_weeks
+# provided.

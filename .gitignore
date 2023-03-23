@@ -6,3 +6,4 @@ rds/
 *.zip
 *.xml
 README_before_download.txt
+output/
