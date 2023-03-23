@@ -17,8 +17,9 @@ library(geodist)
 
 # path management ---------------------------------------------------------
 
-if (!dir.exists('pdf')) {dir.create('pdf')}
+
 if (!dir.exists('output')) {dir.create('output')}
+if (!dir.exists(file.path('output','maps'))) {dir.create(file.path('output','maps'))}
 
 # taxonomy join ---------
 
@@ -83,107 +84,64 @@ for (file in rds_files){
 }
 dev.off()
 
-## OLD process
+## Map pairwise tracks
 
-
-species_lookup <- fread('data/NABBP_Lookups_2022/species.csv')
-summary_df <- data.frame(SPECIES_ID = integer(0),
-                         species_name = character(0),
-                         nrow_start_div2 = integer(0),
-                         nrow_pre_expand_div2 = integer(0),
-                         nrow_post_expand_div2 = integer(0),
-                         nrow_dist_gr_0 = integer(0),
-                         nrow_dist_gr_15 = integer(0))
-for (filename in file_df$name){
-  multispecies_df <- fread(file.path('data',filename),
-                           colClasses = c(BIRD_STATUS = 'character',
-                                          EXTRA_INFO = 'character'))
-  species_tbl <- data.frame(SPECIES_ID = unique(multispecies_df$SPECIES_ID)) %>%
-    left_join(species_lookup[,c('SPECIES_ID', 'SPECIES_NAME')], by = 'SPECIES_ID')
-  for (species_tbl_row in seq_len(nrow(species_tbl))){
-    df <- multispecies_df %>% filter(SPECIES_ID == species_tbl[species_tbl_row, 'SPECIES_ID'])
-    species_name <- species_tbl[species_tbl_row, 'SPECIES_NAME']
-    message(species_name)
-    summary_df_row <- data.frame(SPECIES_ID = species_tbl[species_tbl_row, 'SPECIES_ID'],
-                                  species_name = species_name,
-                                  nrow_start_div2 = NA_integer_,
-                                  nrow_pre_expand_div2 = NA_integer_,
-                                  nrow_post_expand_div2 = NA_integer_,
-                                  nrow_dist_gr_0 = NA_integer_,
-                                  nrow_dist_gr_15 = NA_integer_)
-    original_rows <- nrow(df)
-    summary_df_row$nrow_start_div2 <- as.integer(original_rows / 2)
-    print(nrow(df))
-    df <- preprocess_data_types(df)
-    df <- preprocess_exclusions(df)
-    df <- preprocess_with_recovery(df)
-    # report row attrition
-    print(nrow(df) / original_rows)
-    # skip if no more rows
-    if (nrow(df) == 0){
-      summary_df_row$nrow_pre_expand_div2 <- 0L
-      summary_df_row$nrow_post_expand_div2 <- 0L
-      next
-    }
-    # record nrows
-    pre_expand <- nrow(df)
-    summary_df_row$nrow_pre_expand_div2 <- as.integer(pre_expand / 2)
-    # exclude bands that no longer have at least 2 timepoints
-    # and expand data to separate BAND_TRACKs (two consecutive points)
-    df <- df %>% group_by(BAND) %>%
-      mutate(count = c(1, rep(2, n() - 2), 1)) %>%
-      uncount(count) %>%
-      mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
-      ungroup
-    # report expansion factor
-    print(nrow(df) / pre_expand)
-    # report number of linestring-able pairs
-    print(nrow(df)/2)
-    summary_df_row$nrow_post_expand_div2 <- as.integer(nrow(df) / 2)
-    # get rid of same start and stop coordinates (multipoint filter also does it)
+rds_files <- list.files('rds', full.names = TRUE)
+for (file in rds_files){
+  df <- readRDS(file)
+  species_code <- basename(file) %>% sub('\\.rds$', '', .)
+  species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
+  message(species_name)
+  pre_expand <- nrow(df)
+  df <- df %>% group_by(BAND) %>%
+    mutate(count = c(1, rep(2, n() - 2), 1)) %>%
+    uncount(count) %>%
+    mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
+    ungroup
+  # report expansion factor
+  print(nrow(df) / pre_expand)
+  # report number of linestring-able pairs
+  print(nrow(df)/2)
+  #summary_df_row$nrow_post_expand_div2 <- as.integer(nrow(df) / 2)
+  # get rid of same start and stop coordinates (multipoint filter also does it)
+  df <- df %>%
+    st_as_sf(coords = c('LON_DD', 'LAT_DD'), remove = FALSE, crs = 'wgs84') %>%
+    st_transform(birdflow_crs) %>%
+    group_by(BAND_TRACK) %>%
+    filter(n_distinct(LON_DD) > 1 | n_distinct(LAT_DD) > 1) %>%
+    ungroup
+  if (nrow(df) > 0){
+    # skip rest if no rows of data
     df <- df %>%
-      st_as_sf(coords = c('LON_DD', 'LAT_DD'), remove = FALSE, crs = 'wgs84') %>%
       group_by(BAND_TRACK) %>%
-      filter(n_distinct(LON_DD) > 1 | n_distinct(LAT_DD) > 1) %>%
-      ungroup
-    if (nrow(df) > 0){
-      # skip rest if no rows of data
-      df <- df %>%
-        group_by(BAND_TRACK) %>%
-        summarise(start_date = min(EVENT_DATE),
-                  stop_date = max(EVENT_DATE)) %>%
-        #filter(st_geometry_type(.) == "MULTIPOINT") %>%
-        st_cast("LINESTRING") %>%
-        mutate(distance = as.numeric(st_length(.)))
-      summary_df_row$nrow_dist_gr_0 <- nrow(df)
-      # this line gets rid of anything less than 15000 meters
-      df <- df[as.numeric(st_length(df)) > 15000,]
-      # check length of data.frame after filtering
-      print(nrow(df))
-      summary_df_row$nrow_dist_gr_15 <- nrow(df)
-      # make plot
-      if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
-        try({
-          pdf(paste0('pdf/', species_name, '.pdf'), 6, 6)
-          coastline <- get_coastline(select(df, BAND_TRACK), buffer = 5)
-          my_main <- paste0(species_name, '\n(n = ', nrow(df), ')')
-          if (nrow(coastline) > 1){
-            plot(coastline, main = my_main)
-            plot(select(df, BAND_TRACK), add = TRUE)
-          } else {
-            # don't plot coastline if there isn't any
-            plot(select(df, BAND_TRACK), main = my_main)
-          }
-          dev.off()
-        })
-      }
-    } else {
-      summary_df_row$nrow_dist_gr_0 <- 0L
-      summary_df_row$nrow_dist_gr_15 <- 0L
+      summarise(start_date = min(EVENT_DATE),
+                stop_date = max(EVENT_DATE)) %>%
+      #filter(st_geometry_type(.) == "MULTIPOINT") %>%
+      st_cast("LINESTRING") %>%
+      mutate(distance = as.numeric(st_length(.)))
+    #summary_df_row$nrow_dist_gr_0 <- nrow(df)
+    # this line gets rid of anything less than 15000 meters
+    df <- df[as.numeric(st_length(df)) > 15000,]
+    # check length of data.frame after filtering
+    print(nrow(df))
+    #summary_df_row$nrow_dist_gr_15 <- nrow(df)
+    # make plot
+    if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
+      try({
+        pdf(file.path('output','maps', paste0(species_name, '.pdf')), 6, 6)
+        if (exists('coastline')) rm(coastline)
+        try({coastline <- get_coastline(select(df, BAND_TRACK), buffer = 5)})
+        my_main <- paste0(species_name, '\n(n = ', nrow(df), ')')
+        if (exists('coastline') && nrow(coastline) > 1){
+          plot(coastline, main = my_main)
+          plot(select(df, BAND_TRACK), add = TRUE)
+        } else {
+          # don't plot coastline if there isn't any
+          plot(select(df, BAND_TRACK), main = my_main)
+        }
+        dev.off()
+      })
     }
-    summary_df <- rbind(summary_df, summary_df_row)
-    # write csv after species, for troubleshooting
-    write.csv(summary_df, 'summary_df.csv', row.names = FALSE)
   }
 }
 
