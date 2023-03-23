@@ -19,7 +19,7 @@ library(geodist)
 
 if (!dir.exists('pdf')) {dir.create('pdf')}
 
-# test using rwbl data ----------------------------------------------------
+# functions ----------------------------------------------------
 
 preprocess_calc_distance_days <- function(df){
   df %>%
