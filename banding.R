@@ -44,6 +44,40 @@ preprocess_filter_days <- function(df, ndays){
   df
 }
 
+make_tracks <- function(
+    df,
+    remove_identical = TRUE,
+    crs_in = 'wgs84',
+    crs_out = birdflow_crs,
+    min_dist_m = 15000){
+  # Function to convert banding df to an sf object of linestrings of origin-destination tracks
+  # expand to two steps
+  df <- df %>% group_by(BAND) %>%
+    mutate(count = c(1, rep(2, n() - 2), 1)) %>%
+    uncount(count) %>%
+    mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
+    ungroup
+  # get rid of same start and stop coordinates (multipoint filter also does it)
+  if (remove_identical){
+    df <- df %>%
+      group_by(BAND_TRACK) %>%
+      filter(n_distinct(LON_DD) > 1 | n_distinct(LAT_DD) > 1) %>%
+      ungroup
+  }
+  # summarise
+  df <- df %>%
+    group_by(BAND_TRACK) %>%
+    summarise(start_date = min(EVENT_DATE),
+              stop_date = max(EVENT_DATE),
+              geom = sprintf("LINESTRING(%s %s, %s %s)",
+                             LON_DD[1], LAT_DD[1], LON_DD[2], LAT_DD[2])
+    ) %>% ungroup
+  df <- st_as_sf(df, wkt = "geom", crs = crs_in) %>% st_transform(crs_out)
+  # filter distances
+  df <- df[as.numeric(st_length(df)) >= min_dist_m,]
+  df
+}
+
 ## Filtering attrition and days elapsed vs. distance graphs
 
 attrition_df <- data.frame(species_code = character(0),
@@ -92,56 +126,22 @@ for (file in rds_files){
   species_code <- basename(file) %>% sub('\\.rds$', '', .)
   species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
   message(species_name)
-  pre_expand <- nrow(df)
-  df <- df %>% group_by(BAND) %>%
-    mutate(count = c(1, rep(2, n() - 2), 1)) %>%
-    uncount(count) %>%
-    mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
-    ungroup
-  # report expansion factor
-  print(nrow(df) / pre_expand)
-  # report number of linestring-able pairs
-  print(nrow(df)/2)
-  #summary_df_row$nrow_post_expand_div2 <- as.integer(nrow(df) / 2)
-  # get rid of same start and stop coordinates (multipoint filter also does it)
-  df <- df %>%
-    st_as_sf(coords = c('LON_DD', 'LAT_DD'), remove = FALSE, crs = 'wgs84') %>%
-    st_transform(birdflow_crs) %>%
-    group_by(BAND_TRACK) %>%
-    filter(n_distinct(LON_DD) > 1 | n_distinct(LAT_DD) > 1) %>%
-    ungroup
-  if (nrow(df) > 0){
-    # skip rest if no rows of data
-    df <- df %>%
-      group_by(BAND_TRACK) %>%
-      summarise(start_date = min(EVENT_DATE),
-                stop_date = max(EVENT_DATE)) %>%
-      #filter(st_geometry_type(.) == "MULTIPOINT") %>%
-      st_cast("LINESTRING") %>%
-      mutate(distance = as.numeric(st_length(.)))
-    #summary_df_row$nrow_dist_gr_0 <- nrow(df)
-    # this line gets rid of anything less than 15000 meters
-    df <- df[as.numeric(st_length(df)) > 15000,]
-    # check length of data.frame after filtering
-    print(nrow(df))
-    #summary_df_row$nrow_dist_gr_15 <- nrow(df)
-    # make plot
-    if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
-      try({
-        pdf(file.path('output','maps', paste0(species_name, '.pdf')), 6, 6)
-        if (exists('coastline')) rm(coastline)
-        try({coastline <- get_coastline(select(df, BAND_TRACK), buffer = 5)})
-        my_main <- paste0(species_name, '\n(n = ', nrow(df), ')')
-        if (exists('coastline') && nrow(coastline) > 1){
-          plot(coastline, main = my_main)
-          plot(select(df, BAND_TRACK), add = TRUE)
-        } else {
-          # don't plot coastline if there isn't any
-          plot(select(df, BAND_TRACK), main = my_main)
-        }
-        dev.off()
-      })
-    }
+  df <- make_tracks(df)
+  if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
+    try({
+      pdf(file.path('output','maps', paste0(species_name, '.pdf')), 6, 6)
+      if (exists('coastline')) rm(coastline)
+      try({coastline <- get_coastline(select(df, BAND_TRACK), buffer = 5)})
+      my_main <- paste0(species_name, '\n(n = ', nrow(df), ')')
+      if (exists('coastline') && nrow(coastline) > 1){
+        plot(coastline, main = my_main)
+        plot(select(df, BAND_TRACK), add = TRUE)
+      } else {
+        # don't plot coastline if there isn't any
+        plot(select(df, BAND_TRACK), main = my_main)
+      }
+      dev.off()
+    })
   }
 }
 
