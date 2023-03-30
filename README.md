@@ -18,3 +18,5 @@ IdentityFile ~/.ssh/<your_unity_private_key.file>
 # https://ood.unity.rc.umass.edu/pun/sys/dashboard/
 
 # Try the test_batchtools.R script
+
+# set EBIRDST_API_KEY environment variable
