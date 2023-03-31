@@ -12,6 +12,15 @@ params$species <- c('rewbla', 'Hooded Warbler')
 # memory for model in GB to determine preprocess resolution
 params$mem_mf <- c(1,2)
 
+# modelfit distance weight ###
+params$mf_dist_weight <- 0.1
+
+# modelfit entropy weight ###
+params$mf_ent_weight <- 0.02
+
+# modelfit distance power ###
+params$mf_dist_pow <- 0.5
+
 # preprocess CPU walltime in seconds
 params$wt_pp <- 3 * 60
 
@@ -23,9 +32,19 @@ params$dir <- file.path(getwd(), 'batch_preprocess')
 dir.create(params$dir, showWarnings = FALSE)
 
 
-
-
 #### LESS COMMONLY CHANGED PARAMETERS ####
+
+# modelfit observation weight
+params$mf_obs_weight <- 20
+
+# modelfit learning rate
+params$mf_learning_rate <- 0.1
+
+# modelfit training steps
+params$mf_training_steps <- 1500
+
+# modelfit random seed
+params$mf_rng_seed <- 17
 
 # preprocess partition
 params$part_pp <- 'cpu-preempt,cpu'
