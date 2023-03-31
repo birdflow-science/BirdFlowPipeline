@@ -42,4 +42,4 @@ hostname
 source /etc/profile
 module load miniconda
 conda activate jax_gpu
-python3 <%= resources$mypy %> <%= resources$mydir %> <%= resources$mysp %> <%= resources$myres %>
+python3 <%= resources$mypy %> <%= resources$mydir %> <%= resources$mysp %> <%= resources$myres %> --obs_weight=<%= resources$mf_obs_weight %> --dist_weight=<%= resources$mf_dist_weight %> --ent_weight=<%= resources$mf_ent_weight %> --dist_pow=<%= resources$mf_dist_pow %> --learning_rate=<%= resources$mf_learning_rate %> --training_steps=<%= resources$mf_training_steps %> --rng_seed=<%= resources$mf_rng_seed %>

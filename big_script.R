@@ -1,5 +1,6 @@
 library(batchtools)
 library(BirdFlowR)
+library(dplyr)
 
 ## Set batch parameters
 params <- list()
@@ -7,10 +8,10 @@ params <- list()
 #### COMMONLY CHANGED PARAMETERS
 
 # species list
-params$species <- c('rewbla', 'Hooded Warbler')
+params$species <- 'rewbla'
 
 # memory for model in GB to determine preprocess resolution
-params$mem_mf <- c(1,2)
+params$mem_mf <- 1
 
 # modelfit distance weight ###
 params$mf_dist_weight <- 0.1
@@ -156,12 +157,27 @@ fit_model <- function(mypy, mydir, mysp, myres, mymem){
   )
 }
 
-batchMap(fun = fit_model,
-         mypy  = params$mf_script,
-         mydir = params$dir,
-         mysp  = pp_info$species,
-         myres = pp_info$res,
-         mymem = pp_info$mem + 1)
+# organize grid expansion for arguments...
+orig <- data.frame(mypy  = params$mf_script,
+           mydir = params$dir,
+           mysp  = pp_info$species,
+           myres = pp_info$res,
+           mymem = pp_info$mem + 1)
+orig$id <- seq_len(nrow(orig))
+expanded <- expand.grid(
+  id = orig$id,
+  mf_dist_weight = params$mf_dist_weight,
+  mf_ent_weight = params$mf_ent_weight,
+  mf_dist_pow = params$mf_dist_pow,
+  mf_obs_weight = params$mf_obs_weight,
+  mf_learning_rate = params$mf_learning_rate,
+  mf_training_steps = params$mf_training_steps,
+  mf_rng_seed = params$mf_rng_seed
+)
+mf_args <- left_join(orig, expanded, by = 'id')
+mf_args$id <- NULL
+
+batchMap(fun = fit_model, args = mf_args)
 
 # resources the same across all jobs
 static_rez <- list(walltime = params$wt_mf,
@@ -180,6 +196,14 @@ for (i in seq_along(jobinfo)){
   rez$mysp  <- jobinfo[[i]]$mysp
   rez$myres <- jobinfo[[i]]$myres
   rez$mymem <- jobinfo[[i]]$mymem
+  rez$mf_dist_weight <- jobinfo[[i]]$mf_dist_weight
+  rez$mf_ent_weight <- jobinfo[[i]]$mf_ent_weight
+  rez$mf_dist_pow <- jobinfo[[i]]$mf_dist_pow
+  rez$mf_obs_weight <- jobinfo[[i]]$mf_obs_weight
+  rez$mf_learning_rate <- jobinfo[[i]]$mf_learning_rate
+  rez$mf_training_steps <- jobinfo[[i]]$mf_training_steps
+  rez$mf_rng_seed <- jobinfo[[i]]$mf_rng_seed
+  
   stopifnot(all(lapply(rez, length) == 1))
   submitJobs(ids = i, resources = rez)
 }
