@@ -57,7 +57,9 @@ params$pp_reg <- paste0(params$datetime, '_pp')
 
 batch_preprocess_species <- function(params = params){
   reg <- makeRegistry(params$pp_reg)
-  reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'test_template.tmpl', array.jobs = params$array, nodename = params$login)
+  reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_preprocess_species.tmpl',
+                                                     array.jobs = params$array,
+                                                     nodename = params$login)
   batchMap(fun = BirdFlowR::preprocess_species,
            args = expand.grid(
              species = params$species,
