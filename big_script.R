@@ -1,18 +1,13 @@
 library(batchtools)
 library(BirdFlowR)
 
-# Set batch parameters
+## Set batch parameters
 params <- list()
 
-# hdf directory
-params$dir <- file.path(getwd(), 'batch_preprocess')
-dir.create(params$dir, showWarnings = FALSE)
+#### COMMONLY CHANGED PARAMETERS
 
-# login node
-params$login <- 'login2'
-
-# array jobs
-params$array <- TRUE
+# species list
+params$species <- c('rewbla', 'Hooded Warbler')
 
 # memory for model fit in GB
 params$mem_mf <- c(1,2)
@@ -20,25 +15,43 @@ params$mem_mf <- c(1,2)
 # preprocess CPU walltime in seconds
 params$wt_pp <- 3 * 60
 
-# preprocess NCPUs
-params$ncpu_pp <- 1
+# hdf directory
+params$dir <- file.path(getwd(), 'batch_preprocess')
+dir.create(params$dir, showWarnings = FALSE)
 
-# preprocess memory in GB
-params$mem_pp <- 4
+
+
+
+#### LESS COMMONLY CHANGED PARAMETERS ####
 
 # preprocess partition
 params$part_pp <- 'cpu-preempt'
 
+# preprocess memory in GB
+params$mem_pp <- 4
+
+# login node to use via SSH
+params$login <- 'login2'
+
+# array jobs
+params$array <- TRUE
+
+# preprocess NCPUs
+params$ncpu_pp <- 1
+
+# time zone for file naming
+params$tz <- "America/Los_Angeles"
+
 # run datetime
 params$datetime <- Sys.time()
-params$datetime <- `attr<-`(params$datetime,"tzone", "America/Los_Angeles")
+params$datetime <- `attr<-`(params$datetime,"tzone", params$tz)
 params$datetime <- format(params$datetime, "%Y-%m-%d_%H-%M-%S")
 
-# pp registry
+# pp registry name
 params$pp_reg <- paste0(params$datetime, '_pp')
 
-# species list
-params$species <- c('rewbla', 'Hooded Warbler')
+
+#### BATCH PREPROCESS SPECIES ####
 
 # batch preprocess species
 reg <- makeRegistry(params$pp_reg)
@@ -52,9 +65,9 @@ batchMap(fun = BirdFlowR::preprocess_species,
 )
 rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
 submitJobs(resources = rez)
+#pp_status <- NA
+#pp_status <- waitForJobs()
 waitForJobs()
-pp_status <- NA
-pp_status <- waitForJobs()
 
 # my_result_list <- lapply(1:4, loadResult)
 # 
