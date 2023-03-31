@@ -37,20 +37,24 @@ batchMap(fun = fit_model,
          mysp  = 'rewbla',
          myres = myres)
 
-# Need to loop through here to adjust resources for each job,
+# resources the same across all jobs
+static_rez <- list(walltime = 600,
+                   ncpus = 2,
+                   ngpus = 1,
+                   partition = 'gpu',
+                   mypy = '/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py',
+                   mydir = dir,
+                   mymem = mymem)
+
+# Need to loop through here to adjust variable "resources" for each job,
 # since species and resolution needs to be a static "resource"
 jobinfo <- getJobPars()$job.pars
 for (i in seq_along(jobinfo)){
-  # resources here includes the Python arguments to be deparsed into sbatch file via brew
-  rez <- list(walltime = 600,
-              ncpus = 2,
-              ngpus = 1,
-              partition = 'gpu',
-              mypy = '/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py',
-              mydir = dir,
-              mysp  = jobinfo[[i]]$mysp,
-              myres = jobinfo[[i]]$myres,
-              mymem = mymem)
+  # variable rez here = Python arguments to be deparsed into sbatch file via brew
+  rez       <- static_rez
+  rez$mysp  <- jobinfo[[i]]$mysp
+  rez$myres <- jobinfo[[i]]$myres
+  stopifnot(all(lapply(rez, length) == 1))
   submitJobs(ids = i, resources = rez)
 }
 
