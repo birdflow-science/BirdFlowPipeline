@@ -18,13 +18,16 @@ reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'modelfit.tmpl', a
 
 dir <- file.path(getwd(), 'batch_preprocess')
 dir.create(dir, showWarnings = FALSE)
-myres <- 184
+myres <- c(184,126)
 mymem <- 8
 
 fit_model <- function(mypy, mydir, mysp, myres){
-  system2(
-    command = 'python3',
-    args = c(mypy, mydir, mysp, myres)
+  # not actually printed currently since not evaluated by R on remote
+  # just need all arguments here for batch_map
+  print(
+    paste(
+      mypy, mydir, mysp, myres
+    )
   )
 }
 
@@ -34,17 +37,25 @@ batchMap(fun = fit_model,
          mysp  = 'rewbla',
          myres = myres)
 
-rez <- list(walltime = 600,
-            ncpus = 2,
-            ngpus = 1,
-            memory = gpu_ram,
-            partition = 'gpu',
-            max.concurrent.jobs = 4,
-            mypy = '/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py',
-            mydir = dir,
-            mysp  = 'rewbla',
-            myres = myres,
-            mymem = mymem)
+# Need to loop through here to adjust resources for each job,
+# since species and resolution needs to be a static "resource"
+jobinfo <- getJobPars()$job.pars
+for (i in seq_along(jobinfo)){
+  # resources here includes the Python arguments to be deparsed into sbatch file via brew
+  rez <- list(walltime = 600,
+              ncpus = 2,
+              ngpus = 1,
+              partition = 'gpu',
+              mypy = '/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py',
+              mydir = dir,
+              mysp  = jobinfo[[i]]$mysp,
+              myres = jobinfo[[i]]$myres,
+              mymem = mymem)
+  submitJobs(ids = i, resources = rez)
+}
 
-submitJobs(resources = rez)
-waitForJobs()
+# This ends up just expiring, because no batchtools process in remote, so no reporting of results
+# waitForJobs()
+
+# Either install R/batchtools on remote or check for output files manually.
+
