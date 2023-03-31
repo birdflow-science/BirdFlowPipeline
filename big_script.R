@@ -8,19 +8,19 @@ params <- list()
 #### COMMONLY CHANGED PARAMETERS
 
 # species list
-params$species <- 'rewbla'
+params$species <- c('Cinnamon Teal', 'Purple Finch')
 
 # memory for model in GB to determine preprocess resolution
 params$mem_mf <- 1
 
-# modelfit distance weight ###
-params$mf_dist_weight <- 0.1
+# modelfit distance weight ### a
+params$mf_dist_weight <- 0.005
 
-# modelfit entropy weight ###
-params$mf_ent_weight <- 0.02
+# modelfit entropy weight ### B
+params$mf_ent_weight <- seq(from = 0, to = 0.006, by = 0.001)
 
-# modelfit distance power ###
-params$mf_dist_pow <- 0.5
+# modelfit distance power ### E
+params$mf_dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1)
 
 # preprocess CPU walltime in seconds
 params$wt_pp <- 3 * 60
