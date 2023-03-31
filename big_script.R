@@ -53,21 +53,26 @@ params$pp_reg <- paste0(params$datetime, '_pp')
 
 #### BATCH PREPROCESS SPECIES ####
 
-# batch preprocess species
-reg <- makeRegistry(params$pp_reg)
-reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'test_template.tmpl', array.jobs = params$array, nodename = params$login)
-batchMap(fun = BirdFlowR::preprocess_species,
-         args = expand.grid(
-           species = params$species,
-           out_dir = params$dir,
-           gpu_ram = params$mem_mf,
-           stringsAsFactors = FALSE)
-)
-rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
-submitJobs(resources = rez)
-#pp_status <- NA
-#pp_status <- waitForJobs()
-waitForJobs()
+# batch preprocess species function
+
+batch_preprocess_species <- function(params = params){
+  reg <- makeRegistry(params$pp_reg)
+  reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'test_template.tmpl', array.jobs = params$array, nodename = params$login)
+  batchMap(fun = BirdFlowR::preprocess_species,
+           args = expand.grid(
+             species = params$species,
+             out_dir = params$dir,
+             gpu_ram = params$mem_mf,
+             stringsAsFactors = FALSE)
+  )
+  rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
+  submitJobs(resources = rez)
+  #pp_status <- NA
+  #pp_status <- waitForJobs()
+  waitForJobs()
+}
+
+batch_preprocess_species(params)
 
 # my_result_list <- lapply(1:4, loadResult)
 # 
