@@ -42,3 +42,4 @@ hostname
 source /etc/profile
 module load microarch/x86_64 apptainer
 apptainer exec /modules/apps/ood/rstudio-server/rocker-ml-verse-4.2.3-sandbox Rscript -e 'batchtools::doJobCollection("<%= uri %>")'
+TZ='America/Los_Angeles' date
