@@ -11,7 +11,7 @@ params <- list()
 params$species <- c('Cinnamon Teal', 'Purple Finch')
 
 # memory for model in GB to determine preprocess resolution
-params$mem_mf <- 1
+params$mem_mf <- 8
 
 # modelfit distance weight ### a
 params$mf_dist_weight <- 0.005
@@ -29,7 +29,8 @@ params$wt_pp <- 3 * 60
 params$wt_mf <- 10 * 60
 
 # hdf directory
-params$dir <- file.path(getwd(), 'batch_preprocess')
+params$dir <- file.path('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf')
+#params$dir <- file.path(getwd(), 'batch_preprocess')
 dir.create(params$dir, showWarnings = FALSE)
 
 
