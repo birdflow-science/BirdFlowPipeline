@@ -73,8 +73,9 @@ make_tracks <- function(
                              LON_DD[1], LAT_DD[1], LON_DD[2], LAT_DD[2])
     ) %>% ungroup
   df <- st_as_sf(df, wkt = "geom", crs = crs_in) %>% st_transform(crs_out)
-  # filter distances
-  df <- df[as.numeric(st_length(df)) >= min_dist_m,]
+  # add and filter distances
+  df$distance <- as.numeric(st_length(df))
+  df <- df %>% filter(distance >= min_dist_m)
   df
 }
 
