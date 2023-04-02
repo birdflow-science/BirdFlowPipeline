@@ -8,19 +8,19 @@ params <- list()
 #### COMMONLY CHANGED PARAMETERS
 
 # species list
-params$species <- c('Cinnamon Teal', 'Purple Finch')
+params$species <- c('American Crow')
 
 # memory for model in GB to determine preprocess resolution
-params$mem_mf <- 8
+params$mem_mf <- 2
 
 # modelfit distance weight ### a
 params$mf_dist_weight <- 0.005
 
 # modelfit entropy weight ### B
-params$mf_ent_weight <- seq(from = 0, to = 0.006, by = 0.001)
+params$mf_ent_weight <- 0.01
 
 # modelfit distance power ### E
-params$mf_dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1)
+params$mf_dist_pow <- 0.5
 
 # preprocess CPU walltime in seconds
 params$wt_pp <- 3 * 60
@@ -133,7 +133,7 @@ pp_info <- save_preprocessing_info()
 ## Model Fitting ##
 
 reg <- reg <- makeRegistry(params$mf_reg)
-reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_modelfit.tmpl', array.jobs = params$array, nodename = params$login)
+reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_modelfit_container.tmpl', array.jobs = params$array, nodename = params$login)
 
 ## Possible way to get around the static resources issue??
 # Note that all variables defined in a JobCollection can be used inside the
@@ -158,12 +158,42 @@ fit_model <- function(mypy, mydir, mysp, myres, mymem){
   )
 }
 
+fit_model_container <- function(
+    mypy,
+    mydir,
+    mysp,
+    myres,
+    mymem,
+    mf_dist_weight,
+    mf_ent_weight,
+    mf_dist_pow,
+    mf_obs_weight,
+    mf_learning_rate,
+    mf_training_steps,
+    mf_rng_seed
+){
+  system2('python',
+          args = c(
+            mypy,
+            mydir,
+            mysp,
+            myres,
+            paste0('--dist_weight=', mf_dist_weight),
+            paste0('--ent_weight=', mf_ent_weight),
+            paste0('--dist_pow=', mf_dist_pow),
+            paste0('--obs_weight=', mf_obs_weight),
+            paste0('--learning_rate=', mf_learning_rate),
+            paste0('--training_steps=', mf_training_steps),
+            paste0('--rng_seed=', mf_rng_seed)
+          ))
+}
+
 # organize grid expansion for arguments...
 orig <- data.frame(mypy  = params$mf_script,
-           mydir = params$dir,
-           mysp  = pp_info$species,
-           myres = pp_info$res,
-           mymem = pp_info$mem + 1)
+                   mydir = params$dir,
+                   mysp  = pp_info$species,
+                   myres = pp_info$res,
+                   mymem = pp_info$mem + 1)
 orig$id <- seq_len(nrow(orig))
 expanded <- expand.grid(
   id = orig$id,
@@ -178,7 +208,7 @@ expanded <- expand.grid(
 mf_args <- left_join(orig, expanded, by = 'id')
 mf_args$id <- NULL
 
-batchMap(fun = fit_model, args = mf_args)
+batchMap(fun = fit_model_container, args = mf_args)
 
 # resources the same across all jobs
 static_rez <- list(walltime = params$wt_mf,
@@ -208,6 +238,7 @@ for (i in seq_along(jobinfo)){
   stopifnot(all(lapply(rez, length) == 1))
   submitJobs(ids = i, resources = rez)
 }
+waitForJobs()
 
 # This ends up just expiring, because no batchtools process in remote, so no reporting of results
 # waitForJobs()
