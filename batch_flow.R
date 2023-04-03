@@ -101,8 +101,6 @@ batch_preprocess_species <- function(params = params){
   )
   rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
   submitJobs(resources = rez)
-  #pp_status <- NA
-  #pp_status <- waitForJobs()
   waitForJobs()
 }
 
@@ -118,16 +116,6 @@ save_preprocessing_info <- function(){
 }
 
 pp_info <- save_preprocessing_info()
-
-# my_memory_vector <- sapply(getJobPars()$job.pars, function(i){i$gpu_ram})
-# my_result_list <- lapply(seq_len(nrow(getJobPars())), loadResult)
-# my_species_vector <- sapply(my_result_list, function(i){i$species$species_code})
-# my_resolution_vector <- sapply(my_result_list, function(i){i$geom$res[1]/1000})
-# my_ebirdst_year_vector <- unlist(lapply(my_result_list, function(i){i$metadata$ebird_version_year}))
-# 
-# my_species_vector
-# my_resolution_vector
-# my_ebirdst_year_vector
 
 
 ## Model Fitting ##
@@ -147,16 +135,6 @@ reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_modelfit_c
 # jc = makeJobCollection(1:3, resources = list(foo = "bar"), reg = tmp)
 # ls(jc)
 # jc$resources
-
-fit_model <- function(mypy, mydir, mysp, myres, mymem){
-  # not actually printed currently since not evaluated by R on remote
-  # just need all arguments here for batch_map
-  print(
-    paste(
-      mypy, mydir, mysp, myres, mymem
-    )
-  )
-}
 
 fit_model_container <- function(
     mypy,
@@ -239,9 +217,3 @@ for (i in seq_along(jobinfo)){
   submitJobs(ids = i, resources = rez)
 }
 waitForJobs()
-
-# This ends up just expiring, because no batchtools process in remote, so no reporting of results
-# waitForJobs()
-
-# Either install R/batchtools on remote or check for output files manually.
-
