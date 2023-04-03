@@ -1,3 +1,5 @@
+#Sys.setenv(DEBUGME = "batchtools")
+
 library(batchtools)
 library(BirdFlowR)
 library(dplyr)
@@ -91,7 +93,12 @@ params$mf_script <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/upd
 # batch preprocess species function
 
 batch_preprocess_species <- function(params = params){
+  # See ?Registry for more info on configuration files, e.g., always loading
+  # certain packages or starting in certain working directories
   reg <- makeRegistry(params$pp_reg)
+  # saveRegistry()
+  # ?setDefaultRegistry
+  # not needed because once we make registry, it stays for session as reg
   reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_preprocess_species.tmpl',
                                                      array.jobs = params$array,
                                                      nodename = params$login)
@@ -220,3 +227,4 @@ for (i in seq_along(jobinfo)){
   submitJobs(ids = i, resources = rez)
 }
 waitForJobs()
+#getJobTable()
