@@ -58,7 +58,7 @@ params$mem_pp <- 4
 params$part_mf <- 'gpu-preempt,gpu'
 
 # login node to use via SSH
-params$login <- 'login2'
+params$login <- 'login5'
 
 # array jobs
 params$array <- TRUE
@@ -172,7 +172,7 @@ fit_model_container <- function(
     mf_training_steps,
     mf_rng_seed
 ){
-  system2('python',
+  system2('/conda/bin/python3',
           args = c(
             mypy,
             mydir,
