@@ -14,12 +14,15 @@ params$species <- c('American Crow')
 params$mem_mf <- 2
 
 # modelfit distance weight ### a
+## params$mf_dist_weight <- 0.005 ## paper ##
 params$mf_dist_weight <- 0.005
 
 # modelfit entropy weight ### B
+## params$mf_ent_weight <- seq(from = 0, to = 0.006, by = 0.001) ## paper ##
 params$mf_ent_weight <- 0.01
 
 # modelfit distance power ### E
+## params$mf_dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1) ## paper ##
 params$mf_dist_pow <- 0.5
 
 # preprocess CPU walltime in seconds
