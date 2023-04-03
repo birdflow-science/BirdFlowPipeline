@@ -133,7 +133,7 @@ pp_info <- save_preprocessing_info()
 ## Model Fitting ##
 
 reg <- reg <- makeRegistry(params$mf_reg)
-reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_modelfit_container.tmpl', array.jobs = params$array, nodename = params$login)
+reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_modelfit_container_gpu.tmpl', array.jobs = params$array, nodename = params$login)
 
 ## Possible way to get around the static resources issue??
 # Note that all variables defined in a JobCollection can be used inside the
