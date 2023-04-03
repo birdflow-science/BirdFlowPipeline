@@ -172,7 +172,7 @@ fit_model_container <- function(
     mf_training_steps,
     mf_rng_seed
 ){
-  system2('/conda/bin/python3',
+  system2('python',
           args = c(
             mypy,
             mydir,

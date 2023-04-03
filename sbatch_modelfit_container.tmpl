@@ -41,8 +41,5 @@ source /etc/profile
 whoami
 hostname
 module load microarch/x86_64 apptainer
-#export APPTAINERENV_PREPEND_PATH=/conda/bin
-#apptainer exec --nv /work/pi_drsheldon_umass_edu/python_R_container/dslager_cuda11.8.sif python --version
-#apptainer exec --nv /work/pi_drsheldon_umass_edu/python_R_container/dslager_cuda11.8.sif echo $PYTHONPATH
 apptainer exec --nv /work/pi_drsheldon_umass_edu/python_R_container/dslager_cuda11.8.sif Rscript --no-environ -e 'batchtools::doJobCollection("<%= uri %>")'
 TZ='America/Los_Angeles' date
