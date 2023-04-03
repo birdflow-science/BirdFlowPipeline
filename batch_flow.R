@@ -55,7 +55,7 @@ params$part_pp <- 'cpu-preempt,cpu'
 params$mem_pp <- 4
 
 # modelfit partition
-params$part_mf <- 'gpu-preempt,gpu'
+params$part_mf <- 'gpu'
 
 # login node to use via SSH
 params$login <- 'login5'
