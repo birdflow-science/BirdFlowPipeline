@@ -89,7 +89,7 @@ inspect_flagged_tracks_sf <- function(track_info, my_ll, true_column){
 
 inspect_flagged_tracks_sf(track_info, my_ll, true_column = 'dynamic_mask')
 
-files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf', pattern = '^cintea.*92km_.*\\.hdf5$', full.names = TRUE)
+files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf', pattern = '^purfin.*89km_.*\\.hdf5$', full.names = TRUE)
 
 get_cite_likelihood <- function(file){
   
@@ -135,7 +135,7 @@ get_cite_likelihood <- function(file){
   bf <- BirdFlowR::import_birdflow(file)
   bf <- BirdFlowR::sparsify(bf, method = "state")
   
-  file <- 'rds/cintea.rds'
+  file <- 'rds/purfin.rds'
   df <- readRDS(file)
   species_code <- basename(file) %>% sub('\\.rds$', '', .)
   tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
@@ -150,10 +150,6 @@ get_cite_likelihood <- function(file){
   names(mll) <- model_name
   mll
 }
-
-result_list <- vector(mode = 'list', length = 70)
-names(result_list) <- basename(files)
-
 
 batch_cite_likelihood <- function(params = params){
   # See ?Registry for more info on configuration files, e.g., always loading
@@ -178,4 +174,6 @@ batch_cite_likelihood(params)
 my_result <- sapply(1:70, loadResult)
 aa <- data.frame(model = names(my_result), ll = unname(my_result))
 aa <- aa %>% arrange(-ll)
-saveRDS(aa, 'aa.rds')
+saveRDS(aa, 'pufi.rds')
+
+bf <- import_birdflow('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/purfin_2021_89km_obs20.0_ent0.002_dist0.005_pow0.6.hdf5')
