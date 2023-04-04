@@ -27,57 +27,7 @@ tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECI
 
 # functions ----------------------------------------------------
 
-preprocess_calc_distance_days <- function(df){
-  df %>%
-    group_by(BAND) %>%
-    mutate(distance = geodist::geodist(data.frame(lon = LON_DD, lat = LAT_DD),
-                                       sequential = TRUE, measure = 'geodesic', pad = TRUE) / 1000) %>%
-    mutate(days = as.integer(EVENT_DATE - lag(EVENT_DATE))) %>%
-    ungroup
-}
-
-preprocess_filter_days <- function(df, ndays){
-  # something seems wrong with this filtering still, currently not using
-  browser()
-  df <- df %>% filter((days < {{ndays}}) | (lead(days) < {{ndays}}))
-  df <- df %>% filter((days > 0) | (lead(days) > 0 ))
-  df
-}
-
-make_tracks <- function(
-    df,
-    remove_identical = TRUE,
-    crs_in = 'wgs84',
-    crs_out = birdflow_crs,
-    min_dist_m = 15000){
-  # Function to convert banding df to an sf object of linestrings of origin-destination tracks
-  # expand to two steps
-  df <- df %>% group_by(BAND) %>%
-    mutate(count = c(1, rep(2, n() - 2), 1)) %>%
-    uncount(count) %>%
-    mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
-    ungroup
-  # get rid of same start and stop coordinates (multipoint filter also does it)
-  if (remove_identical){
-    df <- df %>%
-      group_by(BAND_TRACK) %>%
-      filter(n_distinct(LON_DD) > 1 | n_distinct(LAT_DD) > 1) %>%
-      ungroup
-  }
-  # summarise
-  df <- df %>%
-    group_by(BAND_TRACK) %>%
-    summarise(start_date = min(EVENT_DATE),
-              stop_date = max(EVENT_DATE),
-              geom = sprintf("LINESTRING(%s %s, %s %s)",
-                             LON_DD[1], LAT_DD[1], LON_DD[2], LAT_DD[2])
-    ) %>% ungroup
-  df <- st_as_sf(df, wkt = "geom", crs = crs_in) %>% st_transform(crs_out)
-  # add and filter distances
-  df$distance <- as.numeric(st_length(df))
-  df <- df %>% filter(distance >= min_dist_m)
-  df
-}
+source('functions.R')
 
 ## Filtering attrition and days elapsed vs. distance graphs
 
