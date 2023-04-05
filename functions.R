@@ -101,3 +101,42 @@ inspect_flagged_tracks_sf <- function(track_info, my_ll, true_column){
   plot(get_coastline(df))
   plot(df %>% select(BAND_TRACK), add = TRUE)
 }
+
+# season is 'prebreeding', 'postbreeding', 'all'
+# intervals outside that season will get an NA for log likelihood
+do_ll <- function(path, season){
+  bf <- import_birdflow(path)
+  bf <- sparsify(bf, method = "state")
+  species_code <- BirdFlowR::species_info(bf)$species_code
+  banding_df <- readRDS(file.path('rds', paste0(species_code, '.rds')))
+  track_info <- make_tracks2(banding_df)
+  my_ll <- interval_log_likelihood2(
+    intervals = as.data.frame(track_info$int_df),
+    observations = as.data.frame(track_info$obs_df),
+    bf = bf,
+    season = season)
+  my_ll
+  list(model = basename(path), obs = track_info$obs_df, int = track_info$int_df, ll = as_tibble(my_ll))
+}
+
+# get params from beginning of batch_flow.R first
+batch_likelihood <- function(dir, regex, params = params){
+  files <- list.files(path = dir, pattern = regex, full.names = TRUE)
+  # See ?Registry for more info on configuration files, e.g., always loading
+  # certain packages or starting in certain working directories
+  reg <- makeRegistry(params$pp_reg,
+                      packages = c('data.table', 'dplyr', 'tidyr', 'BirdFlowR'),
+                      source = c('functions.R', '~/BirdFlowR/R/interval_log_likelihood.R'))
+  # saveRegistry()
+  # ?setDefaultRegistry
+  # not needed because once we make registry, it stays for session as reg
+  reg$cluster.functions <- makeClusterFunctionsSlurm(template = '~/batchtools_proj/sbatch_preprocess_species.tmpl',
+                                                     array.jobs = params$array,
+                                                     nodename = params$login)
+  batchMap(fun = do_ll,
+           path = files,
+           season = 'prebreeding')
+  rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
+  submitJobs(resources = rez)
+  waitForJobs()
+}
