@@ -42,7 +42,7 @@ dir.create(params$dir, showWarnings = FALSE)
 #### LESS COMMONLY CHANGED PARAMETERS ####
 
 # modelfit observation weight
-params$mf_obs_weight <- 20
+params$mf_obs_weight <- 1
 
 # modelfit learning rate
 params$mf_learning_rate <- 0.1
