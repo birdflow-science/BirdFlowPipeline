@@ -6,13 +6,48 @@ library(tidyr)
 library(sf)
 library(batchtools)
 
+## Import functions
+
 source('functions.R')
 source('~/BirdFlowR/R/interval_log_likelihood.R')
 
-dir  <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf'
-file <- 'purfin_2021_89km_obs20.0_ent0.002_dist0.005_pow0.6.hdf5'
+## Batch liklihood calculation using hdf5 directory, filename regex, and job parameters
 
-path <- file.path(dir, file)
+batch_likelihood(
+  dir = '/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf',
+  regex = '^purfin.*89km_.*\\.hdf5$',
+  params)
+
+## Collect results
+
+#loadRegistry()
+my_results <- lapply(seq_len(nrow(getJobNames())), loadResult)
+just_ll <- lapply(my_results, function(i){
+  data.frame(model = i$model,
+             ll = sum(i$ll$log_likelihood, na.rm = TRUE)
+             )
+  }) %>% rbindlist %>% as_tibble %>% arrange(-ll)
+
+# import_birdflow and sparsify for best model
+
+just_ll$model[1]
+bf <- import_birdflow(file.path(dir, just_ll$model[1]))
+bf <- sparsify(bf, method = "state")
+
+## check out map
+
+rts <- route_migration(bf, 20, 'prebreeding')
+plot(get_coastline(rts$lines))
+plot(rts$lines, add = TRUE)
+title(main = just_ll$model[1])
+
+## Old code
+
+
+# dir  <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf'
+# file <- 'purfin_2021_89km_obs20.0_ent0.002_dist0.005_pow0.6.hdf5'
+# 
+# path <- file.path(dir, file)
 
 #do_ll(path, season = 'prebreeding')
 
@@ -22,18 +57,3 @@ path <- file.path(dir, file)
 # nrow(my_ll)
 
 # inspect_flagged_tracks_sf(track_info, my_ll, true_column = 'dynamic_mask')
-
-batch_likelihood(
-  dir = '/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf',
-  regex = '^purfin.*89km_.*\\.hdf5$',
-  params)
-
-my_results <- lapply(1:70, loadResult)
-
-just_ll <- lapply(my_results, function(i){
-  data.frame(model = i$model,
-             ll = mean(i$ll$log_likelihood, na.rm = TRUE)
-             )
-  }) %>% rbindlist %>% as_tibble %>% arrange(-ll)
-just_ll
-
