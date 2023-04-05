@@ -140,3 +140,25 @@ batch_likelihood <- function(dir, regex, params = params){
   submitJobs(resources = rez)
   waitForJobs()
 }
+
+get_season_timesteps <- function(bf, season){
+  stopifnot(!is.null(season), is.character(season), length(season) == 1)
+  stopifnot(season %in% c("all", "prebreeding", "postbreeding"))
+  full_model_start_step <- 1
+  full_model_stop_step <- n_transitions(bf)
+  if (season %in% c("prebreeding", "postbreeding")) {
+    start_step <- lookup_timestep(bf$species[[paste0(season, "_migration_start")]], bf)
+    stop_step <- lookup_timestep(bf$species[[paste0(season, "_migration_end")]], bf)
+  }
+  else {
+    start_step <- full_model_start_step
+    stop_step <- full_model_stop_step
+  }
+  if (start_step > stop_step) {
+    selected_timesteps <- c(start_step:full_model_stop_step, full_model_start_step:stop_step)
+  }
+  else {
+    selected_timesteps <- start_step:stop_step
+  }
+  selected_timesteps
+}
