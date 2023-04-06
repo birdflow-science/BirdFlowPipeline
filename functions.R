@@ -120,7 +120,7 @@ do_ll <- function(path, season){
 }
 
 # get params from beginning of batch_flow.R first
-batch_likelihood <- function(dir, regex, params = params){
+batch_likelihood <- function(dir, regex, params = params, season){
   files <- list.files(path = dir, pattern = regex, full.names = TRUE)
   # See ?Registry for more info on configuration files, e.g., always loading
   # certain packages or starting in certain working directories
@@ -135,7 +135,7 @@ batch_likelihood <- function(dir, regex, params = params){
                                                      nodename = params$login)
   batchMap(fun = do_ll,
            path = files,
-           season = 'prebreeding')
+           season = season)
   rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
   submitJobs(resources = rez)
   waitForJobs()
