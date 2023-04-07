@@ -109,6 +109,9 @@ do_ll <- function(path, season){
   bf <- sparsify(bf, method = "state")
   species_code <- BirdFlowR::species_info(bf)$species_code
   banding_df <- readRDS(file.path('rds', paste0(species_code, '.rds')))
+  # subsampling banding data down to 5000 if larger
+  unique_bands <- unique(banding_df$BAND)
+  banding_df <- dplyr::filter(banding_df, BAND %in% sample(unique_bands, max(5000, length(unique_bands))))
   track_info <- make_tracks2(banding_df)
   my_ll <- interval_log_likelihood2(
     intervals = as.data.frame(track_info$int_df),
