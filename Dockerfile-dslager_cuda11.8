@@ -1,0 +1,16 @@
+FROM rocker/ml-verse:4.2.3
+
+ENV PATH="/conda/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/conda/lib:${LD_LIBRARY_PATH}"
+ENV CONDA_OVERRIDE_CUDA="11.8"
+
+RUN apt-get update
+
+RUN wget -c https://repo.anaconda.com/miniconda/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh -O miniconda.sh \
+    && bash miniconda.sh -b -p /conda \
+    && rm miniconda.sh
+
+RUN conda install -y -c conda-forge cudatoolkit=11.8.0 cudnn=8.4.1 \
+    && conda install -y -c nvidia cuda-nvcc=12.0 \
+    && conda install -y -c conda-forge jaxlib=0.4.7=*cuda* jax=0.4.8 \
+    && pip install dm-haiku==0.0.9 optax==0.1.4 h5py==3.8.0
