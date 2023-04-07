@@ -62,12 +62,6 @@ params$mem_pp <- 4
 # modelfit partition
 params$part_mf <- 'gpu'
 
-# login node to use via SSH
-params$login <- 'login5'
-
-# array jobs
-params$array <- TRUE
-
 # preprocess NCPUs
 params$ncpu_pp <- 1
 

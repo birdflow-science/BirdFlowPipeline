@@ -128,14 +128,13 @@ batch_likelihood <- function(dir, regex, params = params, season){
   # See ?Registry for more info on configuration files, e.g., always loading
   # certain packages or starting in certain working directories
   reg <- makeRegistry(params$pp_reg,
+                      conf.file = file.path('conf', 'conf/preprocess_species.batchtools.conf.R'),
                       packages = c('data.table', 'dplyr', 'tidyr', 'BirdFlowR'),
                       source = c('functions.R', '~/BirdFlowR/R/interval_log_likelihood.R'))
   # saveRegistry()
   # ?setDefaultRegistry
   # not needed because once we make registry, it stays for session as reg
-  reg$cluster.functions <- makeClusterFunctionsSlurm(template = '~/batchtools_proj/sbatch_preprocess_species.tmpl',
-                                                     array.jobs = params$array,
-                                                     nodename = params$login)
+
   batchMap(fun = do_ll,
            path = files,
            season = season)
