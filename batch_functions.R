@@ -2,13 +2,10 @@
 batch_preprocess_species <- function(params = params){
   # See ?Registry for more info on configuration files, e.g., always loading
   # certain packages or starting in certain working directories
-  reg <- makeRegistry(params$pp_reg)
+  reg <- makeRegistry(params$pp_reg, conf.file = file.path('conf', 'preprocess_species.batchtools.conf.R'))
   # saveRegistry()
   # ?setDefaultRegistry
   # not needed because once we make registry, it stays for session as reg
-  reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_preprocess_species.tmpl',
-                                                     array.jobs = params$array,
-                                                     nodename = params$login)
   batchMap(fun = BirdFlowR::preprocess_species,
            args = expand.grid(
              species = params$species,
