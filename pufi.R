@@ -9,19 +9,30 @@ library(batchtools)
 ## Import functions
 
 source('functions.R')
-source('~/BirdFlowR/R/interval_log_likelihood.R')
+source('interval_log_likelihood2.R')
+
+dir <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf'
 
 ## Batch liklihood calculation using hdf5 directory, filename regex, and job parameters
 
+## Annoying things:
+# 1) setting params
+# 2) getting species code and resolution from hdf5 folder
+
+
 batch_likelihood(
   dir = '/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf',
-  regex = '^purfin.*89km_.*\\.hdf5$',
+  regex = '^buwtea.*114km_.*\\.hdf5$',
+  season = 'postbreeding',
   params)
 
 ## Collect results
 
 #loadRegistry()
 my_results <- lapply(seq_len(nrow(getJobNames())), loadResult)
+
+my_results[[1]]$ll %>% filter(!is.na(log_likelihood)) %>% nrow
+
 just_ll <- lapply(my_results, function(i){
   data.frame(model = i$model,
              ll = sum(i$ll$log_likelihood, na.rm = TRUE)

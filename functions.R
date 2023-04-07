@@ -69,7 +69,7 @@ make_tracks2 <- function(
   # expand to two steps
   df <- df %>% group_by(BAND) %>%
     mutate(count = c(1, rep(2, n() - 2), 1)) %>%
-    uncount(count) %>%
+    tidyr::uncount(count) %>%
     mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
     ungroup
   df <- preprocess_calc_distance_days2(df)
