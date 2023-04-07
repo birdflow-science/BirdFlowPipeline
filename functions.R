@@ -113,7 +113,7 @@ do_ll <- function(path, season){
   unique_bands <- unique(banding_df$BAND)
   banding_df <- dplyr::filter(banding_df, BAND %in% sample(unique_bands, min(5000, length(unique_bands))))
   track_info <- make_tracks2(banding_df)
-  my_ll <- interval_log_likelihood2(
+  my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf,
@@ -143,25 +143,25 @@ batch_likelihood <- function(dir, regex, params = params, season){
   submitJobs(resources = rez)
   waitForJobs()
 }
-
-get_season_timesteps <- function(bf, season){
-  stopifnot(!is.null(season), is.character(season), length(season) == 1)
-  stopifnot(season %in% c("all", "prebreeding", "postbreeding"))
-  full_model_start_step <- 1
-  full_model_stop_step <- n_transitions(bf)
-  if (season %in% c("prebreeding", "postbreeding")) {
-    start_step <- lookup_timestep(bf$species[[paste0(season, "_migration_start")]], bf)
-    stop_step <- lookup_timestep(bf$species[[paste0(season, "_migration_end")]], bf)
-  }
-  else {
-    start_step <- full_model_start_step
-    stop_step <- full_model_stop_step
-  }
-  if (start_step > stop_step) {
-    selected_timesteps <- c(start_step:full_model_stop_step, full_model_start_step:stop_step)
-  }
-  else {
-    selected_timesteps <- start_step:stop_step
-  }
-  selected_timesteps
-}
+# 
+# get_season_timesteps <- function(bf, season){
+#   stopifnot(is.character(season), length(season) == 1)
+#   stopifnot(season %in% c("all", "prebreeding", "postbreeding"))
+#   full_model_start_step <- 1
+#   full_model_stop_step <- n_transitions(bf)
+#   if (season %in% c("prebreeding", "postbreeding")) {
+#     start_step <- lookup_timestep(bf$species[[paste0(season, "_migration_start")]], bf)
+#     stop_step <- lookup_timestep(bf$species[[paste0(season, "_migration_end")]], bf)
+#   }
+#   else {
+#     start_step <- full_model_start_step
+#     stop_step <- full_model_stop_step
+#   }
+#   if (start_step > stop_step) {
+#     selected_timesteps <- c(start_step:full_model_stop_step, full_model_start_step:stop_step)
+#   }
+#   else {
+#     selected_timesteps <- start_step:stop_step
+#   }
+#   selected_timesteps
+# }
