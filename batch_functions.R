@@ -84,9 +84,8 @@ setup_modelfit_arguments <- function(params, pp_info){
 
 ## Model Fitting ##
 batch_fit_models <- function(params, pp_info){
-  reg <- reg <- makeRegistry(params$mf_reg)
-  reg$cluster.functions <- makeClusterFunctionsSlurm(template = 'sbatch_modelfit_container_gpu.tmpl', array.jobs = params$array, nodename = params$login)
-  
+  reg <- makeRegistry(params$mf_reg, conf.file = file.path('conf', 'modelfit.batchtools.conf.R'))
+
   ## Possible way to get around the static resources issue??
   # Note that all variables defined in a JobCollection can be used inside the
   # template. If you need to pass extra variables, you can set them via the
