@@ -1,8 +1,15 @@
+# make timestamp
+make_timestamp <- function(tz = "America/Los_Angeles"){
+  datetime <- Sys.time()
+  datetime <- `attr<-`(datetime, "tzone", tz)
+  format(datetime, "%Y-%m-%d_%H-%M-%S")
+}
+
 # batch preprocess species function
-batch_preprocess_species <- function(params = params){
+batch_preprocess_species <- function(params = params, datetime = make_timestamp()){
   # See ?Registry for more info on configuration files, e.g., always loading
   # certain packages or starting in certain working directories
-  reg <- makeRegistry(params$pp_reg, conf.file = file.path('conf', 'preprocess_species.batchtools.conf.R'))
+  reg <- makeRegistry(paste0(datetime, '_pp'), conf.file = file.path('conf', 'preprocess_species.batchtools.conf.R'))
   # saveRegistry()
   # ?setDefaultRegistry
   # not needed because once we make registry, it stays for session as reg
@@ -83,8 +90,8 @@ setup_modelfit_arguments <- function(params, pp_info){
 }
 
 ## Model Fitting ##
-batch_fit_models <- function(params, pp_info){
-  reg <- makeRegistry(params$mf_reg, conf.file = file.path('conf', 'modelfit.batchtools.conf.R'))
+batch_fit_models <- function(params, pp_info, datetime = make_timestamp()){
+  reg <- makeRegistry(paste0(datetime, '_mf'), conf.file = file.path('conf', 'modelfit.batchtools.conf.R'))
 
   ## Possible way to get around the static resources issue??
   # Note that all variables defined in a JobCollection can be used inside the
