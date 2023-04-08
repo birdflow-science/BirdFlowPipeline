@@ -8,9 +8,10 @@ library(dplyr)
 source('batch_functions.R')
 
 # batch preprocess species
-source('params.R')
+source('params_pp.R')
 batch_preprocess_species(params)
 pp_info <- save_preprocessing_info()
 
 # Batch fit models
+source('params_mf.R')
 batch_fit_models(params, pp_info)
