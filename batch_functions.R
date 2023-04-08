@@ -5,26 +5,6 @@ make_timestamp <- function(tz = "America/Los_Angeles"){
   format(datetime, "%Y-%m-%d_%H-%M-%S")
 }
 
-# batch preprocess species function
-batch_preprocess_species <- function(params = params, datetime = make_timestamp()){
-  # See ?Registry for more info on configuration files, e.g., always loading
-  # certain packages or starting in certain working directories
-  reg <- makeRegistry(paste0(datetime, '_pp'), conf.file = file.path('conf', 'preprocess_species.batchtools.conf.R'))
-  # saveRegistry()
-  # ?setDefaultRegistry
-  # not needed because once we make registry, it stays for session as reg
-  batchMap(fun = BirdFlowR::preprocess_species,
-           args = expand.grid(
-             species = params$species,
-             out_dir = params$dir,
-             gpu_ram = params$mem_mf,
-             stringsAsFactors = FALSE)
-  )
-  rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
-  submitJobs(resources = rez)
-  waitForJobs()
-}
-
 # save info from preprocess-species batch function
 save_preprocessing_info <- function(){
   my_result_list <- lapply(seq_len(nrow(getJobPars())), loadResult)
