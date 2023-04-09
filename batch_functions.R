@@ -46,11 +46,17 @@ fit_model_container <- function(
 }
 
 # organize grid expansion for arguments...
-setup_modelfit_arguments <- function(params, pp_info){
-  orig <- data.frame(mypy  = params$mf_script,
-                     mydir = params$dir,
-                     mysp  = pp_info$species,
-                     myres = pp_info$res)
+setup_modelfit_arguments <- function(
+    mypy,
+    mydir,
+    mysp,
+    myres,
+    params,
+    pp_info){
+  orig <- data.frame(mypy  = mypy,
+                     mydir = mydir,
+                     mysp  = mysp,
+                     myres = myres)
   orig$id <- seq_len(nrow(orig))
   expanded <- expand.grid(
     id = orig$id,
