@@ -30,9 +30,9 @@ log.file = fs::path_expand(log.file)
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=<%= resources$ncpus %>
 #SBATCH --mem=<%= resources$memory %>G
-<%= if (!is.null(resources$ngpus)) sprintf("#SBATCH --gpus-per-task=%i", resources$ngpus) %>
+<%= if (!is.null(resources$ngpus)) sprintf("#SBATCH --gpus-per-task=%i\n", resources$ngpus) -%>
 <%= paste0("#SBATCH --partition=", if (!is.null(resources$ngpus)) resources$partition.gpu else resources$partition.cpu) %>
-<%= if (array.jobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (!is.null(resources$ngpus)) sprintf("%%%i", resources$max.arrayjobs.gpu) else sprintf("%%%i", resources$max.arrayjobs.cpu) %>
+<%= if (array.jobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (array.jobs && !is.null(resources$ngpus)) sprintf("%%%i", resources$max.arrayjobs.gpu) else sprintf("%%%i", resources$max.arrayjobs.cpu) %>
 
 ## Export value of DEBUGME environemnt var to slave
 export DEBUGME=<%= Sys.getenv("DEBUGME") %>

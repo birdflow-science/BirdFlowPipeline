@@ -44,9 +44,6 @@ params$mf_training_steps <- 1500
 # modelfit random seed
 params$mf_rng_seed <- 17
 
-# modelfit partition
-params$part_mf <- 'gpu'
-
 # model fitting .py path
 params$mf_script <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py'
 
