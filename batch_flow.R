@@ -39,9 +39,9 @@ batchMap(fun = birdflow_modelfit,
              myres = pp_info$res
            ),
            grid_search_list = list(
-             mf_dist_weight = 0.005,
-             mf_ent_weight = seq(from = 0, to = 0.006, by = 0.001),
-             mf_dist_pow = 0.5
+             dist_weight = 0.005,
+             ent_weight = seq(from = 0, to = 0.006, by = 0.001),
+             dist_pow = 0.5
            )
          ),
          reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
