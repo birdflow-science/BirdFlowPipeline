@@ -5,5 +5,7 @@ default.resources <- list(
   ncpus = 1,
   chunks.as.arrayjobs = TRUE,
   max.arrayjobs.gpu = 48,
-  max.arrayjobs.cpu = 200
+  max.arrayjobs.cpu = 200,
+  partition.gpu = 'gpu',
+  partition.cpu = 'cpu-preempt,cpu'
 )
