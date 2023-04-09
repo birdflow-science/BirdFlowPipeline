@@ -33,7 +33,7 @@ pp_info <- save_preprocessing_info()
 
 batchMap(fun = birdflow_modelfit,
          args = birdflow_modelfit_args(
-           preprocess_list = list(
+           preprocessed_list = list(
              mydir = my_dir,
              mysp = pp_info$species,
              myres = pp_info$res

@@ -17,9 +17,9 @@ save_preprocessing_info <- function(){
 
 # organize grid expansion for arguments...
 birdflow_modelfit_args <- function(
-    preprocess_list,
+    preprocessed_list,
     grid_search_list){
-  orig <- data.frame(preprocess_list)
+  orig <- data.frame(preprocessed_list)
   orig$id <- seq_len(nrow(orig))
   grid_search_list$id <- orig$id
   expanded <- expand.grid(grid_search_list)
