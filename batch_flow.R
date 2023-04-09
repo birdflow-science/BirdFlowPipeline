@@ -16,22 +16,35 @@ walltime_min <- 3 # minutes
 job_ram <- 4
 
 batchMap(fun = BirdFlowR::preprocess_species,
-          species = c('American Crow', 'Cedar Waxwing', 'Cerulean Warbler'),
+          species = c('Hooded Warbler', 'Cerulean Warbler'),
           out_dir = my_dir,
           gpu_ram = gpu_ram,
           reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                             conf.file = file.path('conf', 'preprocess_species.batchtools.conf.R')))
+                             conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = walltime_min,
                             ncpus = 1,
                             memory = job_ram,
                             partition = "cpu-preempt,cpu",
                             chunks.as.arrayjobs = TRUE,
-                            max.arrayjobs = 3,
-                            measure.memory = TRUE))
+                            max.arrayjobs = 32))
 waitForJobs()
 pp_info <- save_preprocessing_info()
 
 # Batch fit models
 source('params_mf.R')
-batch_fit_models(params, pp_info)
+params$species <- c('Hooded Warbler', 'Cerulean Warbler')
+params$mem_mf <- 8
+
+batchMap(fun = fit_model_container,
+         args = setup_modelfit_arguments(params, pp_info),
+         reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
+submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+           resources = list(walltime = params$wt_mf,
+                            ncpus = 1,
+                            ngpus = 1,
+                            memory = gpu_ram + 1,
+                            partition = "gpu",
+                            chunks.as.arrayjobs = TRUE,
+                            max.arrayjobs = 32))
+waitForJobs()

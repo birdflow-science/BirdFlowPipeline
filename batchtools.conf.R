@@ -1,3 +1,3 @@
-cluster.functions <- makeClusterFunctionsSlurm(template = file.path('tmpl', 'sbatch_preprocess_species.tmpl'),
+cluster.functions <- makeClusterFunctionsSlurm(template = 'slurm.tmpl',
                                                array.jobs = TRUE,
                                                nodename = 'login5')

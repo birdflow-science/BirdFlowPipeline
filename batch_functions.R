@@ -21,7 +21,6 @@ fit_model_container <- function(
     mydir,
     mysp,
     myres,
-    mymem,
     mf_dist_weight,
     mf_ent_weight,
     mf_dist_pow,
@@ -51,8 +50,7 @@ setup_modelfit_arguments <- function(params, pp_info){
   orig <- data.frame(mypy  = params$mf_script,
                      mydir = params$dir,
                      mysp  = pp_info$species,
-                     myres = pp_info$res,
-                     mymem = pp_info$mem + 1)
+                     myres = pp_info$res)
   orig$id <- seq_len(nrow(orig))
   expanded <- expand.grid(
     id = orig$id,
@@ -67,57 +65,4 @@ setup_modelfit_arguments <- function(params, pp_info){
   mf_args <- left_join(orig, expanded, by = 'id')
   mf_args$id <- NULL
   mf_args
-}
-
-## Model Fitting ##
-batch_fit_models <- function(params, pp_info, datetime = make_timestamp()){
-  reg <- makeRegistry(paste0(datetime, '_mf'), conf.file = file.path('conf', 'modelfit.batchtools.conf.R'))
-
-  ## Possible way to get around the static resources issue??
-  # Note that all variables defined in a JobCollection can be used inside the
-  # template. If you need to pass extra variables, you can set them via the
-  # argument resources of submitJobs().
-  # 
-  # tmp = makeRegistry(file.dir = NA, make.default = FALSE, packages = "methods")
-  # batchMap(identity, 1:5, reg = tmp)
-  # 
-  # # resources are usually set in submitJobs()
-  # jc = makeJobCollection(1:3, resources = list(foo = "bar"), reg = tmp)
-  # ls(jc)
-  # jc$resources
-  
-  mf_args <- setup_modelfit_arguments(params, pp_info)
-  
-  batchMap(fun = fit_model_container, args = mf_args)
-  
-  # resources the same across all jobs
-  static_rez <- list(walltime = params$wt_mf,
-                     ncpus = 1,
-                     ngpus = 1,
-                     partition = params$part_mf,
-                     mypy =  params$mf_script,
-                     mydir = params$dir)
-  
-  # Need to loop through here to adjust variable "resources" for each job,
-  # since species and resolution needs to be a static "resource"
-  jobinfo <- getJobPars()$job.pars
-  for (i in seq_along(jobinfo)){
-    # variable rez here = Python arguments to be deparsed into sbatch file via brew
-    rez       <- static_rez
-    rez$mysp  <- jobinfo[[i]]$mysp
-    rez$myres <- jobinfo[[i]]$myres
-    rez$mymem <- jobinfo[[i]]$mymem
-    rez$mf_dist_weight <- jobinfo[[i]]$mf_dist_weight
-    rez$mf_ent_weight <- jobinfo[[i]]$mf_ent_weight
-    rez$mf_dist_pow <- jobinfo[[i]]$mf_dist_pow
-    rez$mf_obs_weight <- jobinfo[[i]]$mf_obs_weight
-    rez$mf_learning_rate <- jobinfo[[i]]$mf_learning_rate
-    rez$mf_training_steps <- jobinfo[[i]]$mf_training_steps
-    rez$mf_rng_seed <- jobinfo[[i]]$mf_rng_seed
-    
-    stopifnot(all(lapply(rez, length) == 1))
-    submitJobs(ids = i, resources = rez)
-  }
-  waitForJobs()
-  #getJobTable()
 }

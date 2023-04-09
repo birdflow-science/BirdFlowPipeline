@@ -22,24 +22,25 @@
 log.file = fs::path_expand(log.file)
 -%>
 
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=<%= resources$ncpus %>
-#SBATCH --gpus-per-task=<%= resources$ngpus %>
-#SBATCH --mem-per-gpu=<%= resources$mymem %>GB  # Requested Memory
-#SBATCH --time=<%= ceiling(resources$walltime / 60) %>
+
 #SBATCH --job-name=<%= job.name %>
 #SBATCH --output=<%= log.file %>
 #SBATCH --error=<%= log.file %>
-<%= if (!is.null(resources$partition)) sprintf(paste0("#SBATCH --partition='", resources$partition, "'")) %>
-<%= if (array.jobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %>
+#SBATCH --time=<%= resources$walltime %>
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=<%= resources$ncpus %>
+#SBATCH --mem=<%= resources$memory %>G
+<%= if (!is.null(resources$ngpus)) sprintf(paste0("#SBATCH --gpus-per-task=", resources$ngpus)) %>
+<%= if (!is.null(resources$partition)) sprintf(paste0("#SBATCH --partition=", resources$partition)) %>
+<%= if (array.jobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (resources$max.arrayjobs) sprintf("%%%i", resources$max.arrayjobs) else "" %>
 
 ## Export value of DEBUGME environemnt var to slave
 export DEBUGME=<%= Sys.getenv("DEBUGME") %>
 
 TZ='America/Los_Angeles' date
-source /etc/profile
 whoami
 hostname
+source /etc/profile
 module load microarch/x86_64 apptainer
-apptainer exec --nv /work/pi_drsheldon_umass_edu/birdflow_modeling/python_R_container/dslager_cuda11.8.sif Rscript --no-environ -e 'batchtools::doJobCollection("<%= uri %>")'
+apptainer exec <%= if (!is.null(resources$ngpus)) "--nv" %> /work/pi_drsheldon_umass_edu/birdflow_modeling/python_R_container/dslager_cuda11.8.sif Rscript <%= if (!is.null(resources$ngpus)) "--no-environ" %> -e 'batchtools::doJobCollection("<%= uri %>")'
 TZ='America/Los_Angeles' date
