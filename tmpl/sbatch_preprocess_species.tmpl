@@ -26,10 +26,10 @@ log.file = fs::path_expand(log.file)
 #SBATCH --job-name=<%= job.name %>
 #SBATCH --output=<%= log.file %>
 #SBATCH --error=<%= log.file %>
-#SBATCH --time=<%= ceiling(resources$walltime / 60) %>
+#SBATCH --time=<%= resources$walltime %>
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=<%= resources$ncpus %>
-#SBATCH --mem-per-cpu=<%= resources$memory %>
+#SBATCH --mem=<%= resources$memory %>G
 <%= if (!is.null(resources$partition)) sprintf(paste0("#SBATCH --partition='", resources$partition, "'")) %>
 <%= if (array.jobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (resources$max.arrayjobs) sprintf("%%%i", resources$max.arrayjobs) else "" %>
 
