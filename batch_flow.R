@@ -25,8 +25,7 @@ batchMap(fun = BirdFlowR::preprocess_species,
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = walltime_min,
                             memory = job_ram,
-                            partition = "cpu-preempt,cpu",
-                            max.arrayjobs = 32))
+                            partition = "cpu-preempt,cpu"))
 waitForJobs()
 pp_info <- save_preprocessing_info()
 
@@ -42,6 +41,5 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = params$wt_mf,
                             ngpus = 1,
                             memory = gpu_ram + 1,
-                            partition = "gpu",
-                            max.arrayjobs = 32))
+                            partition = "gpu"))
 waitForJobs()

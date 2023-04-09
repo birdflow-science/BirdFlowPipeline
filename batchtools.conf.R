@@ -3,5 +3,7 @@ cluster.functions <- makeClusterFunctionsSlurm(template = 'slurm.tmpl',
                                                nodename = 'login5')
 default.resources <- list(
   ncpus = 1,
-  chunks.as.arrayjobs = TRUE
+  chunks.as.arrayjobs = TRUE,
+  max.arrayjobs.gpu = 48,
+  max.arrayjobs.cpu = 200
 )
