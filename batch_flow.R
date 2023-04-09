@@ -26,7 +26,6 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = walltime_min,
                             memory = job_ram,
                             partition = "cpu-preempt,cpu",
-                            chunks.as.arrayjobs = TRUE,
                             max.arrayjobs = 32))
 waitForJobs()
 pp_info <- save_preprocessing_info()
@@ -44,6 +43,5 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
                             ngpus = 1,
                             memory = gpu_ram + 1,
                             partition = "gpu",
-                            chunks.as.arrayjobs = TRUE,
                             max.arrayjobs = 32))
 waitForJobs()
