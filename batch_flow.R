@@ -30,21 +30,24 @@ waitForJobs()
 pp_info <- save_preprocessing_info()
 
 # Batch fit models
-source('params_mf.R')
-params$species <- my_species
-params$mem_mf <- gpu_ram
 
 batchMap(fun = fit_model_container,
          args = setup_modelfit_arguments(
-           mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py",
-           mydir = my_dir,
-           mysp = pp_info$species,
-           myres = pp_info$res,
-           params = params,
-           pp_info = pp_info),
+           preprocess_list = list(
+             mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py",
+             mydir = my_dir,
+             mysp = pp_info$species,
+             myres = pp_info$res
+           ),
+           grid_search_list = list(
+             mf_dist_weight = 0.005,
+             mf_ent_weight = seq(from = 0, to = 0.006, by = 0.001),
+             mf_dist_pow = 0.5
+           )
+         ),
          reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = params$wt_mf,
+           resources = list(walltime = 10,
                             ngpus = 1,
                             memory = gpu_ram + 1))
 waitForJobs()

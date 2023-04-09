@@ -15,19 +15,36 @@ save_preprocessing_info <- function(){
   lst
 }
 
+# organize grid expansion for arguments...
+setup_modelfit_arguments <- function(
+    preprocess_list,
+    grid_search_list){
+  orig <- data.frame(preprocess_list)
+  orig$id <- seq_len(nrow(orig))
+  grid_search_list$id <- orig$id
+  expanded <- expand.grid(grid_search_list)
+  mf_args <- left_join(orig, expanded, by = 'id')
+  mf_args$id <- NULL
+  mf_args
+}
+
 # fit model container function
+# grid search parameters from paper not included as default arguments here:
+#  mf_dist_weight = 0.005
+#  mf_ent_weight = seq(from = 0, to = 0.006, by = 0.001)
+#  mf_dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1)
 fit_model_container <- function(
-    mypy,
+    mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py",
     mydir,
     mysp,
     myres,
     mf_dist_weight,
     mf_ent_weight,
     mf_dist_pow,
-    mf_obs_weight,
-    mf_learning_rate,
-    mf_training_steps,
-    mf_rng_seed
+    mf_obs_weight = 1,
+    mf_learning_rate = 0.1,
+    mf_training_steps = 1500,
+    mf_rng_seed = 17
 ){
   system2('python',
           args = c(
@@ -43,32 +60,4 @@ fit_model_container <- function(
             paste0('--training_steps=', mf_training_steps),
             paste0('--rng_seed=', mf_rng_seed)
           ))
-}
-
-# organize grid expansion for arguments...
-setup_modelfit_arguments <- function(
-    mypy,
-    mydir,
-    mysp,
-    myres,
-    params,
-    pp_info){
-  orig <- data.frame(mypy  = mypy,
-                     mydir = mydir,
-                     mysp  = mysp,
-                     myres = myres)
-  orig$id <- seq_len(nrow(orig))
-  expanded <- expand.grid(
-    id = orig$id,
-    mf_dist_weight = params$mf_dist_weight,
-    mf_ent_weight = params$mf_ent_weight,
-    mf_dist_pow = params$mf_dist_pow,
-    mf_obs_weight = params$mf_obs_weight,
-    mf_learning_rate = params$mf_learning_rate,
-    mf_training_steps = params$mf_training_steps,
-    mf_rng_seed = params$mf_rng_seed
-  )
-  mf_args <- left_join(orig, expanded, by = 'id')
-  mf_args$id <- NULL
-  mf_args
 }
