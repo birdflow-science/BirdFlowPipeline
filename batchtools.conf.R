@@ -6,6 +6,7 @@ default.resources <- list(
   chunks.as.arrayjobs = TRUE,
   max.arrayjobs.gpu = 48,
   max.arrayjobs.cpu = 200,
-  partition.gpu = 'gpu',
-  partition.cpu = 'cpu-preempt,cpu'
+  partition.gpu = 'gpu-preempt,gpu',
+  partition.cpu = 'cpu-preempt,cpu',
+  constraint.gpu = '2080|2080ti|1080ti|v100'
 )
