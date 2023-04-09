@@ -31,10 +31,9 @@ pp_info <- save_preprocessing_info()
 
 # Batch fit models
 
-batchMap(fun = fit_model_container,
-         args = setup_modelfit_arguments(
+batchMap(fun = birdflow_modelfit,
+         args = birdflow_modelfit_args(
            preprocess_list = list(
-             mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py",
              mydir = my_dir,
              mysp = pp_info$species,
              myres = pp_info$res
