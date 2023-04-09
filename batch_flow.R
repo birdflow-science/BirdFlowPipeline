@@ -14,9 +14,10 @@ my_suffix <- 'pp'
 gpu_ram <- 8
 walltime_min <- 3 # minutes
 job_ram <- 4
+my_species <- c('Hooded Warbler', 'Cerulean Warbler')
 
 batchMap(fun = BirdFlowR::preprocess_species,
-          species = c('Hooded Warbler', 'Cerulean Warbler'),
+          species = my_species,
           out_dir = my_dir,
           gpu_ram = gpu_ram,
           reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
@@ -33,8 +34,8 @@ pp_info <- save_preprocessing_info()
 
 # Batch fit models
 source('params_mf.R')
-params$species <- c('Hooded Warbler', 'Cerulean Warbler')
-params$mem_mf <- 8
+params$species <- my_species
+params$mem_mf <- gpu_ram
 
 batchMap(fun = fit_model_container,
          args = setup_modelfit_arguments(params, pp_info),

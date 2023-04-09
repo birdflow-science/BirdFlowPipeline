@@ -44,9 +44,6 @@ params$mf_training_steps <- 1500
 # modelfit random seed
 params$mf_rng_seed <- 17
 
-# preprocess partition
-params$part_pp <- 'cpu-preempt,cpu'
-
 # modelfit partition
 params$part_mf <- 'gpu'
 
