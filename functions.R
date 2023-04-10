@@ -1,3 +1,45 @@
+# pre-processing functions
+
+preprocess_data_types <- function(df){
+  # coerce ambiguous dates to NAs
+  # convert codes for 1st, 2nd, and last 10 days of month to their midpoint
+  # note these are not present in the database!
+  # df$EVENT_DATE <- sub('[/]41[/]', '/05/', df$EVENT_DATE)
+  # df$EVENT_DATE <- sub('[/]42[/]', '/15/', df$EVENT_DATE)
+  # df$EVENT_DATE <- sub('[/]43[/]', '/25/', df$EVENT_DATE)
+  # convert all other imprecise date codes to NA
+  df$EVENT_DATE <- as.Date(df$EVENT_DATE, format = '%m/%d/%Y')
+  # fields contain both NAs and empty strings, so make sure to do the below
+  #df$BIRD_INFO <- suppressWarnings(as.integer(df$BIRD_INFO))
+  df$EXTRA_INFO <- suppressWarnings(as.integer(df$EXTRA_INFO))
+  df$BIRD_STATUS <- suppressWarnings(as.integer(df$BIRD_STATUS))
+  df
+}
+
+preprocess_exclusions <- function(df){
+  # exclude invalid dates
+  df <- filter(df, !is.na(EVENT_DATE))
+  # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead
+  df <- filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
+  # exclude state or country level locations
+  df <- filter(df, ! CP %in% c(12, 72))
+  # exclude records with longitude of 0 (might be real records with 0 latitude)
+  df <- filter(df, LON_DD != 0)
+  # exclude records with missing latitude or longitude
+  df <- filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
+  df
+}
+
+preprocess_with_recovery <- function(df){
+  # delete exluded records
+  df <- df %>% group_by(SPECIES_ID, BAND) %>% filter(n() >= 2) %>% ungroup
+  df
+}
+
+preprocess_sort_band_date <- function(df){
+  df %>% arrange(BAND, EVENT_DATE)
+}
+
 preprocess_calc_distance_days <- function(df){
   df %>%
     group_by(BAND) %>%
