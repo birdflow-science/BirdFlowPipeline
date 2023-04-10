@@ -1,0 +1,54 @@
+my_packages <- c('dplyr', 'data.table', 'geodist', 'tidyr', 'batchtools')
+for (i in my_packages){
+  library(i, character.only = TRUE)
+}
+source('batch_functions.R')
+
+# Batch data availability info function
+banding_data_availability <- function(file){
+  tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
+  df <- readRDS(file)
+  species_code <- basename(file) %>% sub('\\.rds$', '', .)
+  species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
+  message(species_name)
+  max_track_days_options <- c(Inf, 180)
+  min_distance_km_options <- c(0, 0.001, 15)
+  attrition_df <- data.frame(species_code = species_code,
+                             species_name = species_name,
+                             max_track_days= rep(max_track_days_options, each = 3),
+                             min_distance_km = rep(min_distance_km_options, 2),
+                             n_tracks = rep(NA_integer_, 6))
+  df <- preprocess_calc_distance_days(df)
+  df <- drop_na(df, distance, days)
+  df <- filter(df, days > 0)
+  # stats for all durations
+  for (da in max_track_days_options){
+    for (di in min_distance_km_options){
+      attrition_df[attrition_df$max_track_days == da & attrition_df$min_distance_km == di, 'n_tracks'] <- 
+        filter(df, days <= da & distance >= di) %>% nrow
+    }
+  }
+  # write.csv(attrition_df, file.path('output','attrition.csv'), row.names = FALSE)
+  # if (n_day180 < 20){
+  #   next
+  # }
+  # plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
+  #      main = paste0(species_name, '\n', '(n = ', n_day180, ')'))
+  attrition_df
+}
+
+rds_files <- list.files('rds', full.names = TRUE)
+my_suffix <- 'da'
+batchMap(banding_data_availability,
+         rds_files,
+         reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
+                            conf.file = 'batchtools.conf.R',
+                            packages = my_packages,
+                            source = 'functions.R',
+         ))
+submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+           resources = list(walltime = 30,
+                            memory = 4))
+waitForJobs()
+results_df <- lapply(findJobs()$job.id, loadResult) %>% rbindlist
+write.csv(results_df, 'data_availability.csv', row.names = FALSE)
