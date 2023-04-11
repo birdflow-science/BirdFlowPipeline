@@ -1,28 +1,31 @@
 #Sys.setenv(DEBUGME = "batchtools")
 
-library(batchtools)
-library(BirdFlowR)
-library(dplyr)
+my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools')
+for (i in my_packages){
+  library(i, character.only = TRUE)
+}
 
 # load functions
 source('batch_functions.R')
+source('functions.R')
 
 # batch preprocess species
 
 my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
 dir.create(my_dir, showWarnings = FALSE)
 my_suffix <- 'pp'
-gpu_ram <- 8
+gpu_ram <- 10
 walltime_min <- 3 # minutes
 job_ram <- 4
-my_species <- c('Hooded Warbler', 'Cerulean Warbler')
+my_species <- c('American Woodcock')
 
 batchMap(fun = BirdFlowR::preprocess_species,
           species = my_species,
           out_dir = my_dir,
           gpu_ram = gpu_ram,
           reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                             conf.file = 'batchtools.conf.R'))
+                             conf.file = 'batchtools.conf.R',
+                             packages = my_packages))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = walltime_min,
                             memory = job_ram))
@@ -41,7 +44,7 @@ batchMap(fun = birdflow_modelfit,
            grid_search_list = list(
              dist_weight = 0.005,
              ent_weight = seq(from = 0, to = 0.006, by = 0.001),
-             dist_pow = 0.5
+             dist_pow = seq(from = 0.1, to = 1.0, by = 0.1)
            )
          ),
          reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
@@ -50,3 +53,83 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
                             ngpus = 1,
                             memory = gpu_ram + 1))
 waitForJobs()
+
+# Batch likelihoods
+
+files <- list.files(path = my_dir, pattern = '^amewoo.*58km_.*\\.hdf5$', full.names = TRUE)
+
+banding_df <- readRDS(file.path('rds', paste0('amewoo', '.rds')))
+track_info <- make_tracks2(banding_df)
+
+batchMap(do_ll_plain,
+         files,
+         more.args = list(track_info = track_info),
+         reg = makeRegistry(paste0(make_timestamp(), '_ll'),
+                            conf.file = 'batchtools.conf.R',
+                            packages = my_packages,
+                            source = 'functions.R'))
+submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+           resources = list(walltime = 10,
+                            memory = 8))
+waitForJobs()
+
+## from PUFI.R code ##
+
+
+#loadRegistry()
+my_results <- lapply(seq_len(nrow(getJobNames())), loadResult)
+
+my_results[[1]]$ll %>% filter(!is.na(log_likelihood)) %>% nrow
+
+just_ll <- lapply(my_results, function(i){
+  data.frame(model = i$model,
+             ll = sum(i$ll$log_likelihood, na.rm = TRUE)
+  )
+}) %>% rbindlist %>% as_tibble %>% arrange(-ll)
+
+# import_birdflow and sparsify for best model
+
+just_ll$model[1]
+bf <- import_birdflow(file.path(my_dir, just_ll$model[1]))
+bf <- sparsify(bf, method = "state")
+
+## check out map
+
+rts <- route_migration(bf, 10, 'prebreeding')
+plot(get_coastline(rts$lines))
+plot(rts$lines, add = TRUE)
+title(main = just_ll$model[1])
+
+#readRDS('amwewoo_banding.rds')
+
+### AMEWOO Tracking ###
+
+min_dist_m <- 0
+max_days = 180
+
+tracking_df <- fread('amwo/amewoo_USGS_Movebank_st2019_weekly_tracks-100.csv')
+tracking_df <- tracking_df %>% select(indiv_only, timestamp, lon, lat) %>% arrange(indiv_only, timestamp)
+tracking_df$timestamp <- as.Date(tracking_df$timestamp)
+tracking_df <- tracking_df %>% rename(BAND = indiv_only,
+                                      EVENT_DATE = timestamp,
+                                      LON_DD = lon,
+                                      LAT_DD = lat)
+# picking up here inside the make_tracks2 function...
+tracking_df <- tracking_df %>% group_by(BAND) %>%
+  mutate(count = c(1, rep(2, n() - 2), 1)) %>%
+  tidyr::uncount(count) %>%
+  mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
+  ungroup
+df <- tracking_df
+df <- preprocess_calc_distance_days2(df)
+df <- df %>% select(BAND, EVENT_DATE, LAT_DD, LON_DD, BAND_TRACK, distance, days)
+df <- df %>% group_by(BAND_TRACK) %>%
+  filter(distance[2] > min_dist_m / 1000) %>%
+  filter(days[2] <= max_days) %>%
+  mutate(when = c('from', 'to')) %>%
+  ungroup
+df$id <- seq_len(nrow(df))
+obs_df <- df %>% rename(date = EVENT_DATE, lat = LAT_DD, lon = LON_DD)
+int_df <- df %>% select(BAND_TRACK, when, id)
+int_df <- pivot_wider(int_df, id_cols = BAND_TRACK, names_from = when, values_from = id)
+track_info <- list(obs_df = obs_df, int_df = int_df)
