@@ -8,5 +8,5 @@ default.resources <- list(
   max.arrayjobs.cpu = 200,
   partition.gpu = 'gpu-preempt,gpu',
   partition.cpu = 'cpu-preempt,cpu',
-  constraint.gpu = '2080|2080ti|1080ti|v100'
+  constraint.gpu = '2080|2080ti|v100'
 )
