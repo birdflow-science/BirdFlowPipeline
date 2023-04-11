@@ -30,9 +30,9 @@ birdflow_modelfit_args <- function(
 
 # fit model container function
 # grid search parameters from paper not included as default arguments here:
-#  dist_weight = 0.005
-#  ent_weight = seq(from = 0, to = 0.006, by = 0.001)
-#  dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1)
+#  dist_weight = 0.005 # a
+#  ent_weight = seq(from = 0, to = 0.006, by = 0.001) # B
+#  dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1) # E
 birdflow_modelfit <- function(
     mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py",
     mydir,
