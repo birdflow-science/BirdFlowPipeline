@@ -7,3 +7,6 @@ rds/
 *.xml
 README_before_download.txt
 output/
+*.pdf
+*.rds
+2023*
