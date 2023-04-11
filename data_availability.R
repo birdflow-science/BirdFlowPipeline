@@ -52,3 +52,12 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
 waitForJobs()
 results_df <- lapply(findJobs()$job.id, loadResult) %>% rbindlist
 write.csv(results_df, 'data_availability.csv', row.names = FALSE)
+
+hindex <- function(x) {
+  tx <- sort(x, decreasing = T)
+  sum(tx >= seq_along(tx))
+}
+
+results_df %>%
+  group_by(max_track_days, min_distance_km) %>%
+  summarise(n_species_n_tracks_h_index = hindex(n_tracks), .groups = 'drop')
