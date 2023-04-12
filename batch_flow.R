@@ -115,7 +115,7 @@ bf <- sparsify(bf, method = "state")
 ## check out map
 
 rts <- route_migration(bf, 10, 'prebreeding')
-plot(get_coastline(rts$lines))
+plot(get_coastline(bf, match_extent = TRUE))
 plot(rts$lines, add = TRUE)
 title(main = just_ll$model[1])
 
