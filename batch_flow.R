@@ -13,22 +13,20 @@ source('functions.R')
 
 my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
 dir.create(my_dir, showWarnings = FALSE)
-my_suffix <- 'pp'
+
 gpu_ram <- 10
-walltime_min <- 3 # minutes
-job_ram <- 4
 my_species <- c('American Woodcock')
 
 batchMap(fun = BirdFlowR::preprocess_species,
-          species = my_species,
-          out_dir = my_dir,
-          gpu_ram = gpu_ram,
-          reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                             conf.file = 'batchtools.conf.R',
-                             packages = my_packages))
+         species = my_species,
+         out_dir = my_dir,
+         gpu_ram = gpu_ram,
+         reg = makeRegistry(paste(make_timestamp(), 'pp', sep = '_'),
+                            conf.file = 'batchtools.conf.R',
+                            packages = my_packages))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = walltime_min,
-                            memory = job_ram))
+           resources = list(walltime = 3L,
+                            memory = 4L))
 waitForJobs()
 pp_info <- save_preprocessing_info()
 
