@@ -73,6 +73,27 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
                             memory = 8))
 waitForJobs()
 
+# btmapply version of the above
+files <- list.files(path = my_dir, pattern = '^amewoo.*58km_.*\\.hdf5$', full.names = TRUE)
+names(files) <- basename(files) %>% sub('\\.hdf5', '', .)
+files <- files[1:2]
+
+aa <- btmapply(
+  do_ll_plain,
+  files,
+  more.args = list(track_info = track_info),
+  reg = makeRegistry(paste0(make_timestamp(), '_btmapply_ll'),
+                     conf.file = 'batchtools.conf.R',
+                     packages = my_packages,
+                     source = 'functions.R'),
+  use.names = TRUE,
+  resources = list(walltime = 10,
+                   memory = 8),
+  n.chunks = 1L
+)
+  
+
+
 ## from PUFI.R code ##
 
 
