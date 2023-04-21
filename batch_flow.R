@@ -77,43 +77,11 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 10,
                             memory = 8))
 waitForJobs()
-
-# btmapply version of the above
-files <- list.files(path = my_dir,
-                    pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
-                    full.names = TRUE)
-names(files) <- basename(files) %>% sub('\\.hdf5', '', .)
-
-aa <- btmapply(
-  do_ll_plain,
-  files,
-  more.args = list(track_info = track_info),
-  reg = makeRegistry(paste0(make_timestamp(), '_btmapply_ll'),
-                     conf.file = 'batchtools.conf.R',
-                     packages = my_packages,
-                     source = 'functions.R'),
-  use.names = TRUE,
-  resources = list(walltime = 10,
-                   memory = 8),
-  n.chunks = 1L
-)
-
-hyperparams_ll_df_row <- function(i){
-  mn <- i$model
-  tibble(
-    model = mn,
-    obs = sub('.*obs(.*?)_.*', '\\1', mn) %>% as.numeric,
-    ent = sub('.*ent(.*?)_.*', '\\1', mn) %>% as.numeric,
-    dist = sub('.*dist(.*?)_.*', '\\1', mn) %>% as.numeric,
-    pow = sub('.*pow(.*?)\\.hdf5', '\\1', mn) %>% as.numeric,
-    ll = sum(i$ll$log_likelihood, na.rm = TRUE)
-  )
-}
-
-ll_df <- lapply(aa, hyperparams_ll_df_row) %>% bind_rows %>% arrange(-ll)
+ll_results <- reduceResultsList()
+ll_df <- lapply(ll_results, hyperparams_ll_df_row) %>% bind_rows %>% arrange(-ll)
 ll_df$color <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
 
-# Plot
+# Plot the grid search likelihood results
 plot3d( 
   x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
   col = ll_df$color, 
@@ -123,40 +91,23 @@ plot3d(
 
 # To display in an R Markdown document:
 # rglwidget()
-
-# To save to a file:
-htmlwidgets::saveWidget(rglwidget(width = 520, height = 520), 
+# 
+# # To save to a file:
+htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
                         file = "3dscatter.html",
                         libdir = "libs",
                         selfcontained = TRUE
 )
 
+# Visualize model with best LL
 
-## from PUFI.R code ##
-
-
-#loadRegistry()
-my_results <- lapply(seq_len(nrow(getJobNames())), loadResult)
-
-my_results[[1]]$ll %>% filter(!is.na(log_likelihood)) %>% nrow
-
-just_ll <- lapply(my_results, function(i){
-  data.frame(model = i$model,
-             ll = sum(i$ll$log_likelihood, na.rm = TRUE)
-  )
-}) %>% rbindlist %>% as_tibble %>% arrange(-ll)
-
-# import_birdflow and sparsify for best model
-
-just_ll$model[1]
-bf <- import_birdflow(file.path(my_dir, just_ll$model[1]))
+ll_df$model[1]
+bf <- import_birdflow(file.path(my_dir, ll_df$model[1]))
 bf <- sparsify(bf, method = "state")
 
-## check out map
+## Plot map route_migration spring msap
 
 rts <- route_migration(bf, 10, 'prebreeding')
 plot(get_coastline(bf, match_extent = TRUE))
 plot(rts$lines, add = TRUE)
-title(main = just_ll$model[1])
-
-#readRDS('amwewoo_banding.rds')
+title(main = ll_df$model[1])
