@@ -111,3 +111,28 @@ rts <- route_migration(bf, 10, 'prebreeding')
 plot(get_coastline(bf, match_extent = TRUE))
 plot(rts$lines, add = TRUE)
 title(main = ll_df$model[1])
+
+# graph route migration for all models in parallel
+
+spring_migration_pdf <- function(filename, my_dir){
+  bf <- import_birdflow(file.path(my_dir, filename))
+  bf <- sparsify(bf, method = "state")
+  rts <- route_migration(bf, 10, 'prebreeding')
+  pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
+  plot(get_coastline(bf, match_extent = TRUE))
+  plot(rts$lines, add = TRUE)
+  title(main = filename)
+  dev.off()
+}
+
+batchMap(spring_migration_pdf,
+         ll_df$model,
+         more.args = list(my_dir = my_dir),
+         reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
+                            conf.file = 'batchtools.conf.R',
+                            packages = my_packages,
+                            source = 'functions.R'))
+submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+           resources = list(walltime = 10,
+                            memory = 8))
+waitForJobs()
