@@ -54,9 +54,11 @@ waitForJobs()
 
 # Batch likelihoods
 
-files <- list.files(path = my_dir, pattern = '^amewoo.*58km_.*\\.hdf5$', full.names = TRUE)
+files <- list.files(path = my_dir,
+                    pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
+                    full.names = TRUE)
 
-banding_df <- readRDS(file.path('rds', paste0('amewoo', '.rds')))
+banding_df <- readRDS(file.path('rds', paste0(pp_info$species, '.rds')))
 track_info <- make_tracks2(banding_df)
 
 batchMap(do_ll_plain,
@@ -72,7 +74,9 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
 waitForJobs()
 
 # btmapply version of the above
-files <- list.files(path = my_dir, pattern = '^amewoo.*58km_.*\\.hdf5$', full.names = TRUE)
+files <- list.files(path = my_dir,
+                    pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
+                    full.names = TRUE)
 names(files) <- basename(files) %>% sub('\\.hdf5', '', .)
 
 aa <- btmapply(
