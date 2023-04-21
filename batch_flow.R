@@ -9,13 +9,24 @@ for (i in my_packages){
 source('batch_functions.R')
 source('functions.R')
 
-# batch preprocess species
+# directory settings
 
 my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
 dir.create(my_dir, showWarnings = FALSE)
 
-gpu_ram <- 10
+# main arguments
+
 my_species <- c('American Woodcock')
+
+gpu_ram <- 10
+
+grid_search_list <- list(
+  dist_weight = seq(from = 0.01, to = 0.51, length.out = 4),
+  ent_weight = seq(from = 0.01, to = 0.11, length.out = 4),
+  dist_pow = seq(from = 0.1, to = 0.7, length.out = 4)
+)
+
+# batch preprocess species
 
 batchMap(fun = BirdFlowR::preprocess_species,
          species = my_species,
@@ -37,14 +48,8 @@ batchMap(fun = birdflow_modelfit,
            preprocessed_list = list(
              mydir = my_dir,
              mysp = pp_info$species,
-             myres = pp_info$res
-           ),
-           grid_search_list = list(
-             dist_weight = seq(from = 0.01, to = 0.51, length.out = 4),
-             ent_weight = seq(from = 0.01, to = 0.11, length.out = 4),
-             dist_pow = seq(from = 0.1, to = 0.7, length.out = 4)
-           )
-         ),
+             myres = pp_info$res),
+           grid_search_list = grid_search_list),
          reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 10,
