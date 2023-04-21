@@ -34,7 +34,7 @@ birdflow_modelfit_args <- function(
 #  ent_weight = seq(from = 0, to = 0.006, by = 0.001) # B
 #  dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1) # E
 birdflow_modelfit <- function(
-    mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/birdflow/update_hdf.py",
+    mypy = "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/birdflow/update_hdf.py",
     mydir,
     mysp,
     myres,
