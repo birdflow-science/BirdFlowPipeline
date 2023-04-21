@@ -96,6 +96,7 @@ aa <- btmapply(
 hyperparams_ll_df_row <- function(i){
   mn <- i$model
   tibble(
+    model = mn,
     obs = sub('.*obs(.*?)_.*', '\\1', mn) %>% as.numeric,
     ent = sub('.*ent(.*?)_.*', '\\1', mn) %>% as.numeric,
     dist = sub('.*dist(.*?)_.*', '\\1', mn) %>% as.numeric,
