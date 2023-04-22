@@ -21,9 +21,9 @@ my_species <- c('American Woodcock')
 gpu_ram <- 10
 
 grid_search_list <- list(
-  dist_weight = seq(from = 0.01, to = 0.51, length.out = 4),
-  ent_weight = seq(from = 0.01, to = 0.11, length.out = 4),
-  dist_pow = seq(from = 0.1, to = 0.7, length.out = 4)
+  dist_weight = c(0.002, 0.005, 0.010),
+  ent_weight = seq(from = 0, to = 0.006, by = 0.001),
+  dist_pow = seq(from = 0.1, to = 1.0, by = 0.1)
 )
 
 # batch preprocess species
