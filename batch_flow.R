@@ -101,16 +101,16 @@ htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
 
 # Visualize model with best LL
 
-ll_df$model[1]
-bf <- import_birdflow(file.path(my_dir, ll_df$model[1]))
-bf <- sparsify(bf, method = "state")
-
-## Plot map route_migration spring msap
-
-rts <- route_migration(bf, 10, 'prebreeding')
-plot(get_coastline(bf, match_extent = TRUE))
-plot(rts$lines, add = TRUE)
-title(main = ll_df$model[1])
+# ll_df$model[1]
+# bf <- import_birdflow(file.path(my_dir, ll_df$model[1]))
+# bf <- sparsify(bf, method = "state")
+# 
+# ## Plot map route_migration spring msap
+# 
+# rts <- route_migration(bf, 10, 'prebreeding')
+# plot(get_coastline(bf, match_extent = TRUE))
+# plot(rts$lines, add = TRUE)
+# title(main = ll_df$model[1])
 
 # graph route migration for all models in parallel
 
