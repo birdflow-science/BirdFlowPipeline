@@ -71,5 +71,7 @@ hyperparams_ll_df_row <- function(i){
     dist = sub('.*dist(.*?)_.*', '\\1', mn) %>% as.numeric,
     pow = sub('.*pow(.*?)\\.hdf5', '\\1', mn) %>% as.numeric,
     ll = sum(i$ll$log_likelihood, na.rm = TRUE),
+    nll = sum(i$ll$null_ll, na.rm = TRUE),
+    mean_distr_cor = i$mean_distr_cor
   )
 }

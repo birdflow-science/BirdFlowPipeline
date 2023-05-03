@@ -168,12 +168,13 @@ do_ll <- function(path, season){
 # intervals outside that season will get an NA for log likelihood
 do_ll_plain <- function(path, track_info){
   bf <- import_birdflow(path)
+  mean_distr_cor <- BirdFlowR:::evaluate_performance(bf)$mean_distr_cor
   my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf)
   #my_ll
-  list(model = basename(path), obs = track_info$obs_df, int = track_info$int_df, ll = as_tibble(my_ll))
+  list(model = basename(path), obs = track_info$obs_df, int = track_info$int_df, ll = as_tibble(my_ll), mean_distr_cor = mean_distr_cor)
 }
 
 # get params from beginning of batch_flow.R first

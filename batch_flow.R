@@ -152,7 +152,7 @@ spring_migration_pdf <- function(filename, my_dir){
 }
 
 batchMap(spring_migration_pdf,
-         ll_df$model,
+         basename(files),
          more.args = list(my_dir = my_dir),
          reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
                             conf.file = 'batchtools.conf.R',
