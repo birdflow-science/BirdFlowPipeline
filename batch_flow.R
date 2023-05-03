@@ -94,10 +94,38 @@ plot3d(
 # 
 # # To save to a file:
 htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
-                        file = "3dscatter.html",
+                        file = "3dscatter_ll.html",
                         libdir = "libs",
                         selfcontained = TRUE
 )
+
+
+# Plot the grid search likelihood results with NULL MASK
+
+ll_df <- ll_df %>%
+  rowwise %>%
+  mutate(color = if_else(ll < nll, '#ffffff', color))
+
+plot3d( 
+  x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
+  col = ll_df$color, 
+  type = 's', 
+  radius = .02,
+  xlab="ent", ylab="dist", zlab="pow")
+
+# To display in an R Markdown document:
+# rglwidget()
+# 
+# # To save to a file:
+htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
+                        file = "3dscatter_nll.html",
+                        libdir = "libs",
+                        selfcontained = TRUE
+)
+
+
+
+
 
 # Visualize model with best LL
 
