@@ -168,7 +168,6 @@ do_ll <- function(path, season){
 # intervals outside that season will get an NA for log likelihood
 do_ll_plain <- function(path, track_info){
   bf <- import_birdflow(path)
-  bf <- sparsify(bf, method = "state")
   my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),

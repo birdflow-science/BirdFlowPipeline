@@ -21,9 +21,9 @@ my_species <- c('American Woodcock')
 gpu_ram <- 10
 
 grid_search_list <- list(
-  dist_weight = c(0.002, 0.005, 0.010),
-  ent_weight = seq(from = 0, to = 0.006, by = 0.001),
-  dist_pow = seq(from = 0.1, to = 1.0, by = 0.1)
+  dist_weight = c(0.01, 0.025, 0.05, 0.10, 0.15),
+  ent_weight = seq(from = 0.001, to = 0.021, by = 0.005),
+  dist_pow = seq(from = 0.0, to = 0.8, by = 0.2)
 )
 
 # batch preprocess species
@@ -101,9 +101,8 @@ htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
 
 # Visualize model with best LL
 
-# ll_df$model[1]
-# bf <- import_birdflow(file.path(my_dir, ll_df$model[1]))
-# bf <- sparsify(bf, method = "state")
+ll_df$model[1]
+bf <- import_birdflow(file.path(my_dir, ll_df$model[1]))
 # 
 # ## Plot map route_migration spring msap
 # 
@@ -116,7 +115,6 @@ htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
 
 spring_migration_pdf <- function(filename, my_dir){
   bf <- import_birdflow(file.path(my_dir, filename))
-  bf <- sparsify(bf, method = "state")
   rts <- route_migration(bf, 10, 'prebreeding')
   pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
   plot(get_coastline(bf, match_extent = TRUE))
