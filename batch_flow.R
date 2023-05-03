@@ -162,3 +162,25 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 10,
                             memory = 8))
 waitForJobs()
+
+
+### make coded list by drawing plots and waiting to user input
+
+ll_df$visual <- NA_character_
+for (i in 40:nrow(ll_df)){
+  mname <- ll_df[i, 'model']
+  bf <- import_birdflow(file.path(my_dir, mname))
+  rts <- route_migration(bf, 10, 'prebreeding')
+  plot(get_coastline(bf))
+  plot(rts$lines, add = TRUE)
+  my_input <- readline('Enter code: ')
+  while (my_input == 'redo'){
+    dev.off()
+    rts <- route_migration(bf, 10, 'prebreeding')
+    plot(get_coastline(bf))
+    plot(rts$lines, add = TRUE)
+    my_input <- readline('Enter code: ')
+  }
+  ll_df$visual[i] <- my_input
+  dev.off()
+}
