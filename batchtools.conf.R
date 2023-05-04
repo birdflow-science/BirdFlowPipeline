@@ -4,7 +4,7 @@ cluster.functions <- makeClusterFunctionsSlurm(template = 'slurm.tmpl',
 default.resources <- list(
   ncpus = 1,
   chunks.as.arrayjobs = TRUE,
-  max.arrayjobs.gpu = 64,
+  max.arrayjobs.gpu = 200,
   max.arrayjobs.cpu = 250,
   partition.gpu = 'gpu-preempt,gpu',
   partition.cpu = 'cpu-preempt,cpu',
