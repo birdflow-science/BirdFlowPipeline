@@ -66,15 +66,17 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
                             memory = gpu_ram + 1))
 waitForJobs()
 
+# Load track info
+
+#banding_df <- readRDS(file.path('rds', paste0(pp_info$species, '.rds')))
+#track_info <- make_tracks2(banding_df)
+track_info <- readRDS('track_info_banding_tracking_combined.rds')
+
 # Batch likelihoods
 
 files <- list.files(path = my_dir,
                     pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
-
-banding_df <- readRDS(file.path('rds', paste0(pp_info$species, '.rds')))
-track_info <- make_tracks2(banding_df)
-
 batchMap(do_ll_plain,
          files,
          more.args = list(track_info = track_info),
