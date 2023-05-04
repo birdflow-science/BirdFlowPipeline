@@ -43,7 +43,7 @@ birdflow_modelfit <- function(
     dist_pow,
     obs_weight = 1,
     learning_rate = 0.1,
-    training_steps = 1500,
+    training_steps = 600,
     rng_seed = 17
 ){
   system2('python',
