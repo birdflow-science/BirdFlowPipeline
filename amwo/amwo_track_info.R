@@ -1,6 +1,6 @@
 ### AMEWOO Tracking ###
 
-min_dist_m <- 15000
+min_dist_m <- 0
 max_days = 180
 
 tracking_df <- fread('amwo/amewoo_USGS_Movebank_st2019_weekly_tracks-100.csv')
