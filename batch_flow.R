@@ -47,6 +47,11 @@ pp_info <- save_preprocessing_info()
 
 # Batch fit models
 
+# delete existing modelfit files matching the output pattern
+files <- list.files(path = my_dir,
+                    pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
+                    full.names = TRUE)
+file.remove(files)
 batchMap(fun = birdflow_modelfit,
          args = birdflow_modelfit_args(
            preprocessed_list = list(
