@@ -219,3 +219,23 @@ batch_likelihood <- function(dir, regex, params = params, season){
 #   }
 #   selected_timesteps
 # }
+
+# 3d plot function
+
+make_3d_plot <- function(color_column, suffix){
+  plot3d( 
+    x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
+    col = ll_df[[color_column]], 
+    type = 's', 
+    radius = .02,
+    xlab="ent", ylab="dist", zlab="pow")
+  # To display in an R Markdown document:
+  # rglwidget()
+  # 
+  # # To save to a file:
+  htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
+                          file = file.path('output', 'plots', paste0("3dscatter_", suffix, ".html")),
+                          libdir = "libs",
+                          selfcontained = TRUE
+  )
+}

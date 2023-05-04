@@ -89,26 +89,6 @@ cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
 cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
-# 3d plot function
-
-make_3d_plot <- function(color_column, suffix){
-  plot3d( 
-    x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
-    col = ll_df[[color_column]], 
-    type = 's', 
-    radius = .02,
-    xlab="ent", ylab="dist", zlab="pow")
-  # To display in an R Markdown document:
-  # rglwidget()
-  # 
-  # # To save to a file:
-  htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
-                          file = paste0("3dscatter_", suffix, ".html"),
-                          libdir = "libs",
-                          selfcontained = TRUE
-  )
-}
-
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll')
 
