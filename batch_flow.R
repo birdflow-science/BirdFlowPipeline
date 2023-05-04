@@ -79,65 +79,58 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
 waitForJobs()
 ll_results <- reduceResultsList()
 ll_df <- lapply(ll_results, hyperparams_ll_df_row) %>% bind_rows %>% arrange(-ll)
-ll_df$color <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
 
-# Plot the grid search likelihood results
-plot3d( 
-  x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
-  col = ll_df$color, 
-  type = 's', 
-  radius = .02,
-  xlab="ent", ylab="dist", zlab="pow")
+# Set the plot colors
 
-# To display in an R Markdown document:
-# rglwidget()
-# 
-# # To save to a file:
-htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
-                        file = "3dscatter_ll.html",
-                        libdir = "libs",
-                        selfcontained = TRUE
-)
+ll_df$color_ll <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
+ll_df <- ll_df %>% mutate(color_nll = if_else(ll < nll, '#ffffff', color_ll))
+cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
+cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
+cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
+ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
+# 3d plot function
 
-# Plot the grid search likelihood results with NULL MASK
+make_3d_plot <- function(color_column, suffix){
+  plot3d( 
+    x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
+    col = ll_df[[color_column]], 
+    type = 's', 
+    radius = .02,
+    xlab="ent", ylab="dist", zlab="pow")
+  # To display in an R Markdown document:
+  # rglwidget()
+  # 
+  # # To save to a file:
+  htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
+                          file = paste0("3dscatter_", suffix, ".html"),
+                          libdir = "libs",
+                          selfcontained = TRUE
+  )
+}
 
-ll_df <- ll_df %>%
-  rowwise %>%
-  mutate(color = if_else(ll < nll, '#ffffff', color))
+# Plot likelihood results cube
+make_3d_plot('color_ll', 'll')
 
-plot3d( 
-  x = ll_df$ent, y = ll_df$dist, z = ll_df$pow, 
-  col = ll_df$color, 
-  type = 's', 
-  radius = .02,
-  xlab="ent", ylab="dist", zlab="pow")
+# Plot null likelihood cube
+make_3d_plot('color_nll', 'nll')
 
-# To display in an R Markdown document:
-# rglwidget()
-# 
-# # To save to a file:
-htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
-                        file = "3dscatter_nll.html",
-                        libdir = "libs",
-                        selfcontained = TRUE
-)
-
-
-
-
+# Plot correlation cube
+make_3d_plot('color_cor', 'cor')
 
 # Visualize model with best LL
 
-ll_df$model[1]
-bf <- import_birdflow(file.path(my_dir, ll_df$model[1]))
+i <- 1
+
+ll_df$model[i]
+bf <- import_birdflow(file.path(my_dir, ll_df$model[i]))
 # 
 # ## Plot map route_migration spring msap
 # 
 rts <- route_migration(bf, 10, 'prebreeding')
 plot(get_coastline(bf))
 plot(rts$lines, add = TRUE)
-title(main = ll_df$model[1])
+title(main = ll_df$model[i])
 
 # graph route migration for all models in parallel
 
