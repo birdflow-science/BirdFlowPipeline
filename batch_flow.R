@@ -20,6 +20,9 @@ my_species <- c('American Woodcock')
 
 gpu_ram <- 10
 
+res <- 58
+# res <- NULL
+
 grid_search_list <- list(
   dist_weight = seq(from = 0.008, to = 0.018, length.out = 6),
   ent_weight = seq(from = 0.0015, to = 0.004, length.out = 6),
@@ -32,6 +35,7 @@ batchMap(fun = BirdFlowR::preprocess_species,
          species = my_species,
          out_dir = my_dir,
          gpu_ram = gpu_ram,
+         res = res,
          reg = makeRegistry(paste(make_timestamp(), 'pp', sep = '_'),
                             conf.file = 'batchtools.conf.R',
                             packages = my_packages))
