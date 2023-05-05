@@ -17,7 +17,7 @@ tracking_df <- tracking_df %>% group_by(BAND) %>%
   mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
   ungroup
 df <- tracking_df
-df <- preprocess_calc_distance_days2(df)
+df <- preprocess_calc_distance_days(df)
 df <- df %>% select(BAND, EVENT_DATE, LAT_DD, LON_DD, BAND_TRACK, distance, days)
 df <- df %>% group_by(BAND_TRACK) %>%
   filter(distance[2] > min_dist_m / 1000) %>%

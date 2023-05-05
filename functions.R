@@ -49,14 +49,6 @@ preprocess_calc_distance_days <- function(df){
     ungroup
 }
 
-preprocess_filter_days <- function(df, ndays){
-  # something seems wrong with this filtering still, currently not using
-  browser()
-  df <- df %>% filter((days < {{ndays}}) | (lead(days) < {{ndays}}))
-  df <- df %>% filter((days > 0) | (lead(days) > 0 ))
-  df
-}
-
 make_tracks <- function(
     df,
     remove_identical = TRUE,
@@ -93,16 +85,6 @@ make_tracks <- function(
 }
 
 # Version for preparing for log likelihood calcs #
-preprocess_calc_distance_days2 <- function(df){
-  df %>%
-    group_by(BAND) %>%
-    mutate(distance = geodist::geodist(data.frame(lon = LON_DD, lat = LAT_DD),
-                                       sequential = TRUE, measure = 'geodesic', pad = TRUE) / 1000) %>%
-    mutate(days = as.integer(EVENT_DATE - lag(EVENT_DATE))) %>%
-    ungroup
-}
-
-# Version for preparing for log likelihood calcs #
 make_tracks2 <- function(
     df,
     min_dist_m = 15000,
@@ -114,7 +96,7 @@ make_tracks2 <- function(
     tidyr::uncount(count) %>%
     mutate(BAND_TRACK = paste(BAND, rep(1:(n()/2), each = 2), sep = '_')) %>%
     ungroup
-  df <- preprocess_calc_distance_days2(df)
+  df <- preprocess_calc_distance_days(df)
   df <- df %>% select(BAND, EVENT_TYPE, EVENT_DATE, LAT_DD, LON_DD, EBIRDST_CODE, BAND_TRACK, distance, days)
   df <- df %>% group_by(BAND_TRACK) %>%
     filter(distance[2] > min_dist_m / 1000) %>%
