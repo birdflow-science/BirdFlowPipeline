@@ -177,49 +177,6 @@ do_ll_plain <- function(path, track_info){
   list(model = basename(path), obs = track_info$obs_df, int = track_info$int_df, ll = as_tibble(my_ll), mean_distr_cor = mean_distr_cor)
 }
 
-# get params from beginning of batch_flow.R first
-batch_likelihood <- function(dir, regex, params = params, season){
-  files <- list.files(path = dir, pattern = regex, full.names = TRUE)
-  # See ?Registry for more info on configuration files, e.g., always loading
-  # certain packages or starting in certain working directories
-  reg <- makeRegistry(params$pp_reg,
-                      conf.file = file.path('conf', 'conf/preprocess_species.batchtools.conf.R'),
-                      packages = c('data.table', 'dplyr', 'tidyr', 'BirdFlowR'),
-                      source = c('functions.R', '~/BirdFlowR/R/interval_log_likelihood.R'))
-  # saveRegistry()
-  # ?setDefaultRegistry
-  # not needed because once we make registry, it stays for session as reg
-
-  batchMap(fun = do_ll,
-           path = files,
-           season = season)
-  rez <- list(walltime = params$wt_pp, ncpus = params$ncpu_pp, memory = params$mem_pp * 1000, partition = params$part_pp)
-  submitJobs(resources = rez)
-  waitForJobs()
-}
-# 
-# get_season_timesteps <- function(bf, season){
-#   stopifnot(is.character(season), length(season) == 1)
-#   stopifnot(season %in% c("all", "prebreeding", "postbreeding"))
-#   full_model_start_step <- 1
-#   full_model_stop_step <- n_transitions(bf)
-#   if (season %in% c("prebreeding", "postbreeding")) {
-#     start_step <- lookup_timestep(bf$species[[paste0(season, "_migration_start")]], bf)
-#     stop_step <- lookup_timestep(bf$species[[paste0(season, "_migration_end")]], bf)
-#   }
-#   else {
-#     start_step <- full_model_start_step
-#     stop_step <- full_model_stop_step
-#   }
-#   if (start_step > stop_step) {
-#     selected_timesteps <- c(start_step:full_model_stop_step, full_model_start_step:stop_step)
-#   }
-#   else {
-#     selected_timesteps <- start_step:stop_step
-#   }
-#   selected_timesteps
-# }
-
 # 3d plot function
 
 make_3d_plot <- function(color_column, suffix){
