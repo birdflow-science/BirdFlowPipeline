@@ -31,7 +31,7 @@ grid_search_list <- list(
 
 # batch preprocess species
 
-batchMap(fun = BirdFlowR::preprocess_species,
+batchMap(fun = preprocess_species_wrapper,
          species = my_species,
          out_dir = my_dir,
          gpu_ram = gpu_ram,
@@ -43,7 +43,9 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 3L,
                             memory = 4L))
 waitForJobs()
-pp_info <- save_preprocessing_info()
+pp_info <- reduceResultsList() |> rbindlist() |> as.data.frame()
+# pipeline currently assumes just 1 species at a time, take only 1st row
+pp_info <- pp_info[1,]
 
 # Batch fit models
 

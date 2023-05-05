@@ -5,14 +5,13 @@ make_timestamp <- function(tz = "America/Los_Angeles"){
   format(datetime, "%Y-%m-%d_%H-%M-%S")
 }
 
-# save info from preprocess-species batch function
-save_preprocessing_info <- function(){
-  my_result_list <- lapply(seq_len(nrow(getJobPars())), loadResult)
+# preprocess species wrapper
+preprocess_species_wrapper <- function(...){
+  bf <- BirdFlowR::preprocess_species(...)
   lst <- list()
-  lst$mem <- sapply(getJobPars()$job.pars, function(i){i$gpu_ram})
-  lst$species <- sapply(my_result_list, function(i){i$species$species_code})
-  lst$res <- sapply(my_result_list, function(i){i$geom$res[1]/1000})
-  lst
+  lst$species <- BirdFlowR::species_info(bf)$species_code
+  lst$res <- BirdFlowR::res(bf)[1]/1000
+  return(lst)
 }
 
 # organize grid expansion for arguments...
