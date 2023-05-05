@@ -239,3 +239,15 @@ make_3d_plot <- function(color_column, suffix){
                           selfcontained = TRUE
   )
 }
+
+# make pdf of spring route_migration for a model hdf5 file
+
+spring_migration_pdf <- function(filename, my_dir){
+  bf <- import_birdflow(file.path(my_dir, filename))
+  rts <- route_migration(bf, 10, 'prebreeding')
+  pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
+  plot(get_coastline(bf))
+  plot(rts$lines, add = TRUE)
+  title(main = filename)
+  dev.off()
+}

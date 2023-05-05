@@ -140,16 +140,6 @@ title(main = ll_df$model[i])
 
 # graph route migration for all models in parallel
 
-spring_migration_pdf <- function(filename, my_dir){
-  bf <- import_birdflow(file.path(my_dir, filename))
-  rts <- route_migration(bf, 10, 'prebreeding')
-  pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
-  plot(get_coastline(bf))
-  plot(rts$lines, add = TRUE)
-  title(main = filename)
-  dev.off()
-}
-
 batchMap(spring_migration_pdf,
          basename(files),
          more.args = list(my_dir = my_dir),
