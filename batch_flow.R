@@ -53,7 +53,7 @@ pp_info <- pp_info[1,]
 files <- list.files(path = my_dir,
                     pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
-file.remove(files)
+#file.remove(files)
 batchMap(fun = birdflow_modelfit,
          args = birdflow_modelfit_args(
            preprocessed_list = list(
