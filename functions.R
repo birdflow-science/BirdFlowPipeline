@@ -87,6 +87,7 @@ make_tracks <- function(
 # Version for preparing for log likelihood calcs #
 make_tracks2 <- function(
     df,
+    max_bands = 10000,
     min_dist_m = 15000,
     max_days = 180){
   # Function to convert banding df to an sf object of linestrings of origin-destination tracks
@@ -103,6 +104,10 @@ make_tracks2 <- function(
     filter(days[2] <= max_days) %>%
     mutate(when = c('from', 'to')) %>%
     ungroup
+  # Downsample to max # bands
+  sampled_bands <- sample(df$BAND, max_bands)
+  df <- df %>% filter(BAND %in% sampled_bands)
+  # Make IDs
   df$id <- seq_len(nrow(df))
   obs_df <- df %>% rename(date = EVENT_DATE, lat = LAT_DD, lon = LON_DD)
   int_df <- df %>% select(BAND_TRACK, when, id)
