@@ -30,6 +30,7 @@ log.file = fs::path_expand(log.file)
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=<%= resources$ncpus %>
 #SBATCH --mem=<%= resources$memory %>G
+#SBATCH --exclude=toltec-cpu[001-007]
 <%= if (!is.null(resources$ngpus)) sprintf("#SBATCH --gpus-per-task=%i\n", resources$ngpus) -%>
 <%= if (!is.null(resources$ngpus)) paste0("#SBATCH --constraint=", resources$constraint.gpu, '\n') -%>
 <%= paste0("#SBATCH --partition=", if (!is.null(resources$ngpus)) resources$partition.gpu else resources$partition.cpu) %>
