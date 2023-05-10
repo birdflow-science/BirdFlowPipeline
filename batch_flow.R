@@ -125,6 +125,9 @@ cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
 cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
+# save RDS
+saveRDS(ll_df, file.path('output', 'll_rds', paste0(pp_info$species, '_', pp_info$res, 'km_log_likelihoods.rds')))
+
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll')
 
