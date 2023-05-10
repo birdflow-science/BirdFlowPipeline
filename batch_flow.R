@@ -110,7 +110,7 @@ batchMap(do_ll_plain,
                             packages = my_packages,
                             source = 'functions.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = 10,
+           resources = list(walltime = 15,
                             memory = 8))
 waitForJobs()
 ll_results <- reduceResultsList()
