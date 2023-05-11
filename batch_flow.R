@@ -2,7 +2,11 @@
 
 my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl')
 for (i in my_packages){
-  library(i, character.only = TRUE)
+  suppressWarnings(
+    suppressPackageStartupMessages(
+      library(i, character.only = TRUE, warn.conflicts = FALSE)
+    )
+  )
 }
 
 # load functions
