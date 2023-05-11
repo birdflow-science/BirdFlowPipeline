@@ -61,7 +61,7 @@ birdflow_modelfit <- function(
           ))
 }
 
-hyperparams_ll_df_row <- function(i){
+model_information_row <- function(i){
   mn <- i$model
   tibble(
     model = mn,

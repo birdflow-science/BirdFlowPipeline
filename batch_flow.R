@@ -117,7 +117,7 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
                             memory = 8))
 waitForJobs()
 ll_results <- reduceResultsList()
-ll_df <- lapply(ll_results, hyperparams_ll_df_row) %>% bind_rows %>% arrange(-ll)
+ll_df <- lapply(ll_results, model_information_row) %>% bind_rows %>% arrange(-ll)
 
 # Set the plot colors
 
