@@ -182,7 +182,7 @@ make_3d_plot <- function(color_column, suffix){
   # 
   # # To save to a file:
   htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
-                          file = file.path('output', 'plots', paste0(pp_info$species, "_", pp_info$res, "km_3dscatter_", suffix, ".html")),
+                          file = file.path('output', 'plots', paste0(my_species, "_", my_res, "km_3dscatter_", suffix, ".html")),
                           libdir = "libs",
                           selfcontained = TRUE
   )
