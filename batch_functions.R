@@ -8,10 +8,8 @@ make_timestamp <- function(tz = "America/Los_Angeles"){
 # preprocess species wrapper
 preprocess_species_wrapper <- function(...){
   bf <- BirdFlowR::preprocess_species(...)
-  lst <- list()
-  lst$species <- BirdFlowR::species_info(bf)$species_code
-  lst$res <- BirdFlowR::res(bf)[1]/1000
-  return(lst)
+  # return res
+  BirdFlowR::res(bf)[1]/1000
 }
 
 # organize grid expansion for arguments...

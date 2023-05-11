@@ -13,19 +13,11 @@ for (i in my_packages){
 source('batch_functions.R')
 source('functions.R')
 
-# directory settings
+# main settings
 
-my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
-dir.create(my_dir, showWarnings = FALSE)
-
-# main arguments
-
-my_species <- c('American Woodcock')
-
+my_species <- 'American Woodcock'
 gpu_ram <- 10
-
-res <- 58
-# res <- NULL
+my_res <- 58
 
 grid_search_list <- list(
   dist_weight = seq(from = 0.008, to = 0.018, length.out = 6),
@@ -33,15 +25,22 @@ grid_search_list <- list(
   dist_pow = seq(from = 0.1, to = .9, length.out = 5)
 )
 
+# directory settings
+
+my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
+
+# preprocess inputs
+
+dir.create(my_dir, showWarnings = FALSE)
+my_species <- ebirdst::get_species(my_species)
+
 # preprocess species
 
-pp_info <- preprocess_species_wrapper(
+my_res <- preprocess_species_wrapper(
   species = my_species,
   out_dir = my_dir,
   gpu_ram = gpu_ram,
-  res = res) %>% list %>% rbindlist %>% as.data.frame
-# pipeline currently assumes just 1 species at a time, take only 1st row
-pp_info <- pp_info[1,]
+  res = my_res)
 
 # batch preprocess species
 
@@ -65,15 +64,15 @@ pp_info <- pp_info[1,]
 
 # delete existing modelfit files matching the output pattern
 files <- list.files(path = my_dir,
-                    pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
+                    pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
 #file.remove(files)
 batchMap(fun = birdflow_modelfit,
          args = birdflow_modelfit_args(
            preprocessed_list = list(
              mydir = my_dir,
-             mysp = pp_info$species,
-             myres = pp_info$res),
+             mysp = my_species,
+             myres = my_res),
            grid_search_list = grid_search_list),
          reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
@@ -97,14 +96,14 @@ waitForJobs()
 #   int_df = all_int
 # )
 
-banding_df <- readRDS(file.path('rds', paste0(pp_info$species, '.rds')))
+banding_df <- readRDS(file.path('rds', paste0(my_species, '.rds')))
 track_info <- make_tracks2(banding_df)
 #track_info <- readRDS('track_info_banding_tracking_combined.rds')
 
 # Batch likelihoods
 
 files <- list.files(path = my_dir,
-                    pattern = paste0('^', pp_info$species, '.*', pp_info$res, 'km_.*\\.hdf5$'),
+                    pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
 batchMap(do_ll_plain,
          files,
@@ -130,7 +129,7 @@ cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
 # save RDS
-saveRDS(ll_df, file.path('output', 'll_rds', paste0(pp_info$species, '_', pp_info$res, 'km_log_likelihoods.rds')))
+saveRDS(ll_df, file.path('output', 'll_rds', paste0(my_species, '_', my_res, 'km_log_likelihoods.rds')))
 
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll')
