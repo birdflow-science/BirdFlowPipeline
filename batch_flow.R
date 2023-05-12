@@ -1,6 +1,6 @@
 #Sys.setenv(DEBUGME = "batchtools")
 
-my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl')
+my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr')
 for (i in my_packages){
   suppressWarnings(
     suppressPackageStartupMessages(
@@ -100,12 +100,12 @@ banding_df <- readRDS(file.path('rds', paste0(my_species, '.rds')))
 track_info <- make_tracks2(banding_df)
 #track_info <- readRDS('track_info_banding_tracking_combined.rds')
 
-# Batch likelihoods
+# Batch model evaluation
 
 files <- list.files(path = my_dir,
                     pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
-batchMap(do_ll_plain,
+batchMap(evaluate_model,
          files,
          more.args = list(track_info = track_info),
          reg = makeRegistry(paste0(make_timestamp(), '_ll'),
@@ -116,8 +116,11 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 15,
                             memory = 8))
 waitForJobs()
-ll_results <- reduceResultsList()
-ll_df <- lapply(ll_results, model_information_row) %>% bind_rows %>% arrange(-ll)
+ll_df <- reduceResultsList() %>%
+  lapply(function(i){i$df}) %>%
+  rbindlist %>%
+  as_tibble %>%
+  arrange(-ll)
 
 # Set the plot colors
 

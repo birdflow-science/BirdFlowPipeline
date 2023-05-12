@@ -63,7 +63,7 @@ birdflow_modelfit <- function(
 
 model_information_row <- function(i){
   mn <- i$model
-  tibble(
+  df <- tibble(
     model = mn,
     obs = sub('.*obs(.*?)_.*', '\\1', mn) %>% as.numeric,
     ent = sub('.*ent(.*?)_.*', '\\1', mn) %>% as.numeric,
@@ -75,4 +75,13 @@ model_information_row <- function(i){
     ll_n = length(na.omit(i$ll$log_likelihood)),
     mean_distr_cor = i$mean_distr_cor
   )
+  bf <- import_birdflow(file.path(my_dir, mn))
+  rts <- route_migration(bf, 100, 'prebreeding')
+  stats <- rts_stats(rts)
+  for (i in names(stats)){
+    df[[i]] <- stats[[i]]
+  }
+  df
 }
+
+
