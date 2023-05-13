@@ -31,7 +31,7 @@ output_folder <- 'amewoo_58km_classic_banding'
 
 # directory settings
 
-my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
+my_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_folder)
 
 # preprocess inputs
 
