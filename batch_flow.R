@@ -25,6 +25,10 @@ grid_search_list <- list(
   dist_pow = seq(from = 0.1, to = .9, length.out = 5)
 )
 
+output_folder <- 'amewoo_58km_classic_banding'
+
+
+
 # directory settings
 
 my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf"
@@ -32,7 +36,10 @@ my_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batc
 # preprocess inputs
 
 dir.create(my_dir, showWarnings = FALSE)
+dir.create('output', showWarnings = FALSE)
+dir.create(file.path('output', output_folder), showWarnings = FALSE)
 my_species <- ebirdst::get_species(my_species)
+saveRDS(grid_search_list, file.path('output', output_folder, 'grid_search_list.rds'))
 
 # preprocess species
 
@@ -74,7 +81,7 @@ batchMap(fun = birdflow_modelfit,
              mysp = my_species,
              myres = my_res),
            grid_search_list = grid_search_list),
-         reg = makeRegistry(paste0(make_timestamp(), '_mf'), conf.file = 'batchtools.conf.R'))
+         reg = makeRegistry(file.path('output', output_folder, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 10,
                             ngpus = 1,
@@ -108,7 +115,7 @@ files <- list.files(path = my_dir,
 batchMap(evaluate_model,
          files,
          more.args = list(track_info = track_info),
-         reg = makeRegistry(paste0(make_timestamp(), '_ll'),
+         reg = makeRegistry(file.path('output', output_folder, paste0(make_timestamp(), '_ll')),
                             conf.file = 'batchtools.conf.R',
                             packages = my_packages,
                             source = 'functions.R'))
@@ -124,7 +131,7 @@ ll_df <- reduceResultsList() %>%
 
 # make PCA evaluation plot
 
-model_evaluation_biplot(ll_df, 'outfile.pdf')
+model_evaluation_biplot(ll_df, file.path('output', output_folder, 'pca_evaluation.pdf'))
 
 # Set the plot colors
 
@@ -136,7 +143,7 @@ cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
 # save RDS
-saveRDS(ll_df, file.path('output', 'll_rds', paste0(my_species, '_', my_res, 'km_log_likelihoods.rds')))
+saveRDS(ll_df, file.path('output', output_folder, 'll_df.rds'))
 
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll')
