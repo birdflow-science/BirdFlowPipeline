@@ -145,20 +145,9 @@ make_3d_plot('color_cor', 'cor')
 
 # Visualize model with best LL
 
-i <- 1
-
-ll_df$model[i]
-bf <- import_birdflow(file.path(my_dir, ll_df$model[i]))
-# 
-# ## Plot map route_migration spring msap
-# 
-rts <- route_migration(bf, 10, 'prebreeding')
-plot(get_coastline(bf))
-plot(rts$lines, add = TRUE)
-title(main = ll_df$model[i])
+quick_visualize_routes(60)
 
 # graph route migration for all models in parallel
-
 batchMap(spring_migration_pdf,
          basename(files),
          more.args = list(my_dir = my_dir),

@@ -233,3 +233,16 @@ rts_stats <- function(rts){
   out$length <- sf::st_length(rts$lines$geometry) %>% as.numeric %>% `/`(1000) %>% mean(na.rm = TRUE)
   out
 }
+# Quick visualize by model number
+# Plot map route_migration spring map
+quick_visualize_routes <- function(i){
+  bf <- import_birdflow(file.path(my_dir, ll_df$model[i]))
+  # 
+  # ## Plot map route_migration spring msap
+  # 
+  rts <- route_migration(bf, 10, 'prebreeding')
+  plot(get_coastline(bf))
+  plot(rts$lines, add = TRUE)
+  title(main = ll_df$model[i])
+  ll_df$model[i]
+}
