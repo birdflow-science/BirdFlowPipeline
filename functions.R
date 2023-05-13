@@ -176,7 +176,7 @@ evaluate_model <- function(path, track_info){
     ll_raw_n = nrow(my_ll),
     ll_n = length(na.omit(my_ll$log_likelihood)),
     straightness = route_stats$straightness,
-    sinuosiity = route_stats$sinuosiity,
+    sinuosity = route_stats$sinuosity,
     length = route_stats$length,
     displacement = route_stats$displacement
   )
@@ -225,7 +225,7 @@ rts_stats <- function(rts){
     traj <- TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
     list(
       straightness = TrajStraightness(traj),
-      sinuosiity = TrajSinuosity2(traj),
+      sinuosity = TrajSinuosity2(traj),
       length = TrajLength(traj)/1000,
       displacement = TrajDistance(traj)/1000
     )
