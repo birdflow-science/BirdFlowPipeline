@@ -1,6 +1,6 @@
 #Sys.setenv(DEBUGME = "batchtools")
 
-my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr')
+my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra')
 for (i in my_packages){
   suppressWarnings(
     suppressPackageStartupMessages(
@@ -121,6 +121,10 @@ ll_df <- reduceResultsList() %>%
   rbindlist %>%
   as_tibble %>%
   arrange(-ll)
+
+# make PCA evaluation plot
+
+model_evaluation_biplot(ll_df, 'outfile.pdf')
 
 # Set the plot colors
 

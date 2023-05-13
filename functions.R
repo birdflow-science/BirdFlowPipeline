@@ -233,6 +233,31 @@ rts_stats <- function(rts){
   out$length <- sf::st_length(rts$lines$geometry) %>% as.numeric %>% `/`(1000) %>% mean(na.rm = TRUE)
   out
 }
+
+# PCA biplot hyperparameters evaluation
+model_evaluation_biplot <- function(ll_df, outfile){
+  fit <- princomp(
+    ll_df[,
+          c(
+            'ent_weight',
+            'dist_weight',
+            'dist_pow',
+            'mean_distr_cor',
+            'll',
+            'straightness',
+            'sinuosity',
+            'length',
+            'displacement'
+          )
+    ],
+    cor = TRUE
+  )
+  #biplot(fit)
+  pdf(outfile, 9,9)
+  print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))
+  dev.off()
+}
+
 # Quick visualize by model number
 # Plot map route_migration spring map
 quick_visualize_routes <- function(i){
