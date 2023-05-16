@@ -269,5 +269,5 @@ quick_visualize_routes <- function(i){
   plot(get_coastline(bf))
   plot(rts$lines, add = TRUE)
   title(main = ll_df$model[i])
-  ll_df$model[i]
+  print(ll_df[i,])
 }
