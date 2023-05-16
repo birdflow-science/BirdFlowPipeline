@@ -127,7 +127,8 @@ ll_df <- reduceResultsList() %>%
   lapply(function(i){i$df}) %>%
   rbindlist %>%
   as_tibble %>%
-  arrange(-ll)
+  arrange(-ll) %>%
+  mutate(row_no = row_number())
 
 # make PCA evaluation plot
 
