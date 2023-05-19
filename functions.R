@@ -170,6 +170,8 @@ evaluate_model <- function(path, track_info){
     ent_weight = bf$metadata$hyperparameters$ent_weight,
     dist_weight = bf$metadata$hyperparameters$dist_weight,
     dist_pow = bf$metadata$hyperparameters$dist_pow,
+    de_ratio = signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3),
+    obs_prop = signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4),
     mean_distr_cor = BirdFlowR:::evaluate_performance(bf)$mean_distr_cor,
     start_cor = evaluate_performance_route(bf, season = 'prebreeding')$start_cor,
     end_traverse_cor = evaluate_performance_route(bf, season = 'prebreeding')$end_traverse_cor,

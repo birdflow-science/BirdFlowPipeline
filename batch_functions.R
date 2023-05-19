@@ -27,6 +27,40 @@ birdflow_modelfit_args <- function(
   args
 }
 
+# Find dist weight and ent weight, for a given obs proportion and de ratio
+# where c = dist_weight/ent_weight
+#       d = obs_weight ( = 1 - dist_weight - ent_weight)
+#.      x = dist_weight
+#.      y = ent_weight
+find_xy <- function(c, d, s = 5){
+  x = (c - c * d) / (c * d + d)
+  y = (1 - d) / (c * d + d)
+  return(
+    c(x = signif(x, s),
+      y = signif(y, s))
+  )
+}
+
+# organize grid expansion for arguments... NEW
+birdflow_modelfit_args_NEW <- function(
+    preprocessed_list,
+    grid_search_list_NEW){
+  orig <- data.frame(preprocessed_list)
+  orig$id <- seq_len(nrow(orig))
+  grid_search_list_NEW$id <- orig$id
+  df <- expand.grid(grid_search_list_NEW)
+  for (i in seq_len(nrow(df))){
+    xy <- find_xy(df$c[i], df$d[i])
+    df$dist_weight[i] <- xy['x']
+    df$ent_weight[i] <- xy['y']
+  }
+  args <- left_join(orig, df, by = 'id')
+  args$id <- NULL
+  args$c <- NULL
+  args$d <- NULL
+  args
+}
+
 # fit model container function
 # grid search parameters from paper not included as default arguments here:
 #  dist_weight = 0.005 # a
@@ -84,4 +118,38 @@ model_information_row <- function(i){
   df
 }
 
-
+# function to make modelfit arguments df from old and new style grid_search_list
+# OLD EXAMPLE:
+# grid_search_list <- list(
+#   dist_weight = seq(from = 0.0008, to = 0.0018, length.out = 5),
+#   ent_weight = seq(from = 0.00015, to = 0.0004, length.out = 5),
+#   dist_pow = seq(from = 0.1, to = .9, length.out = 5)
+# )
+# NEW EXAMPLE:
+# grid_search_list <- list(
+#   c = c(2, 4, 8, 16),
+#   d = c(0.95, 0.975, 0.99, 0.999, 0.9999),
+#   dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+#   dist_weight = NA_real_,
+#   ent_weight = NA_real_
+# )
+make_birdflow_modelfit_args_df <- function(
+    grid_search_type = NULL, grid_search_list = NULL){
+  if (grid_search_type == 'old'){
+    out <- birdflow_modelfit_args(
+      preprocessed_list = list(
+        mydir = my_dir,
+        mysp = my_species,
+        myres = my_res),
+      grid_search_list = grid_search_list
+    )
+  } else if (grid_search_type == 'new'){
+    out <- birdflow_modelfit_args_NEW(
+      preprocessed_list = list(
+        mydir = my_dir,
+        mysp = my_species,
+        myres = my_res),
+      grid_search_list_NEW = grid_search_list)
+  }
+  out
+}

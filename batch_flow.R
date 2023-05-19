@@ -19,13 +19,17 @@ my_species <- 'American Woodcock'
 gpu_ram <- 10
 my_res <- 58
 
+grid_search_type <- 'new'
+
 grid_search_list <- list(
-  dist_weight = seq(from = 0.008, to = 0.018, length.out = 6),
-  ent_weight = seq(from = 0.0015, to = 0.004, length.out = 6),
-  dist_pow = seq(from = 0.1, to = .9, length.out = 5)
+  c = c(2, 4, 8, 16),
+  d = c(0.95, 0.975, 0.99, 0.999, 0.9999),
+  dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+  dist_weight = NA_real_,
+  ent_weight = NA_real_
 )
 
-output_folder <- 'amewoo_58km_classic_banding'
+output_folder <- 'amewoo_58km_new_gs_test'
 
 
 
@@ -40,6 +44,7 @@ dir.create('output', showWarnings = FALSE)
 dir.create(file.path('output', output_folder), showWarnings = FALSE)
 my_species <- ebirdst::get_species(my_species)
 saveRDS(grid_search_list, file.path('output', output_folder, 'grid_search_list.rds'))
+saveRDS(grid_search_type, file.path('output', output_folder, 'grid_search_type.rds'))
 
 # preprocess species
 
@@ -75,12 +80,7 @@ files <- list.files(path = my_dir,
                     full.names = TRUE)
 #file.remove(files)
 batchMap(fun = birdflow_modelfit,
-         args = birdflow_modelfit_args(
-           preprocessed_list = list(
-             mydir = my_dir,
-             mysp = my_species,
-             myres = my_res),
-           grid_search_list = grid_search_list),
+         args = make_birdflow_modelfit_args_df(grid_search_type, grid_search_list),
          reg = makeRegistry(file.path('output', output_folder, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 10,
@@ -157,7 +157,7 @@ make_3d_plot('color_cor', 'cor')
 
 # Visualize model with best LL
 
-quick_visualize_routes(60)
+quick_visualize_routes(1)
 
 # graph route migration for all models in parallel
 batchMap(spring_migration_pdf,
