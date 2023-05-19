@@ -1,7 +1,7 @@
 ### AMEWOO Tracking ###
 
 # birdflow for reference timesteps
-bf <- import_birdflow(file.path(my_dir, 'amewoo_2021_58km_obs1.0_ent0.003_dist0.01_pow0.5.hdf5'))
+bf <- import_birdflow(file.path(my_dir, 'amewoo_2021_58km_obs1.0_ent0.00011122_dist0.00088978_pow0.2.hdf5'))
 
 
 lagtimes = c(1,2,4,8,16)
