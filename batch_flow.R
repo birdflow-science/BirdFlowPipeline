@@ -1,6 +1,6 @@
 #Sys.setenv(DEBUGME = "batchtools")
 
-my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra')
+my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra', 'gridExtra', 'ggfortify')
 for (i in my_packages){
   suppressWarnings(
     suppressPackageStartupMessages(

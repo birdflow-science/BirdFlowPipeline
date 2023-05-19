@@ -253,8 +253,35 @@ model_evaluation_biplot <- function(ll_df, outfile){
     cor = TRUE
   )
   #biplot(fit)
-  pdf(outfile, 9,9)
-  print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))
+  pdf(outfile, 13, 5.5)
+  #print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))
+  plot1 <- autoplot(fit, color = 'straightness',
+                    loadings = TRUE,
+                    loadings.label = TRUE,
+                    loadings.colour = 'gray',
+                    loadings.label.colour = 'black',
+                    loadings.label.size = 2.5,
+                    label = TRUE,
+                    label.colour = 'black',
+                    label.repel = TRUE,
+                    label.size = 2.5) +
+    theme_bw() +
+    scale_color_viridis_c(limits = c(0, 1))
+  
+  plot2 <- autoplot(fit, color = 'mean_distr_cor',
+                    loadings = TRUE,
+                    loadings.label = TRUE,
+                    loadings.colour = 'gray',
+                    loadings.label.colour = 'black',
+                    loadings.label.size = 2.5,
+                    label = TRUE,
+                    label.colour = 'black',
+                    label.repel = TRUE,
+                    label.size = 2.5) +
+    theme_bw() +
+    scale_color_viridis_c()
+  
+  gridExtra::grid.arrange(plot1, plot2, top = substr(ll_df$model[1], 1, 6), ncol=2)
   dev.off()
 }
 
