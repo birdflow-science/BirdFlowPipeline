@@ -298,3 +298,30 @@ quick_visualize_routes <- function(i){
   title(main = ll_df$model[i])
   print(ll_df[i,])
 }
+# function to get centroid displacement in km from start to end of a season
+get_season_centroid_displacement <- function(bf, season = 'all'){
+  my_ts <- lookup_season_timesteps(bf, season)
+  my_start_step <- my_ts[1]
+  my_end_step   <- tail(my_ts, 1)
+  my_start_distr <- get_distr(bf, which = my_end_step,   from_marginals = FALSE)
+  my_end_distr <- get_distr(bf, which = my_start_step, from_marginals = FALSE)
+  df <- tibble(
+    time = rep(
+      c('start', 'end'),
+      each = length(my_start_distr)
+    ),
+    i = rep(seq_along(my_start_distr), 2),
+    value = c(
+      my_start_distr,
+      my_end_distr
+    )
+  )
+  df <- df %>%
+    mutate(x = i_to_x(i, bf),
+           y = i_to_y(i, bf))
+  centroids <- df %>%
+    group_by(time) %>%
+    summarise(x = mean(x * value),
+              y = mean(y * value))
+  centroids %>% select(-time) %>% stats::dist() %>% as.numeric
+}
