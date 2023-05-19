@@ -171,6 +171,8 @@ evaluate_model <- function(path, track_info){
     dist_weight = bf$metadata$hyperparameters$dist_weight,
     dist_pow = bf$metadata$hyperparameters$dist_pow,
     mean_distr_cor = BirdFlowR:::evaluate_performance(bf)$mean_distr_cor,
+    start_cor = evaluate_performance_route(bf, season = 'prebreeding')$start_cor,
+    end_traverse_cor = evaluate_performance_route(bf, season = 'prebreeding')$end_traverse_cor,
     ll = sum(my_ll$log_likelihood, na.rm = TRUE),
     nll = sum(my_ll$null_ll, na.rm = TRUE),
     ll_raw_n = nrow(my_ll),
@@ -298,6 +300,40 @@ quick_visualize_routes <- function(i){
   title(main = ll_df$model[i])
   print(ll_df[i,])
 }
+
+# Evaluate how well the STS marginal distribution correlates with ebirdST distribution at the season start point
+# AND
+# Evaluate how well the ebirdST end date distribution correlates with the forwarded-projected distribution when starting with the marginals
+#bf <- import_birdflow('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/amewoo_58km_NEW/amewoo_2021_58km_obs1.0_ent0.00478_dist0.0478_pow0.7.hdf5')
+evaluate_performance_route <- function (x, season = 'all') 
+{
+  if (!has_dynamic_mask(x)) 
+    x <- add_dynamic_mask(x)
+  season_timesteps <- lookup_season_timesteps(x, season)
+  start <- season_timesteps[1]
+  end <- tail(season_timesteps, 1)
+  
+  start_distr_ebirdst <- get_distr(x, start, from_marginals = FALSE)
+  start_distr_marginals <- get_distr(x, start, from_marginals = TRUE)
+  start_dm <- get_dynamic_mask(x, start)
+  start_cor <- cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
+  end_distr_ebirdst <- get_distr(x, end, from_marginals = FALSE)
+  projected <- predict(x, distr = start_distr_marginals, start = start, 
+                       end = end, direction = "forward")
+  end_dm <- get_dynamic_mask(x, end)
+  end_traverse_cor <- cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])
+  browser()
+  # get_distr(bf, start, TRUE) |> rasterize_distr(bf) |> terra::plot()
+  # get_distr(bf, start, FALSE) |> rasterize_distr(bf) |> terra::plot()
+  # get_distr(bf, end, TRUE) |> rasterize_distr(bf) |> terra::plot()
+  # get_distr(bf, end, FALSE) |> rasterize_distr(bf) |> terra::plot()
+  list(start_cor = start_cor,
+       end_traverse_cor = end_traverse_cor)
+}
+#evaluate_performance(bf)
+#evaluate_performance_route(bf, 'prebreeding')
+
+
 # function to get centroid displacement in km from start to end of a season
 get_season_centroid_displacement <- function(bf, season = 'all'){
   my_ts <- lookup_season_timesteps(bf, season)
