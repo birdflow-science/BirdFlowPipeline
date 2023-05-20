@@ -1,6 +1,6 @@
 #Sys.setenv(DEBUGME = "batchtools")
 
-my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra', 'gridExtra', 'ggfortify')
+my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra', 'gridExtra', 'ggfortify', 'desirability2')
 for (i in my_packages){
   suppressWarnings(
     suppressPackageStartupMessages(
@@ -155,41 +155,71 @@ make_3d_plot('color_nll', 'nll')
 # Plot correlation cube
 make_3d_plot('color_cor', 'cor')
 
+# Do desirability rankings
+
+ll_df <- ll_df %>%
+  mutate(
+    etc_d = d_max(end_traverse_cor, low = 0.9, use_data = TRUE),
+    #stc_d = d_max(start_cor, low = 0.9, use_data = TRUE),
+    str_d = d_max(straightness, low = 0.5, use_data = TRUE),
+    #str_d = d_target(straightness, low = 0.5, target = 0.85, high = 1),
+    #cor_d = d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
+    #ll_d  = d_max(ll, use_data = TRUE),
+    #str_d = d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
+    #sin_d = d_max(sinuosity, use_data = TRUE),
+    #dsp_d = d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
+    overall_des = d_overall(across(ends_with("_d")))
+  ) %>% arrange(-overall_des)
+
+# plot most desirable models
+
+for (i in 1:5){
+  pdf(file.path('output', output_folder, paste0('desirability', i, '.pdf')))
+  quick_visualize_routes(i)
+  dev.off()
+}
+
+# graph tradeoff
+
+pdf(file.path('output', output_folder, 'straightness_vs_end_traverse_cor.pdf'))
+plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = my_species)
+dev.off()
+
 # Visualize model with best LL
-
-quick_visualize_routes(1)
-
-# graph route migration for all models in parallel
-batchMap(spring_migration_pdf,
-         basename(files),
-         more.args = list(my_dir = my_dir),
-         reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
-                            conf.file = 'batchtools.conf.R',
-                            packages = my_packages,
-                            source = 'functions.R'))
-submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = 10,
-                            memory = 8))
-waitForJobs()
+# 
+# quick_visualize_routes(1)
+# 
+# # graph route migration for all models in parallel
+# batchMap(spring_migration_pdf,
+#          basename(files),
+#          more.args = list(my_dir = my_dir),
+#          reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
+#                             conf.file = 'batchtools.conf.R',
+#                             packages = my_packages,
+#                             source = 'functions.R'))
+# submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+#            resources = list(walltime = 10,
+#                             memory = 8))
+# waitForJobs()
 
 
 ### make coded list by drawing plots and waiting to user input
-
-ll_df$visual <- NA_character_
-for (i in 40:nrow(ll_df)){
-  mname <- ll_df[i, 'model']
-  bf <- import_birdflow(file.path(my_dir, mname))
-  rts <- route_migration(bf, 10, 'prebreeding')
-  plot(get_coastline(bf))
-  plot(rts$lines, add = TRUE)
-  my_input <- readline('Enter code: ')
-  while (my_input == 'redo'){
-    dev.off()
-    rts <- route_migration(bf, 10, 'prebreeding')
-    plot(get_coastline(bf))
-    plot(rts$lines, add = TRUE)
-    my_input <- readline('Enter code: ')
-  }
-  ll_df$visual[i] <- my_input
-  dev.off()
-}
+# 
+# ll_df$visual <- NA_character_
+# for (i in 40:nrow(ll_df)){
+#   mname <- ll_df[i, 'model']
+#   bf <- import_birdflow(file.path(my_dir, mname))
+#   rts <- route_migration(bf, 10, 'prebreeding')
+#   plot(get_coastline(bf))
+#   plot(rts$lines, add = TRUE)
+#   my_input <- readline('Enter code: ')
+#   while (my_input == 'redo'){
+#     dev.off()
+#     rts <- route_migration(bf, 10, 'prebreeding')
+#     plot(get_coastline(bf))
+#     plot(rts$lines, add = TRUE)
+#     my_input <- readline('Enter code: ')
+#   }
+#   ll_df$visual[i] <- my_input
+#   dev.off()
+# }
