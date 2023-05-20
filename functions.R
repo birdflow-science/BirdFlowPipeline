@@ -308,22 +308,20 @@ rts_stats <- function(rts){
 
 # PCA biplot hyperparameters evaluation
 model_evaluation_biplot <- function(ll_df, outfile){
-  fit <- princomp(
-    ll_df[,
-          c(
-            'ent_weight',
-            'dist_weight',
-            'dist_pow',
-            'mean_distr_cor',
-            'll',
-            'straightness',
-            'sinuosity',
-            'length',
-            'displacement'
-          )
-    ],
-    cor = TRUE
+  if (length(unique(ll_df$ll)) == 1) {ll_df$ll <- NULL}
+  pca_columns <- c(
+    'ent_weight',
+    'dist_weight',
+    'dist_pow',
+    'mean_distr_cor',
+    'll',
+    'straightness',
+    'sinuosity',
+    'length',
+    'displacement'
   )
+  pca_columns <- pca_columns[pca_columns %in% names(ll_df)]
+  fit <- princomp(ll_df[,pca_columns], cor = TRUE)
   #biplot(fit)
   pdf(outfile, 13, 5.5)
   #print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))

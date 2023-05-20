@@ -129,6 +129,10 @@ ll_df <- reduceResultsList() %>%
   arrange(-ll) %>%
   mutate(row_no = row_number())
 
+# replace ll and nll with 0 if all NAs
+if (all(is.na(ll_df$ll))) {ll_df$ll <- 0}
+if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}
+
 # make PCA evaluation plot
 
 model_evaluation_biplot(ll_df, file.path('output', output_folder, 'pca_evaluation.pdf'))
