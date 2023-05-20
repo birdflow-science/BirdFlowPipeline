@@ -86,11 +86,48 @@ make_tracks <- function(
 
 # Version for preparing for log likelihood calcs #
 make_tracks2 <- function(
-    df,
+    banding_rds_path,
     max_band_tracks = 10000,
     max_preprocess = 500000,
     min_dist_m = 15000,
     max_days = 180){
+  file_exists <- if_else(file.exists(banding_rds_path), TRUE, FALSE)
+  if (file_exists){
+    df <- readRDS(banding_rds_path)
+  }
+  if (!file_exists || nrow(df) == 0) {
+    # return zero-row track_info
+    return(list(
+      obs_df = structure(
+        list(
+          BAND = character(0),
+          EVENT_TYPE = character(0),
+          date = structure(numeric(0), class = "Date"),
+          lat = numeric(0),
+          lon = numeric(0),
+          EBIRDST_CODE = character(0),
+          BAND_TRACK = character(0),
+          distance = numeric(0),
+          days = integer(0),
+          when = character(0),
+          id = integer(0)
+        ),
+        row.names = integer(0),
+        class = c("tbl_df",
+                  "tbl", "data.frame")
+      ),
+      int_df = structure(
+        list(
+          BAND_TRACK = character(0),
+          from = integer(0),
+          to = integer(0)
+        ),
+        row.names = integer(0),
+        class = c("tbl_df",
+                  "tbl", "data.frame")
+      )
+    ))
+  }
   # Downsample to max for preprocessing
   sampled_bands <- sample(unique(df$BAND), if_else(max_preprocess > n_distinct(df$BAND), n_distinct(df$BAND), max_preprocess))
   df <- df %>% filter(BAND %in% sampled_bands)
@@ -106,7 +143,11 @@ make_tracks2 <- function(
   df <- df %>% group_by(BAND_TRACK) %>%
     filter(distance[2] > min_dist_m / 1000) %>%
     filter(days[2] <= max_days) %>%
-    mutate(when = c('from', 'to')) %>%
+    mutate(
+      when = rep(
+        c('from', 'to'), times = n() / 2
+      )
+    ) %>%
     ungroup
   # Downsample to max # band_tracks
   sampled_band_tracks <- sample(unique(df$BAND_TRACK), if_else(max_band_tracks > n_distinct(df$BAND_TRACK), n_distinct(df$BAND_TRACK), max_band_tracks))
@@ -115,7 +156,23 @@ make_tracks2 <- function(
   df$id <- seq_len(nrow(df))
   obs_df <- df %>% rename(date = EVENT_DATE, lat = LAT_DD, lon = LON_DD)
   int_df <- df %>% select(BAND_TRACK, when, id)
-  int_df <- pivot_wider(int_df, id_cols = BAND_TRACK, names_from = when, values_from = id)
+  if (nrow(int_df) > 0){
+    # typical behavior if data is present
+    int_df <- pivot_wider(int_df, id_cols = BAND_TRACK, names_from = when, values_from = id)
+  } else {
+    # return zero-row data frame with same columns as if there was data
+    int_df <-
+      structure(
+        list(
+          BAND_TRACK = character(0),
+          from = integer(0),
+          to = integer(0)
+        ),
+        row.names = integer(0),
+        class = c("tbl_df",
+                  "tbl", "data.frame")
+      )
+  }
   return(list(obs_df = obs_df, int_df = int_df))
 }
 

@@ -103,8 +103,7 @@ waitForJobs()
 #   int_df = all_int
 # )
 
-banding_df <- readRDS(file.path('rds', paste0(my_species, '.rds')))
-track_info <- make_tracks2(banding_df)
+track_info <- make_tracks2(file.path('rds', paste0(my_species, '.rds')))
 #track_info <- readRDS('track_info_banding_tracking_combined.rds')
 
 # Batch model evaluation
