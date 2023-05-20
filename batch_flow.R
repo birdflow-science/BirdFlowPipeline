@@ -83,7 +83,7 @@ batchMap(fun = birdflow_modelfit,
          args = make_birdflow_modelfit_args_df(grid_search_type, grid_search_list),
          reg = makeRegistry(file.path('output', output_folder, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = 10,
+           resources = list(walltime = 15,
                             ngpus = 1,
                             memory = gpu_ram + 1))
 waitForJobs()
