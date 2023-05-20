@@ -215,10 +215,21 @@ do_ll <- function(path, season){
 # evaluate model tracks
 evaluate_model <- function(path, track_info){
   bf <- import_birdflow(path)
-  my_ll <- BirdFlowR::interval_log_likelihood(
-    intervals = as.data.frame(track_info$int_df),
-    observations = as.data.frame(track_info$obs_df),
-    bf = bf)
+  if (nrow(track_info$int_df) == 0){
+    # return zero-row likelihood data.frame
+    # can remove this once interval_log_likelihood handles this internally
+    my_ll <- structure(list(BAND_TRACK = character(0), from = integer(0), 
+                            to = integer(0), log_likelihood = numeric(0), null_ll = numeric(0), 
+                            lag = numeric(0), exclude = logical(0), not_active = logical(0), 
+                            dynamic_mask = logical(0), sparse = logical(0), same_timestep = logical(0), 
+                            bad_date = logical(0)), row.names = integer(0), class = "data.frame")
+  } else {
+    # proceed with likelihood calculation
+    my_ll <- BirdFlowR::interval_log_likelihood(
+      intervals = as.data.frame(track_info$int_df),
+      observations = as.data.frame(track_info$obs_df),
+      bf = bf)
+  }
   rts <- route_migration(bf, 100, 'prebreeding')
   route_stats <- rts_stats(rts)
   out_df <- tibble(
@@ -232,8 +243,8 @@ evaluate_model <- function(path, track_info){
     mean_distr_cor = BirdFlowR:::evaluate_performance(bf)$mean_distr_cor,
     start_cor = evaluate_performance_route(bf, season = 'prebreeding')$start_cor,
     end_traverse_cor = evaluate_performance_route(bf, season = 'prebreeding')$end_traverse_cor,
-    ll = sum(my_ll$log_likelihood, na.rm = TRUE),
-    nll = sum(my_ll$null_ll, na.rm = TRUE),
+    ll = if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
+    nll = if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
     ll_raw_n = nrow(my_ll),
     ll_n = length(na.omit(my_ll$log_likelihood)),
     straightness = route_stats$straightness,
