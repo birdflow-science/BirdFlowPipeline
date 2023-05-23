@@ -14,19 +14,6 @@ preprocess_species_wrapper <- function(...) {
   BirdFlowR::res(bf)[1] / 1000
 }
 
-# organize grid expansion for arguments...
-birdflow_modelfit_args <- function(
-    preprocessed_list,
-    grid_search_list){
-  orig <- data.frame(preprocessed_list)
-  orig$id <- seq_len(nrow(orig))
-  grid_search_list$id <- orig$id
-  expanded <- expand.grid(grid_search_list)
-  args <- left_join(orig, expanded, by = 'id')
-  args$id <- NULL
-  args
-}
-
 # Find dist weight and ent weight, for a given obs proportion and de ratio
 # where c = dist_weight/ent_weight
 #       d = obs_weight ( = 1 - dist_weight - ent_weight)
@@ -39,26 +26,6 @@ find_xy <- function(c, d, s = 5){
     c(x = signif(x, s),
       y = signif(y, s))
   )
-}
-
-# organize grid expansion for arguments... NEW
-birdflow_modelfit_args_NEW <- function(
-    preprocessed_list,
-    grid_search_list_NEW){
-  orig <- data.frame(preprocessed_list)
-  orig$id <- seq_len(nrow(orig))
-  grid_search_list_NEW$id <- orig$id
-  df <- expand.grid(grid_search_list_NEW)
-  for (i in seq_len(nrow(df))){
-    xy <- find_xy(df$c[i], df$d[i])
-    df$dist_weight[i] <- xy['x']
-    df$ent_weight[i] <- xy['y']
-  }
-  args <- left_join(orig, df, by = 'id')
-  args$id <- NULL
-  args$c <- NULL
-  args$d <- NULL
-  args
 }
 
 # fit model container function
@@ -133,23 +100,36 @@ model_information_row <- function(i){
 #   dist_weight = NA_real_,
 #   ent_weight = NA_real_
 # )
-make_birdflow_modelfit_args_df <- function(
-    grid_search_type = NULL, grid_search_list = NULL){
-  if (grid_search_type == 'old'){
-    out <- birdflow_modelfit_args(
-      preprocessed_list = list(
-        mydir = hdf_dir,
-        mysp = my_species,
-        myres = my_res),
-      grid_search_list = grid_search_list
-    )
-  } else if (grid_search_type == 'new'){
-    out <- birdflow_modelfit_args_NEW(
-      preprocessed_list = list(
-        mydir = hdf_dir,
-        mysp = my_species,
-        myres = my_res),
-      grid_search_list_NEW = grid_search_list)
+# create grid-expanded df for old and new grid search types
+birdflow_modelfit_args_df <- function(
+    grid_search_type = NULL,
+    grid_search_list = NULL,
+    hdf_dir = NULL,
+    my_species = NULL,
+    my_res = NULL){
+  stopifnot(!is.null(grid_search_type) && grid_search_type %in% c('old', 'new'))
+  # base df without grid search parameters
+  orig <- data.frame(
+    mydir = hdf_dir,
+    mysp = my_species,
+    myres = my_res
+  )
+  orig$id <- seq_len(nrow(orig))
+  grid_search_list$id <- orig$id
+  df <- expand.grid(grid_search_list)
+
+  # if the grid search type is new, calculate dist_weight and ent_weight
+  if (grid_search_type == "new"){
+    for (i in seq_len(nrow(df))){
+      xy <- find_xy(df$c[i], df$d[i])
+      df$dist_weight[i] <- xy["x"]
+      df$ent_weight[i] <- xy["y"]
+    }
+    df$c <- NULL
+    df$d <- NULL
   }
-  out
+
+  args <- left_join(orig, df, by = "id")
+  args$id <- NULL
+  args
 }

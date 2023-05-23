@@ -75,7 +75,12 @@ files <- list.files(path = hdf_dir,
                     full.names = TRUE)
 #file.remove(files)
 batchMap(fun = birdflow_modelfit,
-         args = make_birdflow_modelfit_args_df(grid_search_type, grid_search_list),
+         args = birdflow_modelfit_args_df(
+           grid_search_type = grid_search_type,
+           grid_search_list = grid_search_list,
+           hdf_dir = hdf_dir,
+           my_species = my_species,
+           my_res = my_res),
          reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 15,
