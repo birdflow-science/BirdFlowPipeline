@@ -15,9 +15,10 @@ source('functions.R')
 
 # main settings
 
-my_species <- 'American Woodcock'
+my_species <- 'Kentucky Warbler'
 gpu_ram <- 10
-my_res <- 58
+my_res <- 100
+output_nickname <- 'testing_may22'
 
 grid_search_type <- 'new'
 
@@ -29,30 +30,42 @@ grid_search_list <- list(
   ent_weight = NA_real_
 )
 
-output_folder <- 'amewoo_58km_new_gs_test'
+# prepare for process_species
 
-
-
-# directory settings
-
-my_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_folder)
-
-# preprocess inputs
-
-dir.create(my_dir, showWarnings = FALSE)
-dir.create('output', showWarnings = FALSE)
-dir.create(file.path('output', output_folder), showWarnings = FALSE)
+pp_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/_preprocessing"
+dir.create(pp_dir, showWarnings = FALSE)
 my_species <- ebirdst::get_species(my_species)
-saveRDS(grid_search_list, file.path('output', output_folder, 'grid_search_list.rds'))
-saveRDS(grid_search_type, file.path('output', output_folder, 'grid_search_type.rds'))
 
 # preprocess species
 
 my_res <- preprocess_species_wrapper(
   species = my_species,
-  out_dir = my_dir,
+  out_dir = pp_dir,
   gpu_ram = gpu_ram,
   res = my_res)
+
+# process output directories
+
+output_folder <- paste0(ebirdst::get_species(my_species), '_', my_res, 'km', '_', output_nickname)
+my_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_folder)
+dir.create(my_dir, showWarnings = FALSE)
+dir.create('output', showWarnings = FALSE)
+output_path <- file.path('output', output_folder)
+dir.create(output_path, showWarnings = FALSE)
+
+# move preprocessed file to modelfit directory
+
+preprocessed_file <- list.files(path = pp_dir,
+                                pattern = paste0('^', my_species, '.*', my_res, 'km.*\\.hdf5$'),
+                                full.names = TRUE)
+invisible(file.copy(preprocessed_file, my_dir))
+if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
+
+# save objects
+
+saveRDS(grid_search_list, file.path(output_path, 'grid_search_list.rds'))
+saveRDS(grid_search_type, file.path(output_path, 'grid_search_type.rds'))
+saveRDS(my_dir, file.path(output_path, 'my_dir.rds'))
 
 # batch preprocess species
 
