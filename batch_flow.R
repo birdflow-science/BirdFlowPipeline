@@ -83,9 +83,10 @@ submitJobs(mutate(findNotSubmitted(), chunk = 1L),
                             memory = gpu_ram + 1))
 waitForJobs()
 
-# Load track info
+# Load and save track info
 
 track_info <- make_tracks2(file.path('rds', paste0(my_species, '.rds')))
+saveRDS(track_info, file.path(output_path, 'track_info.rds'))
 
 # Batch model evaluation
 
