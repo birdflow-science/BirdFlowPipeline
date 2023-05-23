@@ -357,16 +357,18 @@ model_evaluation_biplot <- function(ll_df, outfile){
 
 # Quick visualize by model number
 # Plot map route_migration spring map
-quick_visualize_routes <- function(i){
+quick_visualize_routes <- function(i, n = 10, season = 'prebreeding'){
   bf <- import_birdflow(file.path(hdf_dir, ll_df$model[i]))
   # 
   # ## Plot map route_migration spring msap
   # 
-  rts <- route_migration(bf, 10, 'prebreeding')
-  plot(get_coastline(bf))
-  plot(rts$lines, add = TRUE)
-  title(main = ll_df$model[i])
-  print(ll_df[i,])
+  rts <- route_migration(bf, n = n, migration = season)
+  print(
+    {
+      plot_routes(rts, bf) +
+        labs(title = ll_df$model[i])
+    }
+  )
 }
 
 # Evaluate how well the STS marginal distribution correlates with ebirdST distribution at the season start point
