@@ -2,7 +2,7 @@ my_packages <- c('dplyr', 'data.table', 'geodist', 'tidyr', 'batchtools')
 for (i in my_packages){
   library(i, character.only = TRUE)
 }
-source('batch_functions.R')
+source(file.path('R', 'batch_functions.R'))
 
 # Batch data availability info function
 banding_data_availability <- function(file){
@@ -44,7 +44,7 @@ batchMap(banding_data_availability,
          reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
                             conf.file = 'batchtools.conf.R',
                             packages = my_packages,
-                            source = 'functions.R',
+                            source = file.path('R', 'functions.R'),
          ))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 30,

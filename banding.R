@@ -27,7 +27,7 @@ tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECI
 
 # functions ----------------------------------------------------
 
-source('functions.R')
+source(file.path('R', 'functions.R'))
 
 ## Filtering attrition and days elapsed vs. distance graphs
 ## OLD FUNTION -- new one is data_availabilty.R

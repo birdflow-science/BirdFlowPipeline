@@ -10,8 +10,8 @@ for (i in my_packages){
 }
 
 # load functions
-source('batch_functions.R')
-source('functions.R')
+source(file.path('R', 'batch_functions.R'))
+source(file.path('R', 'functions.R'))
 
 # main settings
 
@@ -99,7 +99,7 @@ batchMap(evaluate_model,
          reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_ll')),
                             conf.file = 'batchtools.conf.R',
                             packages = my_packages,
-                            source = 'functions.R'))
+                            source = file.path('R', 'functions.R')))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 15,
                             memory = 8))
@@ -181,7 +181,7 @@ dev.off()
 #          reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
 #                             conf.file = 'batchtools.conf.R',
 #                             packages = my_packages,
-#                             source = 'functions.R'))
+#                             source = file.path('R', 'functions.R')))
 # submitJobs(mutate(findNotSubmitted(), chunk = 1L),
 #            resources = list(walltime = 10,
 #                             memory = 8))

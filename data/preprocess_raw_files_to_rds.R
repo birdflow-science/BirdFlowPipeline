@@ -2,8 +2,8 @@ library(data.table)
 library(dplyr)
 library(batchtools)
 library(magrittr)
-source('batch_functions.R')
-source('functions.R')
+source(file.path('R', 'batch_functions.R'))
+source(file.path('R', 'functions.R'))
 
 # Some file sets need to be collapsed together for processing because same ebirdst taxa span multiple files
 collapse_list <- list(1, c(2,3), 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, c(42, 43), 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, c(55, 56), 57)
@@ -38,8 +38,8 @@ batchMap(process_file_set,
          reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
                             conf.file = 'batchtools.conf.R',
                             packages = c('magrittr', 'data.table', 'dplyr'),
-                            source = 'functions.R',
-                            ))
+                            source = file.path('R', 'functions.R')
+         ))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 60,
                             memory = 8))
