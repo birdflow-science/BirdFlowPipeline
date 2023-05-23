@@ -67,24 +67,6 @@ saveRDS(grid_search_list, file.path(output_path, 'grid_search_list.rds'))
 saveRDS(grid_search_type, file.path(output_path, 'grid_search_type.rds'))
 saveRDS(my_dir, file.path(output_path, 'my_dir.rds'))
 
-# batch preprocess species
-
-# batchMap(fun = preprocess_species_wrapper,
-#          species = my_species,
-#          out_dir = my_dir,
-#          gpu_ram = gpu_ram,
-#          res = res,
-#          reg = makeRegistry(paste(make_timestamp(), 'pp', sep = '_'),
-#                             conf.file = 'batchtools.conf.R',
-#                             packages = my_packages))
-# submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-#            resources = list(walltime = 3L,
-#                             memory = 4L))
-# waitForJobs()
-# pp_info <- reduceResultsList() |> rbindlist() |> as.data.frame()
-# # pipeline currently assumes just 1 species at a time, take only 1st row
-# pp_info <- pp_info[1,]
-
 # Batch fit models
 
 # delete existing modelfit files matching the output pattern
