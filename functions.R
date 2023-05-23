@@ -278,8 +278,8 @@ make_3d_plot <- function(color_column, suffix){
 
 # make pdf of spring route_migration for a model hdf5 file
 
-spring_migration_pdf <- function(filename, my_dir){
-  bf <- import_birdflow(file.path(my_dir, filename))
+spring_migration_pdf <- function(filename, hdf_dir){
+  bf <- import_birdflow(file.path(hdf_dir, filename))
   rts <- route_migration(bf, 10, 'prebreeding')
   pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
   plot(get_coastline(bf))
@@ -358,7 +358,7 @@ model_evaluation_biplot <- function(ll_df, outfile){
 # Quick visualize by model number
 # Plot map route_migration spring map
 quick_visualize_routes <- function(i){
-  bf <- import_birdflow(file.path(my_dir, ll_df$model[i]))
+  bf <- import_birdflow(file.path(hdf_dir, ll_df$model[i]))
   # 
   # ## Plot map route_migration spring msap
   # 

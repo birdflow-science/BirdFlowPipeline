@@ -47,8 +47,8 @@ my_res <- preprocess_species_wrapper(
 # process output directories
 
 output_folder <- paste0(ebirdst::get_species(my_species), '_', my_res, 'km', '_', output_nickname)
-my_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_folder)
-dir.create(my_dir, showWarnings = FALSE)
+hdf_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_folder)
+dir.create(hdf_dir, showWarnings = FALSE)
 dir.create('output', showWarnings = FALSE)
 output_path <- file.path('output', output_folder)
 dir.create(output_path, showWarnings = FALSE)
@@ -58,19 +58,19 @@ dir.create(output_path, showWarnings = FALSE)
 preprocessed_file <- list.files(path = pp_dir,
                                 pattern = paste0('^', my_species, '.*', my_res, 'km.*\\.hdf5$'),
                                 full.names = TRUE)
-invisible(file.copy(preprocessed_file, my_dir))
+invisible(file.copy(preprocessed_file, hdf_dir))
 if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
 
 # save objects
 
 saveRDS(grid_search_list, file.path(output_path, 'grid_search_list.rds'))
 saveRDS(grid_search_type, file.path(output_path, 'grid_search_type.rds'))
-saveRDS(my_dir, file.path(output_path, 'my_dir.rds'))
+saveRDS(hdf_dir, file.path(output_path, 'hdf_dir.rds'))
 
 # Batch fit models
 
 # delete existing modelfit files matching the output pattern
-files <- list.files(path = my_dir,
+files <- list.files(path = hdf_dir,
                     pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
 #file.remove(files)
@@ -89,7 +89,7 @@ track_info <- make_tracks2(file.path('rds', paste0(my_species, '.rds')))
 
 # Batch model evaluation
 
-files <- list.files(path = my_dir,
+files <- list.files(path = hdf_dir,
                     pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
 batchMap(evaluate_model,
@@ -176,7 +176,7 @@ dev.off()
 # # graph route migration for all models in parallel
 # batchMap(spring_migration_pdf,
 #          basename(files),
-#          more.args = list(my_dir = my_dir),
+#          more.args = list(hdf_dir = hdf_dir),
 #          reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
 #                             conf.file = 'batchtools.conf.R',
 #                             packages = my_packages,

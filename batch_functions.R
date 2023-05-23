@@ -109,7 +109,7 @@ model_information_row <- function(i){
     ll_n = length(na.omit(i$ll$log_likelihood)),
     mean_distr_cor = i$mean_distr_cor
   )
-  bf <- import_birdflow(file.path(my_dir, mn))
+  bf <- import_birdflow(file.path(hdf_dir, mn))
   rts <- route_migration(bf, 100, 'prebreeding')
   stats <- rts_stats(rts)
   for (i in names(stats)){
@@ -138,7 +138,7 @@ make_birdflow_modelfit_args_df <- function(
   if (grid_search_type == 'old'){
     out <- birdflow_modelfit_args(
       preprocessed_list = list(
-        mydir = my_dir,
+        mydir = hdf_dir,
         mysp = my_species,
         myres = my_res),
       grid_search_list = grid_search_list
@@ -146,7 +146,7 @@ make_birdflow_modelfit_args_df <- function(
   } else if (grid_search_type == 'new'){
     out <- birdflow_modelfit_args_NEW(
       preprocessed_list = list(
-        mydir = my_dir,
+        mydir = hdf_dir,
         mysp = my_species,
         myres = my_res),
       grid_search_list_NEW = grid_search_list)
