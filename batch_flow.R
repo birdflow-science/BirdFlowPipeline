@@ -85,21 +85,7 @@ waitForJobs()
 
 # Load track info
 
-# Build joint tracking-banding datafile
-#
-# n_banding <- nrow(track_info_banding$obs_df)
-# track_info_tracking$obs_df$id <- track_info_tracking$obs_df$id + n_banding
-# track_info_tracking$int_df$from <- track_info_tracking$int_df$from + n_banding
-# track_info_tracking$int_df$to <- track_info_tracking$int_df$to + n_banding
-# all_obs <- bind_rows(track_info_banding$obs_df, track_info_tracking$obs_df)
-# all_int <- bind_rows(track_info_banding$int_df, track_info_tracking$int_df)
-# track_info <- list(
-#   obs_df = all_obs,
-#   int_df = all_int
-# )
-
 track_info <- make_tracks2(file.path('rds', paste0(my_species, '.rds')))
-#track_info <- readRDS('track_info_banding_tracking_combined.rds')
 
 # Batch model evaluation
 
