@@ -133,3 +133,13 @@ birdflow_modelfit_args_df <- function(
   args$id <- NULL
   args
 }
+
+load_batch <- function(output_fullname = NULL){
+  output_path <<- output_path <- file.path('output', output_fullname)
+  ll_df <<- ll_df <- readRDS(file.path(output_path, 'll_df.rds'))
+  my_species <<- sub('_.*$', '', ll_df$model[1])
+  hdf_dir <<- hdf_dir <- readRDS(file.path(output_path, 'hdf_dir.rds'))
+  grid_search_list <<- readRDS(file.path(output_path, 'grid_search_list.rds'))
+  grid_search_type <<- readRDS(file.path(output_path, 'grid_search_type.rds'))
+  track_info <<- readRDS(file.path(output_path, 'track_info.rds'))
+}
