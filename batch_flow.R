@@ -18,7 +18,7 @@ source(file.path('R', 'functions.R'))
 my_species <- 'Kentucky Warbler'
 gpu_ram <- 10
 my_res <- 100
-output_nickname <- 'testing_may22'
+output_nickname <- Sys.Date()
 
 grid_search_type <- 'new'
 
