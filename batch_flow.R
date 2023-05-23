@@ -74,19 +74,26 @@ files <- list.files(path = hdf_dir,
                     pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
 #file.remove(files)
-batchMap(fun = birdflow_modelfit,
-         args = birdflow_modelfit_args_df(
-           grid_search_type = grid_search_type,
-           grid_search_list = grid_search_list,
-           hdf_dir = hdf_dir,
-           my_species = my_species,
-           my_res = my_res),
-         reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
-submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = 15,
-                            ngpus = 1,
-                            memory = gpu_ram + 1))
-waitForJobs()
+success <- FALSE
+counter <- 0
+repeat {
+  counter <- counter + 1
+  batchMap(fun = birdflow_modelfit,
+           args = birdflow_modelfit_args_df(
+             grid_search_type = grid_search_type,
+             grid_search_list = grid_search_list,
+             hdf_dir = hdf_dir,
+             my_species = my_species,
+             my_res = my_res),
+           reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
+  submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+             resources = list(walltime = 15,
+                              ngpus = 1,
+                              memory = gpu_ram + 1))
+  success <- waitForJobs()
+  if (isTRUE(success) || counter > 2) break
+}
+stopifnot(isTRUE(success))
 
 # Load and save track info
 
@@ -98,17 +105,24 @@ saveRDS(track_info, file.path(output_path, 'track_info.rds'))
 files <- list.files(path = hdf_dir,
                     pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
                     full.names = TRUE)
-batchMap(evaluate_model,
-         files,
-         more.args = list(track_info = track_info),
-         reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_ll')),
-                            conf.file = 'batchtools.conf.R',
-                            packages = my_packages,
-                            source = file.path('R', 'functions.R')))
-submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = 15,
-                            memory = 8))
-waitForJobs()
+success <- FALSE
+counter <- 0
+repeat {
+  counter <- counter + 1
+  batchMap(evaluate_model,
+           files,
+           more.args = list(track_info = track_info),
+           reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_ll')),
+                              conf.file = 'batchtools.conf.R',
+                              packages = my_packages,
+                              source = file.path('R', 'functions.R')))
+  submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+             resources = list(walltime = 15,
+                              memory = 8))
+  success <- waitForJobs()
+  if (isTRUE(success) || counter > 2) break
+}
+stopifnot(isTRUE(success))
 ll_df <- reduceResultsList() %>%
   lapply(function(i){i$df}) %>%
   rbindlist %>%
