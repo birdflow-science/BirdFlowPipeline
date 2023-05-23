@@ -128,9 +128,6 @@ cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
 cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
-# save RDS
-saveRDS(ll_df, file.path(output_path, 'll_df.rds'))
-
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll')
 
@@ -155,6 +152,9 @@ ll_df <- ll_df %>%
     #dsp_d = d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
     overall_des = d_overall(across(ends_with("_d")))
   ) %>% arrange(-overall_des)
+
+# save model evaluation RDS
+saveRDS(ll_df, file.path(output_path, 'll_df.rds'))
 
 # plot most desirable models
 
