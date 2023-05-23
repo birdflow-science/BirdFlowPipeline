@@ -46,11 +46,11 @@ my_res <- preprocess_species_wrapper(
 
 # process output directories
 
-output_folder <- paste0(ebirdst::get_species(my_species), '_', my_res, 'km', '_', output_nickname)
-hdf_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_folder)
+output_fullname <- paste0(ebirdst::get_species(my_species), '_', my_res, 'km', '_', output_nickname)
+hdf_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_fullname)
 dir.create(hdf_dir, showWarnings = FALSE)
 dir.create('output', showWarnings = FALSE)
-output_path <- file.path('output', output_folder)
+output_path <- file.path('output', output_fullname)
 dir.create(output_path, showWarnings = FALSE)
 
 # move preprocessed file to modelfit directory
@@ -76,7 +76,7 @@ files <- list.files(path = hdf_dir,
 #file.remove(files)
 batchMap(fun = birdflow_modelfit,
          args = make_birdflow_modelfit_args_df(grid_search_type, grid_search_list),
-         reg = makeRegistry(file.path('output', output_folder, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
+         reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
 submitJobs(mutate(findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 15,
                             ngpus = 1,
@@ -95,7 +95,7 @@ files <- list.files(path = hdf_dir,
 batchMap(evaluate_model,
          files,
          more.args = list(track_info = track_info),
-         reg = makeRegistry(file.path('output', output_folder, paste0(make_timestamp(), '_ll')),
+         reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_ll')),
                             conf.file = 'batchtools.conf.R',
                             packages = my_packages,
                             source = 'functions.R'))
@@ -116,7 +116,7 @@ if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}
 
 # make PCA evaluation plot
 
-model_evaluation_biplot(ll_df, file.path('output', output_folder, 'pca_evaluation.pdf'))
+model_evaluation_biplot(ll_df, file.path(output_path, 'pca_evaluation.pdf'))
 
 # Set the plot colors
 
@@ -128,7 +128,7 @@ cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
 # save RDS
-saveRDS(ll_df, file.path('output', output_folder, 'll_df.rds'))
+saveRDS(ll_df, file.path(output_path, 'll_df.rds'))
 
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll')
@@ -158,14 +158,14 @@ ll_df <- ll_df %>%
 # plot most desirable models
 
 for (i in 1:5){
-  pdf(file.path('output', output_folder, paste0('desirability', i, '.pdf')))
+  pdf(file.path(output_path, paste0('desirability', i, '.pdf')))
   quick_visualize_routes(i)
   dev.off()
 }
 
 # graph tradeoff
 
-pdf(file.path('output', output_folder, 'straightness_vs_end_traverse_cor.pdf'))
+pdf(file.path(output_path, 'straightness_vs_end_traverse_cor.pdf'))
 plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = my_species)
 dev.off()
 
