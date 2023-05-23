@@ -145,6 +145,9 @@ make_3d_plot('color_cor', 'cor')
 # Do desirability rankings
 
 ll_df <- ll_df %>%
+  # remove any existing desirability columns (for interactive scripting)
+  select(-ends_with("_d")) %>%
+  # create new desirability columns
   mutate(
     etc_d = d_max(end_traverse_cor, low = 0.9, use_data = TRUE),
     #stc_d = d_max(start_cor, low = 0.9, use_data = TRUE),
