@@ -361,7 +361,9 @@ model_evaluation_biplot <- function(ll_df, outfile){
 
 # Quick visualize by model number
 # Plot map route_migration spring map
-quick_visualize_routes <- function(i, n = 10, season = 'prebreeding'){
+quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df, dir = hdf_dir){
+  ll_df <- df
+  hdf_dir <- dir
   bf <- import_birdflow(file.path(hdf_dir, ll_df$model[i]))
   # 
   # ## Plot map route_migration spring msap

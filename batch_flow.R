@@ -168,7 +168,7 @@ saveRDS(ll_df, file.path(output_path, 'll_df.rds'))
 
 for (i in 1:5){
   pdf(file.path(output_path, paste0('desirability', i, '.pdf')))
-  quick_visualize_routes(i)
+  quick_visualize_routes(i, df = ll_df, dir = hdf_dir)
   dev.off()
 }
 
