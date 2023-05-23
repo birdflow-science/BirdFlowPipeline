@@ -194,3 +194,20 @@ dev.off()
 #            resources = list(walltime = 10,
 #                             memory = 8))
 # waitForJobs()
+
+## 3d plot of straightness, end_traverse_cor, and ll
+
+plot3d(
+  x = ll_df$ll, y = ll_df$straightness, z = ll_df$end_traverse_cor,
+  col = 'gray',
+  type = 's',
+  xlab="ll", ylab="straightness", zlab="end_traverse_cor")
+# To display in an R Markdown document:
+# rglwidget()
+#
+# # To save to a file:
+htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
+                        file = file.path(output_path, "_3d_ll_straightness_traverse_cor.html"),
+                        libdir = "libs",
+                        selfcontained = TRUE
+)
