@@ -134,8 +134,8 @@ birdflow_modelfit_args_df <- function(
   args
 }
 
-load_batch <- function(output_fullname = NULL){
-  output_path <<- output_path <- file.path('output', output_fullname)
+load_batch <- function(output_path = NULL){
+  output_path <<- output_path
   ll_df <<- ll_df <- readRDS(file.path(output_path, 'll_df.rds'))
   my_species <<- sub('_.*$', '', ll_df$model[1])
   hdf_dir <<- hdf_dir <- readRDS(file.path(output_path, 'hdf_dir.rds'))
