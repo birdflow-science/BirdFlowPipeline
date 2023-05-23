@@ -258,7 +258,11 @@ evaluate_model <- function(path, track_info){
 
 # 3d plot function
 
-make_3d_plot <- function(color_column, suffix){
+make_3d_plot <- function(color_column, suffix, df = ll_df, op = output_path, mr = my_res, ms = my_species){
+  my_species <- ms
+  my_res <- mr
+  output_path <- op
+  ll_df <- df
   plot3d( 
     x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow, 
     col = ll_df[[color_column]], 

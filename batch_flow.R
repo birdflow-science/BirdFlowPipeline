@@ -134,13 +134,13 @@ cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
 # Plot likelihood results cube
-make_3d_plot('color_ll', 'll')
+make_3d_plot('color_ll', 'll', ll_df, output_path, my_res, my_species)
 
 # Plot null likelihood cube
-make_3d_plot('color_nll', 'nll')
+make_3d_plot('color_nll', 'nll', ll_df, output_path, my_res, my_species)
 
 # Plot correlation cube
-make_3d_plot('color_cor', 'cor')
+make_3d_plot('color_cor', 'cor', ll_df, output_path, my_res, my_species)
 
 # Do desirability rankings
 
