@@ -1,10 +1,12 @@
 # For big downloads not to timeout
-options(timeout = max(3600, getOption("timeout")))
+# options(timeout = max(3600, getOption("timeout")))
 
-library(data.table)
-library(dplyr)
-library(rvest)
-library(tidyr)
+# library(data.table)
+# library(dplyr)
+# library(rvest)
+# library(tidyr)
+
+download_banding_files <- function(){
 
 # path management ---------------------------------------------------------
 
@@ -25,4 +27,6 @@ for (i in seq_len(nrow(file_df))){
   # download in reverse order (earlier files are huge)
   file_path <- file.path('data', file_df$name[i])
   download.file(file_df$url[i], file_path)
+}
+
 }
