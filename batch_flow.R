@@ -13,59 +13,23 @@ for (i in my_packages){
 source(file.path('R', 'batch_functions.R'))
 source(file.path('R', 'functions.R'))
 
-# main settings
+params <- list(
+  my_species = "Philadelphia Vireo",
+  gpu_ram = 10,
+  my_res = 100,
+  output_nickname = as.character(Sys.Date()),
+  grid_search_type = 'new',
+  grid_search_list = list(
+    c = c(2, 4, 8, 16),
+    d = c(0.95, 0.975, 0.99, 0.999, 0.9999),
+    dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+    dist_weight = NA_real_,
+    ent_weight = NA_real_)
+  )
 
-my_species <- 'Kentucky Warbler'
-gpu_ram <- 10
-my_res <- 100
-output_nickname <- Sys.Date()
+# preprocess species and set up directories
 
-grid_search_type <- 'new'
-
-grid_search_list <- list(
-  c = c(2, 4, 8, 16),
-  d = c(0.95, 0.975, 0.99, 0.999, 0.9999),
-  dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
-  dist_weight = NA_real_,
-  ent_weight = NA_real_
-)
-
-# prepare for process_species
-
-pp_dir <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/_preprocessing"
-dir.create(pp_dir, showWarnings = FALSE)
-my_species <- ebirdst::get_species(my_species)
-
-# preprocess species
-
-my_res <- preprocess_species_wrapper(
-  species = my_species,
-  out_dir = pp_dir,
-  gpu_ram = gpu_ram,
-  res = my_res)
-
-# process output directories
-
-output_fullname <- paste0(ebirdst::get_species(my_species), '_', my_res, 'km', '_', output_nickname)
-hdf_dir <- file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf", output_fullname)
-dir.create(hdf_dir, showWarnings = FALSE)
-dir.create('output', showWarnings = FALSE)
-output_path <- file.path('output', output_fullname)
-dir.create(output_path, showWarnings = FALSE)
-
-# move preprocessed file to modelfit directory
-
-preprocessed_file <- list.files(path = pp_dir,
-                                pattern = paste0('^', my_species, '.*', my_res, 'km.*\\.hdf5$'),
-                                full.names = TRUE)
-invisible(file.copy(preprocessed_file, hdf_dir))
-if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
-
-# save objects
-
-saveRDS(grid_search_list, file.path(output_path, 'grid_search_list.rds'))
-saveRDS(grid_search_type, file.path(output_path, 'grid_search_type.rds'))
-saveRDS(hdf_dir, file.path(output_path, 'hdf_dir.rds'))
+params <- preprocess_species_wrapper(params)
 
 # Batch fit models
 

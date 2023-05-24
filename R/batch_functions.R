@@ -6,12 +6,38 @@ make_timestamp <- function(tz = "America/Los_Angeles"){
 }
 
 # preprocess species wrapper
-preprocess_species_wrapper <- function(...) {
-  suppressMessages(invisible(capture.output(
-    bf <- BirdFlowR::preprocess_species(...)
-  )))
+preprocess_species_wrapper <- function(params) {
+  params$my_species <- ebirdst::get_species(params$my_species)
+  pp_dir <- tempdir()
+  suppressMessages(
+    invisible(
+      capture.output(
+        bf <- BirdFlowR::preprocess_species(
+          species = params$my_species,
+          out_dir = pp_dir,
+          gpu_ram = params$gpu_ram,
+          res = params$my_res)
+      )
+    )
+  )
   # return res
-  BirdFlowR::res(bf)[1] / 1000
+  params$my_res <- BirdFlowR::res(bf)[1] / 1000
+  # set up directories
+  params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
+  params$hdf_dir <- file.path(
+    "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf",
+    params$output_fullname)
+  dir.create(params$hdf_dir, showWarnings = FALSE)
+  dir.create('output', showWarnings = FALSE)
+  params$output_path <- file.path('output', params$output_fullname)
+  dir.create(params$output_path, showWarnings = FALSE)
+  # move preprocessed file to modelfit directory
+  preprocessed_file <- list.files(path = pp_dir,
+                                  pattern = paste0('^', params$my_species, '.*', params$my_res, 'km.*\\.hdf5$'),
+                                  full.names = TRUE)
+  invisible(file.copy(preprocessed_file, params$hdf_dir))
+  if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
+  params
 }
 
 # Find dist weight and ent weight, for a given obs proportion and de ratio
