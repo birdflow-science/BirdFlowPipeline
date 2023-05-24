@@ -44,25 +44,16 @@ saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
 
 ll_df <- batch_evaluate_models(params, track_info)
 
+## Plotting
+
 # make PCA evaluation plot
 
 model_evaluation_biplot(ll_df, params)
 
-# Set the plot colors
-
-ll_df$color_ll <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
-ll_df <- ll_df %>% mutate(color_nll = if_else(ll < nll, '#ffffff', color_ll))
-cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
-cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
-cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
-ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
-
 # Plot likelihood results cube
 make_3d_plot('color_ll', 'll', ll_df, params)
-
 # Plot null likelihood cube
 make_3d_plot('color_nll', 'nll', ll_df, params)
-
 # Plot correlation cube
 make_3d_plot('color_cor', 'cor', ll_df, params)
 

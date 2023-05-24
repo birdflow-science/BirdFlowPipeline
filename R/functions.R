@@ -259,6 +259,16 @@ evaluate_model <- function(path, track_info){
 # 3d plot function
 
 make_3d_plot <- function(color_column, suffix, ll_df, params){
+  ## color_column can be color_ll, color_nll, or color_cor
+
+  # Set the plot colors
+  ll_df$color_ll <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
+  ll_df <- ll_df %>% mutate(color_nll = if_else(ll < nll, '#ffffff', color_ll))
+  cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
+  cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
+  cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
+  ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
+
   plot3d( 
     x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow, 
     col = ll_df[[color_column]], 
