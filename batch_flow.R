@@ -30,6 +30,7 @@ params <- list(
 # preprocess species and set up directories
 
 params <- preprocess_species_wrapper(params)
+saveRDS(params, file.path(params$output_path, 'params.rds'))
 
 # Batch fit models
 
