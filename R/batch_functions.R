@@ -160,14 +160,9 @@ birdflow_modelfit_args_df <- function(
   args
 }
 
-load_batch <- function(output_path = NULL){
-  output_path <<- output_path
-  ll_df <<- ll_df <- readRDS(file.path(output_path, 'll_df.rds'))
-  my_species <<- sub('_.*$', '', ll_df$model[1])
-  hdf_dir <<- hdf_dir <- readRDS(file.path(output_path, 'hdf_dir.rds'))
-  grid_search_list <<- readRDS(file.path(output_path, 'grid_search_list.rds'))
-  grid_search_type <<- readRDS(file.path(output_path, 'grid_search_type.rds'))
-  track_info <<- readRDS(file.path(output_path, 'track_info.rds'))
+load_batch_params <- function(output_path = NULL){
+  params <<- readRDS(file.path(output_path, 'params.rds'))
+  ll_df <<- readRDS(file.path(output_path, 'll_df.rds'))
 }
 
 # Function to batch fit models from params, including multiple cluster attempts
