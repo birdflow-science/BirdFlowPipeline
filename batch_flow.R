@@ -42,37 +42,7 @@ saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
 
 # Batch model evaluation
 
-files <- list.files(path = hdf_dir,
-                    pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
-                    full.names = TRUE)
-success <- FALSE
-counter <- 0
-repeat {
-  counter <- counter + 1
-  batchMap(evaluate_model,
-           files,
-           more.args = list(track_info = track_info),
-           reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_ll')),
-                              conf.file = 'batchtools.conf.R',
-                              packages = my_packages,
-                              source = file.path('R', 'functions.R')))
-  submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-             resources = list(walltime = 15,
-                              memory = 8))
-  success <- waitForJobs()
-  if (isTRUE(success) || counter > 2) break
-}
-stopifnot(isTRUE(success))
-ll_df <- reduceResultsList() %>%
-  lapply(function(i){i$df}) %>%
-  rbindlist %>%
-  as_tibble %>%
-  arrange(-ll) %>%
-  mutate(row_no = row_number())
-
-# replace ll and nll with 0 if all NAs
-if (all(is.na(ll_df$ll))) {ll_df$ll <- 0}
-if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}
+ll_df <- batch_evaluate_models(params, track_info)
 
 # make PCA evaluation plot
 
