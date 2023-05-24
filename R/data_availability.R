@@ -1,8 +1,8 @@
-my_packages <- c('dplyr', 'data.table', 'geodist', 'tidyr', 'batchtools')
-for (i in my_packages){
-  library(i, character.only = TRUE)
-}
-source(file.path('R', 'batch_functions.R'))
+# my_packages <- c('dplyr', 'data.table', 'geodist', 'tidyr', 'batchtools')
+# for (i in my_packages){
+#   library(i, character.only = TRUE)
+# }
+# source(file.path('R', 'batch_functions.R'))
 
 # Batch data availability info function
 banding_data_availability <- function(file){
@@ -37,6 +37,9 @@ banding_data_availability <- function(file){
   attrition_df
 }
 
+# Batch data availability function
+
+batch_data_availability <- function() {
 rds_files <- list.files('rds', full.names = TRUE)
 my_suffix <- 'da'
 batchMap(banding_data_availability,
@@ -61,3 +64,4 @@ hindex <- function(x) {
 results_df %>%
   group_by(max_track_days, min_distance_km) %>%
   summarise(n_species_n_tracks_h_index = hindex(n_tracks), .groups = 'drop')
+}
