@@ -46,7 +46,7 @@ ll_df <- batch_evaluate_models(params, track_info)
 
 # make PCA evaluation plot
 
-model_evaluation_biplot(ll_df, file.path(output_path, 'pca_evaluation.pdf'))
+model_evaluation_biplot(ll_df, file.path(params$output_path, 'pca_evaluation.pdf'))
 
 # Set the plot colors
 
@@ -58,13 +58,13 @@ cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
 ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
 # Plot likelihood results cube
-make_3d_plot('color_ll', 'll', ll_df, output_path, my_res, my_species)
+make_3d_plot('color_ll', 'll', ll_df, params)
 
 # Plot null likelihood cube
-make_3d_plot('color_nll', 'nll', ll_df, output_path, my_res, my_species)
+make_3d_plot('color_nll', 'nll', ll_df, params)
 
 # Plot correlation cube
-make_3d_plot('color_cor', 'cor', ll_df, output_path, my_res, my_species)
+make_3d_plot('color_cor', 'cor', ll_df, params)
 
 # Do desirability rankings
 
@@ -86,20 +86,20 @@ ll_df <- ll_df %>%
   ) %>% arrange(-overall_des)
 
 # save model evaluation RDS
-saveRDS(ll_df, file.path(output_path, 'll_df.rds'))
+saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
 
 # plot most desirable models
 
 for (i in 1:5){
-  pdf(file.path(output_path, paste0('desirability', i, '.pdf')))
-  quick_visualize_routes(i, df = ll_df, dir = hdf_dir)
+  pdf(file.path(params$output_path, paste0('desirability', i, '.pdf')))
+  quick_visualize_routes(i, df = ll_df, dir = params$hdf_dir)
   dev.off()
 }
 
 # graph tradeoff
 
-pdf(file.path(output_path, 'straightness_vs_end_traverse_cor.pdf'))
-plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = my_species)
+pdf(file.path(params$output_path, 'straightness_vs_end_traverse_cor.pdf'))
+plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = params$my_species)
 dev.off()
 
 # Visualize model with best LL
@@ -131,7 +131,7 @@ plot3d(
 #
 # # To save to a file:
 htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
-                        file = file.path(output_path, "_3d_ll_straightness_traverse_cor.html"),
+                        file = file.path(params$output_path, "_3d_ll_straightness_traverse_cor.html"),
                         libdir = "libs",
                         selfcontained = TRUE
 )
