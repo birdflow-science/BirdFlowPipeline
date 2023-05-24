@@ -46,7 +46,7 @@ ll_df <- batch_evaluate_models(params, track_info)
 
 # make PCA evaluation plot
 
-model_evaluation_biplot(ll_df, file.path(params$output_path, 'pca_evaluation.pdf'))
+model_evaluation_biplot(ll_df, params)
 
 # Set the plot colors
 

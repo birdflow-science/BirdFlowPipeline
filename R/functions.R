@@ -307,7 +307,8 @@ rts_stats <- function(rts){
 }
 
 # PCA biplot hyperparameters evaluation
-model_evaluation_biplot <- function(ll_df, outfile){
+model_evaluation_biplot <- function(ll_df, params){
+  outfile <- file.path(params$output_path, 'pca_evaluation.pdf')
   if (length(unique(ll_df$ll)) == 1) {ll_df$ll <- NULL}
   pca_columns <- c(
     'ent_weight',
