@@ -169,3 +169,28 @@ load_batch <- function(output_path = NULL){
   grid_search_type <<- readRDS(file.path(output_path, 'grid_search_type.rds'))
   track_info <<- readRDS(file.path(output_path, 'track_info.rds'))
 }
+
+# Function to batch fit models from params, including multiple cluster attempts
+batch_modelfit_wrapper <- function(params){
+  success <- FALSE
+  counter <- 0
+  repeat {
+    counter <- counter + 1
+    batchMap(fun = birdflow_modelfit,
+             args = birdflow_modelfit_args_df(
+               grid_search_type = params$grid_search_type,
+               grid_search_list = params$grid_search_list,
+               hdf_dir = params$hdf_dir,
+               my_species = params$my_species,
+               my_res = params$my_res),
+             reg = makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
+    submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+               resources = list(walltime = 15,
+                                ngpus = 1,
+                                memory = params$gpu_ram + 1))
+    success <- waitForJobs()
+    if (isTRUE(success) || counter > 2) break
+  }
+  stopifnot(isTRUE(success))
+  invisible(success)
+}

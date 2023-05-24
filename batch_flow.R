@@ -33,31 +33,7 @@ params <- preprocess_species_wrapper(params)
 
 # Batch fit models
 
-# delete existing modelfit files matching the output pattern
-files <- list.files(path = hdf_dir,
-                    pattern = paste0('^', my_species, '.*', my_res, 'km_.*\\.hdf5$'),
-                    full.names = TRUE)
-#file.remove(files)
-success <- FALSE
-counter <- 0
-repeat {
-  counter <- counter + 1
-  batchMap(fun = birdflow_modelfit,
-           args = birdflow_modelfit_args_df(
-             grid_search_type = grid_search_type,
-             grid_search_list = grid_search_list,
-             hdf_dir = hdf_dir,
-             my_species = my_species,
-             my_res = my_res),
-           reg = makeRegistry(file.path(output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
-  submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-             resources = list(walltime = 15,
-                              ngpus = 1,
-                              memory = gpu_ram + 1))
-  success <- waitForJobs()
-  if (isTRUE(success) || counter > 2) break
-}
-stopifnot(isTRUE(success))
+batch_modelfit_wrapper(params)
 
 # Load and save track info
 
