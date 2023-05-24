@@ -1,1 +1,8 @@
 ^LICENSE\.md$
+^.*\.Rproj$
+^\.Rproj\.user$
+^output$
+^pdf$
+^rds$
+^amwo$
+^tax$
