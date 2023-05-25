@@ -6,6 +6,7 @@ make_timestamp <- function(tz = "America/Los_Angeles"){
 }
 
 # preprocess species wrapper
+#' @export
 preprocess_species_wrapper <- function(params) {
   params$my_species <- ebirdst::get_species(params$my_species)
   pp_dir <- tempdir()
@@ -59,6 +60,7 @@ find_xy <- function(c, d, s = 5){
 #  dist_weight = 0.005 # a
 #  ent_weight = seq(from = 0, to = 0.006, by = 0.001) # B
 #  dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1) # E
+#' @export
 birdflow_modelfit <- function(
     mypy = "/home/dslager_umass_edu/birdflow/update_hdf.py",
     mydir,
@@ -88,6 +90,7 @@ birdflow_modelfit <- function(
           ))
 }
 
+#' @export
 model_information_row <- function(i){
   mn <- i$model
   df <- tibble(
@@ -127,6 +130,7 @@ model_information_row <- function(i){
 #   ent_weight = NA_real_
 # )
 # create grid-expanded df for old and new grid search types
+#' @export
 birdflow_modelfit_args_df <- function(
     grid_search_type = NULL,
     grid_search_list = NULL,
@@ -160,12 +164,14 @@ birdflow_modelfit_args_df <- function(
   args
 }
 
+#' @export
 load_batch_params <- function(output_path = NULL){
   params <<- readRDS(file.path(output_path, 'params.rds'))
   ll_df <<- readRDS(file.path(output_path, 'll_df.rds'))
 }
 
 # Function to batch fit models from params, including multiple cluster attempts
+#' @export
 batch_modelfit_wrapper <- function(params){
   success <- FALSE
   counter <- 0
@@ -191,6 +197,7 @@ batch_modelfit_wrapper <- function(params){
 }
 
 # Wrapper to batch evaluate models from params and track_info
+#' @export
 batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$my_species, '.*', params$my_res, 'km_.*\\.hdf5$'),

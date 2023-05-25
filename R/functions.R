@@ -85,6 +85,7 @@ make_tracks <- function(
 }
 
 # Version for preparing for log likelihood calcs #
+#' @export
 make_tracks2 <- function(
     banding_rds_path,
     max_band_tracks = 10000,
@@ -213,6 +214,7 @@ do_ll <- function(path, season){
 }
 
 # evaluate model tracks
+#' @export
 evaluate_model <- function(path, track_info){
   bf <- BirdFlowR::import_birdflow(path)
   if (nrow(track_info$int_df) == 0){
@@ -257,7 +259,7 @@ evaluate_model <- function(path, track_info){
 }
 
 # 3d plot function
-
+#' @export
 make_3d_plot <- function(color_column, suffix, ll_df, params){
   ## color_column can be color_ll, color_nll, or color_cor
 
@@ -300,7 +302,7 @@ spring_migration_pdf <- function(filename, hdf_dir){
 }
 
 # get route summary information (from the output of route_migration)
-
+#' @export
 rts_stats <- function(rts){
   rts_lst <- split(rts$points, rts$points$route)
   out <- lapply(rts_lst, function(rts){
@@ -318,6 +320,7 @@ rts_stats <- function(rts){
 }
 
 # PCA biplot hyperparameters evaluation
+#' @export
 model_evaluation_biplot <- function(ll_df, params){
   outfile <- file.path(params$output_path, 'pca_evaluation.pdf')
   if (length(unique(ll_df$ll)) == 1) {ll_df$ll <- NULL}
@@ -369,6 +372,7 @@ model_evaluation_biplot <- function(ll_df, params){
 
 # Quick visualize by model number
 # Plot map route_migration spring map
+#' @export
 quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df, dir = hdf_dir){
   ll_df <- df
   hdf_dir <- dir
@@ -389,6 +393,7 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
 # AND
 # Evaluate how well the ebirdST end date distribution correlates with the forwarded-projected distribution when starting with the marginals
 #bf <- import_birdflow('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/amewoo_58km_NEW/amewoo_2021_58km_obs1.0_ent0.00478_dist0.0478_pow0.7.hdf5')
+#' @export
 evaluate_performance_route <- function (x, season = 'all') 
 {
   if (!BirdFlowR::has_dynamic_mask(x))
