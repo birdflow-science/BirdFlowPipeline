@@ -322,6 +322,8 @@ rts_stats <- function(rts){
 # PCA biplot hyperparameters evaluation
 #' @export
 model_evaluation_biplot <- function(ll_df, params){
+  # workaround for unexported method ggfortify:::autoplot.princomp()
+  requireNamespace('ggfortify', quietly = TRUE)
   outfile <- file.path(params$output_path, 'pca_evaluation.pdf')
   if (length(unique(ll_df$ll)) == 1) {ll_df$ll <- NULL}
   pca_columns <- c(
@@ -340,7 +342,7 @@ model_evaluation_biplot <- function(ll_df, params){
   #biplot(fit)
   pdf(outfile, 13, 5.5)
   #print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))
-  plot1 <- ggfortify:::autoplot.princomp(fit, color = 'straightness',
+  plot1 <- ggplot2::autoplot(fit, color = 'straightness',
                     loadings = TRUE,
                     loadings.label = TRUE,
                     loadings.colour = 'gray',
@@ -353,7 +355,7 @@ model_evaluation_biplot <- function(ll_df, params){
     ggplot2::theme_bw() +
     ggplot2::scale_color_viridis_c(limits = c(0, 1))
   
-  plot2 <- ggfortify:::autoplot.princomp(fit, color = 'mean_distr_cor',
+  plot2 <- ggplot2::autoplot(fit, color = 'mean_distr_cor',
                     loadings = TRUE,
                     loadings.label = TRUE,
                     loadings.colour = 'gray',
