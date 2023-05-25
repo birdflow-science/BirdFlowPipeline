@@ -1,20 +1,20 @@
 #Sys.setenv(DEBUGME = "batchtools")
 
-my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra', 'gridExtra', 'ggfortify', 'desirability2')
-for (i in my_packages){
-  suppressWarnings(
-    suppressPackageStartupMessages(
-      library(i, character.only = TRUE, warn.conflicts = FALSE)
-    )
-  )
-}
-
-# load functions
-source(file.path('R', 'batch_functions.R'))
-source(file.path('R', 'functions.R'))
+# my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra', 'gridExtra', 'ggfortify', 'desirability2')
+# for (i in my_packages){
+#   suppressWarnings(
+#     suppressPackageStartupMessages(
+#       library(i, character.only = TRUE, warn.conflicts = FALSE)
+#     )
+#   )
+# }
+# 
+# # load functions
+# source(file.path('R', 'batch_functions.R'))
+# source(file.path('R', 'functions.R'))
 
 params <- list(
-  my_species = "Philadelphia Vireo",
+  my_species = "Wilson's Phalarope",
   gpu_ram = 10,
   my_res = 100,
   output_nickname = as.character(Sys.Date()),
@@ -65,16 +65,16 @@ ll_df <- ll_df %>%
   select(-ends_with("_d")) %>%
   # create new desirability columns
   mutate(
-    etc_d = d_max(end_traverse_cor, low = 0.9, use_data = TRUE),
-    #stc_d = d_max(start_cor, low = 0.9, use_data = TRUE),
-    str_d = d_max(straightness, low = 0.5, use_data = TRUE),
-    #str_d = d_target(straightness, low = 0.5, target = 0.85, high = 1),
-    #cor_d = d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
-    #ll_d  = d_max(ll, use_data = TRUE),
-    #str_d = d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
-    #sin_d = d_max(sinuosity, use_data = TRUE),
-    #dsp_d = d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
-    overall_des = d_overall(across(ends_with("_d")))
+    etc_d = desirability2::d_max(end_traverse_cor, low = 0.9, use_data = TRUE),
+    #stc_d = desirability2::d_max(start_cor, low = 0.9, use_data = TRUE),
+    str_d = desirability2::d_max(straightness, low = 0.5, use_data = TRUE),
+    #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
+    #cor_d = desirability2::d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
+    #ll_d  = desirability2::d_max(ll, use_data = TRUE),
+    #str_d = desirability2::d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
+    #sin_d = desirability2::d_max(sinuosity, use_data = TRUE),
+    #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
+    overall_des = desirability2::d_overall(across(ends_with("_d")))
   ) %>% arrange(-overall_des)
 
 # save model evaluation RDS
@@ -113,7 +113,7 @@ dev.off()
 
 ## 3d plot of straightness, end_traverse_cor, and ll
 
-plot3d(
+rgl::plot3d(
   x = ll_df$ll, y = ll_df$straightness, z = ll_df$end_traverse_cor,
   col = 'gray',
   type = 's',
@@ -122,7 +122,7 @@ plot3d(
 # rglwidget()
 #
 # # To save to a file:
-htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
+htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
                         file = file.path(params$output_path, "_3d_ll_straightness_traverse_cor.html"),
                         libdir = "libs",
                         selfcontained = TRUE

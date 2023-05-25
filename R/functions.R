@@ -271,7 +271,7 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
   ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
-  plot3d( 
+  rgl::plot3d(
     x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow, 
     col = ll_df[[color_column]], 
     type = 's', 
@@ -281,7 +281,7 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   # rglwidget()
   # 
   # # To save to a file:
-  htmlwidgets::saveWidget(rglwidget(width = 520, height = 520),
+  htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
                           file = file.path(params$output_path, paste0(params$my_species, "_", params$my_res, "km_3dscatter_", suffix, ".html")),
                           libdir = "libs",
                           selfcontained = TRUE
@@ -340,7 +340,7 @@ model_evaluation_biplot <- function(ll_df, params){
   #biplot(fit)
   pdf(outfile, 13, 5.5)
   #print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))
-  plot1 <- ggplot2::autoplot(fit, color = 'straightness',
+  plot1 <- autoplot(fit, color = 'straightness',
                     loadings = TRUE,
                     loadings.label = TRUE,
                     loadings.colour = 'gray',
@@ -353,7 +353,7 @@ model_evaluation_biplot <- function(ll_df, params){
     ggplot2::theme_bw() +
     ggplot2::scale_color_viridis_c(limits = c(0, 1))
   
-  plot2 <- ggplot2::autoplot(fit, color = 'mean_distr_cor',
+  plot2 <- autoplot(fit, color = 'mean_distr_cor',
                     loadings = TRUE,
                     loadings.label = TRUE,
                     loadings.colour = 'gray',
@@ -376,15 +376,15 @@ model_evaluation_biplot <- function(ll_df, params){
 quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df, dir = hdf_dir){
   ll_df <- df
   hdf_dir <- dir
-  bf <- import_birdflow(file.path(hdf_dir, ll_df$model[i]))
+  bf <- BirdFlowR::import_birdflow(file.path(hdf_dir, ll_df$model[i]))
   # 
   # ## Plot map route_migration spring msap
   # 
-  rts <- route_migration(bf, n = n, migration = season)
+  rts <- BirdFlowR::route_migration(bf, n = n, migration = season)
   print(
     {
-      plot_routes(rts, bf) +
-        labs(title = ll_df$model[i])
+      BirdFlowR::plot_routes(rts, bf) +
+        ggplot2::labs(title = ll_df$model[i])
     }
   )
 }
