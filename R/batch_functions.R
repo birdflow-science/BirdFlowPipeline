@@ -171,19 +171,19 @@ batch_modelfit_wrapper <- function(params){
   counter <- 0
   repeat {
     counter <- counter + 1
-    batchMap(fun = birdflow_modelfit,
+    batchtools::batchMap(fun = birdflow_modelfit,
              args = birdflow_modelfit_args_df(
                grid_search_type = params$grid_search_type,
                grid_search_list = params$grid_search_list,
                hdf_dir = params$hdf_dir,
                my_species = params$my_species,
                my_res = params$my_res),
-             reg = makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
-    submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+             reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
+    batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
                resources = list(walltime = 15,
                                 ngpus = 1,
                                 memory = params$gpu_ram + 1))
-    success <- waitForJobs()
+    success <- batchtools::waitForJobs()
     if (isTRUE(success) || counter > 2) break
   }
   stopifnot(isTRUE(success))

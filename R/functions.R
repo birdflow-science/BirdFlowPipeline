@@ -402,7 +402,7 @@ evaluate_performance_route <- function (x, season = 'all')
   start_dm <- get_dynamic_mask(x, start)
   start_cor <- cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
   end_distr_ebirdst <- get_distr(x, end, from_marginals = FALSE)
-  projected <- BirdFlowR::predict(x, distr = start_distr_marginals, start = start,
+  projected <- predict(x, distr = start_distr_marginals, start = start,
                        end = end, direction = "forward")
   end_dm <- get_dynamic_mask(x, end)
   end_traverse_cor <- cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])

@@ -3,6 +3,8 @@
 
 ## usethis namespace: start
 #' @importFrom data.table fread
+#' @importFrom dplyr filter
+#' @importFrom dplyr lag
 #' @importFrom grDevices dev.off
 #' @importFrom grDevices hcl.colors
 #' @importFrom grDevices pdf
