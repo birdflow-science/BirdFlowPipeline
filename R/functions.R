@@ -158,7 +158,7 @@ make_tracks2 <- function(
   int_df <- df %>% select(BAND_TRACK, when, id)
   if (nrow(int_df) > 0){
     # typical behavior if data is present
-    int_df <- pivot_wider(int_df, id_cols = BAND_TRACK, names_from = when, values_from = id)
+    int_df <- tidyr::pivot_wider(int_df, id_cols = BAND_TRACK, names_from = when, values_from = id)
   } else {
     # return zero-row data frame with same columns as if there was data
     int_df <-
