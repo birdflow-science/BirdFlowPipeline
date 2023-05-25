@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom data.table fread
+#' @importFrom data.table rbindlist
 #' @importFrom dplyr filter
 #' @importFrom dplyr lag
 #' @importFrom grDevices dev.off

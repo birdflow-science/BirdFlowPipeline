@@ -214,7 +214,7 @@ do_ll <- function(path, season){
 
 # evaluate model tracks
 evaluate_model <- function(path, track_info){
-  bf <- import_birdflow(path)
+  bf <- BirdFlowR::import_birdflow(path)
   if (nrow(track_info$int_df) == 0){
     # return zero-row likelihood data.frame
     # can remove this once interval_log_likelihood handles this internally
@@ -230,9 +230,9 @@ evaluate_model <- function(path, track_info){
       observations = as.data.frame(track_info$obs_df),
       bf = bf)
   }
-  rts <- route_migration(bf, 100, 'prebreeding')
+  rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
   route_stats <- rts_stats(rts)
-  out_df <- tibble(
+  out_df <- dplyr::tibble(
     model = basename(path),
     obs_weight = bf$metadata$hyperparameters$obs_weight,
     ent_weight = bf$metadata$hyperparameters$ent_weight,
@@ -243,8 +243,8 @@ evaluate_model <- function(path, track_info){
     mean_distr_cor = BirdFlowR::evaluate_performance(bf)$mean_distr_cor,
     start_cor = evaluate_performance_route(bf, season = 'prebreeding')$start_cor,
     end_traverse_cor = evaluate_performance_route(bf, season = 'prebreeding')$end_traverse_cor,
-    ll = if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
-    nll = if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
+    ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
+    nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
     ll_raw_n = nrow(my_ll),
     ll_n = length(na.omit(my_ll$log_likelihood)),
     straightness = route_stats$straightness,
@@ -305,12 +305,12 @@ rts_stats <- function(rts){
   rts_lst <- split(rts$points, rts$points$route)
   out <- lapply(rts_lst, function(rts){
     rts$ts_sequential <- seq_len(nrow(rts))
-    traj <- TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
+    traj <- trajr::TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
     list(
-      straightness = TrajStraightness(traj),
-      sinuosity = TrajSinuosity2(traj),
-      length = TrajLength(traj)/1000,
-      displacement = TrajDistance(traj)/1000
+      straightness = trajr::TrajStraightness(traj),
+      sinuosity = trajr::TrajSinuosity2(traj),
+      length = trajr::TrajLength(traj)/1000,
+      displacement = trajr::TrajDistance(traj)/1000
     )
   }) %>% rbindlist %>% colMeans(na.rm = TRUE) %>% as.list
   out$length <- sf::st_length(rts$lines$geometry) %>% as.numeric %>% `/`(1000) %>% mean(na.rm = TRUE)
@@ -391,20 +391,20 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
 #bf <- import_birdflow('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/amewoo_58km_NEW/amewoo_2021_58km_obs1.0_ent0.00478_dist0.0478_pow0.7.hdf5')
 evaluate_performance_route <- function (x, season = 'all') 
 {
-  if (!has_dynamic_mask(x)) 
-    x <- add_dynamic_mask(x)
-  season_timesteps <- lookup_season_timesteps(x, season)
+  if (!BirdFlowR::has_dynamic_mask(x))
+    x <- BirdFlowR::add_dynamic_mask(x)
+  season_timesteps <- BirdFlowR::lookup_season_timesteps(x, season)
   start <- season_timesteps[1]
   end <- tail(season_timesteps, 1)
   
-  start_distr_ebirdst <- get_distr(x, start, from_marginals = FALSE)
-  start_distr_marginals <- get_distr(x, start, from_marginals = TRUE)
-  start_dm <- get_dynamic_mask(x, start)
+  start_distr_ebirdst <- BirdFlowR::get_distr(x, start, from_marginals = FALSE)
+  start_distr_marginals <- BirdFlowR::get_distr(x, start, from_marginals = TRUE)
+  start_dm <- BirdFlowR::get_dynamic_mask(x, start)
   start_cor <- cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
-  end_distr_ebirdst <- get_distr(x, end, from_marginals = FALSE)
+  end_distr_ebirdst <- BirdFlowR::get_distr(x, end, from_marginals = FALSE)
   projected <- predict(x, distr = start_distr_marginals, start = start,
                        end = end, direction = "forward")
-  end_dm <- get_dynamic_mask(x, end)
+  end_dm <- BirdFlowR::get_dynamic_mask(x, end)
   end_traverse_cor <- cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])
   # get_distr(bf, start, TRUE) |> rasterize_distr(bf) |> terra::plot()
   # get_distr(bf, start, FALSE) |> rasterize_distr(bf) |> terra::plot()

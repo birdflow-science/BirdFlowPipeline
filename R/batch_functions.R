@@ -199,21 +199,19 @@ batch_evaluate_models <- function(params, track_info){
   counter <- 0
   repeat {
     counter <- counter + 1
-    batchMap(evaluate_model,
+    batchtools::batchMap(evaluate_model,
              files,
              more.args = list(track_info = track_info),
-             reg = makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
-                                conf.file = 'batchtools.conf.R',
-                                packages = my_packages,
-                                source = file.path('R', 'functions.R')))
-    submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+             reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
+                                conf.file = 'batchtools.conf.R'))
+    batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
                resources = list(walltime = 15,
                                 memory = 8))
-    success <- waitForJobs()
+    success <- batchtools::waitForJobs()
     if (isTRUE(success) || counter > 2) break
   }
   stopifnot(isTRUE(success))
-  ll_df <- reduceResultsList() %>%
+  ll_df <- batchtools::reduceResultsList() %>%
     lapply(function(i){i$df}) %>%
     rbindlist %>%
     as_tibble %>%
