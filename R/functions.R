@@ -292,9 +292,10 @@ spring_migration_pdf <- function(filename, hdf_dir){
   bf <- import_birdflow(file.path(hdf_dir, filename))
   rts <- route_migration(bf, 10, 'prebreeding')
   pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
-  plot(get_coastline(bf))
-  plot(rts$lines, add = TRUE)
-  title(main = filename)
+  print({
+    plot_routes(rts, bf) +
+      labs(title = filename)
+  })
   dev.off()
 }
 
@@ -401,7 +402,7 @@ evaluate_performance_route <- function (x, season = 'all')
   start_dm <- get_dynamic_mask(x, start)
   start_cor <- cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
   end_distr_ebirdst <- get_distr(x, end, from_marginals = FALSE)
-  projected <- predict(x, distr = start_distr_marginals, start = start, 
+  projected <- BirdFlowR::predict(x, distr = start_distr_marginals, start = start,
                        end = end, direction = "forward")
   end_dm <- get_dynamic_mask(x, end)
   end_traverse_cor <- cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])

@@ -8,6 +8,7 @@
 #' @importFrom grDevices pdf
 #' @importFrom stats cor
 #' @importFrom stats na.omit
+#' @importFrom stats predict
 #' @importFrom stats princomp
 #' @importFrom utils capture.output
 #' @importFrom utils download.file
