@@ -368,7 +368,9 @@ model_evaluation_biplot <- function(ll_df, params){
     ggplot2::theme_bw() +
     ggplot2::scale_color_viridis_c()
   
-  gridExtra::grid.arrange(plot1, plot2, top = substr(ll_df$model[1], 1, 6), ncol=2)
+  suppressWarnings({
+    gridExtra::grid.arrange(plot1, plot2, top = substr(ll_df$model[1], 1, 6), ncol=2)
+    })
   dev.off()
 }
 
