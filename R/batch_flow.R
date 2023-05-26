@@ -1,20 +1,8 @@
-#Sys.setenv(DEBUGME = "batchtools")
-
-# my_packages <- c('data.table', 'dplyr', 'tidyr', 'BirdFlowR', 'batchtools', 'rgl', 'trajr', 'ggplot2', 'factoextra', 'gridExtra', 'ggfortify', 'desirability2')
-# for (i in my_packages){
-#   suppressWarnings(
-#     suppressPackageStartupMessages(
-#       library(i, character.only = TRUE, warn.conflicts = FALSE)
-#     )
-#   )
-# }
-# 
-# # load functions
-# source(file.path('R', 'batch_functions.R'))
-# source(file.path('R', 'functions.R'))
+#' @export
+batch_flow <- function(one_species){
 
 params <- list(
-  my_species = "Wilson's Phalarope",
+  my_species = one_species,
   gpu_ram = 10,
   my_res = 100,
   output_nickname = as.character(Sys.Date()),
@@ -127,3 +115,15 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
                         libdir = "libs",
                         selfcontained = TRUE
 )
+} # big function end
+
+#' @export
+multiple_species_batch <- function(multispecies_vector) {
+  for (species_i in multispecies_vector) {
+    tryCatch({
+      batch_flow(species_i)
+    }, error = function(e) {
+      cat("ERROR:", conditionMessage(e), "\n")
+    })
+  }
+}
