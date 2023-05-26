@@ -1,7 +1,3 @@
-# taxonomy join ---------
-
-tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
-
 ## Function to convert banding data to linestring.  Removed messy plotting.
 # rds_files <- list.files('rds', full.names = TRUE)
 # ... is additional arguments passed to make_tracks
