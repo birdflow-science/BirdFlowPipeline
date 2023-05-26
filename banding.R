@@ -1,100 +1,25 @@
-library(data.table)
-library(dplyr)
-library(rvest)
-library(rebird)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
-library(remotes)
-library(BirdFlowR)
-library(tidyr)
-library(ebirdst)
-install_github('birdflow-science/BirdFlowModels')
-install_github('birdflow-science/BirdFlowR', build_vignettes = TRUE, upgrade = 'never')
-library(BirdFlowR)
-library(BirdFlowModels)
-library(geodist)
-
-# path management ---------------------------------------------------------
-
-
-if (!dir.exists('output')) {dir.create('output')}
-if (!dir.exists(file.path('output','maps'))) {dir.create(file.path('output','maps'))}
-
 # taxonomy join ---------
 
 tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
 
-# functions ----------------------------------------------------
-
-source(file.path('R', 'functions.R'))
-
-## Filtering attrition and days elapsed vs. distance graphs
-## OLD FUNTION -- new one is data_availabilty.R
-
-attrition_df <- data.frame(species_code = character(0),
-                         species_name = character(0),
-                         n_i_rows = integer(0),
-                         n_day180 = integer(0),
-                         n_day180_dist0 = integer(0),
-                         n_day180_dist15 = integer(0))
-pdf(file = file.path('output', 'distance_days.pdf'), onefile = TRUE)
-rds_files <- list.files('rds', full.names = TRUE)
-for (file in rds_files){
+## Function to convert banding data to linestring.  Removed messy plotting.
+# rds_files <- list.files('rds', full.names = TRUE)
+# ... is additional arguments passed to make_tracks2
+banding_data_to_linestring <- function(rds_file, ...) {
+  file <- rds_file
   df <- readRDS(file)
   species_code <- basename(file) %>% sub('\\.rds$', '', .)
-  species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
-  message(species_name)
-  attrition_df_row <- data.frame(species_code = species_code,
-                               species_name = species_name,
-                               n_i_rows = nrow(df),
-                               n_day180 = NA_integer_,
-                               n_day180_dist0 = NA_integer_,
-                               n_day180_dist15 = NA_integer_)
-  print(nrow(df))
-  df <- preprocess_calc_distance_days(df)
-  df <- drop_na(df, distance, days)
-  df <- filter(df, days > 0 & days < 365/2)
-  print(nrow(df))
-  n_day180 <- nrow(df)
-  attrition_df_row$n_day180_dist0 <- filter(df, distance > 0) %>% pull(distance) %>% na.omit %>% length
-  attrition_df_row$n_day180_dist15 <- filter(df, distance > 15) %>% pull(distance) %>% na.omit %>% length
-  attrition_df_row$n_day180 <- n_day180
-  attrition_df <- rbind(attrition_df, attrition_df_row)
-  write.csv(attrition_df, file.path('output','attrition.csv'), row.names = FALSE)
-  if (n_day180 < 20){
-    next
-  }
-  plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
-       main = paste0(species_name, '\n', '(n = ', n_day180, ')'))
-}
-dev.off()
-
-## Map pairwise tracks
-
-rds_files <- list.files('rds', full.names = TRUE)
-for (file in rds_files){
-  df <- readRDS(file)
-  species_code <- basename(file) %>% sub('\\.rds$', '', .)
-  species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
-  message(species_name)
-  df <- make_tracks(df)
-  if (nrow(df) > 1 && length(unique(st_bbox(df))) == 4){
-    try({
-      pdf(file.path('output','maps', paste0(species_name, '.pdf')), 6, 6)
-      if (exists('coastline')) rm(coastline)
-      try({coastline <- get_coastline(select(df, BAND_TRACK), buffer = 5)})
-      my_main <- paste0(species_name, '\n(n = ', nrow(df), ')')
-      if (exists('coastline') && nrow(coastline) > 1){
-        plot(coastline, main = my_main)
-        plot(select(df, BAND_TRACK), add = TRUE)
-      } else {
-        # don't plot coastline if there isn't any
-        plot(select(df, BAND_TRACK), main = my_main)
-      }
-      dev.off()
-    })
-  }
+  message(species_code)
+  df <- make_tracks2(banding_rds_path = file, ...)$obs_df
+  df <- df %>%
+    group_by(BAND_TRACK) %>%
+    summarise(
+      start_date = min(date),
+      stop_date = max(date),
+      geom = sprintf("LINESTRING(%s %s, %s %s)",
+                     lon[1], lat[1], lon[2], lat[2])
+    ) %>% ungroup
+  sf::st_as_sf(df, wkt = "geom", crs = 'wgs84')
 }
 
 # ## Taxonomy notes from XML file: <taxonpro>expert advice;;identification
