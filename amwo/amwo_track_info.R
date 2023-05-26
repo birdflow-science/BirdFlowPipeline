@@ -10,7 +10,7 @@ tracking_df <- tracking_df %>% rename(BAND = indiv_only,
                                       EVENT_DATE = timestamp,
                                       LON_DD = lon,
                                       LAT_DD = lat)
-# picking up here inside the make_tracks2 function...
+# picking up here inside the make_tracks function...
 tracking_df <- tracking_df %>% group_by(BAND) %>%
   mutate(count = c(1, rep(2, n() - 2), 1)) %>%
   tidyr::uncount(count) %>%

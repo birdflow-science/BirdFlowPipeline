@@ -4,13 +4,13 @@ tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECI
 
 ## Function to convert banding data to linestring.  Removed messy plotting.
 # rds_files <- list.files('rds', full.names = TRUE)
-# ... is additional arguments passed to make_tracks2
+# ... is additional arguments passed to make_tracks
 banding_data_to_linestring <- function(rds_file, ...) {
   file <- rds_file
   df <- readRDS(file)
   species_code <- basename(file) %>% sub('\\.rds$', '', .)
   message(species_code)
-  df <- make_tracks2(banding_rds_path = file, ...)$obs_df
+  df <- make_tracks(banding_rds_path = file, ...)$obs_df
   df <- df %>%
     group_by(BAND_TRACK) %>%
     summarise(

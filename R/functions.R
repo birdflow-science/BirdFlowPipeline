@@ -51,7 +51,7 @@ preprocess_calc_distance_days <- function(df){
 
 # Version for preparing for log likelihood calcs #
 #' @export
-make_tracks2 <- function(
+make_tracks <- function(
     banding_rds_path,
     max_band_tracks = 10000,
     max_preprocess = 500000,
@@ -168,7 +168,7 @@ do_ll <- function(path, season){
   # subsampling banding data down to 5000 if larger
   unique_bands <- unique(banding_df$BAND)
   banding_df <- dplyr::filter(banding_df, BAND %in% sample(unique_bands, min(5000, length(unique_bands))))
-  track_info <- make_tracks2(banding_df)
+  track_info <- make_tracks(banding_df)
   my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
