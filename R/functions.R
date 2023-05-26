@@ -295,7 +295,7 @@ spring_migration_pdf <- function(filename, hdf_dir){
   rts <- route_migration(bf, 10, 'prebreeding')
   pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
   print({
-    plot_routes(rts, bf) +
+    plot_routes(rts, bf, use_seasonal_colors = FALSE) +
       labs(title = filename)
   })
   dev.off()
@@ -385,7 +385,7 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
   rts <- BirdFlowR::route_migration(bf, n = n, migration = season)
   print(
     {
-      BirdFlowR::plot_routes(rts, bf) +
+      BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE) +
         ggplot2::labs(title = ll_df$model[i])
     }
   )
