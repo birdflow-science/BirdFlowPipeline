@@ -11,7 +11,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
     batchtools,
-    BirdFlowR,
+    BirdFlowR (>= 0.1.0.9014),
     data.table,
     desirability2,
     ebirdst,
@@ -36,3 +36,5 @@ Depends:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Remotes:
+    birdflow-science/BirdFlowR
