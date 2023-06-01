@@ -266,8 +266,12 @@ spring_migration_pdf <- function(filename, hdf_dir){
   dev.off()
 }
 
-# get route summary information (from the output of route_migration)
+#' Calculate route summary statistics
+#' @param rts data.frame object output from `BirdFlowR::route()` or `BirdFlowR::route_migration()`
+#' @returns a list of mean summary statistics
+#' @seealso [BirdFlowR::route()], [BirdFlowR::route_migration()]
 #' @export
+#' 
 rts_stats <- function(rts){
   rts_lst <- split(rts$points, rts$points$route)
   out <- lapply(rts_lst, function(rts){
@@ -357,10 +361,22 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
   )
 }
 
-# Evaluate how well the STS marginal distribution correlates with ebirdST distribution at the season start point
-# AND
-# Evaluate how well the ebirdST end date distribution correlates with the forwarded-projected distribution when starting with the marginals
-#bf <- import_birdflow('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf/amewoo_58km_NEW/amewoo_2021_58km_obs1.0_ent0.00478_dist0.0478_pow0.7.hdf5')
+#' Evaluate how well a BirdFlow model correlates with eBird Status and Trends
+#'
+#' @param x a BirdFlow object, e.g., the object returned from
+#'   `BirdFlowR::import_birdflow()`
+#' @param season a BirdFlow season, e.g., one of the options in
+#'   `??BirdFlowR::lookup_season_timesteps()`
+#' @returns a list containing the following:
+#'
+#' * `start_cor` correlation between eBird Status and Trends distribution at the 
+#'    beginning of `season` and the model's weekly marginal distribution for 
+#'    the same week
+#' * `end_traverse_cor` correlation between eBird Status and Trends distribution 
+#'    at the end of `season` and the forward-predicted weekly marginal 
+#'    distribution for that same week, when starting the prediction from the 
+#'    model's marginal distribution at `season`'s starting week
+#'
 #' @export
 evaluate_performance_route <- function (x, season = 'all') 
 {
