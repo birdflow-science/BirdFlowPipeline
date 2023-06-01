@@ -85,19 +85,6 @@ dev.off()
 # Visualize model with best LL
 # 
 # quick_visualize_routes(1)
-# 
-# # graph route migration for all models in parallel
-# batchMap(spring_migration_pdf,
-#          basename(files),
-#          more.args = list(hdf_dir = hdf_dir),
-#          reg = makeRegistry(paste0(make_timestamp(), '_pdf'),
-#                             conf.file = 'batchtools.conf.R',
-#                             packages = my_packages,
-#                             source = file.path('R', 'functions.R')))
-# submitJobs(mutate(findNotSubmitted(), chunk = 1L),
-#            resources = list(walltime = 10,
-#                             memory = 8))
-# waitForJobs()
 
 ## 3d plot of straightness, end_traverse_cor, and ll
 

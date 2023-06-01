@@ -243,19 +243,6 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   )
 }
 
-# make pdf of spring route_migration for a model hdf5 file
-
-spring_migration_pdf <- function(filename, hdf_dir){
-  bf <- import_birdflow(file.path(hdf_dir, filename))
-  rts <- route_migration(bf, 10, 'prebreeding')
-  pdf(file.path('output', 'maps', paste0(filename, '.pdf')))
-  print({
-    plot_routes(rts, bf, use_seasonal_colors = FALSE) +
-      labs(title = filename)
-  })
-  dev.off()
-}
-
 #' Calculate route summary statistics
 #' @param rts data.frame object output from `BirdFlowR::route()` or `BirdFlowR::route_migration()`
 #' @returns a list of mean summary statistics
