@@ -280,7 +280,6 @@ rts_stats <- function(rts){
       displacement = trajr::TrajDistance(traj)/1000
     )
   }) %>% rbindlist %>% colMeans(na.rm = TRUE) %>% as.list
-  out$length <- sf::st_length(rts$lines$geometry) %>% as.numeric %>% `/`(1000) %>% mean(na.rm = TRUE)
   out
 }
 
