@@ -1,12 +1,9 @@
 .Rproj.user/
-pdf/
-summary_df.csv
 rds/
 *.csv
 *.zip
 *.xml
 README_before_download.txt
-output/
 *.pdf
 *.rds
 2023*
