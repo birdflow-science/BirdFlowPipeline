@@ -26,7 +26,7 @@ batch_modelfit_wrapper(params)
 
 # Load and save track info
 
-track_info <- make_tracks(file.path('rds', paste0(params$my_species, '.rds')))
+track_info <- make_tracks(file.path(Sys.getenv('HOME'), 'banding_raw_rds', paste0(params$my_species, '.rds')))
 saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
 
 # Batch model evaluation

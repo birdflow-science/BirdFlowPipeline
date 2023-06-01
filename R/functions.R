@@ -164,7 +164,7 @@ do_ll <- function(path, season){
   bf <- import_birdflow(path)
   bf <- sparsify(bf, method = "state")
   species_code <- BirdFlowR::species_info(bf)$species_code
-  banding_df <- readRDS(file.path('rds', paste0(species_code, '.rds')))
+  banding_df <- readRDS(file.path(Sys.getenv('HOME'), 'banding_raw_rds', paste0(species_code, '.rds')))
   # subsampling banding data down to 5000 if larger
   unique_bands <- unique(banding_df$BAND)
   banding_df <- dplyr::filter(banding_df, BAND %in% sample(unique_bands, min(5000, length(unique_bands))))
