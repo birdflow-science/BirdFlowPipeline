@@ -152,22 +152,6 @@ make_tracks <- function(
   return(list(obs_df = obs_df, int_df = int_df))
 }
 
-inspect_flagged_tracks_sf <- function(track_info, my_ll, true_column){
-  my_ll <- as_tibble(my_ll)
-  df <- left_join(my_ll, track_info$obs_df, by = 'BAND_TRACK') %>%
-    filter(.data[[true_column]])
-  df <- df %>%
-    group_by(BAND_TRACK) %>%
-    summarise(start_date = date[1],
-              stop_date = date[2],
-              geom = sprintf("LINESTRING(%s %s, %s %s)",
-                             lon[1], lat[1], lon[2], lat[2])
-    ) %>% ungroup
-  df <- st_as_sf(df, wkt = "geom", crs = 'wgs84')
-  plot(get_coastline(df))
-  plot(df %>% select(BAND_TRACK), add = TRUE)
-}
-
 # evaluate model tracks
 #' @export
 evaluate_model <- function(path, track_info){
