@@ -168,26 +168,6 @@ inspect_flagged_tracks_sf <- function(track_info, my_ll, true_column){
   plot(df %>% select(BAND_TRACK), add = TRUE)
 }
 
-# season is 'prebreeding', 'postbreeding', 'all'
-# intervals outside that season will get an NA for log likelihood
-do_ll <- function(path, season){
-  bf <- import_birdflow(path)
-  bf <- sparsify(bf, method = "state")
-  species_code <- BirdFlowR::species_info(bf)$species_code
-  banding_df <- readRDS(file.path(Sys.getenv('HOME'), 'banding_raw_rds', paste0(species_code, '.rds')))
-  # subsampling banding data down to 5000 if larger
-  unique_bands <- unique(banding_df$BAND)
-  banding_df <- dplyr::filter(banding_df, BAND %in% sample(unique_bands, min(5000, length(unique_bands))))
-  track_info <- make_tracks(banding_df)
-  my_ll <- BirdFlowR::interval_log_likelihood(
-    intervals = as.data.frame(track_info$int_df),
-    observations = as.data.frame(track_info$obs_df),
-    bf = bf,
-    season = season)
-  my_ll
-  list(model = basename(path), obs = track_info$obs_df, int = track_info$int_df, ll = as_tibble(my_ll))
-}
-
 # evaluate model tracks
 #' @export
 evaluate_model <- function(path, track_info){
