@@ -49,7 +49,17 @@ preprocess_calc_distance_days <- function(df){
     ungroup
 }
 
-# Version for preparing for log likelihood calcs #
+#' Prepare banding data for `BirdFlowR::interval_log_likelihood()`
+#' 
+#' @param banding_rds_path file path to `.rds` file containing raw banding data
+#' @param max_band_tracks maximum number of band_tracks to output, downsample if necessary
+#' @param max_preprocess  maximum number of bands to preprocess, downsample if necessary
+#' @param min_dist_m minimum distance in meters between origin and destination to retain a band_track
+#' @param max_days maximum number of days between origin and destination to retain a band_track
+#' @returns a list:
+#'  * `obs_df` data.frame of observations for `BirdFlowR::interval_log_likelihood()`
+#'  * `int_df` data.frame of intervals for `BirdFlowR::interval_log_likelihood()`
+#' @seealso [BirdFlowR::interval_log_likelihood()]
 #' @export
 make_tracks <- function(
     banding_rds_path,
