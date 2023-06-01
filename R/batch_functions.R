@@ -29,8 +29,8 @@ preprocess_species_wrapper <- function(params) {
     "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf",
     params$output_fullname)
   dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create('output', showWarnings = FALSE)
-  params$output_path <- file.path('output', params$output_fullname)
+  dir.create(file.path(Sys.getenv('HOME'), 'banding_output'), showWarnings = FALSE)
+  params$output_path <- file.path(Sys.getenv('HOME'), 'banding_output', params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   # move preprocessed file to modelfit directory
   preprocessed_file <- list.files(path = pp_dir,
