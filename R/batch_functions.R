@@ -94,30 +94,6 @@ birdflow_modelfit <- function(
   stopifnot(python_exit_code == 0)
 }
 
-#' @export
-model_information_row <- function(i){
-  mn <- i$model
-  df <- dplyr::tibble(
-    model = mn,
-    obs = sub('.*obs(.*?)_.*', '\\1', mn) %>% as.numeric,
-    ent = sub('.*ent(.*?)_.*', '\\1', mn) %>% as.numeric,
-    dist = sub('.*dist(.*?)_.*', '\\1', mn) %>% as.numeric,
-    pow = sub('.*pow(.*?)\\.hdf5', '\\1', mn) %>% as.numeric,
-    ll = sum(i$ll$log_likelihood, na.rm = TRUE),
-    nll = sum(i$ll$null_ll, na.rm = TRUE),
-    ll_raw_n = nrow(i$ll),
-    ll_n = length(na.omit(i$ll$log_likelihood)),
-    mean_distr_cor = i$mean_distr_cor
-  )
-  bf <- BirdFlowR::import_birdflow(file.path(hdf_dir, mn))
-  rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
-  stats <- rts_stats(rts)
-  for (i in names(stats)){
-    df[[i]] <- stats[[i]]
-  }
-  df
-}
-
 # function to make modelfit arguments df from old and new style grid_search_list
 # OLD EXAMPLE:
 # grid_search_list <- list(
@@ -163,7 +139,7 @@ birdflow_modelfit_args_df <- function(
     df$obs_prop <- NULL
   }
 
-  args <- left_join(orig, df, by = "id")
+  args <- dplyr::left_join(orig, df, by = "id")
   args$id <- NULL
   args
 }
