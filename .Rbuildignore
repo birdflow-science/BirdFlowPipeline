@@ -2,9 +2,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^output$
-^pdf$
-^rds$
 ^amwo$
 ^tax$
-^Dockerfile-dslager_cuda11\.8$
 ^data-raw$

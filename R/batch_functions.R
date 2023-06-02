@@ -183,7 +183,7 @@ batch_modelfit_wrapper <- function(params){
                          hdf_dir = params$hdf_dir,
                          my_species = params$my_species,
                          my_res = params$my_res),
-                       reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
+                       reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
   batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = modelfit_resources)
   success <- batchtools::waitForJobs()
@@ -215,7 +215,7 @@ batch_evaluate_models <- function(params, track_info){
                        files,
                        more.args = list(track_info = track_info),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
-                                                      conf.file = 'batchtools.conf.R'))
+                                                      conf.file = system.file('batchtools.conf.R', package = 'banding')))
   batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = evaluation_resources)
   success <- batchtools::waitForJobs()

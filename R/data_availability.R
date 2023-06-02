@@ -45,7 +45,7 @@ my_suffix <- 'da'
 batchtools::batchMap(banding_data_availability,
          rds_files,
          reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                            conf.file = 'batchtools.conf.R',
+                            conf.file = system.file('batchtools.conf.R', package = 'banding'),
                             packages = my_packages,
                             source = file.path('R', 'functions.R'),
          ))

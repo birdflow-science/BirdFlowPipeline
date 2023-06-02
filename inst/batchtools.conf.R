@@ -1,4 +1,4 @@
-cluster.functions <- makeClusterFunctionsSlurm(template = 'slurm.tmpl',
+cluster.functions <- makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', package = 'banding'),
                                                array.jobs = TRUE,
                                                nodename = 'login5')
 default.resources <- list(

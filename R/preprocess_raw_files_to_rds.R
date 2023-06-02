@@ -37,7 +37,7 @@ my_suffix <- 'pf'
 batchtools::batchMap(process_file_set,
          collapse_list,
          reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                            conf.file = 'batchtools.conf.R',
+                            conf.file = system.file('batchtools.conf.R', package = 'banding'),
                             packages = c('magrittr', 'data.table', 'dplyr'),
                             source = file.path('R', 'functions.R')
          ))
