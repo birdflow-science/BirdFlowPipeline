@@ -1,7 +1,4 @@
 ^LICENSE\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^output$
-^amwo$
-^tax$
 ^data-raw$
