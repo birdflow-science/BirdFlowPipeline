@@ -174,27 +174,35 @@ load_batch_params <- function(output_path = NULL){
 # Function to batch fit models from params, including multiple cluster attempts
 #' @export
 batch_modelfit_wrapper <- function(params){
+  modelfit_resources <- list(walltime = 15,
+                             ngpus = 1,
+                             memory = params$gpu_ram + 1)
   success <- FALSE
-  counter <- 0
-  repeat {
-    counter <- counter + 1
-    batchtools::batchMap(fun = birdflow_modelfit,
-             args = birdflow_modelfit_args_df(
-               grid_search_type = params$grid_search_type,
-               grid_search_list = params$grid_search_list,
-               hdf_dir = params$hdf_dir,
-               my_species = params$my_species,
-               my_res = params$my_res),
-             reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
-    batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
-               resources = list(walltime = 15,
-                                ngpus = 1,
-                                memory = params$gpu_ram + 1))
+  batchtools::batchMap(fun = birdflow_modelfit,
+                       args = birdflow_modelfit_args_df(
+                         grid_search_type = params$grid_search_type,
+                         grid_search_list = params$grid_search_list,
+                         hdf_dir = params$hdf_dir,
+                         my_species = params$my_species,
+                         my_res = params$my_res),
+                       reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = 'batchtools.conf.R'))
+  batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
+                         resources = modelfit_resources)
+  success <- batchtools::waitForJobs()
+  if (! isTRUE(success)) {
+    message('Requeuing jobs that expired or had an error, attempt 1 of 2')
+    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+                           resources = modelfit_resources)
     success <- batchtools::waitForJobs()
-    if (isTRUE(success) || counter > 2) break
+  }
+  if (! isTRUE(success)) {
+    message('Requeuing jobs that expired or had an error, attempt 2 of 2')
+    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+                           resources = modelfit_resources)
+    success <- batchtools::waitForJobs()
   }
   stopifnot(isTRUE(success))
-  invisible(success)
+  return(success)
 }
 
 # Wrapper to batch evaluate models from params and track_info
@@ -203,20 +211,27 @@ batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$my_species, '.*', params$my_res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
+  evaluation_resources <- list(walltime = 15, memory = 8)
   success <- FALSE
-  counter <- 0
-  repeat {
-    counter <- counter + 1
-    batchtools::batchMap(evaluate_model,
-             files,
-             more.args = list(track_info = track_info),
-             reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
-                                conf.file = 'batchtools.conf.R'))
-    batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
-               resources = list(walltime = 15,
-                                memory = 8))
+  batchtools::batchMap(evaluate_model,
+                       files,
+                       more.args = list(track_info = track_info),
+                       reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
+                                                      conf.file = 'batchtools.conf.R'))
+  batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
+                         resources = evaluation_resources)
+  success <- batchtools::waitForJobs()
+  if (! isTRUE(success)) {
+    message('Requeuing jobs that expired or had an error, attempt 1 of 2')
+    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+                           resources = evaluation_resources)
     success <- batchtools::waitForJobs()
-    if (isTRUE(success) || counter > 2) break
+  }
+  if (! isTRUE(success)) {
+    message('Requeuing jobs that expired or had an error, attempt 2 of 2')
+    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+                           resources = evaluation_resources)
+    success <- batchtools::waitForJobs()
   }
   stopifnot(isTRUE(success))
   ll_df <- batchtools::reduceResultsList() %>%
