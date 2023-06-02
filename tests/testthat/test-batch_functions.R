@@ -1,4 +1,4 @@
-test_that("find_xy works", {
-  expect_equal(find_xy(2, 0.9, 5),
-               c(x = 0.074074, y = 0.037037))
+test_that("refactor_hyperparams works", {
+  expect_equal(refactor_hyperparams(2, 0.9, 5),
+               c(dist_weight = 0.074074, ent_weight = 0.037037))
 })

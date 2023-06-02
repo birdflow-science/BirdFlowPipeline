@@ -39,17 +39,22 @@ preprocess_species_wrapper <- function(params) {
   params
 }
 
-# Find dist weight and ent weight, for a given obs proportion and de ratio
-# where c = dist_weight/ent_weight
-#       d = obs_weight ( = 1 - dist_weight - ent_weight)
-#.      x = dist_weight
-#.      y = ent_weight
-find_xy <- function(c, d, s = 5){
-  x = (c - c * d) / (c * d + d)
-  y = (1 - d) / (c * d + d)
-  return(
-    c(x = signif(x, s),
-      y = signif(y, s))
+#' Find a dist_weight and ent_weight consistent with a given obs_prop and de_ratio
+#'
+#' @param de_ratio numeric Desired ratio, dist_weight/ent_weight
+#' @param obs_prop numeric Desired observation_proportion when obs_weight = 1,
+#'   e.g. obs_prop = 1 / (1 + dist_weight + ent_weight)
+#' @param digits integer Desired number of significant digits to retain in result
+#'
+#' @returns A list:
+#'  * `dist_weight` dist_weight parameter that satisfies desired de_ratio and obs_prop
+#'  * `ent_weight` ent_weight parameter that satisfies desired de_ratio and obs_prop
+#' @export
+refactor_hyperparams <- function(de_ratio, obs_prop, digits = 5){
+  x = (de_ratio - de_ratio * obs_prop) / (de_ratio * obs_prop + obs_prop)
+  y = (1 - obs_prop) / (de_ratio * obs_prop + obs_prop)
+  c(dist_weight = signif(x, digits),
+    ent_weight = signif(y, digits)
   )
 }
 
@@ -122,8 +127,8 @@ model_information_row <- function(i){
 # )
 # NEW EXAMPLE:
 # grid_search_list <- list(
-#   c = c(2, 4, 8, 16),
-#   d = c(0.95, 0.975, 0.99, 0.999, 0.9999),
+#   de_ratio = c(2, 4, 8, 16),
+#   obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
 #   dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
 #   dist_weight = NA_real_,
 #   ent_weight = NA_real_
@@ -150,12 +155,12 @@ birdflow_modelfit_args_df <- function(
   # if the grid search type is new, calculate dist_weight and ent_weight
   if (grid_search_type == "new"){
     for (i in seq_len(nrow(df))){
-      xy <- find_xy(df$c[i], df$d[i])
-      df$dist_weight[i] <- xy["x"]
-      df$ent_weight[i] <- xy["y"]
+      xy <- refactor_hyperparams(df$de_ratio[i], df$obs_prop[i])
+      df$dist_weight[i] <- xy["dist_weight"]
+      df$ent_weight[i] <- xy["ent_weight"]
     }
-    df$c <- NULL
-    df$d <- NULL
+    df$de_ratio <- NULL
+    df$obs_prop <- NULL
   }
 
   args <- left_join(orig, df, by = "id")
