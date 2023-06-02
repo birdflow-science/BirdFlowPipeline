@@ -34,15 +34,15 @@ if (!dir.exists(file.path(Sys.getenv('HOME'), 'banding_raw_rds'))) {dir.create(f
 ## Batch process raw files to RDS
 
 my_suffix <- 'pf'
-batchMap(process_file_set,
+batchtools::batchMap(process_file_set,
          collapse_list,
-         reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
+         reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
                             conf.file = 'batchtools.conf.R',
                             packages = c('magrittr', 'data.table', 'dplyr'),
                             source = file.path('R', 'functions.R')
          ))
-submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 60,
                             memory = 8))
-waitForJobs()
+batchtools::waitForJobs()
 }

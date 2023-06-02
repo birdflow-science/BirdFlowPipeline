@@ -94,7 +94,7 @@ birdflow_modelfit <- function(
 #' @export
 model_information_row <- function(i){
   mn <- i$model
-  df <- tibble(
+  df <- dplyr::tibble(
     model = mn,
     obs = sub('.*obs(.*?)_.*', '\\1', mn) %>% as.numeric,
     ent = sub('.*ent(.*?)_.*', '\\1', mn) %>% as.numeric,
@@ -106,8 +106,8 @@ model_information_row <- function(i){
     ll_n = length(na.omit(i$ll$log_likelihood)),
     mean_distr_cor = i$mean_distr_cor
   )
-  bf <- import_birdflow(file.path(hdf_dir, mn))
-  rts <- route_migration(bf, 100, 'prebreeding')
+  bf <- BirdFlowR::import_birdflow(file.path(hdf_dir, mn))
+  rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
   stats <- rts_stats(rts)
   for (i in names(stats)){
     df[[i]] <- stats[[i]]
@@ -221,9 +221,9 @@ batch_evaluate_models <- function(params, track_info){
   stopifnot(isTRUE(success))
   ll_df <- batchtools::reduceResultsList() %>%
     lapply(function(i){i$df}) %>%
-    rbindlist %>%
-    as_tibble %>%
-    arrange(-ll)
+    (data.table::rbindlist) %>%
+    (dplyr::as_tibble) %>%
+    (dplyr::arrange)(-ll)
   # replace ll and nll with 0 if all NAs
   if (all(is.na(ll_df$ll))) {ll_df$ll <- 0}
   if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}

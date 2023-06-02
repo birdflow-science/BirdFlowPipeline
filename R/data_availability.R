@@ -42,18 +42,18 @@ banding_data_availability <- function(file){
 batch_data_availability <- function() {
 rds_files <- list.files('rds', full.names = TRUE)
 my_suffix <- 'da'
-batchMap(banding_data_availability,
+batchtools::batchMap(banding_data_availability,
          rds_files,
-         reg = makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
+         reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
                             conf.file = 'batchtools.conf.R',
                             packages = my_packages,
                             source = file.path('R', 'functions.R'),
          ))
-submitJobs(mutate(findNotSubmitted(), chunk = 1L),
+batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
            resources = list(walltime = 30,
                             memory = 4))
-waitForJobs()
-results_df <- lapply(findJobs()$job.id, loadResult) %>% rbindlist
+batchtools::waitForJobs()
+results_df <- lapply(batchtools::findJobs()$job.id, batchtools::loadResult) %>% rbindlist
 write.csv(results_df, 'data_availability.csv', row.names = FALSE)
 
 hindex <- function(x) {
