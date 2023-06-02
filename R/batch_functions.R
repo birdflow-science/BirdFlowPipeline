@@ -1,5 +1,5 @@
 # make timestamp
-make_timestamp <- function(tz = "America/Los_Angeles"){
+make_timestamp <- function(tz = the$tz){
   datetime <- Sys.time()
   datetime <- `attr<-`(datetime, "tzone", tz)
   format(datetime, "%Y-%m-%d_%H-%M-%S")
@@ -25,12 +25,10 @@ preprocess_species_wrapper <- function(params) {
   params$my_res <- BirdFlowR::res(bf)[1] / 1000
   # set up directories
   params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
-  params$hdf_dir <- file.path(
-    "/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/batch_hdf",
-    params$output_fullname)
+  params$hdf_dir <- file.path(the$batch_hdf_path, params$output_fullname)
   dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create(file.path(Sys.getenv('HOME'), 'banding_output'), showWarnings = FALSE)
-  params$output_path <- file.path(Sys.getenv('HOME'), 'banding_output', params$output_fullname)
+  dir.create(the$banding_output_path, showWarnings = FALSE)
+  params$output_path <- file.path(the$banding_output_path, params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   # move preprocessed file to modelfit directory
   preprocessed_file <- list.files(path = pp_dir,
@@ -62,7 +60,7 @@ find_xy <- function(c, d, s = 5){
 #  dist_pow <- seq(from = 0.1, to = 1.0, by = 0.1) # E
 #' @export
 birdflow_modelfit <- function(
-    mypy = "/home/dslager_umass_edu/birdflow/update_hdf.py",
+    mypy = file.path(the$python_repo_path, 'update_hdf.py'),
     mydir,
     mysp,
     myres,
