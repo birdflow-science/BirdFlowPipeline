@@ -268,9 +268,7 @@ model_evaluation_biplot <- function(ll_df, params){
   )
   pca_columns <- pca_columns[pca_columns %in% names(ll_df)]
   fit <- princomp(ll_df[,pca_columns], cor = TRUE)
-  #biplot(fit)
   pdf(outfile, 13, 5.5)
-  #print(factoextra::fviz_pca_biplot(fit, title = paste0('PCA biplot: ', substr(ll_df$model[1], 1, 6))))
   plot1 <- ggplot2::autoplot(fit, color = 'straightness',
                     loadings = TRUE,
                     loadings.label = TRUE,
