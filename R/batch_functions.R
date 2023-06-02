@@ -74,7 +74,7 @@ birdflow_modelfit <- function(
     training_steps = 600,
     rng_seed = 17
 ){
-  system2('python',
+  python_exit_code <- system2('python',
           args = c(
             mypy,
             mydir,
@@ -88,6 +88,7 @@ birdflow_modelfit <- function(
             paste0('--training_steps=', training_steps),
             paste0('--rng_seed=', rng_seed)
           ))
+  stopifnot(python_exit_code == 0)
 }
 
 #' @export
