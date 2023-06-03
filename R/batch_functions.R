@@ -165,18 +165,18 @@ batch_modelfit_wrapper <- function(params){
                          my_species = params$my_species,
                          my_res = params$my_res),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
-  batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
+  batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = modelfit_resources)
   success <- batchtools::waitForJobs()
   if (! isTRUE(success)) {
     message('Requeuing jobs that expired or had an error, attempt 1 of 2')
-    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+    batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = modelfit_resources)
     success <- batchtools::waitForJobs()
   }
   if (! isTRUE(success)) {
     message('Requeuing jobs that expired or had an error, attempt 2 of 2')
-    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+    batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = modelfit_resources)
     success <- batchtools::waitForJobs()
   }

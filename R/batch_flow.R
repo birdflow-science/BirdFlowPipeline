@@ -50,20 +50,20 @@ make_3d_plot('color_cor', 'cor', ll_df, params)
 
 ll_df <- ll_df %>%
   # remove any existing desirability columns (for interactive scripting)
-  select(-ends_with("_d")) %>%
+  (dplyr::select)(-dplyr::ends_with("_d")) %>%
   # create new desirability columns
-  mutate(
-    etc_d = desirability2::d_max(end_traverse_cor, low = 0.9, use_data = TRUE),
+  dplyr::mutate(
+    etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
     #stc_d = desirability2::d_max(start_cor, low = 0.9, use_data = TRUE),
-    str_d = desirability2::d_max(straightness, low = 0.5, use_data = TRUE),
+    str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
     #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
     #cor_d = desirability2::d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
     #ll_d  = desirability2::d_max(ll, use_data = TRUE),
     #str_d = desirability2::d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
     #sin_d = desirability2::d_max(sinuosity, use_data = TRUE),
     #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
-    overall_des = desirability2::d_overall(across(ends_with("_d")))
-  ) %>% arrange(-overall_des)
+    overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
+  ) %>% (dplyr::arrange)(-.data$overall_des)
 
 # save model evaluation RDS
 saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
