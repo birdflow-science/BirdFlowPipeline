@@ -5,7 +5,13 @@ make_timestamp <- function(tz = the$tz){
   format(datetime, "%Y-%m-%d_%H-%M-%S")
 }
 
-# preprocess species wrapper
+#' Wrapper for [BirdFlowR::preprocess_species()] that also prepares batch parameters
+#' @param params A list of starting parameters, currently set up in [batch_flow()]
+#' @returns The starting params list, modified to include additional information calculated during preprocessing. Also has side effects:
+#'  * create directories as needed
+#'  * write preprocessed hdf5 file
+#' @seealso [batch_flow()]
+#'
 #' @export
 preprocess_species_wrapper <- function(params) {
   params$my_species <- ebirdst::get_species(params$my_species)
@@ -184,7 +190,10 @@ batch_modelfit_wrapper <- function(params){
   return(success)
 }
 
-# Wrapper to batch evaluate models from params and track_info
+#' Batch evaluate models on the cluster
+#' @param params A list of parameters, as returned by [preprocess_species_wrapper()].
+#' @param track_info A list of track info, as returned by [make_tracks()], and passed internally to [BirdFlowR::interval_log_likelihood()].
+#' @returns A data.frame with a row for each model evaluated
 #' @export
 batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,

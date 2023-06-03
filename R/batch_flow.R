@@ -1,3 +1,11 @@
+#' Grid search, model selection, and model evaluation for one species on the cluster
+#' @param one_species a character vector of length 1 that is a valid input to [ebirdst::get_species()], e.g., an eBird 6-letter code or a valid common name
+#' @returns function is used for its many side effects, according to configuration settings in `as.list(banding:::the)`
+#'  * create destination directories as needed
+#'  * write preprocessed hdf5 file
+#'  * write modelfit hdf5 files
+#'  * write output files, plots, and maps for model evaluation and visualization
+#' @seealso [multiple_species_batch()]
 #' @export
 batch_flow <- function(one_species){
 
@@ -104,6 +112,14 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
 )
 } # big function end
 
+#' Grid search, model selection, and model evaluation for multiple species on the cluster, with error handling
+#' @param multispecies_vector a character vector that contains a valid inputs to [ebirdst::get_species()], e.g., eBird 6-letter codes or valid common names.
+#' @returns function is used for its many side effects, according to configuration settings in `as.list(banding:::the)`
+#'  * create destination directories as needed
+#'  * write preprocessed hdf5 files
+#'  * write modelfit hdf5 files
+#'  * write output files, plots, and maps for model evaluation and visualization
+#' @seealso [batch_flow()] for doing this for one species
 #' @export
 multiple_species_batch <- function(multispecies_vector) {
   for (species_i in multispecies_vector) {
