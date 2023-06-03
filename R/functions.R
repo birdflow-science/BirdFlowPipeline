@@ -18,21 +18,21 @@ preprocess_data_types <- function(df){
 
 preprocess_exclusions <- function(df){
   # exclude invalid dates
-  df <- filter(df, !is.na(EVENT_DATE))
+  df <- dplyr::filter(df, !is.na(EVENT_DATE))
   # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead
-  df <- filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
+  df <- dplyr::filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
   # exclude state or country level locations
-  df <- filter(df, ! CP %in% c(12, 72))
+  df <- dplyr::filter(df, ! CP %in% c(12, 72))
   # exclude records with longitude of 0 (might be real records with 0 latitude)
-  df <- filter(df, LON_DD != 0)
+  df <- dplyr::filter(df, LON_DD != 0)
   # exclude records with missing latitude or longitude
-  df <- filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
+  df <- dplyr::filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
   df
 }
 
 preprocess_with_recovery <- function(df){
   # delete exluded records
-  df <- df %>% group_by(SPECIES_ID, BAND) %>% filter(n() >= 2) %>% ungroup
+  df <- df %>% group_by(SPECIES_ID, BAND) %>% (dplyr::filter)(n() >= 2) %>% ungroup
   df
 }
 
@@ -42,11 +42,11 @@ preprocess_sort_band_date <- function(df){
 
 preprocess_calc_distance_days <- function(df){
   df %>%
-    group_by(BAND) %>%
-    mutate(distance = geodist::geodist(data.frame(lon = LON_DD, lat = LAT_DD),
+    (dplyr::group_by)(BAND) %>%
+    (dplyr::mutate)(distance = geodist::geodist(data.frame(lon = LON_DD, lat = LAT_DD),
                                        sequential = TRUE, measure = 'geodesic', pad = TRUE) / 1000) %>%
-    mutate(days = as.integer(EVENT_DATE - lag(EVENT_DATE))) %>%
-    ungroup
+    (dplyr::mutate)(days = as.integer(EVENT_DATE - dplyr::lag(EVENT_DATE))) %>%
+    (dplyr::ungroup)
 }
 
 #' Prepare banding data for `BirdFlowR::interval_log_likelihood()`
@@ -187,7 +187,7 @@ evaluate_model <- function(path, track_info){
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
     nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
     ll_raw_n = nrow(my_ll),
-    ll_n = length(na.omit(my_ll$log_likelihood)),
+    ll_n = length(stats::na.omit(my_ll$log_likelihood)),
     straightness = route_stats$straightness,
     sinuosity = route_stats$sinuosity,
     length = route_stats$length,
@@ -203,11 +203,11 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   ## color_column can be color_ll, color_nll, or color_cor
 
   # Set the plot colors
-  ll_df$color_ll <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
+  ll_df$color_ll <- grDevices::hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
   ll_df <- ll_df %>% dplyr::mutate(color_nll = dplyr::if_else(.data$ll < .data$nll, '#ffffff', .data$color_ll))
   cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
   cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
-  cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
+  cor_colors <- c('#FFFFFF', grDevices::hcl.colors(3, rev = TRUE))
   ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
 
   rgl::plot3d(
@@ -244,7 +244,7 @@ rts_stats <- function(rts){
       length = trajr::TrajLength(traj)/1000,
       displacement = trajr::TrajDistance(traj)/1000
     )
-  }) %>% rbindlist %>% colMeans(na.rm = TRUE) %>% as.list
+  }) %>% (data.table::rbindlist) %>% colMeans(na.rm = TRUE) %>% as.list
   out
 }
 
@@ -267,7 +267,7 @@ model_evaluation_biplot <- function(ll_df, params){
     'displacement'
   )
   pca_columns <- pca_columns[pca_columns %in% names(ll_df)]
-  fit <- princomp(ll_df[,pca_columns], cor = TRUE)
+  fit <- stats::princomp(ll_df[,pca_columns], cor = TRUE)
   pdf(outfile, 13, 5.5)
   plot1 <- ggplot2::autoplot(fit, color = 'straightness',
                     loadings = TRUE,
@@ -343,17 +343,17 @@ evaluate_performance_route <- function (x, season = 'all')
     x <- BirdFlowR::add_dynamic_mask(x)
   season_timesteps <- BirdFlowR::lookup_season_timesteps(x, season)
   start <- season_timesteps[1]
-  end <- tail(season_timesteps, 1)
+  end <- utils::tail(season_timesteps, 1)
   
   start_distr_ebirdst <- BirdFlowR::get_distr(x, start, from_marginals = FALSE)
   start_distr_marginals <- BirdFlowR::get_distr(x, start, from_marginals = TRUE)
   start_dm <- BirdFlowR::get_dynamic_mask(x, start)
-  start_cor <- cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
+  start_cor <- stats::cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
   end_distr_ebirdst <- BirdFlowR::get_distr(x, end, from_marginals = FALSE)
-  projected <- predict(x, distr = start_distr_marginals, start = start,
+  projected <- stats::predict(x, distr = start_distr_marginals, start = start,
                        end = end, direction = "forward")
   end_dm <- BirdFlowR::get_dynamic_mask(x, end)
-  end_traverse_cor <- cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])
+  end_traverse_cor <- stats::cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])
   # get_distr(bf, start, TRUE) |> rasterize_distr(bf) |> terra::plot()
   # get_distr(bf, start, FALSE) |> rasterize_distr(bf) |> terra::plot()
   # get_distr(bf, end, TRUE) |> rasterize_distr(bf) |> terra::plot()

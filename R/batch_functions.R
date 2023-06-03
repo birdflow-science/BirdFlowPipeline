@@ -12,7 +12,7 @@ preprocess_species_wrapper <- function(params) {
   pp_dir <- tempdir()
   suppressMessages(
     invisible(
-      capture.output(
+      utils::capture.output(
         bf <- BirdFlowR::preprocess_species(
           species = params$my_species,
           out_dir = pp_dir,

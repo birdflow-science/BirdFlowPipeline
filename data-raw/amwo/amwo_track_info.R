@@ -20,8 +20,8 @@ df <- tracking_df
 df <- preprocess_calc_distance_days(df)
 df <- df %>% select(BAND, EVENT_DATE, LAT_DD, LON_DD, BAND_TRACK, distance, days)
 df <- df %>% group_by(BAND_TRACK) %>%
-  filter(distance[2] > min_dist_m / 1000) %>%
-  filter(days[2] <= max_days) %>%
+  (dplyr::filter)(distance[2] > min_dist_m / 1000) %>%
+  (dplyr::filter)(days[2] <= max_days) %>%
   mutate(when = c('from', 'to')) %>%
   ungroup
 df$id <- seq_len(nrow(df))

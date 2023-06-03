@@ -15,12 +15,12 @@ find_ts_pairs <- function(bf, obs, ts_diff) {
       # Start timestep
       ts1 <- sub_df$ts[i]
       # End timestep
-      ts2 <- lookup_timestep_sequence(bf, start = ts1, n = ts_diff) |> tail(1)
+      ts2 <- lookup_timestep_sequence(bf, start = ts1, n = ts_diff) %>% (utils::tail)(1)
       # Check if there is data matching ts value
       match_rows <- sub_df[sub_df$ts == ts2, ]
       # only use the interval we want, not future years
       if (nrow(match_rows) > 1){
-        match_rows <- filter(match_rows, date == min(date) & as.numeric(date - sub_df$date[i]) < 365)
+        match_rows <- dplyr::filter(match_rows, date == min(date) & as.numeric(date - sub_df$date[i]) < 365)
       }
       # If there is a match, add a row to the output if date 1 is after date 2
       if (nrow(match_rows) > 0) {

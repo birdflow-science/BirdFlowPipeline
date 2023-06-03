@@ -17,9 +17,9 @@ process_file_set <- function(collapse_list_item){
   df <- preprocess_with_recovery(df)
   df <- preprocess_sort_band_date(df)
   df <- left_join(df, select(crosswalk, BBL_SPECIES_ID, EBIRDST_CODE), by = join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
-  for (species in unique(na.omit(df$EBIRDST_CODE))){
+  for (species in unique(stats::na.omit(df$EBIRDST_CODE))){
     print(species)
-    df %>% filter(EBIRDST_CODE == species) %>% saveRDS(file.path(the$banding_rds_path, paste0(species, '.rds')))
+    df %>% (dplyr::filter)(EBIRDST_CODE == species) %>% saveRDS(file.path(the$banding_rds_path, paste0(species, '.rds')))
   }
 }
 

@@ -52,14 +52,14 @@ for (i in seq_len(nrow(joined))){
            joined$EBIRD_SPECIES_CODE_COM[i])
   is_conflict <- if (all(is.na(vec))){
     FALSE
-  } else if (length(unique(na.omit(vec))) == 1){
+  } else if (length(unique(stats::na.omit(vec))) == 1){
     FALSE
   } else {
     TRUE
   }
   joined[i, 'EBIRD_SPECIES_CODE_CONFLICT'] <- is_conflict
 }
-joined %>% filter(EBIRD_SPECIES_CODE_CONFLICT)
+joined %>% (dplyr::filter)(EBIRD_SPECIES_CODE_CONFLICT)
 
 ## Add column for eBird species code consensus
 joined$EBIRD_SPECIES_CODE_CONSENSUS <- NA_character_
@@ -75,7 +75,7 @@ for (i in seq_len(nrow(joined))){
       joined$EBIRD_SPECIES_CODE_CONSENSUS[i] <- NA_character_
       next
     } else {
-      joined$EBIRD_SPECIES_CODE_CONSENSUS[i] <- unique(na.omit(vec))
+      joined$EBIRD_SPECIES_CODE_CONSENSUS[i] <- unique(stats::na.omit(vec))
     }
   }
 }
@@ -99,8 +99,8 @@ joined <- left_join(
 
 # joined %>%
 #   select(BBL_SPECIES_NAME, EBIRD_SPECIES_CODE_CONSENSUS, EBIRD_PRIMARY_COM_NAME_CONSENSUS, EBIRD_CATEGORY_CONSENSUS) %>%
-#   filter(EBIRD_CATEGORY_CONSENSUS != 'species' | EBIRD_CATEGORY_CONSENSUS %in% NA_character_ | grepl('[;]', EBIRD_SPECIES_CODE_CONSENSUS)) %>%
-#   write.csv('working_overrides.csv', row.names = FALSE)
+#   (dplyr::filter)(EBIRD_CATEGORY_CONSENSUS != 'species' | EBIRD_CATEGORY_CONSENSUS %in% NA_character_ | grepl('[;]', EBIRD_SPECIES_CODE_CONSENSUS)) %>%
+#   (utils::write.csv)('working_overrides.csv', row.names = FALSE)
 
 # sketchy taxa to probably not include in analysis
 # CANG
@@ -109,10 +109,10 @@ joined <- left_join(
 # Scrub-Jays (CASJ, WESJ, WOSJ)
 # WCSE/CRSE
 
-#odf <- fread('working_overrides.csv', na.strings = '') %>% select(EBIRD_SPECIES_CODE_OVERRIDE, BBL_SPECIES_NAME) %>% na.omit
+#odf <- fread('working_overrides.csv', na.strings = '') %>% select(EBIRD_SPECIES_CODE_OVERRIDE, BBL_SPECIES_NAME) %>% (stats::na.omit)
 #odf <- odf %>% left_join(tax, by = join_by('EBIRD_SPECIES_CODE_OVERRIDE' == 'EBIRD_SPECIES_CODE'))
 #odf <- odf %>% select(BBL_SPECIES_NAME, EBIRD_SPECIES_CODE_OVERRIDE, EBIRD_PRIMARY_COM_NAME, EBIRD_SCI_NAME, EBIRD_CATEGORY)
-#write.csv(odf, 'tax/taxonomic_join_overrides.csv', row.names = FALSE)
+#utils::write.csv(odf, 'tax/taxonomic_join_overrides.csv', row.names = FALSE)
 
 overrides <- fread('tax/taxonomic_join_overrides.csv')
 
@@ -140,7 +140,7 @@ joined %>% select(BBL_SPECIES_NAME, starts_with('EBIRD_SPECIES_CODE')) %>%
       is.na(EBIRD_SPECIES_CODE_FINAL),
       'NA',
       EBIRD_SPECIES_CODE_FINAL))) %>%
-  write.csv('join_check.csv', row.names = FALSE)
+  (utils::write.csv)('join_check.csv', row.names = FALSE)
 
 ##
 # do checks of the above CSV file, and make any necessary fixes to taxonomic_join_overrides.csv, then run to this point again, and repeat
@@ -153,4 +153,4 @@ joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_
       is.na(EBIRD_SPECIES_CODE),
       'NA',
       EBIRD_SPECIES_CODE))) %>%
-  write.csv('tax/taxonomy_crosswalk.csv', row.names = FALSE)
+  (utils::write.csv)('tax/taxonomy_crosswalk.csv', row.names = FALSE)

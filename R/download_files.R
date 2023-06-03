@@ -27,7 +27,7 @@ file_df$url <- paste0('https://www.sciencebase.gov', file_df$url)
 for (i in seq_len(nrow(file_df))){
   # download in reverse order (earlier files are huge)
   file_path <- file.path(banding_data_dir, file_df$name[i])
-  download.file(file_df$url[i], file_path)
+  utils::download.file(file_df$url[i], file_path)
 }
 
 }

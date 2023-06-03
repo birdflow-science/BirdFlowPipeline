@@ -20,15 +20,15 @@ banding_data_availability <- function(file){
                              n_tracks = rep(NA_integer_, 6))
   df <- preprocess_calc_distance_days(df)
   df <- drop_na(df, distance, days)
-  df <- filter(df, days > 0)
+  df <- dplyr::filter(df, days > 0)
   # stats for all durations
   for (da in max_track_days_options){
     for (di in min_distance_km_options){
       attrition_df[attrition_df$max_track_days == da & attrition_df$min_distance_km == di, 'n_tracks'] <- 
-        filter(df, days <= da & distance >= di) %>% nrow
+        dplyr::filter(df, days <= da & distance >= di) %>% nrow
     }
   }
-  # write.csv(attrition_df, file.path('output','attrition.csv'), row.names = FALSE)
+  # utils::write.csv(attrition_df, file.path('output','attrition.csv'), row.names = FALSE)
   # if (n_day180 < 20){
   #   next
   # }
@@ -54,7 +54,7 @@ batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
                             memory = 4))
 batchtools::waitForJobs()
 results_df <- lapply(batchtools::findJobs()$job.id, batchtools::loadResult) %>% rbindlist
-write.csv(results_df, 'data_availability.csv', row.names = FALSE)
+utils::write.csv(results_df, 'data_availability.csv', row.names = FALSE)
 
 hindex <- function(x) {
   tx <- sort(x, decreasing = T)
