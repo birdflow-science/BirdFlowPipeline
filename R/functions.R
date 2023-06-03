@@ -204,7 +204,7 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
 
   # Set the plot colors
   ll_df$color_ll <- hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
-  ll_df <- ll_df %>% mutate(color_nll = if_else(ll < nll, '#ffffff', color_ll))
+  ll_df <- ll_df %>% dplyr::mutate(color_nll = dplyr::if_else(.data$ll < .data$nll, '#ffffff', .data$color_ll))
   cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
   cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
   cor_colors <- c('#FFFFFF', hcl.colors(3, rev = TRUE))
