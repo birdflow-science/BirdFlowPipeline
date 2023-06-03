@@ -197,18 +197,18 @@ batch_evaluate_models <- function(params, track_info){
                        more.args = list(track_info = track_info),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
                                                       conf.file = system.file('batchtools.conf.R', package = 'banding')))
-  batchtools::submitJobs(mutate(batchtools::findNotSubmitted(), chunk = 1L),
+  batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = evaluation_resources)
   success <- batchtools::waitForJobs()
   if (! isTRUE(success)) {
     message('Requeuing jobs that expired or had an error, attempt 1 of 2')
-    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+    batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = evaluation_resources)
     success <- batchtools::waitForJobs()
   }
   if (! isTRUE(success)) {
     message('Requeuing jobs that expired or had an error, attempt 2 of 2')
-    batchtools::submitJobs(mutate(batchtools::findNotDone(), chunk = 1L),
+    batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = evaluation_resources)
     success <- batchtools::waitForJobs()
   }
@@ -217,7 +217,7 @@ batch_evaluate_models <- function(params, track_info){
     lapply(function(i){i$df}) %>%
     (data.table::rbindlist) %>%
     (dplyr::as_tibble) %>%
-    (dplyr::arrange)(-ll)
+    (dplyr::arrange)(-.data$ll)
   # replace ll and nll with 0 if all NAs
   if (all(is.na(ll_df$ll))) {ll_df$ll <- 0}
   if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}
