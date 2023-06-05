@@ -30,23 +30,84 @@ download_banding_files <- function(banding_raw_path) {
 }
 
 
-## Function to convert banding data to linestring.  Removed messy plotting.
-# rds_files <- list.files('rds', full.names = TRUE)
-# ... is additional arguments passed to make_tracks
+#' Function to take a set of raw files and produce per-species RDS
+#'
+#' @param collapse_list_item A vector containing CSV file numbers to process together
+#' @returns Side effect is writing `.rds` file or files
+#' @export
+process_file_set <- function(collapse_list_item, banding_data_dir){
+  crosswalk <- data.table::fread('tax/taxonomy_crosswalk.csv')
+  df <- lapply(collapse_list_item,
+               data.table::fread,
+               colClasses = c(BIRD_STATUS = 'character', EXTRA_INFO = 'character')
+  ) %>% (data.table::rbindlist)
+  df <- preprocess_data_types(df)
+  df <- preprocess_exclusions(df)
+  df <- preprocess_with_recovery(df)
+  df <- preprocess_sort_band_date(df)
+  df <- dplyr::left_join(df, dplyr::select(crosswalk, .data$BBL_SPECIES_ID, .data$EBIRDST_CODE), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
+  for (species in unique(stats::na.omit(df$EBIRDST_CODE))){
+    print(species)
+    df %>% (dplyr::filter)(.data$EBIRDST_CODE == species) %>% saveRDS(file.path(banding_data_dir, paste0(species, '.rds')))
+  }
+}
+
+#' Batch preprocess banding data on the cluster
+#'
+#' @param banding_data_dir Directory containing CSV files
+#' @return side effect, lots of rds files
+#' @export
+batch_preprocess_raw_files_to_rds <- function(banding_data_dir){
+  
+  # check if argument provided. if not, use from pkg environment preset
+  if (missing(banding_data_dir)){
+    banding_data_dir <- the$banding_rds_path
+  }
+  
+  # Some file sets need to be collapsed together for processing because same ebirdst taxa span multiple files
+  
+  collapse_list <- lapply(banding::banding_csv_collapse_list, function(i) file.path(banding_data_dir, paste0('NABBP_2022_grp_', sprintf('%02d', i), '.csv')))
+  
+  if (!dir.exists(file.path(banding_data_dir))) {dir.create(banding_data_dir)}
+  
+  ## Batch process raw files to RDS
+  
+  my_suffix <- 'pf'
+  batchtools::batchMap(process_file_set,
+                       collapse_list,
+                       more.args = list(banding_data_dir = banding_data_dir),
+                       reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
+                                                      conf.file = system.file('batchtools.conf.R', package = 'banding')
+                       ))
+  batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
+                         resources = list(walltime = 60,
+                                          memory = 8))
+  batchtools::waitForJobs()
+}
+
+
+#' Function to convert banding data to linestring of origin-destination pairs
+#'
+#' @param rds_file path to rds file to make linestrings from
+#' @param ... additional arguments passed to make_tracks
+#'
+#' @returns sf data.frame with linestring geometry
+#' @export
+#'
 banding_data_to_linestring <- function(rds_file, ...) {
   file <- rds_file
   df <- readRDS(file)
-  species_code <- basename(file) %>% sub('\\.rds$', '', .)
+  species_code <- sub('\\.rds$', '', basename(file))
   message(species_code)
   df <- make_tracks(banding_rds_path = file, ...)$obs_df
   df <- df %>%
-    group_by(BAND_TRACK) %>%
-    summarise(
-      start_date = min(date),
-      stop_date = max(date),
+    (dplyr::group_by)(.data$BAND_TRACK) %>%
+    (dplyr::summarise)(
+      start_date = min(.data$date),
+      stop_date = max(.data$date),
       geom = sprintf("LINESTRING(%s %s, %s %s)",
-                     lon[1], lat[1], lon[2], lat[2])
-    ) %>% ungroup
+                     .data$lon[1], .data$lat[1], .data$lon[2], .data$lat[2])
+    ) %>% (dplyr::ungroup)
   sf::st_as_sf(df, wkt = "geom", crs = 'wgs84')
 }
 
