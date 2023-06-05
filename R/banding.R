@@ -1,3 +1,35 @@
+#' Download raw USGS banding files
+#'
+#' @param banding_raw_path Path to which to download the files. If not provided, it will download to `the$banding_raw_path`
+#' @returns Function exists for its side effects, namely downloading the files listed in package data object [banding_raw_file_urls]
+#' @seealso [banding_raw_file_urls]
+#' @export
+download_banding_files <- function(banding_raw_path) {
+  # keep oringal option for download timeout when finished or error
+  old_timeout_option <- options()$timeout
+  on.exit({
+    options(timeout = old_timeout_option)
+  })
+  # set new longer timeout option
+  options(timeout = max(3600, getOption("timeout")))
+  # check if argument provided. if not, use from pkg environment preset
+  if (missing(banding_raw_path)){
+    banding_raw_path <- the$banding_raw_path
+  }
+  # make directory if doesn't exist
+  if (!dir.exists(banding_raw_path)) {
+    dir.create(banding_raw_path)
+  }
+  # Download files
+  for (i in seq_len(nrow(banding::banding_raw_file_urls))) {
+    # download in reverse order (earlier files are huge)
+    file_path <-
+      file.path(banding_raw_path, banding::banding_raw_file_urls$name[i])
+    utils::download.file(banding::banding_raw_file_urls$url[i], file_path)
+  }
+}
+
+
 ## Function to convert banding data to linestring.  Removed messy plotting.
 # rds_files <- list.files('rds', full.names = TRUE)
 # ... is additional arguments passed to make_tracks
