@@ -181,7 +181,7 @@ evaluate_model <- function(path, track_info){
     dist_pow = bf$metadata$hyperparameters$dist_pow,
     de_ratio = signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3),
     obs_prop = signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4),
-    mean_distr_cor = BirdFlowR::evaluate_performance(bf)$mean_distr_cor,
+    mean_distr_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
     start_cor = evaluate_performance_route(bf, season = 'prebreeding')$start_cor,
     end_traverse_cor = evaluate_performance_route(bf, season = 'prebreeding')$end_traverse_cor,
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
