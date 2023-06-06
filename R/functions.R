@@ -205,7 +205,13 @@ evaluate_model <- function(path, track_info){
   list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)
 }
 
-# 3d plot function
+#' 3d plot function
+#' @param color_column column to use for the colors
+#' @param suffix suffix to use for output filenames
+#' @param ll_df data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
+#' @param params the standard params list object, see [preprocess_species_wrapper()]
+#' @seealso [batch_evaluate_models()], [evaluate_model()], [preprocess_species_wrapper()]
+#' @returns side-effect is a plot file created
 #' @export
 make_3d_plot <- function(color_column, suffix, ll_df, params){
   ## color_column can be color_ll, color_nll, or color_cor
@@ -256,7 +262,11 @@ rts_stats <- function(rts){
   out
 }
 
-# PCA biplot hyperparameters evaluation
+#' PCA biplot hyperparameters evaluation
+#' @param ll_df data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
+#' @param params the standard params list object, see [preprocess_species_wrapper()]
+#' @seealso [batch_evaluate_models()], [preprocess_species_wrapper()]
+#' @returns side effect is a plot written to file
 #' @export
 model_evaluation_biplot <- function(ll_df, params){
   # workaround for unexported method ggfortify:::autoplot.princomp()
@@ -309,8 +319,14 @@ model_evaluation_biplot <- function(ll_df, params){
   dev.off()
 }
 
-# Quick visualize by model number
-# Plot map route_migration spring map
+#' Quick visualize a spring migration routes simulation from ll_df by row number
+#' @param i row number in `df` from which to extract model
+#' @param n number of routes to simulate for visualization
+#' @param season season for which to simulate route, parseable by [BirdFlowR::lookup_season_timesteps()]
+#' @param df a `ll_df` produced by [batch_evaluate_models()]
+#' @param dir hdf5 directory from `params` list.  Need to refactor some of these arguments
+#' @seealso [BirdFlowR::lookup_season_timesteps()], [batch_evaluate_models()]
+#' @returns side effect is an interactive plot
 #' @export
 quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df, dir = hdf_dir){
   ll_df <- df
