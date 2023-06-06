@@ -25,7 +25,27 @@ download_banding_files <- function(banding_raw_path) {
     # download in reverse order (earlier files are huge)
     file_path <-
       file.path(banding_raw_path, banding::banding_raw_file_urls$name[i])
-    utils::download.file(banding::banding_raw_file_urls$url[i], file_path)
+    message(banding_raw_file_urls$name[i])
+    # keep trying the download until successful, up to 3x
+    count <- 0
+    repeat {
+      count <- count + 1
+      tryCatch({
+        utils::download.file(banding::banding_raw_file_urls$url[i], file_path)
+        break
+      }, error = function(e){
+        cat("ERROR:", conditionMessage(e), "\n")
+        Sys.sleep(1)
+      })
+      if (count >= 3) stop("Max number of attempts reached")
+    }
+    # unzip at same location if zipped
+    if (grepl('\\.zip$', file_path)){
+      zipfile <- file_path
+      zipname <- basename(zipfile)
+      zipdir <- sub('.\\zip$', '', zipname)
+      unzip(zipfile, exdir = dirname(zipfile))
+    }
   }
 }
 
