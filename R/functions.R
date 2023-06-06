@@ -152,7 +152,15 @@ make_tracks <- function(
   return(list(obs_df = obs_df, int_df = int_df))
 }
 
-# evaluate model tracks
+#' Evaluate a BirdFlow model
+#' @param path Path of BirdFlow model to evaluate
+#' @param track_info Object produced from [make_tracks()]
+#' @seealso [make_tracks()], [batch_evaluate_models()]
+#' @returns A list:
+#'  * `df` 1-row data.frame of model descriptors and metrics 
+#'  * `obs` obs_df portion from original `track_info`
+#'  * `int` = int_df portion from original `track_info`
+#'
 #' @export
 evaluate_model <- function(path, track_info){
   bf <- BirdFlowR::import_birdflow(path)

@@ -216,6 +216,7 @@ batch_modelfit_wrapper <- function(params){
 #' @param params A list of parameters, as returned by [preprocess_species_wrapper()].
 #' @param track_info A list of track info, as returned by [make_tracks()], and passed internally to [BirdFlowR::interval_log_likelihood()].
 #' @returns A data.frame with a row for each model evaluated
+#' @seealso [evaluate_model()], [preprocess_species_wrapper()], [make_tracks()], [BirdFlowR::interval_log_likelihood()]
 #' @export
 batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,
