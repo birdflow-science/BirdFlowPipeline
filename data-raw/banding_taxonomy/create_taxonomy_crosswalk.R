@@ -2,8 +2,8 @@
 ## the crosswalk file between BBL and eBird v.2021 taxonomies
 
 bbl_species_file <- '~/banding_raw/NABBP_Lookups_2022/species.csv'
-eb_taxonomy_file <- 'data-raw/eBird_Taxonomy_v2021.csv'
-overrides_file <- 'data-raw/taxonomic_join_overrides.csv'
+eb_taxonomy_file <- 'data-raw/banding_taxonomy/eBird_Taxonomy_v2021.csv'
+overrides_file <- 'data-raw/banding_taxonomy/taxonomic_join_overrides.csv'
 
 suppressPackageStartupMessages(
   {
@@ -152,11 +152,12 @@ joined %>% select(BBL_SPECIES_NAME, starts_with('EBIRD_SPECIES_CODE')) %>%
 
 file.remove('join_check.csv')
 
-joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_CODE = EBIRD_SPECIES_CODE_FINAL) %>%
+taxonomy_crosswalk <- joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_CODE = EBIRD_SPECIES_CODE_FINAL) %>%
   left_join(tax, by = 'EBIRD_SPECIES_CODE') %>%
   mutate(EBIRDST_CODE = ebirdst::get_species(
     if_else(
       is.na(EBIRD_SPECIES_CODE),
       'NA',
-      EBIRD_SPECIES_CODE))) %>%
-  (utils::write.csv)('data-raw/taxonomy_crosswalk.csv', row.names = FALSE)
+      EBIRD_SPECIES_CODE)))
+
+usethis::use_data(taxonomy_crosswalk)
