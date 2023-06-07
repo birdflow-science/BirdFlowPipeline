@@ -1,6 +1,10 @@
 ## Somewhat messy and highly interactive/iterative code to assist in creating
 ## the crosswalk file between BBL and eBird v.2021 taxonomies
 
+bbl_species_file <- '~/banding_raw/NABBP_Lookups_2022/species.csv'
+eb_taxonomy_file <- 'data-raw/eBird_Taxonomy_v2021.csv'
+overrides_file <- 'data-raw/taxonomic_join_overrides.csv'
+
 suppressPackageStartupMessages(
   {
     library(ebirdst)
@@ -10,11 +14,11 @@ suppressPackageStartupMessages(
   }
 )
 
-df <- fread('data/NABBP_Lookups_2022/species.csv') %>%
+df <- fread(bbl_species_file) %>%
   select(SPECIES_ID, SPECIES_NAME, SCI_NAME)
 names(df) <- paste0('BBL_', names(df))
 
-tax <- fread('tax/eBird_Taxonomy_v2021.csv') %>%
+tax <- fread(eb_taxonomy_file) %>%
   select(SPECIES_CODE, PRIMARY_COM_NAME, SCI_NAME, CATEGORY)
 names(tax) <- paste0('EBIRD_', names(tax))
 
@@ -114,7 +118,7 @@ joined <- left_join(
 #odf <- odf %>% select(BBL_SPECIES_NAME, EBIRD_SPECIES_CODE_OVERRIDE, EBIRD_PRIMARY_COM_NAME, EBIRD_SCI_NAME, EBIRD_CATEGORY)
 #utils::write.csv(odf, 'tax/taxonomic_join_overrides.csv', row.names = FALSE)
 
-overrides <- fread('tax/taxonomic_join_overrides.csv')
+overrides <- fread(overrides_file)
 
 joined <- left_join(joined,
           overrides %>% select(BBL_SPECIES_NAME, EBIRD_SPECIES_CODE_OVERRIDE),
@@ -146,6 +150,8 @@ joined %>% select(BBL_SPECIES_NAME, starts_with('EBIRD_SPECIES_CODE')) %>%
 # do checks of the above CSV file, and make any necessary fixes to taxonomic_join_overrides.csv, then run to this point again, and repeat
 ##
 
+file.remove('join_check.csv')
+
 joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_CODE = EBIRD_SPECIES_CODE_FINAL) %>%
   left_join(tax, by = 'EBIRD_SPECIES_CODE') %>%
   mutate(EBIRDST_CODE = ebirdst::get_species(
@@ -153,4 +159,4 @@ joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_
       is.na(EBIRD_SPECIES_CODE),
       'NA',
       EBIRD_SPECIES_CODE))) %>%
-  (utils::write.csv)('tax/taxonomy_crosswalk.csv', row.names = FALSE)
+  (utils::write.csv)('data-raw/taxonomy_crosswalk.csv', row.names = FALSE)
