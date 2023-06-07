@@ -8,6 +8,8 @@ process_file_set(collapse_list_item, banding_data_dir)
 }
 \arguments{
 \item{collapse_list_item}{A vector containing CSV file numbers to process together}
+
+\item{banding_data_dir}{Directory containing the raw downloaded banding data}
 }
 \value{
 Side effect is writing \code{.rds} file or files

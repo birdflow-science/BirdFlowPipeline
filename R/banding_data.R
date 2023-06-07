@@ -25,7 +25,7 @@ download_banding_files <- function(banding_raw_path) {
     # download in reverse order (earlier files are huge)
     file_path <-
       file.path(banding_raw_path, banding::banding_raw_file_urls$name[i])
-    message(banding_raw_file_urls$name[i])
+    message(banding::banding_raw_file_urls$name[i])
     # keep trying the download until successful, up to 3x
     count <- 0
     repeat {
@@ -44,7 +44,7 @@ download_banding_files <- function(banding_raw_path) {
       zipfile <- file_path
       zipname <- basename(zipfile)
       zipdir <- sub('.\\zip$', '', zipname)
-      unzip(zipfile, exdir = dirname(zipfile))
+      utils::unzip(zipfile, exdir = dirname(zipfile))
     }
   }
 }
@@ -53,6 +53,7 @@ download_banding_files <- function(banding_raw_path) {
 #' Function to take a set of raw files and produce per-species RDS
 #'
 #' @param collapse_list_item A vector containing CSV file numbers to process together
+#' @param banding_data_dir Directory containing the raw downloaded banding data
 #' @returns Side effect is writing `.rds` file or files
 #' @export
 process_file_set <- function(collapse_list_item, banding_data_dir){

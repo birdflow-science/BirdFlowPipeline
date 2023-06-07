@@ -6,7 +6,7 @@
 
 # Batch data availability info function
 banding_data_availability <- function(file){
-  tax_join <- fread(file.path('tax', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
+  tax_join <- fread(file.path('data-raw', 'bandng_taxonomy', 'eBird_Taxonomy_v2021.csv')) %>% select(SPECIES_CODE, PRIMARY_COM_NAME)
   df <- readRDS(file)
   species_code <- basename(file) %>% sub('\\.rds$', '', .)
   species_name <- tax_join[SPECIES_CODE == species_code,]$`PRIMARY_COM_NAME`
