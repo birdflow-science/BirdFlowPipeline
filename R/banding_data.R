@@ -1,3 +1,25 @@
+#' Make the list of file sets required by [process_file_set()]
+#'
+#' @param suffix_vec A vector of all possible suffixes in the BBL CSV file download set
+#' @param together_list A list, each element of which is a vector of 2 or more CSV file suffixes that need to be analyzed together
+#' @return A list, each element of which is a vector of CSV file suffixes to analyze at the same time. When one of the vectors has length > 1, it's because one or more ebirdst species spans multiple CSV files
+#' @seealso [process_file_set()]
+combine_together_list <- function(suffix_vec, together_list) {
+  output <- list()
+  for (i in suffix_vec) {
+    match <- sapply(together_list, function(x) i %in% x)
+    if (any(match)) {
+      sublist <- together_list[which(match)]
+      if (!any(sapply(output, identical, sublist))) {
+        output <- c(output, list(sublist))
+      }
+    } else {
+      output <- c(output, list(i))
+    }
+  }
+  lapply(output, unlist)
+}
+
 #' Download raw USGS banding files
 #'
 #' @param banding_raw_path Path to which to download the files. If not provided, it will download to `the$banding_raw_path`
@@ -80,15 +102,30 @@ process_file_set <- function(collapse_list_item, banding_data_dir){
 #' @export
 batch_preprocess_raw_files_to_rds <- function(banding_data_dir){
   
+  ### debug directories ... probably want to have both rds and raw directories here #
+  
   # check if argument provided. if not, use from pkg environment preset
   if (missing(banding_data_dir)){
-    banding_data_dir <- the$banding_rds_path
+    banding_data_dir <- the$banding_raw_path
   }
   
   # Some file sets need to be collapsed together for processing because same ebirdst taxa span multiple files
   
-  collapse_list <- lapply(banding::banding_csv_collapse_list, function(i) file.path(banding_data_dir, paste0('NABBP_2022_grp_', sprintf('%02d', i), '.csv')))
+  # make together_list from taxonomy_crosswalk object
+  tc <- banding::taxonomy_crosswalk %>%
+    dplyr::select(.data$BBL_GRP, .data$EBIRDST_CODE) %>%
+    dplyr::filter(!is.na(.data$EBIRDST_CODE))
+  together_list <- split(tc, tc$EBIRDST_CODE)
+  together_list <- lapply(together_list, function(df) {dplyr::distinct(df)$BBL_GRP})
+  together_list <- Filter(function(x) length(x) > 1, together_list)
+  together_list <- lapply(together_list, sort)
+  together_list <- unname(together_list)
   
+  suffix_vec <- sort(unique(banding::taxonomy_crosswalk$BBL_GRP))
+  
+  collapse_list <- combine_together_list(suffix_vec, together_list)
+  collapse_list <- lapply(collapse_list, function(i) file.path(banding_data_dir, paste0('NABBP_2022_grp', i, '.csv')))
+
   if (!dir.exists(file.path(banding_data_dir))) {dir.create(banding_data_dir)}
   
   ## Batch process raw files to RDS
