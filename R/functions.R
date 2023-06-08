@@ -190,8 +190,7 @@ evaluate_model <- function(path, track_info){
     de_ratio = signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3),
     obs_prop = signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4),
     mean_distr_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
-    start_cor = evaluate_performance_route(bf, season = 'prebreeding')$start_cor,
-    end_traverse_cor = evaluate_performance_route(bf, season = 'prebreeding')$end_traverse_cor,
+    end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = NULL, season = 'prebreeding')$md_traverse_cor,
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
     nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
     ll_raw_n = nrow(my_ll),
@@ -342,46 +341,4 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
         ggplot2::labs(title = ll_df$model[i])
     }
   )
-}
-
-#' Evaluate how well a BirdFlow model correlates with eBird Status and Trends
-#'
-#' @param x a BirdFlow object, e.g., the object returned from
-#'   `BirdFlowR::import_birdflow()`
-#' @param season a BirdFlow season, e.g., one of the options in
-#'   `??BirdFlowR::lookup_season_timesteps()`
-#' @returns a list containing the following:
-#'
-#' * `start_cor` correlation between eBird Status and Trends distribution at the 
-#'    beginning of `season` and the model's weekly marginal distribution for 
-#'    the same week
-#' * `end_traverse_cor` correlation between eBird Status and Trends distribution 
-#'    at the end of `season` and the forward-predicted weekly marginal 
-#'    distribution for that same week, when starting the prediction from the 
-#'    model's marginal distribution at `season`'s starting week
-#'
-#' @export
-evaluate_performance_route <- function (x, season = 'all') 
-{
-  if (!BirdFlowR::has_dynamic_mask(x))
-    x <- BirdFlowR::add_dynamic_mask(x)
-  season_timesteps <- BirdFlowR::lookup_season_timesteps(x, season)
-  start <- season_timesteps[1]
-  end <- utils::tail(season_timesteps, 1)
-  
-  start_distr_ebirdst <- BirdFlowR::get_distr(x, start, from_marginals = FALSE)
-  start_distr_marginals <- BirdFlowR::get_distr(x, start, from_marginals = TRUE)
-  start_dm <- BirdFlowR::get_dynamic_mask(x, start)
-  start_cor <- stats::cor(start_distr_ebirdst[start_dm], start_distr_marginals[start_dm])
-  end_distr_ebirdst <- BirdFlowR::get_distr(x, end, from_marginals = FALSE)
-  projected <- stats::predict(x, distr = start_distr_marginals, start = start,
-                       end = end, direction = "forward")
-  end_dm <- BirdFlowR::get_dynamic_mask(x, end)
-  end_traverse_cor <- stats::cor(end_distr_ebirdst[end_dm], projected[end_dm, ncol(projected)])
-  # get_distr(bf, start, TRUE) |> rasterize_distr(bf) |> terra::plot()
-  # get_distr(bf, start, FALSE) |> rasterize_distr(bf) |> terra::plot()
-  # get_distr(bf, end, TRUE) |> rasterize_distr(bf) |> terra::plot()
-  # get_distr(bf, end, FALSE) |> rasterize_distr(bf) |> terra::plot()
-  list(start_cor = start_cor,
-       end_traverse_cor = end_traverse_cor)
 }

@@ -62,7 +62,6 @@ ll_df <- ll_df %>%
   # create new desirability columns
   dplyr::mutate(
     etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-    #stc_d = desirability2::d_max(start_cor, low = 0.9, use_data = TRUE),
     str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
     #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
     #cor_d = desirability2::d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
