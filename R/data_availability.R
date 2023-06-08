@@ -1,10 +1,8 @@
-# my_packages <- c('dplyr', 'data.table', 'geodist', 'tidyr', 'batchtools')
-# for (i in my_packages){
-#   library(i, character.only = TRUE)
-# }
-# source(file.path('R', 'batch_functions.R'))
-
-# Batch data availability info function
+#' Batch data availability info function
+#'
+#' @param file Path to RDS file to check data availability
+#' @return data.frame of attrition info
+#' @export
 banding_data_availability <- function(file){
   tax_join <- data.table::fread(file.path('data-raw', 'bandng_taxonomy', 'eBird_Taxonomy_v2021.csv')) %>%
     dplyr::select(.data$SPECIES_CODE, .data$PRIMARY_COM_NAME) %>%
@@ -30,17 +28,13 @@ banding_data_availability <- function(file){
         dplyr::filter(df, .data$days <= da & .data$distance >= di) %>% nrow
     }
   }
-  # utils::write.csv(attrition_df, file.path('output','attrition.csv'), row.names = FALSE)
-  # if (n_day180 < 20){
-  #   next
-  # }
-  # plot(df$days, df$distance, xlab = 'days elapsed', ylab = 'distance (km)',
-  #      main = paste0(species_name, '\n', '(n = ', n_day180, ')'))
   attrition_df
 }
 
-# Batch data availability function
-
+#' Batch data availability function
+#'
+#' @return Data.frame of data availability
+#' @export
 batch_data_availability <- function() {
 rds_files <- list.files('rds', full.names = TRUE)
 my_suffix <- 'da'
