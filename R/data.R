@@ -29,10 +29,9 @@
 #'   \item{BBL_SPECIES_ID}{4-digit USGS BBL species code}
 #'   \item{BBL_SPECIES_NAME}{USGS BBL common name}
 #'   \item{BBL_SCI_NAME}{USGS BBL scientific name}
+#'   \item{BBL_GRP}{file number suffix of raw BBL data CSV}
 #'   \item{EBIRD_SPECIES_CODE}{6-letter primary key for eBird, sometimes with trailing number}
-#'   \item{EBIRD_PRIMARY_COM_NAME}{eBird common name}
-#'   \item{EBIRD_CATEGORY}{species, hybrid, slash, spuh, or NA}
-#'   \item{EBIRDST_CODE}{same as eBird species code, consider removing one column}
+#'   \item{EBIRDST_CODE}{same as eBird species code, but NA if taxon not included in Status and Trends}
 #'   
 #'
 #' }

@@ -15,8 +15,9 @@ suppressPackageStartupMessages(
 )
 
 df <- fread(bbl_species_file) %>%
-  select(SPECIES_ID, SPECIES_NAME, SCI_NAME)
+  select(SPECIES_ID, SPECIES_NAME, SCI_NAME, BBL_GRP)
 names(df) <- paste0('BBL_', names(df))
+names(df) <- sub('^BBL_BBL_', 'BBL_', names(df)) # fix BBL_BBL_GRP
 
 tax <- fread(eb_taxonomy_file) %>%
   select(SPECIES_CODE, PRIMARY_COM_NAME, SCI_NAME, CATEGORY)
@@ -152,12 +153,7 @@ joined %>% select(BBL_SPECIES_NAME, starts_with('EBIRD_SPECIES_CODE')) %>%
 
 file.remove('join_check.csv')
 
-taxonomy_crosswalk <- joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, EBIRD_SPECIES_CODE = EBIRD_SPECIES_CODE_FINAL) %>%
-  left_join(tax, by = 'EBIRD_SPECIES_CODE') %>%
-  mutate(EBIRDST_CODE = ebirdst::get_species(
-    if_else(
-      is.na(EBIRD_SPECIES_CODE),
-      'NA',
-      EBIRD_SPECIES_CODE)))
+taxonomy_crosswalk <- joined %>% select(BBL_SPECIES_ID, BBL_SPECIES_NAME, BBL_SCI_NAME, BBL_GRP, EBIRD_SPECIES_CODE = EBIRD_SPECIES_CODE_FINAL) %>%
+  mutate(EBIRDST_CODE = ebirdst::get_species(EBIRD_SPECIES_CODE))
 
 usethis::use_data(taxonomy_crosswalk)
