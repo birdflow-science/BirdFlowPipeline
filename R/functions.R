@@ -152,18 +152,39 @@ make_tracks <- function(
   return(list(obs_df = obs_df, int_df = int_df))
 }
 
+#' Safely return a real value
+#'
+#' @param x Input
+#'
+#' @return x if x is not null, else NA_real_
+safe_numeric <- function(x){
+  ifelse(!is.null(x), x, NA_real_)
+}
+
+#' Import BirdFlow model, and apply further arguments to [evaluate_model()]
+#'
+#' @param path Path of hdf5 to pass to [BirdFlowR::import_birdflow()].
+#' @param ... Further arguments passed to [evaluate_model()]
+#' @export
+import_birdflow_and_evaluate <- function(path, ...){
+  bf <- BirdFlowR::import_birdflow(path)
+  evaluate_model(bf, modelname = basename(path), ...)
+}
+
 #' Evaluate a BirdFlow model
-#' @param path Path of BirdFlow model to evaluate
+#'
+#' @param bf A birdflow model object, often passed from [import_birdflow_and_evaluate()]
+#' @param modelname A name for the model, often the basename of the model path
 #' @param track_info Object produced from [make_tracks()]
-#' @seealso [make_tracks()], [batch_evaluate_models()]
+#'
+#' @seealso [make_tracks()], [batch_evaluate_models()], [import_birdflow_and_evaluate()]
 #' @returns A list:
 #'  * `df` 1-row data.frame of model descriptors and metrics 
 #'  * `obs` obs_df portion from original `track_info`
 #'  * `int` = int_df portion from original `track_info`
 #'
 #' @export
-evaluate_model <- function(path, track_info){
-  bf <- BirdFlowR::import_birdflow(path)
+evaluate_model <- function(bf, modelname, track_info){
   if (nrow(track_info$int_df) == 0){
     # return zero-row likelihood data.frame
     # can remove this once interval_log_likelihood handles this internally
@@ -182,13 +203,13 @@ evaluate_model <- function(path, track_info){
   rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
   route_stats <- rts_stats(rts)
   out_df <- dplyr::tibble(
-    model = basename(path),
-    obs_weight = bf$metadata$hyperparameters$obs_weight,
-    ent_weight = bf$metadata$hyperparameters$ent_weight,
-    dist_weight = bf$metadata$hyperparameters$dist_weight,
-    dist_pow = bf$metadata$hyperparameters$dist_pow,
-    de_ratio = signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3),
-    obs_prop = signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4),
+    model = modelname,
+    obs_weight = safe_numeric(bf$metadata$hyperparameters$obs_weight),
+    ent_weight = safe_numeric(bf$metadata$hyperparameters$ent_weight),
+    dist_weight = safe_numeric(bf$metadata$hyperparameters$dist_weight),
+    dist_pow = safe_numeric(bf$metadata$hyperparameters$dist_pow),
+    de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
+    obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
     mean_distr_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
     end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = NULL, season = 'prebreeding')$md_traverse_cor,
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),

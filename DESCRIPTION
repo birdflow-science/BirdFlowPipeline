@@ -33,8 +33,10 @@ Imports:
 Depends: 
     R (>= 2.10)
 Suggests: 
+    BirdFlowModels (>= 0.0.2.9001),
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Remotes:
-    birdflow-science/BirdFlowR
+Remotes: 
+    birdflow-science/BirdFlowR,
+    birdflow-science/BirdFlowModels
 LazyData: true
