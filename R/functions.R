@@ -18,34 +18,34 @@ preprocess_data_types <- function(df){
 
 preprocess_exclusions <- function(df){
   # exclude invalid dates
-  df <- dplyr::filter(df, !is.na(EVENT_DATE))
+  df <- dplyr::filter(df, !is.na(.data$EVENT_DATE))
   # exclude hand-reared, experimental, transported, rehabbed, held, sick, dead
-  df <- dplyr::filter(df, ! BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
+  df <- dplyr::filter(df, ! .data$BIRD_STATUS %in% c(2, 4, 5, 6, 7, 8, 9))
   # exclude state or country level locations
-  df <- dplyr::filter(df, ! CP %in% c(12, 72))
+  df <- dplyr::filter(df, ! .data$CP %in% c(12, 72))
   # exclude records with longitude of 0 (might be real records with 0 latitude)
-  df <- dplyr::filter(df, LON_DD != 0)
+  df <- dplyr::filter(df, .data$LON_DD != 0)
   # exclude records with missing latitude or longitude
-  df <- dplyr::filter(df, !is.na(LON_DD) & !is.na(LAT_DD))
+  df <- dplyr::filter(df, !is.na(.data$LON_DD) & !is.na(.data$LAT_DD))
   df
 }
 
 preprocess_with_recovery <- function(df){
   # delete exluded records
-  df <- df %>% group_by(SPECIES_ID, BAND) %>% (dplyr::filter)(n() >= 2) %>% ungroup
+  df <- df %>% dplyr::group_by(.data$SPECIES_ID, .data$BAND) %>% (dplyr::filter)(dplyr::n() >= 2) %>% dplyr::ungroup
   df
 }
 
 preprocess_sort_band_date <- function(df){
-  df %>% arrange(BAND, EVENT_DATE)
+  df %>% dplyr::arrange(.data$BAND, .data$EVENT_DATE)
 }
 
 preprocess_calc_distance_days <- function(df){
   df %>%
-    (dplyr::group_by)(BAND) %>%
-    (dplyr::mutate)(distance = geodist::geodist(data.frame(lon = LON_DD, lat = LAT_DD),
+    (dplyr::group_by)(.data$BAND) %>%
+    (dplyr::mutate)(distance = geodist::geodist(data.frame(lon = .data$LON_DD, lat = .data$LAT_DD),
                                        sequential = TRUE, measure = 'geodesic', pad = TRUE) / 1000) %>%
-    (dplyr::mutate)(days = as.integer(EVENT_DATE - dplyr::lag(EVENT_DATE))) %>%
+    (dplyr::mutate)(days = as.integer(.data$EVENT_DATE - dplyr::lag(.data$EVENT_DATE))) %>%
     (dplyr::ungroup)
 }
 
