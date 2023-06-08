@@ -36,26 +36,26 @@ banding_data_availability <- function(file){
 #' @return Data.frame of data availability
 #' @export
 batch_data_availability <- function() {
-rds_files <- list.files('rds', full.names = TRUE)
-my_suffix <- 'da'
-batchtools::batchMap(banding_data_availability,
-         rds_files,
-         reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                            conf.file = system.file('batchtools.conf.R', package = 'banding')
-         ))
-batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
-           resources = list(walltime = 30,
-                            memory = 4))
-batchtools::waitForJobs()
-results_df <- lapply(batchtools::findJobs()$job.id, batchtools::loadResult) %>% data.table::rbindlist
-utils::write.csv(results_df, 'data_availability.csv', row.names = FALSE)
-
-hindex <- function(x) {
-  tx <- sort(x, decreasing = T)
-  sum(tx >= seq_along(tx))
-}
-
-results_df %>%
-  dplyr::group_by(.data$max_track_days, .data$min_distance_km) %>%
-  dplyr::summarise(n_species_n_tracks_h_index = hindex(.data$n_tracks), .groups = 'drop')
+  rds_files <- list.files('rds', full.names = TRUE)
+  my_suffix <- 'da'
+  batchtools::batchMap(banding_data_availability,
+                       rds_files,
+                       reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
+                                                      conf.file = system.file('batchtools.conf.R', package = 'banding')
+                       ))
+  batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
+                         resources = list(walltime = 30,
+                                          memory = 4))
+  batchtools::waitForJobs()
+  results_df <- lapply(batchtools::findJobs()$job.id, batchtools::loadResult) %>% data.table::rbindlist
+  utils::write.csv(results_df, 'data_availability.csv', row.names = FALSE)
+  
+  hindex <- function(x) {
+    tx <- sort(x, decreasing = T)
+    sum(tx >= seq_along(tx))
+  }
+  
+  results_df %>%
+    dplyr::group_by(.data$max_track_days, .data$min_distance_km) %>%
+    dplyr::summarise(n_species_n_tracks_h_index = hindex(.data$n_tracks), .groups = 'drop')
 }
