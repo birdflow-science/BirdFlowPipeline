@@ -74,8 +74,9 @@ download_banding_files <- function(banding_raw_path) {
 
 #' Function to take a set of raw files and produce per-species RDS
 #'
+#' @param banding_raw_path Custom path with raw banding CSV files
+#' @param banding_rds_path Custom path to output RDS banding files
 #' @param collapse_list_item A vector containing CSV file numbers to process together
-#' @param banding_data_dir Directory containing the raw downloaded banding data
 #' @returns Side effect is writing `.rds` file or files
 #' @export
 process_file_set <- function(collapse_list_item, banding_raw_path, banding_rds_path){
@@ -97,7 +98,7 @@ process_file_set <- function(collapse_list_item, banding_raw_path, banding_rds_p
   df <- preprocess_exclusions(df)
   df <- preprocess_with_recovery(df)
   df <- preprocess_sort_band_date(df)
-  df <- dplyr::left_join(df, dplyr::select(banding::taxonomy_crosswalk, .data$BBL_SPECIES_ID, .data$EBIRDST_CODE), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
+  df <- dplyr::left_join(df, dplyr::select(banding::taxonomy_crosswalk, c("BBL_SPECIES_ID", "EBIRDST_CODE")), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
   # write species rds files
   for (species in unique(stats::na.omit(df$EBIRDST_CODE))){
     print(species)
@@ -107,7 +108,8 @@ process_file_set <- function(collapse_list_item, banding_raw_path, banding_rds_p
 
 #' Batch preprocess banding data on the cluster
 #'
-#' @param banding_data_dir Directory containing CSV files
+#' @param banding_raw_path Custom path with raw banding CSV files
+#' @param banding_rds_path Custom path to output RDS banding files
 #' @return side effect, lots of rds files
 #' @export
 batch_preprocess_raw_files_to_rds <- function(banding_raw_path, banding_rds_path){

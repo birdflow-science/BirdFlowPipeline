@@ -4,10 +4,12 @@
 \alias{batch_preprocess_raw_files_to_rds}
 \title{Batch preprocess banding data on the cluster}
 \usage{
-batch_preprocess_raw_files_to_rds(banding_data_dir)
+batch_preprocess_raw_files_to_rds(banding_raw_path, banding_rds_path)
 }
 \arguments{
-\item{banding_data_dir}{Directory containing CSV files}
+\item{banding_raw_path}{Custom path with raw banding CSV files}
+
+\item{banding_rds_path}{Custom path to output RDS banding files}
 }
 \value{
 side effect, lots of rds files

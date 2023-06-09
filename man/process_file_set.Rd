@@ -4,12 +4,14 @@
 \alias{process_file_set}
 \title{Function to take a set of raw files and produce per-species RDS}
 \usage{
-process_file_set(collapse_list_item, banding_data_dir)
+process_file_set(collapse_list_item, banding_raw_path, banding_rds_path)
 }
 \arguments{
 \item{collapse_list_item}{A vector containing CSV file numbers to process together}
 
-\item{banding_data_dir}{Directory containing the raw downloaded banding data}
+\item{banding_raw_path}{Custom path with raw banding CSV files}
+
+\item{banding_rds_path}{Custom path to output RDS banding files}
 }
 \value{
 Side effect is writing \code{.rds} file or files
