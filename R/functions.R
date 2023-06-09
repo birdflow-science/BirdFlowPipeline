@@ -32,7 +32,7 @@ preprocess_exclusions <- function(df){
 
 preprocess_with_recovery <- function(df){
   # delete exluded records
-  df <- df %>% dplyr::group_by(.data$SPECIES_ID, .data$BAND) %>% (dplyr::filter)(dplyr::n() >= 2) %>% dplyr::ungroup
+  df <- df %>% dplyr::group_by(.data$SPECIES_ID, .data$BAND) %>% (dplyr::filter)(dplyr::n() >= 2) %>% (dplyr::ungroup)
   df
 }
 

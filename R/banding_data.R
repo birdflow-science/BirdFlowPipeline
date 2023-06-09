@@ -78,8 +78,17 @@ download_banding_files <- function(banding_raw_path) {
 #' @param banding_data_dir Directory containing the raw downloaded banding data
 #' @returns Side effect is writing `.rds` file or files
 #' @export
-process_file_set <- function(collapse_list_item, banding_data_dir){
-  crosswalk <- data.table::fread('tax/taxonomy_crosswalk.csv')
+process_file_set <- function(collapse_list_item, banding_raw_path, banding_rds_path){
+  # check if argument provided. if not, use from pkg environment preset
+  if (missing(banding_raw_path)){
+    banding_raw_path <- the$banding_raw_path
+  }
+  if (missing(banding_rds_path)){
+    banding_rds_path <- the$banding_rds_path
+  }
+  # create destination directory if needed
+  if (!dir.exists(file.path(banding_rds_path))) {dir.create(banding_rds_path)}
+  # process data
   df <- lapply(collapse_list_item,
                data.table::fread,
                colClasses = c(BIRD_STATUS = 'character', EXTRA_INFO = 'character')
@@ -88,10 +97,11 @@ process_file_set <- function(collapse_list_item, banding_data_dir){
   df <- preprocess_exclusions(df)
   df <- preprocess_with_recovery(df)
   df <- preprocess_sort_band_date(df)
-  df <- dplyr::left_join(df, dplyr::select(crosswalk, .data$BBL_SPECIES_ID, .data$EBIRDST_CODE), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
+  df <- dplyr::left_join(df, dplyr::select(banding::taxonomy_crosswalk, .data$BBL_SPECIES_ID, .data$EBIRDST_CODE), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
+  # write species rds files
   for (species in unique(stats::na.omit(df$EBIRDST_CODE))){
     print(species)
-    df %>% (dplyr::filter)(.data$EBIRDST_CODE == species) %>% saveRDS(file.path(banding_data_dir, paste0(species, '.rds')))
+    df %>% (dplyr::filter)(.data$EBIRDST_CODE == species) %>% saveRDS(file.path(banding_rds_path, paste0(species, '.rds')))
   }
 }
 
@@ -100,13 +110,16 @@ process_file_set <- function(collapse_list_item, banding_data_dir){
 #' @param banding_data_dir Directory containing CSV files
 #' @return side effect, lots of rds files
 #' @export
-batch_preprocess_raw_files_to_rds <- function(banding_data_dir){
+batch_preprocess_raw_files_to_rds <- function(banding_raw_path, banding_rds_path){
   
   ### debug directories ... probably want to have both rds and raw directories here #
   
   # check if argument provided. if not, use from pkg environment preset
-  if (missing(banding_data_dir)){
-    banding_data_dir <- the$banding_raw_path
+  if (missing(banding_raw_path)){
+    banding_raw_path <- the$banding_raw_path
+  }
+  if (missing(banding_rds_path)){
+    banding_rds_path <- the$banding_rds_path
   }
   
   # Some file sets need to be collapsed together for processing because same ebirdst taxa span multiple files
@@ -124,16 +137,17 @@ batch_preprocess_raw_files_to_rds <- function(banding_data_dir){
   suffix_vec <- sort(unique(banding::taxonomy_crosswalk$BBL_GRP))
   
   collapse_list <- combine_together_list(suffix_vec, together_list)
-  collapse_list <- lapply(collapse_list, function(i) file.path(banding_data_dir, paste0('NABBP_2022_grp', i, '.csv')))
+  collapse_list <- lapply(collapse_list, function(i) file.path(banding_raw_path, paste0('NABBP_2022_grp', i, '.csv')))
 
-  if (!dir.exists(file.path(banding_data_dir))) {dir.create(banding_data_dir)}
+  if (!dir.exists(file.path(banding_raw_path))) {dir.create(banding_raw_path)}
   
   ## Batch process raw files to RDS
   
   my_suffix <- 'pf'
   batchtools::batchMap(process_file_set,
                        collapse_list,
-                       more.args = list(banding_data_dir = banding_data_dir),
+                       more.args = list(banding_raw_path = banding_raw_path,
+                                        banding_rds_path = banding_rds_path),
                        reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
                                                       conf.file = system.file('batchtools.conf.R', package = 'banding')
                        ))
