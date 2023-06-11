@@ -219,7 +219,7 @@ batch_evaluate_models <- function(params, track_info){
                       full.names = TRUE)
   evaluation_resources <- list(walltime = 15, memory = 8)
   success <- FALSE
-  batchtools::batchMap(evaluate_model,
+  batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
                        more.args = list(track_info = track_info),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
