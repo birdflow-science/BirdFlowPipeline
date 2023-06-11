@@ -1,6 +1,6 @@
 cluster.functions <- makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', package = 'banding'),
                                                array.jobs = TRUE,
-                                               nodename = 'login5')
+                                               nodename = 'login1')
 default.resources <- list(
   ncpus = 1,
   chunks.as.arrayjobs = TRUE,

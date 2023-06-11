@@ -43,6 +43,6 @@ TZ='America/Los_Angeles' date
 whoami
 hostname
 source /etc/profile
-module load microarch/x86_64 apptainer
+module load apptainer/1.1.5
 apptainer exec <%= if (!is.null(resources$ngpus)) "--nv" %> /work/pi_drsheldon_umass_edu/birdflow_modeling/python_R_container/dslager_cuda11.8_r4.3.0.sif Rscript <%= if (!is.null(resources$ngpus)) "--no-environ" %> -e 'batchtools::doJobCollection("<%= uri %>")'
 TZ='America/Los_Angeles' date
