@@ -1,5 +1,8 @@
 #' Grid search, model selection, and model evaluation for one species on the cluster
+#'
+#' @param params a list of standard parameters, typically constructed by complex default argument.
 #' @param one_species a character vector of length 1 that is a valid input to [ebirdst::get_species()], e.g., an eBird 6-letter code or a valid common name
+#'
 #' @returns function is used for its many side effects, according to configuration settings in `as.list(banding:::the)`
 #'  * create destination directories as needed
 #'  * write preprocessed hdf5 file
@@ -7,21 +10,23 @@
 #'  * write output files, plots, and maps for model evaluation and visualization
 #' @seealso [multiple_species_batch()]
 #' @export
-batch_flow <- function(one_species){
-
-params <- list(
-  my_species = one_species,
-  gpu_ram = 10,
-  my_res = 100,
-  output_nickname = as.character(Sys.Date()),
-  grid_search_type = 'new',
-  grid_search_list = list(
-    de_ratio = c(2, 4, 8, 16),
-    obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
-    dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
-    dist_weight = NA_real_,
-    ent_weight = NA_real_)
-  )
+batch_flow <- function(
+    one_species,
+    params = list(
+      my_species = character(0),
+      gpu_ram = 10,
+      my_res = 100,
+      output_nickname = as.character(Sys.Date()),
+      grid_search_type = 'new',
+      grid_search_list = list(
+        de_ratio = c(2, 4, 8, 16),
+        obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
+        dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+        dist_weight = NA_real_,
+        ent_weight = NA_real_)
+    )
+){
+params$my_species <- one_species
 
 # preprocess species and set up directories
 
