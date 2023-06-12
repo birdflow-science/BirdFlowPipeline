@@ -208,7 +208,8 @@ evaluate_model <- function(bf, modelname, track_info){
     straightness = route_stats$straightness,
     sinuosity = route_stats$sinuosity,
     length = route_stats$length,
-    displacement = route_stats$displacement
+    displacement = route_stats$displacement,
+    n_stopovers = route_stats$n_stopovers
   )
   #my_ll
   list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)
@@ -265,7 +266,8 @@ rts_stats <- function(rts){
       straightness = trajr::TrajStraightness(traj),
       sinuosity = trajr::TrajSinuosity2(traj),
       length = trajr::TrajLength(traj)/1000,
-      displacement = trajr::TrajDistance(traj)/1000
+      displacement = trajr::TrajDistance(traj)/1000,
+      n_stopovers = max(sum(trajr::TrajStepLengths(traj) > 0) - 1, 0)
     )
   }) %>% (data.table::rbindlist) %>% colMeans(na.rm = TRUE) %>% as.list
   out

@@ -114,6 +114,24 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
                         libdir = "libs",
                         selfcontained = TRUE
 )
+
+## 3d plot of stopover, straightness, and end_traverse_cor
+
+rgl::plot3d(
+  x = ll_df$n_stopovers, y = ll_df$straightness, z = ll_df$end_traverse_cor,
+  col = 'gray',
+  type = 's',
+  xlab="n_stopovers", ylab="straightness", zlab="end_traverse_cor")
+# To display in an R Markdown document:
+# rglwidget()
+#
+# # To save to a file:
+htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
+                        file = file.path(params$output_path, "_3d_n_stopovers_straightness_traverse_cor.html"),
+                        libdir = "libs",
+                        selfcontained = TRUE
+)
+
 } # big function end
 
 #' Grid search, model selection, and model evaluation for multiple species on the cluster, with error handling
