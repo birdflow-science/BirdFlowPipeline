@@ -185,21 +185,10 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'
 #' @export
 evaluate_model <- function(bf, modelname, track_info){
-  if (nrow(track_info$int_df) == 0){
-    # return zero-row likelihood data.frame
-    # can remove this once interval_log_likelihood handles this internally
-    my_ll <- structure(list(BAND_TRACK = character(0), from = integer(0), 
-                            to = integer(0), log_likelihood = numeric(0), null_ll = numeric(0), 
-                            lag = numeric(0), exclude = logical(0), not_active = logical(0), 
-                            dynamic_mask = logical(0), sparse = logical(0), same_timestep = logical(0), 
-                            bad_date = logical(0)), row.names = integer(0), class = "data.frame")
-  } else {
-    # proceed with likelihood calculation
-    my_ll <- BirdFlowR::interval_log_likelihood(
-      intervals = as.data.frame(track_info$int_df),
-      observations = as.data.frame(track_info$obs_df),
-      bf = bf)
-  }
+  my_ll <- BirdFlowR::interval_log_likelihood(
+    intervals = as.data.frame(track_info$int_df),
+    observations = as.data.frame(track_info$obs_df),
+    bf = bf)
   rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
   route_stats <- rts_stats(rts)
   out_df <- dplyr::tibble(
