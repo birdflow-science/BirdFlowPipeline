@@ -1,0 +1,79 @@
+BBL_SPECIES_NAME,EBIRD_SPECIES_CODE_OVERRIDE,EBIRD_PRIMARY_COM_NAME,EBIRD_SCI_NAME,EBIRD_CATEGORY
+Tule White-fronted Goose,gwfgoo,Greater White-fronted Goose,Anser albifrons,species
+Lesser Snow Goose,snogoo,Snow Goose,Anser caerulescens,species
+Blue Greater Snow Goose,snogoo,Snow Goose,Anser caerulescens,species
+Greater Snow Goose,snogoo,Snow Goose,Anser caerulescens,species
+Atlantic Brant,brant,Brant,Branta bernicla,species
+Black X Atlantic Brant Intergrade,brant,Brant,Branta bernicla,species
+Black Brant,brant,Brant,Branta bernicla,species
+Aleutian Canada Goose,cacgoo1,Cackling Goose,Branta hutchinsii,species
+Large Canada Goose,cangoo,Canada Goose,Branta canadensis,species
+Small Canada Goose,cangoo,Canada Goose,Branta canadensis,species
+Whistling Swan,tunswa,Tundra Swan,Cygnus columbianus,species
+Bewick's Swan,tunswa,Tundra Swan,Cygnus columbianus,species
+European Green-winged Teal,gnwtea,Green-winged Teal,Anas crecca,species
+California Ridgway's Rail,ridrai1,Ridgway's Rail,Rallus obsoletus,species
+Light-footed Ridgway's Rail,ridrai1,Ridgway's Rail,Rallus obsoletus,species
+Yuma Ridgway's Rail,ridrai1,Ridgway's Rail,Rallus obsoletus,species
+Clapper Rail,clarai11,Clapper Rail,Rallus crepitans,species
+Hawaiian Gallinule,comgal1,Common Gallinule,Gallinula galeata,species
+Eastern Black Rail,blkrai,Black Rail,Laterallus jamaicensis,species
+Mississippi Sandhill Crane,sancra,Sandhill Crane,Antigone canadensis,species
+Hawaiian Stilt,bknsti,Black-necked Stilt,Himantopus mexicanus,species
+Lesser Golden-Plover,y00222,American/Pacific Golden-Plover (Lesser Golden-Plover),Pluvialis dominica/fulva,slash
+Western Snowy Plover,snoplo5,Snowy Plover,Charadrius nivosus,species
+Rufa Red Knot,redkno,Red Knot,Calidris canutus,species
+Xantus's Murrelet,xanmur,Scripps's/Guadalupe Murrelet (Xantus's Murrelet),Synthliboramphus scrippsi/hypoleucus,slash
+Unidentified Mew Gull,mewgul2,Short-billed Gull,Larus brachyrhynchus,species
+Thayer's Gull,y00478,Iceland Gull,Larus glaucoides,species
+Interior Least Tern,leater1,Least Tern,Sternula antillarum,species
+California Least Tern,leater1,Least Tern,Sternula antillarum,species
+Cayenne Tern,santer1,Sandwich Tern,Thalasseus sandvicensis,species
+Great White Heron,grbher3,Great Blue Heron,Ardea herodias,species
+Puerto Rican Sharp-shinned Hawk,shshaw,Sharp-shinned Hawk,Accipiter striatus,species
+Puerto Rican Broad-winged Hawk,brwhaw,Broad-winged Hawk,Buteo platypterus,species
+Harlan's Hawk,rethaw,Red-tailed Hawk,Buteo jamaicensis,species
+Northern Spotted Owl,spoowl,Spotted Owl,Strix occidentalis,species
+California Spotted Owl,spoowl,Spotted Owl,Strix occidentalis,species
+Mexican Spotted Owl,spoowl,Spotted Owl,Strix occidentalis,species
+Yellow-shafted Flicker,norfli,Northern Flicker,Colaptes auratus,species
+Red-shafted Flicker,norfli,Northern Flicker,Colaptes auratus,species
+Audubon's Crested Caracara,y00678,Crested Caracara,Caracara plancus,species
+Traill's Flycatcher,y00324,Alder/Willow Flycatcher (Traill's Flycatcher),Empidonax alnorum/traillii,slash
+Southwestern Willow Flycatcher,wilfly,Willow Flycatcher,Empidonax traillii,species
+Western Flycatcher,wesfly,Pacific-slope/Cordilleran Flycatcher (Western Flycatcher),Empidonax difficilis/occidentalis,slash
+Least Bell's Vireo,belvir,Bell's Vireo,Vireo bellii,species
+Solitary Vireo,solvir1,solitary vireo sp.,Vireo cassinii/solitarius/plumbeus,spuh
+San Clemente Loggerhead Shrike,logshr,Loggerhead Shrike,Lanius ludovicianus,species
+Western Scrub-Jay,wesjay,California/Woodhouse's Scrub-Jay,Aphelocoma californica/woodhouseii,slash
+Northwestern Crow,amecro,American Crow,Corvus brachyrhynchos,species
+Plain Titmouse,y00326,Oak/Juniper Titmouse (Plain Titmouse),Baeolophus inornatus/ridgwayi,slash
+Streaked Horned Lark,horlar,Horned Lark,Eremophila alpestris,species
+Southern House Wren,houwre,House Wren,Troglodytes aedon,species
+Unidentified Gray-cheeked/Bicknell's Thrush,y00225,Gray-cheeked/Bicknell's Thrush,Catharus minimus/bicknelli,slash
+Unidentified Common/Hoary Redpoll,redpol,Common/Hoary Redpoll,Acanthis flammea/hornemanni,slash
+Florida Grasshopper Sparrow,graspa,Grasshopper Sparrow,Ammodramus savannarum,species
+White-winged Junco,daejun,Dark-eyed Junco,Junco hyemalis,species
+Gray-headed Junco,daejun,Dark-eyed Junco,Junco hyemalis,species
+Slate-colored Junco,daejun,Dark-eyed Junco,Junco hyemalis,species
+Oregon Junco,daejun,Dark-eyed Junco,Junco hyemalis,species
+Gambel's White-crowned Sparrow,whcspa,White-crowned Sparrow,Zonotrichia leucophrys,species
+Eastern White-crowned Sparrow,whcspa,White-crowned Sparrow,Zonotrichia leucophrys,species
+Nuttall's White-crowned Sparrow,whcspa,White-crowned Sparrow,Zonotrichia leucophrys,species
+Mountain White-crowned Sparrow,whcspa,White-crowned Sparrow,Zonotrichia leucophrys,species
+Puget Sound White-crowned Sparrow,whcspa,White-crowned Sparrow,Zonotrichia leucophrys,species
+San Clemente Bell's Sparrow,belspa2,Bell's Sparrow,Artemisiospiza belli,species
+Unspecified Sage Sparrow,sagspa,Sagebrush/Bell's Sparrow (Sage Sparrow),Artemisiospiza nevadensis/belli,slash
+Dusky Seaside Sparrow,seaspa,Seaside Sparrow,Ammospiza maritima,species
+Cape Sable Seaside Sparrow,seaspa,Seaside Sparrow,Ammospiza maritima,species
+Unidentified Sharp-tailed Sparrow,shtspa,Nelson's/Saltmarsh Sparrow (Sharp-tailed Sparrow),Ammospiza nelsoni/caudacuta,slash
+Belding's Savannah Sparrow,savspa,Savannah Sparrow,Passerculus sandwichensis,species
+Ipswich Sparrow,savspa,Savannah Sparrow,Passerculus sandwichensis,species
+Large-billed Sparrow,savspa,Savannah Sparrow,Passerculus sandwichensis,species
+Inyo California Towhee,caltow,California Towhee,Melozone crissalis,species
+Unidentified Rufous-sided Towhee,y00226,Spotted/Eastern Towhee (Rufous-sided Towhee),Pipilo maculatus/erythrophthalmus,slash
+Western Palm Warbler,palwar,Palm Warbler,Setophaga palmarum,species
+Yellow Palm Warbler,palwar,Palm Warbler,Setophaga palmarum,species
+Myrtle Warbler,yerwar,Yellow-rumped Warbler,Setophaga coronata,species
+Audubon's Warbler,yerwar,Yellow-rumped Warbler,Setophaga coronata,species
+White-collared Seedeater,whcsee,Morelet's/Cinnamon-rumped Seedeater,Sporophila morelleti/torqueola,slash
