@@ -31,10 +31,10 @@ preprocess_species_wrapper <- function(params) {
   params$my_res <- BirdFlowR::res(bf)[1] / 1000
   # set up directories
   params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
-  params$hdf_dir <- file.path(the$batch_hdf_path, params$output_fullname)
+  params$hdf_dir <- file.path(params$batch_hdf_path, params$output_fullname)
   dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create(the$banding_output_path, showWarnings = FALSE)
-  params$output_path <- file.path(the$banding_output_path, params$output_fullname)
+  dir.create(params$banding_output_path, showWarnings = FALSE)
+  params$output_path <- file.path(params$banding_output_path, params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   # move preprocessed file to modelfit directory
   preprocessed_file <- list.files(path = pp_dir,

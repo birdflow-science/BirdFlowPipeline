@@ -23,7 +23,9 @@ batch_flow <- function(
         obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
         dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
         dist_weight = NA_real_,
-        ent_weight = NA_real_)
+        ent_weight = NA_real_),
+      batch_hdf_path = the$batch_hdf_path,
+      banding_output_path = the$banding_output_path
     )
 ){
 params$my_species <- one_species
