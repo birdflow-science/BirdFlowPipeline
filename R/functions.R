@@ -115,7 +115,7 @@ make_tracks <- function(
     dplyr::mutate(BAND_TRACK = paste(.data$BAND, rep(1:(dplyr::n()/2), each = 2), sep = '_')) %>%
     (dplyr::ungroup)
   df <- preprocess_calc_distance_days(df)
-  df <- df %>% dplyr::select(.data$BAND, .data$EVENT_TYPE, .data$EVENT_DATE, .data$LAT_DD, .data$LON_DD, .data$EBIRDST_CODE, .data$BAND_TRACK, .data$distance, .data$days)
+  df <- df %>% dplyr::select(c('BAND', 'EVENT_TYPE', 'EVENT_DATE', 'LAT_DD', 'LON_DD', 'EBIRDST_CODE', 'BAND_TRACK', 'distance', 'days'))
   df <- df %>% dplyr::group_by(.data$BAND_TRACK) %>%
     dplyr::filter(.data$distance[2] > min_dist_m / 1000) %>%
     dplyr::filter(.data$days[2] <= max_days) %>%
@@ -130,11 +130,11 @@ make_tracks <- function(
   df <- df %>% dplyr::filter(.data$BAND_TRACK %in% sampled_band_tracks)
   # Make IDs
   df$id <- seq_len(nrow(df))
-  obs_df <- df %>% dplyr::rename(date = .data$EVENT_DATE, lat = .data$LAT_DD, lon = .data$LON_DD)
-  int_df <- df %>% dplyr::select(.data$BAND_TRACK, .data$when, .data$id)
+  obs_df <- df %>% dplyr::rename(date = 'EVENT_DATE', lat = 'LAT_DD', lon = 'LON_DD')
+  int_df <- df %>% dplyr::select(c('BAND_TRACK', 'when', 'id'))
   if (nrow(int_df) > 0){
     # typical behavior if data is present
-    int_df <- tidyr::pivot_wider(int_df, id_cols = .data$BAND_TRACK, names_from = .data$when, values_from = .data$id)
+    int_df <- tidyr::pivot_wider(int_df, id_cols = 'BAND_TRACK', names_from = 'when', values_from = 'id')
   } else {
     # return zero-row data frame with same columns as if there was data
     int_df <-
