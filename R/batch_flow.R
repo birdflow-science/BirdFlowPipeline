@@ -68,6 +68,7 @@ ll_df <- ll_df %>%
   dplyr::mutate(
     etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
     str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
+    #nso_d = desirability2::d_target(.data$n_stopovers, target = 3.54), ### CHECK ARGS ###
     #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
     #cor_d = desirability2::d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
     #ll_d  = desirability2::d_max(ll, use_data = TRUE),
