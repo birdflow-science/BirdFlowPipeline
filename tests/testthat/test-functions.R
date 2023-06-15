@@ -1,12 +1,15 @@
-test_that("evaluate_model works", {
-  expect_no_error(
-    {
-      eval_obj <- evaluate_model(BirdFlowModels::rewbla, 'fake_modelname', list(
+test_that("evaluate_model works for no-tracking data species", {
+  expect_no_error({
+    eval_obj <- evaluate_model(
+      BirdFlowModels::rewbla,
+      'fake_modelname',
+      list(
         obs_df = BirdFlowModels::rewbla_observations,
         int_df = BirdFlowModels::rewbla_intervals
-      ))
-    }
-  )
+      ),
+      params = list(my_species = 'rewbla')
+    )
+  })
   # when these 4 tests fail, it probably means we have new test model
   # can remove safe_numeric() calls in evaluate_model()
   expect_null(eval_obj$bf$metadata$hyperparameters$obs_weight)

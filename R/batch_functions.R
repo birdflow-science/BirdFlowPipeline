@@ -221,7 +221,7 @@ batch_evaluate_models <- function(params, track_info){
   success <- FALSE
   batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
-                       more.args = list(track_info = track_info),
+                       more.args = list(track_info = track_info, params = params),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
                                                       conf.file = system.file('batchtools.conf.R', package = 'banding')))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),

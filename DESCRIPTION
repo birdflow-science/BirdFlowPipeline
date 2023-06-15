@@ -27,6 +27,7 @@ Imports:
     rlang,
     sf,
     stats,
+    terra,
     tidyr,
     trajr,
     utils

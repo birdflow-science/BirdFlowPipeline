@@ -184,13 +184,22 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'  * `int` = int_df portion from original `track_info`
 #'
 #' @export
-evaluate_model <- function(bf, modelname, track_info){
+evaluate_model <- function(bf, modelname, track_info, params){
   my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf)
   rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
   route_stats <- rts_stats(rts)
+  if (params$my_species %in% c('amewoo')){
+    # PIT tests for American Woodcock, hard-coded transitions file for now
+    transitions <- utils::read.csv('/home/dslager_umass_edu/banding/cal_test/amewoo_USGS_Movebank_st2019_weekly_transitions-100.csv')
+    pit_calibration_obj <- pit_calibration(bf, transitions)
+    pit_plots(pit_calibration_obj, params, modelname)
+  } else {
+    pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_)
+  }
+  
   out_df <- dplyr::tibble(
     model = modelname,
     obs_weight = safe_numeric(bf$metadata$hyperparameters$obs_weight),
@@ -209,7 +218,9 @@ evaluate_model <- function(bf, modelname, track_info){
     sinuosity = route_stats$sinuosity,
     length = route_stats$length,
     displacement = route_stats$displacement,
-    n_stopovers = route_stats$n_stopovers
+    n_stopovers = route_stats$n_stopovers,
+    pit_D_row = pit_calibration_obj$D_row,
+    pit_D_col = pit_calibration_obj$D_col
   )
   #my_ll
   list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)
