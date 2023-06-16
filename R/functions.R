@@ -191,9 +191,13 @@ evaluate_model <- function(bf, modelname, track_info, params){
     bf = bf)
   rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
   route_stats <- rts_stats(rts)
-  if (params$my_species %in% c('amewoo')){
-    # PIT tests for American Woodcock, hard-coded transitions file for now
-    transitions <- utils::read.csv('/home/dslager_umass_edu/banding/cal_test/amewoo_USGS_Movebank_st2019_weekly_transitions-100.csv')
+  transitions_files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/tracking_data',
+                               pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
+                               full.names = TRUE)
+  stopifnot(length(transitions_files) < 2)
+  if (length(transitions_files) > 0){
+    # PIT tests for species with 1 transition file
+    transitions <- utils::read.csv(transitions_files)
     pit_calibration_obj <- pit_calibration(bf, transitions)
     pit_plots(pit_calibration_obj, params, modelname)
   } else {
