@@ -223,8 +223,8 @@ evaluate_model <- function(bf, modelname, track_info, params){
     length = route_stats$length,
     displacement = route_stats$displacement,
     n_stopovers = route_stats$n_stopovers,
-    pit_D_row = pit_calibration_obj$D_row,
-    pit_D_col = pit_calibration_obj$D_col
+    pit_row = pit_calibration_obj$D_row,
+    pit_col = pit_calibration_obj$D_col
   )
   #my_ll
   list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)

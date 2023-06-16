@@ -11,6 +11,27 @@ pit_calibration <- function(bf, transitions) {
   # initialize an empty matrix to store the results
   res_matrix <- matrix(NA, nrow = nrow(transitions), ncol = length(my_colnames))
   colnames(res_matrix) <- my_colnames
+
+  
+  remove_invalid_transitions <- function(transitions){
+    xy1 <- with(transitions,
+                BirdFlowR::latlon_to_xy(lat.1,lon.1,bf))
+    transitions$i1 <- with(xy1,
+                           BirdFlowR::xy_to_i(x, y, bf))
+    xy2 <- with(transitions,
+                BirdFlowR::latlon_to_xy(lat.2,lon.2,bf))
+    transitions$i2 <- with(xy2,
+               BirdFlowR::xy_to_i(x, y, bf))
+    transitions$i1_is_valid <- with(transitions,
+                                    BirdFlowR::is_location_valid(bf, i=i1, timestep=st_week.1))
+    transitions$i2_is_valid <- with(transitions,
+                                    BirdFlowR::is_location_valid(bf, i=i2, timestep=st_week.2))
+    transitions$valid_transitions <- transitions$i1_is_valid & transitions$i2_is_valid
+    out <- transitions[transitions$valid_transitions,]
+    out
+  }
+  
+  transitions <- remove_invalid_transitions(transitions)
   
   # loop over the rows of transitions
   for (j in 1:nrow(transitions)) {
@@ -26,10 +47,15 @@ pit_calibration <- function(bf, transitions) {
     xy1 <- BirdFlowR::latlon_to_xy(lat1,lon1,bf)
     i1 <- BirdFlowR::xy_to_i(xy1$x,xy1$y, bf)
     # must be an easier way than to use my custom function through 3 lines...
+    stopifnot(!is.na(i1))
     loc1 <- one_hot(i1,BirdFlowR::n_active(bf))
     
     xy2 <- BirdFlowR::latlon_to_xy(lat2,lon2,bf)
     i2 <- BirdFlowR::xy_to_i(xy2$x,xy2$y, bf)
+    # if (is.na(i2)){
+    #   print(transitions[j,])
+    # }
+    stopifnot(!is.na(i2))
     # loc2 <- one_hot(i2,BirdFlowR::n_active(bf))
     
     i1_is_valid <- BirdFlowR::is_location_valid(bf, i=i1, timestep=wk1)

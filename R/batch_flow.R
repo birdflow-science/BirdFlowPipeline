@@ -82,8 +82,10 @@ ll_df <- ll_df %>%
     #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
     #str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
     #etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-    pit_D_row_d = desirability2::d_min(pit_D_row, use_data = TRUE),
-    pit_D_col_d = desirability2::d_min(pit_D_col, use_data = TRUE),
+    d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
+    d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
+    pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
+    etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
     overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
   ) %>% (dplyr::arrange)(-.data$overall_des)
 
