@@ -23,7 +23,7 @@ test_that("routes stats work", {
   withr::with_seed(42,
                    {
                      expect_no_error({
-                       rts <- BirdFlowR::route_migration(BirdFlowModels::rewbla, 100, 'prebreeding')
+                       rts <- BirdFlowR::route(bf = BirdFlowModels::rewbla, n = 100, season = 'prebreeding', from_marginals = TRUE)
                      })
                    })
   # test route stats

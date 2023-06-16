@@ -190,7 +190,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf)
-  rts <- BirdFlowR::route_migration(bf, 100, 'prebreeding')
+  rts <- BirdFlowR::route(bf = bf, n = 100, season = 'prebreeding', from_marginals = TRUE)
   route_stats <- rts_stats(rts)
   transitions_files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/tracking_data',
                                pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
@@ -268,13 +268,13 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
 }
 
 #' Calculate route summary statistics
-#' @param rts data.frame object output from `BirdFlowR::route()` or `BirdFlowR::route_migration()`
+#' @param rts data.frame object output from `BirdFlowR::route()`
 #' @returns a list of mean summary statistics
-#' @seealso [BirdFlowR::route()], [BirdFlowR::route_migration()]
+#' @seealso [BirdFlowR::route()]
 #' @export
 #' 
 rts_stats <- function(rts){
-  rts_lst <- split(rts$points, rts$points$route)
+  rts_lst <- split(rts, rts$route_id)
   out <- lapply(rts_lst, function(rts){
     rts$ts_sequential <- seq_len(nrow(rts))
     traj <- trajr::TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
@@ -362,7 +362,7 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
   # 
   # ## Plot map route_migration spring msap
   # 
-  rts <- BirdFlowR::route_migration(bf, n = n, migration = season)
+  rts <- BirdFlowR::route(bf = bf, n = n, season = season, from_marginals = TRUE)
   print(
     {
       BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE) +

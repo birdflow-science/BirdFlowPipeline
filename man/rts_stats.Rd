@@ -7,7 +7,7 @@
 rts_stats(rts)
 }
 \arguments{
-\item{rts}{data.frame object output from \code{BirdFlowR::route()} or \code{BirdFlowR::route_migration()}}
+\item{rts}{data.frame object output from \code{BirdFlowR::route()}}
 }
 \value{
 a list of mean summary statistics
@@ -16,5 +16,5 @@ a list of mean summary statistics
 Calculate route summary statistics
 }
 \seealso{
-\code{\link[BirdFlowR:route]{BirdFlowR::route()}}, \code{\link[BirdFlowR:route_migration]{BirdFlowR::route_migration()}}
+\code{\link[BirdFlowR:route]{BirdFlowR::route()}}
 }
