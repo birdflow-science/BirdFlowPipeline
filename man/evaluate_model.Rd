@@ -4,7 +4,7 @@
 \alias{evaluate_model}
 \title{Evaluate a BirdFlow model}
 \usage{
-evaluate_model(bf, modelname, track_info)
+evaluate_model(bf, modelname, track_info, params)
 }
 \arguments{
 \item{bf}{A birdflow model object, often passed from \code{\link[=import_birdflow_and_evaluate]{import_birdflow_and_evaluate()}}}
@@ -12,6 +12,8 @@ evaluate_model(bf, modelname, track_info)
 \item{modelname}{A name for the model, often the basename of the model path}
 
 \item{track_info}{Object produced from \code{\link[=make_tracks]{make_tracks()}}}
+
+\item{params}{Standard params object}
 }
 \value{
 A list:

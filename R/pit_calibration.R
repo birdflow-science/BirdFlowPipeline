@@ -2,6 +2,7 @@ pit_calibration <- function(bf, transitions) {
   
   # one_hot vector of starting cell
   one_hot <- function(i,len) {
+    stopifnot(!is.na(i))
     x <- rep(0,len); x[i] <- 1
     return(x)
   }

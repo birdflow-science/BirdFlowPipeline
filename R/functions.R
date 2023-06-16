@@ -176,6 +176,7 @@ import_birdflow_and_evaluate <- function(path, ...){
 #' @param bf A birdflow model object, often passed from [import_birdflow_and_evaluate()]
 #' @param modelname A name for the model, often the basename of the model path
 #' @param track_info Object produced from [make_tracks()]
+#' @param params Standard params object
 #'
 #' @seealso [make_tracks()], [batch_evaluate_models()], [import_birdflow_and_evaluate()]
 #' @returns A list:
