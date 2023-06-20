@@ -10,8 +10,12 @@ default.resources <- list(
   max.arrayjobs.cpu = 250,
   partition.gpu = 'gpu-preempt,gpu',
   partition.cpu = 'cpu-preempt,cpu',
-  constraint.gpu = '2080|2080ti|v100'
+  constraint.gpu = 'rtx8000|1080ti',
+  prefer.gpu = '2080|2080ti|v100'
 )
+
+# scheduler gives you gpu nodes first because it's a higher priority partition, which has fast ials_gigabyte_gpu_2020|v100|a100 nodes
+# then it gives you gpu-preempt partition. Here, prefer 2080/2080ti, but accept rtx8000/1080ti
 
 # broader: constraint.gpu = '2080|2080ti|rtx8000|v100'
 # but RTX 8000 seems a little slower sometimes
