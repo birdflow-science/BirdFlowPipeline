@@ -195,10 +195,16 @@ evaluate_model <- function(bf, modelname, track_info, params){
   transitions_files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/tracking_data',
                                pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
                                full.names = TRUE)
-  stopifnot(length(transitions_files) < 2)
   if (length(transitions_files) > 0){
-    # PIT tests for species with 1 transition file
-    transitions <- utils::read.csv(transitions_files)
+    transitions_df_list <- lapply(transitions_files, utils::read.csv)
+    indiv_id_list <- lapply(transitions_df_list, function(i){unique(i$indiv)})
+    # throw error if all the indiv ids are not unique across the different data.frames
+    stopifnot(
+      length(unique(Reduce(c, indiv_id_list))) == sum(sapply(indiv_id_list, function(i){length(unique(i))}))
+    )
+    # Combine potentially multiple tracking data.frames
+    transitions <- as.data.frame(data.table::rbindlist(transitions_df_list, fill = TRUE))
+    # Do PIT calculations
     pit_calibration_obj <- pit_calibration(bf, transitions)
     pit_plots(pit_calibration_obj, params, modelname)
   } else {
