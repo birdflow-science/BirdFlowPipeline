@@ -16,7 +16,29 @@ batch_flow(
 \arguments{
 \item{one_species}{a character vector of length 1 that is a valid input to \code{\link[ebirdst:get_species]{ebirdst::get_species()}}, e.g., an eBird 6-letter code or a valid common name}
 
-\item{params}{a list of standard parameters, typically constructed by complex default argument.}
+\item{params}{a list of standard parameters, typically constructed by complex default argument.
+\itemize{
+\item example \code{old} grid search list:
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{grid_search_list <- list(
+ dist_weight = seq(from = 0.0008, to = 0.0018, length.out = 5),
+ ent_weight = seq(from = 0.00015, to = 0.0004, length.out = 5),
+ dist_pow = seq(from = 0.1, to = .9, length.out = 5)
+)
+}\if{html}{\out{</div>}}
+\itemize{
+\item example \code{new} grid search list:
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{grid_search_list <- list(
+ de_ratio = c(2, 4, 8, 16),
+ obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
+ dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+ dist_weight = NA_real_,
+ ent_weight = NA_real_
+)
+}\if{html}{\out{</div>}}}
 }
 \value{
 function is used for its many side effects, according to configuration settings in \code{as.list(banding:::the)}

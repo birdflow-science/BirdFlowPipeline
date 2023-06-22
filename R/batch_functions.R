@@ -110,38 +110,18 @@ birdflow_modelfit <- function(
 }
 
 #' Create a grid-expanded data.frame of model fit arguments. Output designed to be passed to [batch_modelfit_wrapper()]
-#' @param grid_search_type Character, either `old` (normal grid) or `new` (refactored grid based on [refactor_hyperparams()])
-#' @param grid_search_list List of arguments and vectors, some of which to `grid.expand` over when creating the data.frame:
-#'  * example `old` grid search list:
-#'  ```{r, eval = FALSE}
-#' grid_search_list <- list(
-#'   dist_weight = seq(from = 0.0008, to = 0.0018, length.out = 5),
-#'   ent_weight = seq(from = 0.00015, to = 0.0004, length.out = 5),
-#'   dist_pow = seq(from = 0.1, to = .9, length.out = 5)
-#' )
-#' ```
-#' * example `new` grid search list:
-#'  ```{r, eval = FALSE}
-#' grid_search_list <- list(
-#'   de_ratio = c(2, 4, 8, 16),
-#'   obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
-#'   dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
-#'   dist_weight = NA_real_,
-#'   ent_weight = NA_real_
-#' )
-#' ```
-#' @param hdf_dir Directory containing the prepocessed hdf5 file, and to which modelfit files will be written
-#' @param my_species Character, species to modelfit as output by [ebirdst::get_species()]
-#' @param my_res Integer, resolution in kilometers
+#'
+#' @param params Parameters object, typically created during preprocessing
+#'
 #' @seealso [birdflow_modelfit()], [batch_modelfit_wrapper()]
 #'
 #' @export
-birdflow_modelfit_args_df <- function(
-    grid_search_type = NULL,
-    grid_search_list = NULL,
-    hdf_dir = NULL,
-    my_species = NULL,
-    my_res = NULL){
+birdflow_modelfit_args_df <- function(params){
+  grid_search_type <- params$grid_search_type
+  grid_search_list <- params$grid_search_list
+  hdf_dir <- params$hdf_dir
+  my_species <- params$my_species
+  my_res <- params$my_res
   stopifnot(!is.null(grid_search_type) && grid_search_type %in% c('old', 'new'))
   # base df without grid search parameters
   orig <- data.frame(
@@ -181,12 +161,7 @@ batch_modelfit_wrapper <- function(params){
                              memory = params$gpu_ram + 1)
   success <- FALSE
   batchtools::batchMap(fun = birdflow_modelfit,
-                       args = birdflow_modelfit_args_df(
-                         grid_search_type = params$grid_search_type,
-                         grid_search_list = params$grid_search_list,
-                         hdf_dir = params$hdf_dir,
-                         my_species = params$my_species,
-                         my_res = params$my_res),
+                       args = birdflow_modelfit_args_df(params),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = modelfit_resources)
