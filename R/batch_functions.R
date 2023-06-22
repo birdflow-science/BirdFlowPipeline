@@ -146,6 +146,9 @@ birdflow_modelfit_args_df <- function(params){
 
   args <- dplyr::left_join(orig, df, by = "id")
   args$id <- NULL
+  
+  # Check if fitted model hdf5s already exist, and if so, remove from the list to fit
+  
   args
 }
 
@@ -159,26 +162,31 @@ batch_modelfit_wrapper <- function(params){
   modelfit_resources <- list(walltime = 15,
                              ngpus = 1,
                              memory = params$gpu_ram + 1)
+  modelfit_args_df <- birdflow_modelfit_args_df(params)
   success <- FALSE
-  batchtools::batchMap(fun = birdflow_modelfit,
-                       args = birdflow_modelfit_args_df(params),
-                       reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
-  batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
-                         resources = modelfit_resources)
-  success <- batchtools::waitForJobs()
-  if (! isTRUE(success)) {
-    message('Requeuing jobs that expired or had an error, attempt 1 of 2')
-    batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
+  if (nrow(modelfit_args_df) > 0){
+    batchtools::batchMap(fun = birdflow_modelfit,
+                         args = modelfit_args_df,
+                         reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
+    batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                            resources = modelfit_resources)
     success <- batchtools::waitForJobs()
+    if (! isTRUE(success)) {
+      message('Requeuing jobs that expired or had an error, attempt 1 of 2')
+      batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
+                             resources = modelfit_resources)
+      success <- batchtools::waitForJobs()
+    }
+    if (! isTRUE(success)) {
+      message('Requeuing jobs that expired or had an error, attempt 2 of 2')
+      batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
+                             resources = modelfit_resources)
+      success <- batchtools::waitForJobs()
+    }
+    stopifnot(isTRUE(success))
+  } else {
+    message('Using previously fitted models')
   }
-  if (! isTRUE(success)) {
-    message('Requeuing jobs that expired or had an error, attempt 2 of 2')
-    batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
-                           resources = modelfit_resources)
-    success <- batchtools::waitForJobs()
-  }
-  stopifnot(isTRUE(success))
   return(success)
 }
 
