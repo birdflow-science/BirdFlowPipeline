@@ -217,7 +217,7 @@ batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$my_species, '.*', params$my_res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
-  evaluation_resources <- list(walltime = 15, memory = 8)
+  evaluation_resources <- list(walltime = 25, memory = 8)
   success <- FALSE
   batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
