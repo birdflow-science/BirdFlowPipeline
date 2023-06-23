@@ -31,7 +31,7 @@ preprocess_species_wrapper <- function(params) {
   params$my_res <- BirdFlowR::res(bf)[1] / 1000
   # set up directories
   params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
-  params$hdf_dir <- file.path(params$batch_hdf_path, params$output_fullname)
+  params$hdf_dir <- file.path(params$batch_hdf_path, paste0(params$my_species, '_', params$my_res, 'km'))
   dir.create(params$hdf_dir, showWarnings = FALSE)
   dir.create(params$banding_output_path, showWarnings = FALSE)
   params$output_path <- file.path(params$banding_output_path, params$output_fullname)
@@ -109,6 +109,22 @@ birdflow_modelfit <- function(
   stopifnot(python_exit_code == 0)
 }
 
+#' Read key parameters from hdf5 modelfit
+#'
+#' @param hdf5_path Path of hdf5 model to check
+#'
+#' @returns a one-row data.frame of hdf5 info
+#' @export
+identify_hdf5_model <- function(hdf5_path){
+  hypers <- rhdf5::h5read(hdf5_path, '/metadata/hyperparameters')[c('dist_pow', 'dist_weight', 'ent_weight')]
+  data.frame(dist_pow = hypers$dist_pow,
+             dist_weight = hypers$dist_weight,
+             ent_weight = hypers$ent_weight,
+             myres = rhdf5::h5read(hdf5_path, '/geom/res')[1]/1000,
+             mysp = rhdf5::h5read(hdf5_path, '/species')$species_code
+  )
+}
+
 #' Create a grid-expanded data.frame of model fit arguments. Output designed to be passed to [batch_modelfit_wrapper()]
 #'
 #' @param params Parameters object, typically created during preprocessing
@@ -147,9 +163,31 @@ birdflow_modelfit_args_df <- function(params){
   args <- dplyr::left_join(orig, df, by = "id")
   args$id <- NULL
   
-  # Check if fitted model hdf5s already exist, and if so, remove from the list to fit
+  # Check for existing identical fitted model hdf5s using metadata, and if so, remove from list to fit
   
-  args
+  hdf_path_vec <- list.files(params$hdf_dir, pattern = 'km_', full.names = TRUE)
+  if (length(hdf_path_vec) > 0){
+    message(
+      paste('Found', length(hdf_path_vec), 'previously fitted models')
+    )
+    hdf_df <- sapply(hdf_path_vec, identify_hdf5_model, USE.NAMES = TRUE, simplify = FALSE) %>%
+      (data.table::rbindlist)(idcol = 'hdf5_path') %>% dplyr::as_tibble()
+    # Deal with floating point issues before anti_join, which only uses `==`
+    args <- args %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
+    hdf_df <- hdf_df %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
+    # Delete unneeded hdf5s
+    extra_hdf5s <- dplyr::anti_join(hdf_df, args, by = dplyr::join_by('mysp' == 'mysp', 'myres' == 'myres', 'dist_pow' == 'dist_pow', 'dist_weight' == 'dist_weight', 'ent_weight' == 'ent_weight')) %>%
+      dplyr::pull(.data$hdf5_path)
+    if (length(extra_hdf5s) > 0){
+      invisible(file.remove(extra_hdf5s))
+      message(
+        paste('Deleted', length(extra_hdf5s), 'previously fitted models not needed for this grid search')
+      )
+    }
+    dplyr::anti_join(args, hdf_df, by = dplyr::join_by('mysp' == 'mysp', 'myres' == 'myres', 'dist_pow' == 'dist_pow', 'dist_weight' == 'dist_weight', 'ent_weight' == 'ent_weight'))
+  } else {
+    args
+  }
 }
 
 
@@ -163,8 +201,8 @@ batch_modelfit_wrapper <- function(params){
                              ngpus = 1,
                              memory = params$gpu_ram + 1)
   modelfit_args_df <- birdflow_modelfit_args_df(params)
-  success <- FALSE
   if (nrow(modelfit_args_df) > 0){
+    success <- FALSE
     batchtools::batchMap(fun = birdflow_modelfit,
                          args = modelfit_args_df,
                          reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
@@ -184,10 +222,11 @@ batch_modelfit_wrapper <- function(params){
       success <- batchtools::waitForJobs()
     }
     stopifnot(isTRUE(success))
+    invisible(success)
   } else {
     message('Using previously fitted models')
+    invisible(TRUE)
   }
-  return(success)
 }
 
 #' Batch evaluate models on the cluster

@@ -24,6 +24,7 @@ Imports:
     htmlwidgets,
     magrittr,
     rgl,
+    rhdf5,
     rlang,
     sf,
     stats,
