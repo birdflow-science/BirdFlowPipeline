@@ -6,14 +6,7 @@ pit_calibration <- function(bf, transitions) {
     x <- rep(0,len); x[i] <- 1
     return(x)
   }
-  
-  # assign column names to the matrix
-  my_colnames <- c("j", "wk1", "wk2", "i1", "i2", "x1", "x2", "y1", "y2", "p_cell", "p_95", "in_95_set", "max_cell_pred_value", "sum_leq", "pit_row", "pit_col", "i1_is_valid", "i2_is_valid")
-  # initialize an empty matrix to store the results
-  res_matrix <- matrix(NA, nrow = nrow(transitions), ncol = length(my_colnames))
-  colnames(res_matrix) <- my_colnames
 
-  
   remove_invalid_transitions <- function(transitions, bf){
     xy1 <- with(transitions,
                 BirdFlowR::latlon_to_xy(lat.1,lon.1,bf))
@@ -39,6 +32,12 @@ pit_calibration <- function(bf, transitions) {
   my_season_timesteps <- BirdFlowR::lookup_season_timesteps(bf, season = 'prebreeding')
   transitions <- dplyr::filter(transitions,
                                .data$st_week.1 %in% my_season_timesteps & .data$st_week.2 %in% my_season_timesteps)
+  
+  # assign column names to the matrix
+  my_colnames <- c("j", "wk1", "wk2", "i1", "i2", "x1", "x2", "y1", "y2", "p_cell", "p_95", "in_95_set", "max_cell_pred_value", "sum_leq", "pit_row", "pit_col", "i1_is_valid", "i2_is_valid")
+  # initialize an empty matrix to store the results
+  res_matrix <- matrix(NA, nrow = nrow(transitions), ncol = length(my_colnames))
+  colnames(res_matrix) <- my_colnames
 
   # loop over the rows of transitions
   for (j in 1:nrow(transitions)) {
