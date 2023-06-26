@@ -14,7 +14,7 @@ pit_calibration <- function(bf, transitions) {
   colnames(res_matrix) <- my_colnames
 
   
-  remove_invalid_transitions <- function(transitions){
+  remove_invalid_transitions <- function(transitions, bf){
     xy1 <- with(transitions,
                 BirdFlowR::latlon_to_xy(lat.1,lon.1,bf))
     transitions$i1 <- with(xy1,
@@ -31,9 +31,15 @@ pit_calibration <- function(bf, transitions) {
     out <- transitions[transitions$valid_transitions,]
     out
   }
-  
-  transitions <- remove_invalid_transitions(transitions)
-  
+
+  transitions <- remove_invalid_transitions(transitions, bf)
+
+  # Remove out-of-season transitions
+
+  my_season_timesteps <- BirdFlowR::lookup_season_timesteps(bf, season = 'prebreeding')
+  transitions <- dplyr::filter(transitions,
+                               .data$st_week.1 %in% my_season_timesteps & .data$st_week.2 %in% my_season_timesteps)
+
   # loop over the rows of transitions
   for (j in 1:nrow(transitions)) {
 
