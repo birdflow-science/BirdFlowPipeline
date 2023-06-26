@@ -226,7 +226,6 @@ evaluate_model <- function(bf, modelname, track_info, params){
     ll_raw_n = nrow(my_ll),
     ll_n = length(stats::na.omit(my_ll$log_likelihood)),
     straightness = route_stats$straightness,
-    sinuosity = route_stats$sinuosity,
     length = route_stats$length,
     displacement = route_stats$displacement,
     n_stopovers = route_stats$n_stopovers,
@@ -286,7 +285,6 @@ rts_stats <- function(rts){
     traj <- trajr::TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
     list(
       straightness = trajr::TrajStraightness(traj),
-      sinuosity = trajr::TrajSinuosity2(traj),
       length = trajr::TrajLength(traj)/1000,
       displacement = trajr::TrajDistance(traj)/1000,
       n_stopovers = max(sum(trajr::TrajStepLengths(traj) > 0) - 1, 0)
@@ -313,7 +311,6 @@ model_evaluation_biplot <- function(ll_df, params){
     'mean_distr_cor',
     'll',
     'straightness',
-    'sinuosity',
     'length',
     'displacement'
   )

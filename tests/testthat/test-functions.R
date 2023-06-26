@@ -31,7 +31,7 @@ test_that("routes stats work", {
     stats <- rts_stats(rts)
   })
   expect_equal(stats,
-               list(straightness = 0.823304236754776, sinuosity = 0.00184305321524582, 
+               list(straightness = 0.823304236754776,
                     length = 1463.41057052456, displacement = 845.890889687627, n_stopovers = 0.78))
 })
 

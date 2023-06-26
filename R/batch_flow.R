@@ -96,7 +96,6 @@ ll_df <- ll_df %>%
     #cor_d = desirability2::d_max(mean_distr_cor, high = 1, low = 0.9, scale = exp(-1)),
     #ll_d  = desirability2::d_max(ll, use_data = TRUE),
     #str_d = desirability2::d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
-    #sin_d = desirability2::d_max(sinuosity, use_data = TRUE),
     #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
     #str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
     #etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
