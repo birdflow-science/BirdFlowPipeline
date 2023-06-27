@@ -39,7 +39,7 @@ batch_flow <- function(
       grid_search_list = list(
         de_ratio = c(2, 4, 8, 16),
         obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
-        dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+        dist_pow = seq(from = 0.1, to = 0.9, by = 0.1),
         dist_weight = NA_real_,
         ent_weight = NA_real_),
       batch_hdf_path = the$batch_hdf_path,
