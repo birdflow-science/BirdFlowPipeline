@@ -208,7 +208,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     pit_calibration_obj <- pit_calibration(bf, transitions)
     pit_plots(pit_calibration_obj, params, modelname)
   } else {
-    pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_)
+    pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_, res = data.frame(in_95_set = NA_real_))
   }
   
   out_df <- dplyr::tibble(
@@ -230,7 +230,8 @@ evaluate_model <- function(bf, modelname, track_info, params){
     displacement = route_stats$displacement,
     n_stopovers = route_stats$n_stopovers,
     pit_row = pit_calibration_obj$D_row,
-    pit_col = pit_calibration_obj$D_col
+    pit_col = pit_calibration_obj$D_col,
+    pit_in_95 = sum(pit_calibration_obj$res$in_95_set,na.rm=T)/length(pit_calibration_obj$res$in_95_set)
   )
   #my_ll
   list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)
