@@ -43,7 +43,8 @@ batch_flow <- function(
         dist_weight = NA_real_,
         ent_weight = NA_real_),
       batch_hdf_path = the$batch_hdf_path,
-      banding_output_path = the$banding_output_path
+      banding_output_path = the$banding_output_path,
+      season = 'prebreeding'
     )
 ){
 params$my_species <- one_species
@@ -90,7 +91,7 @@ ll_df <- ll_df %>%
   # str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE)
   dplyr::mutate(
     # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-    # str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
+    str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
     #nso_d = desirability2::d_target(.data$n_stopovers, target = 3.54), ### CHECK ARGS ###
     #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
     #ll_d  = desirability2::d_max(ll, use_data = TRUE),
@@ -100,8 +101,9 @@ ll_df <- ll_df %>%
     #etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
     d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
     d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
+    d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
     pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
-    etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
+    etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
     overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
   ) %>% (dplyr::arrange)(-.data$overall_des)
 
@@ -112,7 +114,7 @@ saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
 
 for (i in 1:5){
   pdf(file.path(params$output_path, paste0('desirability', i, '.pdf')))
-  quick_visualize_routes(i, df = ll_df, dir = params$hdf_dir)
+  quick_visualize_routes(i, df = ll_df, dir = params$hdf_dir, season = params$season)
   dev.off()
 }
 

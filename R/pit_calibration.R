@@ -1,4 +1,4 @@
-pit_calibration <- function(bf, transitions) {
+pit_calibration <- function(bf, transitions, params) {
   
   # one_hot vector of starting cell
   one_hot <- function(i,len) {
@@ -29,7 +29,7 @@ pit_calibration <- function(bf, transitions) {
 
   # Remove out-of-season transitions
 
-  my_season_timesteps <- BirdFlowR::lookup_season_timesteps(bf, season = 'prebreeding')
+  my_season_timesteps <- BirdFlowR::lookup_season_timesteps(bf, season = params$season)
   transitions <- dplyr::filter(transitions,
                                .data$st_week.1 %in% my_season_timesteps & .data$st_week.2 %in% my_season_timesteps)
   

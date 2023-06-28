@@ -190,7 +190,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf)
-  rts <- BirdFlowR::route(bf = bf, n = 100, season = 'prebreeding', from_marginals = TRUE)
+  rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
   route_stats <- rts_stats(rts)
   transitions_files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/tracking_data',
                                pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
@@ -205,7 +205,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     # Combine potentially multiple tracking data.frames
     transitions <- as.data.frame(data.table::rbindlist(transitions_df_list, fill = TRUE))
     # Do PIT calculations
-    pit_calibration_obj <- pit_calibration(bf, transitions)
+    pit_calibration_obj <- pit_calibration(bf, transitions, params)
     pit_plots(pit_calibration_obj, params, modelname)
   } else {
     pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_, res = data.frame(in_95_set = NA_real_))
@@ -219,7 +219,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     dist_pow = safe_numeric(bf$metadata$hyperparameters$dist_pow),
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
-    end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'prebreeding')$md_traverse_cor,
+    end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
     nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
     ll_raw_n = nrow(my_ll),
