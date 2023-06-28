@@ -373,3 +373,65 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
     }
   )
 }
+
+#' Rank the models in a ll_df
+#'
+#' @param ll_df The ll_df, often produced by recombining results from [batch_evaluate_models()]
+#' @param params The standard params list, which includes `model_selection` method
+#' @returns Updated ll_df including desirability columns
+#' @export
+rank_models <- function(ll_df, params){
+  # remove any existing desirability columns (for interactive scripting)
+  ll_df <- ll_df %>% (dplyr::select)(-dplyr::ends_with("_d"))
+  ll_df$overall_des <- NULL
+  # Calculate desirability columns depending on chosen criteria set
+  if (params$model_selection == 'str_etc'){
+    # straightness and end traverse correlation only
+    ll_df <- ll_df %>%
+      dplyr::mutate(
+        str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
+        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE)
+      )
+  } else if (params$model_selection == 'pit_etc'){
+    # PIT metrics and end traverse correlation only
+    ll_df <- ll_df %>%
+      dplyr::mutate(
+        d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
+        d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
+        d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
+        pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
+        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE)
+      )
+  }
+
+  # Calculate overall desirability using desirability columns ending with '_d'
+  ll_df <- ll_df %>% dplyr::mutate(
+    overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
+    )
+  # Do desirability rankings (and return the new ll_df)
+  ll_df %>% (dplyr::arrange)(-.data$overall_des)
+  #
+  # # old code
+  # ll_df %>%
+  #   # create new desirability columns
+  #   ## Previous desirability:  Used just end traverse correlation and straigthness like this, but models were underdispersed
+  #   # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE)
+  #   # str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE)
+  #   dplyr::mutate(
+  #     # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
+  #     str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
+  #     #nso_d = desirability2::d_target(.data$n_stopovers, target = 3.54), ### CHECK ARGS ###
+  #     #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
+  #     #ll_d  = desirability2::d_max(ll, use_data = TRUE),
+  #     #str_d = desirability2::d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
+  #     #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
+  #     #str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
+  #     #etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
+  #     d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
+  #     d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
+  #     d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
+  #     pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
+  #     etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
+  #     overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
+  #   )
+}

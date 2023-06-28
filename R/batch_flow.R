@@ -44,7 +44,8 @@ batch_flow <- function(
         ent_weight = NA_real_),
       batch_hdf_path = the$batch_hdf_path,
       banding_output_path = the$banding_output_path,
-      season = 'prebreeding'
+      season = 'prebreeding',
+      model_selection = 'str_etc'
     )
 ){
 params$my_species <- one_species
@@ -67,6 +68,10 @@ saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
 
 ll_df <- batch_evaluate_models(params, track_info)
 
+# Model selection and ranking with desirability
+
+ll_df <- rank_models(ll_df, params)
+
 ## Plotting
 
 # make PCA evaluation plot
@@ -79,33 +84,6 @@ make_3d_plot('color_ll', 'll', ll_df, params)
 make_3d_plot('color_nll', 'nll', ll_df, params)
 # Plot correlation cube
 make_3d_plot('color_cor', 'cor', ll_df, params)
-
-# Do desirability rankings
-
-ll_df <- ll_df %>%
-  # remove any existing desirability columns (for interactive scripting)
-  (dplyr::select)(-dplyr::ends_with("_d")) %>%
-  # create new desirability columns
-  ## Previous desirability:  Used just end traverse correlation and straigthness like this, but models were underdispersed
-  # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE)
-  # str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE)
-  dplyr::mutate(
-    # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-    str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
-    #nso_d = desirability2::d_target(.data$n_stopovers, target = 3.54), ### CHECK ARGS ###
-    #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
-    #ll_d  = desirability2::d_max(ll, use_data = TRUE),
-    #str_d = desirability2::d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
-    #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
-    #str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
-    #etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-    d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
-    d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
-    d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
-    pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
-    etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
-    overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
-  ) %>% (dplyr::arrange)(-.data$overall_des)
 
 # save model evaluation RDS
 saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
