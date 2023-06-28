@@ -219,7 +219,6 @@ evaluate_model <- function(bf, modelname, track_info, params){
     dist_pow = safe_numeric(bf$metadata$hyperparameters$dist_pow),
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
-    mean_distr_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
     end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'prebreeding')$md_traverse_cor,
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
     nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
@@ -254,7 +253,7 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
   cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
   cor_colors <- c('#FFFFFF', grDevices::hcl.colors(3, rev = TRUE))
-  ll_df$color_cor <- cor_colors[cut(ll_df$mean_distr_cor, breaks = cor_breaks)]
+  ll_df$color_cor <- cor_colors[cut(ll_df$end_traverse_cor, breaks = cor_breaks)]
 
   rgl::plot3d(
     x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow, 
@@ -309,7 +308,7 @@ model_evaluation_biplot <- function(ll_df, params){
     'ent_weight',
     'dist_weight',
     'dist_pow',
-    'mean_distr_cor',
+    'end_traverse_cor',
     'll',
     'straightness',
     'length',
@@ -331,7 +330,7 @@ model_evaluation_biplot <- function(ll_df, params){
     ggplot2::theme_bw() +
     ggplot2::scale_color_viridis_c(limits = c(0, 1))
   
-  plot2 <- ggplot2::autoplot(fit, color = 'mean_distr_cor',
+  plot2 <- ggplot2::autoplot(fit, color = 'end_traverse_cor',
                     loadings = TRUE,
                     loadings.label = TRUE,
                     loadings.colour = 'gray',
