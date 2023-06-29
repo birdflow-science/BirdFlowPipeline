@@ -45,7 +45,7 @@ batch_flow <- function(
       batch_hdf_path = the$batch_hdf_path,
       banding_output_path = the$banding_output_path,
       season = 'prebreeding',
-      model_selection = 'str_etc'
+      model_selection = 'real_tracking'
     )
 ){
 params$my_species <- one_species

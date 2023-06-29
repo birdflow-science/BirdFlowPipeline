@@ -402,6 +402,27 @@ rank_models <- function(ll_df, params){
         pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
         etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE)
       )
+  } else if (params$model_selection == 'real_tracking'){
+    # Tracking-focused model selection
+    # Includes traverse correlation, PIT scores, and
+    # straightness + n_stopovers targetted to observed values from real tracking
+    real_track_stats <- real_track_stats(ll_df, params)
+    stopifnot(
+      !is.na(real_track_stats$straightness),
+      !is.na(real_track_stats$n_stopovers)
+    )
+    ll_df <- ll_df %>%
+      dplyr::mutate(
+        d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
+        d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
+        d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
+        pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
+        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
+        str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
+        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
+      )
+  } else {
+    stop('invalid model_selection in params')
   }
 
   # Calculate overall desirability using desirability columns ending with '_d'
