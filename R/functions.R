@@ -407,6 +407,8 @@ rank_models <- function(ll_df, params){
     # Includes traverse correlation, PIT scores, and
     # straightness + n_stopovers targetted to observed values from real tracking
     real_track_stats <- real_track_stats(ll_df, params)
+    # save real_track_stats RDS
+    saveRDS(real_track_stats, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
       !is.na(real_track_stats$straightness),
       !is.na(real_track_stats$n_stopovers)
