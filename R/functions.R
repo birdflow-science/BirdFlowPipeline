@@ -423,6 +423,24 @@ rank_models <- function(ll_df, params){
         str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
         nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
       )
+  } else if (params$model_selection == 'real_tracking_no_cal'){
+    # Tracking-focused model selection
+    # Includes traverse correlation, and
+    # straightness + n_stopovers targetted to observed values from real tracking
+    # But no PIT scores!
+    real_track_stats <- real_track_stats(ll_df, params)
+    # save real_track_stats RDS
+    saveRDS(real_track_stats, file.path(params$output_path, 'real_track_stats.rds'))
+    stopifnot(
+      !is.na(real_track_stats$straightness),
+      !is.na(real_track_stats$n_stopovers)
+    )
+    ll_df <- ll_df %>%
+      dplyr::mutate(
+        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
+        str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
+        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
+      )
   } else {
     stop('invalid model_selection in params')
   }
