@@ -75,7 +75,6 @@ tracks_to_rts <- function(df, bf, params){
   # required for calculating n_stopovers from trajr::TrajStepLengths()
   df$x <- BirdFlowR::i_to_x(i = df$i, bf)
   df$y <- BirdFlowR::i_to_y(i = df$i, bf)
-  browser()
   df$date <- bf$dates$date[df$timestep]
   df <- df[,c('x', 'y', 'route_id', 'timestep', 'date', 'i')]
   df <- df %>% dplyr::group_by(.data$route_id) %>% dplyr::arrange(.data$timestep)
