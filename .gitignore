@@ -5,3 +5,4 @@ data-raw/amwo/amewoo_USGS_Movebank_st2019_weekly_tracks-100.csv
 data-raw/amwo/amewoo_USGS_Movebank_st2019_weekly_transitions-100.csv
 data-raw/banding_taxonomy/eBird_Taxonomy_v2021.csv
 scripts/
+*.pdf

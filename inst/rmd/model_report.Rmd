@@ -1,0 +1,13 @@
+---
+title: "BirdFlow model summary for `r bf$species$common_name`"
+subtitle: "`r ll_df$model[1]`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r print params, include=TRUE}
+params
+```
