@@ -88,6 +88,14 @@ make_3d_plot('color_cor', 'cor', ll_df, params)
 # save model evaluation RDS
 saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
 
+# create model reports for top 5 models
+
+for (i in 1:5){
+  bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[i]))
+  rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "banding"), 
+                    output_file = paste0("model_report", i, ".pdf"), output_dir = params$output_path)
+}
+
 # plot most desirable models
 
 for (i in 1:5){

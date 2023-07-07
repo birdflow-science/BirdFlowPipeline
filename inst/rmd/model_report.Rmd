@@ -1,6 +1,6 @@
 ---
 title: "BirdFlow model summary for `r bf$species$common_name`"
-subtitle: "`r sub('\\.hdf5$', '', ll_df$model[1])`"
+subtitle: "`r sub('\\.hdf5$', '', ll_df$model[i])`"
 output: pdf_document
 ---
 
@@ -17,14 +17,14 @@ Hyperparameters
 
 ```{r hyperparameters, echo = FALSE}
 kableExtra::kbl(
-  ll_df[1, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
+  ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
   )
 ```
 
 Grid search context
 
 ```{r grid_search_context, echo = FALSE, message = FALSE}
-grid_search_context_plot <- function(ll_df, row_chosen = 1){
+grid_search_context_plot <- function(ll_df, row_chosen = i){
   columns_chosen <- c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight')
   ll_df_scaled <- ll_df <- ll_df[,columns_chosen]
   for (i in columns_chosen){
@@ -37,7 +37,7 @@ grid_search_context_plot <- function(ll_df, row_chosen = 1){
           ylab = 'Scaled value'
   )
 }
-grid_search_context_plot(ll_df, 1)
+grid_search_context_plot(ll_df, i)
 ```
 
 Model selection crtieria
@@ -49,14 +49,14 @@ Correlation and calibration
 
 ```{r cor_cal, echo = FALSE}
 kableExtra::kbl(
-  ll_df[1, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')]
+  ll_df[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')]
   )
 ```
 
 Calibration plots
 
 ```{r cal_plots, echo = FALSE, fig.height = 5, fig.width = 5}
-cal_pdf_dir <- file.path(params$output_path, 'pit_plots', sub('\\.hdf5$', '', ll_df$model[1]))
+cal_pdf_dir <- file.path(params$output_path, 'pit_plots', sub('\\.hdf5$', '', ll_df$model[i]))
 include_files <- c('pit_score_rows.pdf', 'pit_score_cols.pdf', 'pit_transition_prob_obs.pdf')
 include_files <- file.path(cal_pdf_dir, include_files)
 knitr::include_graphics(include_files, rel_path = FALSE)
@@ -64,11 +64,11 @@ knitr::include_graphics(include_files, rel_path = FALSE)
 
 Desirability
 
-- desirability rank within grid search: `r 1`
+- desirability rank within grid search: `r i`
 
 ```{r desirability, echo = FALSE}
 kableExtra::kbl(
-    ll_df[1, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des'), drop = FALSE]
+    ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des'), drop = FALSE]
 )
 ```
 
@@ -85,7 +85,7 @@ Simulated route stats (n = 100)
 
 ```{r route_stats, echo = FALSE, message = FALSE}
 kableExtra::kbl(
-  ll_df[1, c('straightness', 'length', 'displacement', 'n_stopovers')]
+  ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')]
   )
 ```
 
