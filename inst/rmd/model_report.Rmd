@@ -8,13 +8,10 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-eBird Status and Trends version
+Preprocessing info
 
-- `r bf$metadata$ebird_version_year`
-
-Preprocessing resolution
-
-- `r params$my_res` km
+- eBird Status and Trends version: `r bf$metadata$ebird_version_year`
+- grid resolution: `r params$my_res` km
 
 Hyperparameters
 
@@ -24,9 +21,10 @@ kableExtra::kbl(
   )
 ```
 
-Model evaluation season
+Model selection crtieria
 
-- `r params$season`
+- evaluation season: `r params$season`
+- desirability method: `r params$model_selection`
 
 Correlation and calibration
 
@@ -60,3 +58,19 @@ kableExtra::kbl(
   ll_df[1, c('straightness', 'length', 'displacement', 'n_stopovers')]
   )
 ```
+
+Real tracking route stats
+
+```{r real_route_stats, echo = FALSE, message = FALSE}
+kableExtra::kbl(
+  as.data.frame(
+    readRDS(
+      file.path(
+        params$output_path,
+        'real_track_stats.rds'
+      )
+    )
+  )
+)
+```
+
