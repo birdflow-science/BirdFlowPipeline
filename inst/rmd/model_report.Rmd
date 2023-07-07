@@ -21,6 +21,25 @@ kableExtra::kbl(
   )
 ```
 
+Grid search context
+
+```{r grid_search_context, echo = FALSE, message = FALSE}
+grid_search_context_plot <- function(ll_df, row_chosen = 1){
+  columns_chosen <- c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight')
+  ll_df_scaled <- ll_df <- ll_df[,columns_chosen]
+  for (i in columns_chosen){
+    ll_df_scaled[[i]] <- desirability2::d_max(ll_df_scaled[[i]], use_data = TRUE)
+  }
+  ll_df_scaled
+  barplot(height = sapply(ll_df_scaled[row_chosen,], as.numeric),
+          ylim = c(0,1),
+          main = 'Grid search context',
+          ylab = 'Scaled value'
+  )
+}
+grid_search_context_plot(ll_df, 1)
+```
+
 Model selection crtieria
 
 - evaluation season: `r params$season`
@@ -34,7 +53,18 @@ kableExtra::kbl(
   )
 ```
 
+Calibration plots
+
+```{r cal_plots, echo = FALSE, fig.height = 5, fig.width = 5}
+cal_pdf_dir <- file.path(params$output_path, 'pit_plots', sub('\\.hdf5$', '', ll_df$model[1]))
+include_files <- c('pit_score_rows.pdf', 'pit_score_cols.pdf', 'pit_transition_prob_obs.pdf')
+include_files <- file.path(cal_pdf_dir, include_files)
+knitr::include_graphics(include_files, rel_path = FALSE)
+```
+
 Desirability
+
+- desirability rank within grid search: `r 1`
 
 ```{r desirability, echo = FALSE}
 kableExtra::kbl(
