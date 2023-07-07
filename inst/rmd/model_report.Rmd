@@ -8,6 +8,14 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+eBird Status and Trends version
+
+- `r bf$metadata$ebird_version_year`
+
+Preprocessing resolution
+
+- `r params$my_res` km
+
 Hyperparameters
 
 ```{r hyperparameters, echo = FALSE}
@@ -16,10 +24,9 @@ kableExtra::kbl(
   )
 ```
 
-Model evalutaion season: `r params$season`
+Model evaluation season
 
-```{r spacer1, echo = FALSE}
-```
+- `r params$season`
 
 Correlation and calibration
 
@@ -33,16 +40,23 @@ Desirability
 
 ```{r desirability, echo = FALSE}
 kableExtra::kbl(
-  ll_df[1, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')]
+    ll_df[1, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des'), drop = FALSE]
+)
+```
+
+Simulated route map (n = 10)
+
+```{r route_map, echo = FALSE, message = FALSE}
+rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals = TRUE)
+  print(
+    BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE)
   )
 ```
 
-Simulated route characteristics
+Simulated route stats (n = 100)
 
-```{r route_char, echo = FALSE, message = FALSE}
-quick_visualize_routes(1, 10, params$season, dir = params$hdf_dir)
+```{r route_stats, echo = FALSE, message = FALSE}
 kableExtra::kbl(
   ll_df[1, c('straightness', 'length', 'displacement', 'n_stopovers')]
   )
 ```
-
