@@ -69,7 +69,6 @@ tracks_to_rts <- function(df, bf, params){
   # complete season tracks only (commented out because e.g. Wood Thrush tracks never include end of spring migration)
   #df <- df %>% group_by(route_id) %>%
   #  filter(all(c(season_start_step, season_stop_step) %in% timestep))
-  df <- dplyr::filter(df, )
   df$i <- BirdFlowR::xy_to_i(x = df$x, y = df$y, bf)
   # convert back to xy from i to overwrite the fine-grained coordinates
   # required for calculating n_stopovers from trajr::TrajStepLengths()
