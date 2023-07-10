@@ -52,7 +52,8 @@ grid_search_context_plot(ll_df, i)
 
 ```{r cor_cal, echo = FALSE}
 knitr::kable(
-  ll_df[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')]
+  signif(ll_df[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')],
+         digits = 3)
   )
 ```
 
@@ -71,7 +72,8 @@ knitr::include_graphics(include_files, rel_path = FALSE)
 
 ```{r desirability, echo = FALSE}
 knitr::kable(
-    ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des'), drop = FALSE]
+  round(ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')],
+        digits = 3)
 )
 ```
 
@@ -81,7 +83,7 @@ knitr::kable(
 rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals = TRUE)
   print(
     BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE) +
-      ggplot2::ggtitle("")
+      ggplot2::labs(title = NULL)
   )
 ```
 
