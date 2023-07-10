@@ -1,11 +1,14 @@
 ---
 title: "BirdFlow model summary for `r bf$species$common_name`"
 subtitle: "`r sub('\\.hdf5$', '', ll_df$model[i])`"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# fix issue of tables not being formatted properly in html
+# https://github.com/STAT545-UBC/Discussion/issues/136
+options(knitr.table.format = 'markdown')
 ```
 
 Preprocessing info
@@ -16,7 +19,7 @@ Preprocessing info
 Hyperparameters
 
 ```{r hyperparameters, echo = FALSE}
-kableExtra::kbl(
+knitr::kable(
   ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
   )
 ```
@@ -48,7 +51,7 @@ Model selection crtieria
 Correlation and calibration
 
 ```{r cor_cal, echo = FALSE}
-kableExtra::kbl(
+knitr::kable(
   ll_df[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')]
   )
 ```
@@ -67,7 +70,7 @@ Desirability
 - desirability rank within grid search: `r i`
 
 ```{r desirability, echo = FALSE}
-kableExtra::kbl(
+knitr::kable(
     ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des'), drop = FALSE]
 )
 ```
@@ -84,7 +87,7 @@ rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals 
 Simulated route stats (n = 100)
 
 ```{r route_stats, echo = FALSE, message = FALSE}
-kableExtra::kbl(
+knitr::kable(
   ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')]
   )
 ```
@@ -92,7 +95,7 @@ kableExtra::kbl(
 Real tracking route stats
 
 ```{r real_route_stats, echo = FALSE, message = FALSE}
-kableExtra::kbl(
+knitr::kable(
   as.data.frame(
     readRDS(
       file.path(
