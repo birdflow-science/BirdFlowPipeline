@@ -80,20 +80,20 @@ knitr::kable(
 
 ### Correlation and calibration
 
-```{r cor_cal, echo = FALSE}
+```{r cor_cal, echo = FALSE, fig.show="hold", out.width="33%"}
+
+# Table
+
 knitr::kable(
   signif(ll_df[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')],
          digits = 3)
   )
-```
 
-### Calibration plots
+# Plots
 
-```{r cal_plots, echo = FALSE, fig.height = 5, fig.width = 5}
-cal_pdf_dir <- file.path(params$output_path, 'pit_plots', sub('\\.hdf5$', '', ll_df$model[i]))
-include_files <- c('pit_score_rows.pdf', 'pit_score_cols.pdf', 'pit_transition_prob_obs.pdf')
-include_files <- file.path(cal_pdf_dir, include_files)
-knitr::include_graphics(include_files, rel_path = FALSE)
+pit_data_path <- file.path(params$output_path, 'pit_data', paste0(sub('\\.hdf5$', '', ll_df$model[i]), '_pit.rds'))
+pit_calibration_obj <- readRDS(pit_data_path)
+pit_plots_report(pit_calibration_obj, params)
 ```
 
 ### Desirability

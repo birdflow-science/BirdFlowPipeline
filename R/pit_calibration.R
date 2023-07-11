@@ -179,3 +179,22 @@ pit_plots <- function(pit_calibration_obj, params, modelname){
   output_plot(plot_function = graphics::hist, object_to_plot = res$sum_leq, modelname, filename = 'pit_sumfpwk2.pdf', breaks = 50,
               main = paste(modelname, "sum(f[f<=p_wk2])", sep = '\n'), xlab = 'sum_leq')
 }
+
+pit_plots_report <- function(pit_calibration_obj, params){
+  res <- pit_calibration_obj$res
+  
+  output_plot <- function(plot_function, object_to_plot, ...){
+    plot_function(object_to_plot, ...)
+  }
+  
+  output_plot(plot_function = graphics::hist, object_to_plot = res$pit_row, breaks=50,
+              main = '', xlab = 'PIT score (rows)')
+  output_plot(plot_function = graphics::hist, object_to_plot = res$pit_col, breaks=50,
+              main = '', xlab = "PIT score (columns)")
+  output_plot(plot_function = graphics::hist, object_to_plot = res$p_cell, breaks=50,
+              main="Transition prob for obs movement", xlab = 'p_cell')
+  # output_plot(plot_function = graphics::barplot, object_to_plot = sum(res$in_95_set,na.rm=T)/length(res$in_95_set),
+  #             ylim = c(0, 1), ylab = "proportion of obs in 95% confidence set")
+  # output_plot(plot_function = graphics::hist, object_to_plot = res$sum_leq, modelname, filename = 'pit_sumfpwk2.pdf', breaks = 50,
+  #             main = paste(modelname, "sum(f[f<=p_wk2])", sep = '\n'), xlab = 'sum_leq')
+}
