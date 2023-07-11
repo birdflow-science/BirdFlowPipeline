@@ -93,7 +93,7 @@ saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
 for (i in 1:5){
   bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[i]))
   rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "banding"), 
-                    output_file = paste0("model_report", i, ".pdf"), output_dir = params$output_path)
+                    output_file = paste0("model_report", i, ".html"), output_dir = params$output_path)
 }
 
 # plot most desirable models

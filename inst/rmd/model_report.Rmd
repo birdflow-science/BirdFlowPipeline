@@ -44,6 +44,7 @@ Hyperparameters passed to modelfit:
 - dist_pow
 
 ```{r plot3d, echo = FALSE}
+rgl::clear3d()
 rgl::mfrow3d(nr = 1, nc = 2)
 
 cols_3d <- rep('gray', nrow(ll_df))
