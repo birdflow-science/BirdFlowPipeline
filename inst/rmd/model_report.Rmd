@@ -17,23 +17,31 @@ options(rgl.useNULL = TRUE) # Suppress the separate window
 - eBird Status and Trends version: `r bf$metadata$ebird_version_year`
 - grid resolution: `r params$my_res` km
 
-### Hyperparameters
-
-```{r hyperparameters, echo = FALSE}
-knitr::kable(
-  ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
-  )
-```
-
 ### Grid search
 
-Gridded values:
+Grid size: `r length(params$grid_search_list$obs_prop)` x `r length(params$grid_search_list$de_ratio)` x `r length(params$grid_search_list$dist_pow)` = `r prod(sapply(params$grid_search_list, length))`
+
+Gridded hyperparameters:
 
 - obs_prop: `r params$grid_search_list$obs_prop`
 
 - de_ratio: `r params$grid_search_list$de_ratio`
 
 - dist_pow: `r params$grid_search_list$dist_pow`
+
+Hyperparameters calculated from de_ratio and obs_prop:
+
+- dist_weight
+
+- ent_weight
+
+Hyperparameters passed to modelfit:
+
+- dist_weight
+
+- ent_weight
+
+- dist_pow
 
 ```{r plot3d, echo = FALSE}
 rgl::mfrow3d(nr = 1, nc = 2)
@@ -54,6 +62,14 @@ rgl::plot3d(
   xlab="ent_weight", ylab="dist_weight", zlab="dist_pow")
 
 rgl::rglwidget()
+```
+
+### Hyperparameters
+
+```{r hyperparameters, echo = FALSE}
+knitr::kable(
+  ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
+  )
 ```
 
 ### Model selection crtieria
