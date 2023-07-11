@@ -26,9 +26,11 @@ knitr::kable(
 ```
 
 ```{r plot3d, echo = FALSE}
+cols_3d <- rep('gray', nrow(ll_df))
+cols_3d[i] <- 'red'
 rgl::plot3d(
   x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow,
-  col = 'gray',
+  col = cols_3d,
   type = 's',
   xlab="ent_weight", ylab="dist_weight", zlab="dist_pow")
 rgl::rglwidget()
