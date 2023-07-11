@@ -210,6 +210,10 @@ evaluate_model <- function(bf, modelname, track_info, params){
   } else {
     pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_, res = data.frame(in_95_set = NA_real_))
   }
+  dir.create(file.path(params$output_path, 'pit_data'), showWarnings = FALSE)
+  pit_data_filename <- paste0(sub('\\.hdf5$', "", modelname), '_pit.rds')
+  outfile <- file.path(file.path(params$output_path, 'pit_data'), pit_data_filename)
+  saveRDS(pit_calibration_obj, outfile)
   
   out_df <- dplyr::tibble(
     model = modelname,
