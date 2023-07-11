@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # fix issue of tables not being formatted properly in html
 # https://github.com/STAT545-UBC/Discussion/issues/136
 options(knitr.table.format = 'markdown')
+options(rgl.useNULL = TRUE) # Suppress the separate window
 ```
 
 ### Preprocessing info
@@ -22,6 +23,15 @@ options(knitr.table.format = 'markdown')
 knitr::kable(
   ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
   )
+```
+
+```{r plot3d, echo = FALSE}
+rgl::plot3d(
+  x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow,
+  col = 'gray',
+  type = 's',
+  xlab="ent_weight", ylab="dist_weight", zlab="dist_pow")
+rgl::rglwidget()
 ```
 
 ### Grid search context
