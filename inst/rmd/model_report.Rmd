@@ -25,34 +25,35 @@ knitr::kable(
   )
 ```
 
+### Grid search
+
+Gridded values:
+
+- obs_prop: `r params$grid_search_list$obs_prop`
+
+- de_ratio: `r params$grid_search_list$de_ratio`
+
+- dist_pow: `r params$grid_search_list$dist_pow`
+
 ```{r plot3d, echo = FALSE}
+rgl::mfrow3d(nr = 1, nc = 2)
+
 cols_3d <- rep('gray', nrow(ll_df))
 cols_3d[i] <- 'red'
+
+rgl::plot3d(
+  x = ll_df$de_ratio, y = ll_df$obs_prop, z = ll_df$dist_pow,
+  col = cols_3d,
+  type = 's',
+  xlab="de_ratio", ylab="obs_prop", zlab="dist_pow")
+
 rgl::plot3d(
   x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow,
   col = cols_3d,
   type = 's',
   xlab="ent_weight", ylab="dist_weight", zlab="dist_pow")
+
 rgl::rglwidget()
-```
-
-### Grid search context
-
-```{r grid_search_context, echo = FALSE, message = FALSE}
-grid_search_context_plot <- function(ll_df, row_chosen = i){
-  columns_chosen <- c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight')
-  ll_df_scaled <- ll_df <- ll_df[,columns_chosen]
-  for (i in columns_chosen){
-    ll_df_scaled[[i]] <- desirability2::d_max(ll_df_scaled[[i]], use_data = TRUE)
-  }
-  ll_df_scaled
-  barplot(height = sapply(ll_df_scaled[row_chosen,], as.numeric),
-          ylim = c(0,1),
-          main = 'Grid search context',
-          ylab = 'Scaled value'
-  )
-}
-grid_search_context_plot(ll_df, i)
 ```
 
 ### Model selection crtieria
