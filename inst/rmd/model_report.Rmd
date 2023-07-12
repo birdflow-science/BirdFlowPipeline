@@ -12,16 +12,14 @@ options(knitr.table.format = 'markdown')
 options(rgl.useNULL = TRUE) # Suppress the separate window
 ```
 
-### Preprocessing info
+### eBird Status and Trends data preprocessing
 
-- eBird Status and Trends version: `r bf$metadata$ebird_version_year`
-- grid resolution: `r params$my_res` km
+- version year: `r bf$metadata$ebird_version_year`
+- raster resolution: `r params$my_res` km
 
-### Grid search
+### Grid search setup
 
-Grid size: `r length(params$grid_search_list$obs_prop)` x `r length(params$grid_search_list$de_ratio)` x `r length(params$grid_search_list$dist_pow)` = `r prod(sapply(params$grid_search_list, length))`
-
-Gridded hyperparameters:
+Parameters for grid expansion
 
 - obs_prop: `r params$grid_search_list$obs_prop`
 
@@ -29,13 +27,17 @@ Gridded hyperparameters:
 
 - dist_pow: `r params$grid_search_list$dist_pow`
 
-Hyperparameters calculated from de_ratio and obs_prop:
+Grid size
+
+- `r length(params$grid_search_list$obs_prop)` x `r length(params$grid_search_list$de_ratio)` x `r length(params$grid_search_list$dist_pow)` = `r prod(sapply(params$grid_search_list, length))`
+
+Hyperparameters calculated from de_ratio and obs_prop
 
 - dist_weight
 
 - ent_weight
 
-Hyperparameters passed to modelfit:
+Hyperparameters passed to model fitting process
 
 - dist_weight
 
@@ -43,7 +45,10 @@ Hyperparameters passed to modelfit:
 
 - dist_pow
 
+### Grid search space
+
 ```{r plot3d, echo = FALSE}
+
 rgl::clear3d()
 rgl::mfrow3d(nr = 1, nc = 2)
 
@@ -67,16 +72,17 @@ rgl::rglwidget()
 
 ### Hyperparameters
 
-```{r hyperparameters, echo = FALSE}
+
+```{r hypers, echo = FALSE}
 knitr::kable(
   ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
   )
 ```
 
-### Model selection crtieria
+### Model selection
 
-- evaluation season: `r params$season`
-- desirability method: `r params$model_selection`
+- model evaluation season: `r params$season`
+- desirability criteria: `r params$model_selection`
 
 ### Correlation and calibration
 
@@ -98,9 +104,10 @@ pit_plots_report(pit_calibration_obj, params)
 
 ### Desirability
 
-- desirability rank within grid search: `r i`
+Overall desirability rank within grid search: `r i`
 
-```{r desirability, echo = FALSE}
+```{r desirability, echo = FALSE, message = FALSE}
+# Table
 knitr::kable(
   round(ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')],
         digits = 3)
