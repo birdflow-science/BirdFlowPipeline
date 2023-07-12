@@ -23,9 +23,17 @@ Parameters for grid expansion
 
 - obs_prop: `r params$grid_search_list$obs_prop`
 
+  - proportion of all weights allocated to the observation weight.
+  
+  - generally, we want the model to closely follow eBird Status and Trends distributions
+
 - de_ratio: `r params$grid_search_list$de_ratio`
 
+  - specifying this ratio (dist_weight / ent_weight) is useful because this proportion strongly affects simulated routes 
+
 - dist_pow: `r params$grid_search_list$dist_pow`
+
+  - this hyperparameter controls the relative cost of many short movements vs. few long movements
 
 Grid size
 
@@ -37,7 +45,7 @@ Hyperparameters calculated from de_ratio and obs_prop
 
 - ent_weight
 
-Hyperparameters passed to model fitting process
+Hyperparameters passed to model fitting process on GPU
 
 - dist_weight
 
@@ -46,6 +54,8 @@ Hyperparameters passed to model fitting process
 - dist_pow
 
 ### Grid search space
+
+Parameters for grid expansion (left); hyperparameters passed to model fitting process (right)
 
 ```{r plot3d, echo = FALSE}
 
@@ -81,8 +91,16 @@ knitr::kable(
 
 ### Model selection
 
-- model evaluation season: `r params$season`
+- model selection target season: `r params$season`
+
 - desirability criteria: `r params$model_selection`
+
+  - this desirability method co-optimizes the following
+
+    - overall model calibration score (which itself is a co-optimization of row and column PIT scores and PIT 95% CI)
+    - "end traverse correlation" with eBird Status and Trends data (start with modeled distribution at season start, forward-predict distribution to season end, then compare with S&T distribution at season end)
+    - average number of stopovers in simulated tracks targets average number of stopovers in real tracks
+    - average straightness of simulated tracks targets average straightness of real tracks
 
 ### Correlation and calibration
 
@@ -106,26 +124,64 @@ pit_plots_report(pit_calibration_obj, params)
 
 Overall desirability rank within grid search: `r i`
 
-```{r desirability, echo = FALSE, message = FALSE}
+
+```{r desirability_tab, echo = FALSE}
 # Table
 knitr::kable(
   round(ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')],
-        digits = 3)
+        digits = 3),
+  caption = 'desirability sub-scores for this model'
 )
+```
+
+Desirability sub-scores for this model vs. all models in this grid search
+
+```{r desirability_graph, echo = FALSE, message = FALSE}
 
 # Graph
-d_vars <- grep('^d_|_d$|overall_des$', names(ll_df), value = TRUE)
-df <- ll_df[,d_vars]
-df$color <- rep('black', nrow(df))
-df$color[i] <- 'red'
-df <- tidyr::pivot_longer(df, d_vars, names_to = 'variable', values_to = 'desirability')
-df$variable <- factor(df$variable, levels = d_vars)
+# d_vars <- grep('^d_|_d$|overall_des$', names(ll_df), value = TRUE)
+# df <- ll_df[,d_vars]
+# df$color <- rep('black', nrow(df))
+# df$color[i] <- 'red'
+# df <- tidyr::pivot_longer(df, tidyr::all_of(d_vars), names_to = 'variable', values_to = 'desirability')
+# df$variable <- factor(df$variable, levels = d_vars)
+# 
+# ggplot2::ggplot(df, ggplot2::aes(x=variable, y=desirability), shape = 19) +
+#   ggplot2::geom_dotplot(ggplot2::aes(fill = color), binaxis='y', stackdir='center', dotsize = 0.3, show.legend = FALSE, stroke = NA, binpositions = "all") + 
+#   ggplot2::scale_fill_identity() +
+#   ggplot2::theme_bw()
 
-ggplot2::ggplot(df, ggplot2::aes(x=variable, y=desirability), shape = 19) +
-  ggplot2::geom_dotplot(ggplot2::aes(fill = color), binaxis='y', stackdir='center', dotsize = 0.3, show.legend = FALSE, stroke = NA) + 
-  ggplot2::scale_fill_identity() +
-  ggplot2::theme_bw()
+# Base R graph
+
+ncol <- 4
+nrow <- ceiling(length(d_vars)/ ncol)
+
+# function to place text in plotting window 
+# where x and y represent the proprtion of the length
+# along the given axis to locate the lable text.
+ptext <- function(x,y, labels, ...){
+  usr <- par("usr")
+  xlim <- c(usr[1], usr[2])
+  ylim <- c(usr[3], usr[4])	
+  x <- xlim[1]+(xlim[2]-xlim[1])*x
+  y <- ylim[1]+(ylim[2]-ylim[1])*y	
+  text(x, y, labels, ...)
+} # end function def.
+
+
+  
+par(mfrow = c(nrow, ncol), mar = c(2.1, 2.1, 1.1, 1.1))
+for(i in seq_along(d_vars)){
+  var <- d_vars[i]
+  plot(density(df$desirability[df$variable == var]), main  = "", xlab = var, xlim = c(0,1))
+  sel_val <- df$desirability[df$color == "red" & df$variable == var]
+  abline(v = sel_val, col = "red")  
+  ptext(0.05, .9, var, pos = 4)
+}
+
 ```
+
+
 
 ### Simulated route map (n = 10)
 
@@ -152,7 +208,7 @@ route_stats_df <- dplyr::bind_rows(
     )
   )
 ) %>%
-  dplyr::mutate(routes = c('simulated (n = 100)', 'real')) %>%
+  dplyr::mutate(routes = c('simulated (n = 100)', 'real tracking data')) %>%
   dplyr::select('routes', everything()) %>%
   dplyr::mutate(straightness = round(straightness, 2)) %>%
   dplyr::mutate(length = round(length, 0)) %>%
