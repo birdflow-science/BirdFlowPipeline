@@ -112,6 +112,19 @@ knitr::kable(
   round(ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')],
         digits = 3)
 )
+
+# Graph
+d_vars <- grep('^d_|_d$|overall_des$', names(ll_df), value = TRUE)
+df <- ll_df[,d_vars]
+df$color <- rep('black', nrow(df))
+df$color[i] <- 'red'
+df <- tidyr::pivot_longer(df, d_vars, names_to = 'variable', values_to = 'desirability')
+df$variable <- factor(df$variable, levels = d_vars)
+
+ggplot2::ggplot(df, ggplot2::aes(x=variable, y=desirability), shape = 19) +
+  ggplot2::geom_dotplot(ggplot2::aes(fill = color), binaxis='y', stackdir='center', dotsize = 0.3, show.legend = FALSE, stroke = NA) + 
+  ggplot2::scale_fill_identity() +
+  ggplot2::theme_bw()
 ```
 
 ### Simulated route map (n = 10)
