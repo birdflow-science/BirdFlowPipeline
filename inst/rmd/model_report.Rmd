@@ -139,12 +139,12 @@ Desirability sub-scores for this model vs. all models in this grid search
 ```{r desirability_graph, echo = FALSE, message = FALSE}
 
 # Graph
-# d_vars <- grep('^d_|_d$|overall_des$', names(ll_df), value = TRUE)
-# df <- ll_df[,d_vars]
-# df$color <- rep('black', nrow(df))
-# df$color[i] <- 'red'
-# df <- tidyr::pivot_longer(df, tidyr::all_of(d_vars), names_to = 'variable', values_to = 'desirability')
-# df$variable <- factor(df$variable, levels = d_vars)
+d_vars <- grep('^d_|_d$|overall_des$', names(ll_df), value = TRUE)
+df <- ll_df[,d_vars]
+df$color <- rep('black', nrow(df))
+df$color[i] <- 'red'
+df <- tidyr::pivot_longer(df, tidyr::all_of(d_vars), names_to = 'variable', values_to = 'desirability')
+df$variable <- factor(df$variable, levels = d_vars)
 # 
 # ggplot2::ggplot(df, ggplot2::aes(x=variable, y=desirability), shape = 19) +
 #   ggplot2::geom_dotplot(ggplot2::aes(fill = color), binaxis='y', stackdir='center', dotsize = 0.3, show.legend = FALSE, stroke = NA, binpositions = "all") + 
