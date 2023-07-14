@@ -12,6 +12,67 @@ options(knitr.table.format = 'markdown')
 options(rgl.useNULL = TRUE) # Suppress the separate window
 ```
 
+### At-a-glance model quality assessment
+
+```{r qual_glance, echo = FALSE}
+
+qdf <- data.frame(
+  criterion = c(
+    'Correlation with Status and Trends',
+    'Model calibration',
+    'Simulated routes: straightness',
+    'Simulated routes: number of stopovers'
+  ),
+  assessment = NA_character_,
+  color = NA_character_
+  )
+convert_to_color_category <- function(x, breaks, labels){
+  as.character(cut(x = x, breaks = breaks, labels = labels))
+}
+# Correlation with Status and Trends
+out_row <- match('Correlation with Status and Trends', qdf$criterion)
+x <- ll_df$end_traverse_cor[i]
+out_color <- convert_to_color_category(x, breaks = c(0, 0.95, 0.975, 1), labels = c("red", "yellow", "green"))
+qdf[out_row, 'color'] <- out_color
+# Model calibration
+out_row <- match('Model calibration', qdf$criterion)
+x <- ll_df$d_pit_in_95[i]
+out_color <- convert_to_color_category(x, breaks = c(0, 0.6, 0.8, 1), labels = c("red", "yellow", "green"))
+qdf[out_row, 'color'] <- out_color
+# real vs. simulated route metrics df, duplicated code in other chunk below
+mdf <- dplyr::bind_rows(
+  ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
+  as.data.frame(
+    readRDS(
+      file.path(
+        params$output_path,
+        'real_track_stats.rds'
+      )
+    )
+  )
+)
+# Simulated routes: straightness
+out_row <- match('Simulated routes: straightness', qdf$criterion)
+x <- abs((mdf$straightness[2] - mdf$straightness[1])/mdf$straightness[1])
+out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
+qdf[out_row, 'color'] <- out_color
+# Simulated routes: number of stopovers
+out_row <- match('Simulated routes: number of stopovers', qdf$criterion)
+x <- abs((mdf$n_stopovers[2] - mdf$n_stopovers[1])/mdf$n_stopovers[1])
+out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
+qdf[out_row, 'color'] <- out_color
+
+# Convert color column to qualitative assessment descriptor word
+qdf$assessment <- dplyr::case_match(qdf$color,
+                                    'green' ~ 'good',
+                                    'yellow' ~ 'acceptable',
+                                    'red' ~ 'tentative')
+# Render table
+qdf$assessment <- kableExtra::cell_spec(qdf$assessment, background = qdf$color)
+kableExtra::kable(qdf[,c('criterion', 'assessment')], format = "html", escape = FALSE) %>%
+  kableExtra::kable_styling()
+```
+
 ### eBird Status and Trends data preprocessing
 
 - version year: `r bf$metadata$ebird_version_year`
@@ -215,5 +276,5 @@ route_stats_df <- dplyr::bind_rows(
   dplyr::mutate(displacement = round(displacement, 0)) %>%
   dplyr::mutate(n_stopovers = round(n_stopovers, 1))
 
-knitr::kable(route_stats_df)
+knitr::kable(route_stats_df[,c('routes', 'straightness', 'n_stopovers')])
 ```
