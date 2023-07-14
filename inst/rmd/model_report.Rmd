@@ -1,6 +1,5 @@
 ---
-title: "BirdFlow model summary for `r bf$species$common_name`"
-subtitle: "`r sub('\\.hdf5$', '', ll_df$model[i])`"
+title: "BirdFlow model report for `r bf$species$common_name`"
 output: html_document
 ---
 
@@ -12,7 +11,11 @@ options(knitr.table.format = 'markdown')
 options(rgl.useNULL = TRUE) # Suppress the separate window
 ```
 
-### At-a-glance model quality assessment
+### Target season: `r params$season`
+
+# Quick summary
+
+### Model quality assessment (please read limitations document)
 
 ```{r qual_glance, echo = FALSE}
 
@@ -72,6 +75,47 @@ qdf$assessment <- kableExtra::cell_spec(qdf$assessment, background = qdf$color)
 kableExtra::kable(qdf[,c('criterion', 'assessment')], format = "html", escape = FALSE) %>%
   kableExtra::kable_styling()
 ```
+
+### Simulated route map (n = 10)
+
+```{r route_map, echo = FALSE, message = FALSE}
+rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals = TRUE)
+  print(
+    BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE) +
+      ggplot2::labs(title = NULL)
+  )
+```
+
+### Route characteristics
+
+```{r route_stats, echo = FALSE, message = FALSE}
+
+route_stats_df <- dplyr::bind_rows(
+  ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
+  as.data.frame(
+    readRDS(
+      file.path(
+        params$output_path,
+        'real_track_stats.rds'
+      )
+    )
+  )
+) %>%
+  dplyr::mutate(routes = c('simulated (n = 100)', 'real tracking data')) %>%
+  dplyr::select('routes', everything()) %>%
+  dplyr::mutate(straightness = round(straightness, 2)) %>%
+  dplyr::mutate(length = round(length, 0)) %>%
+  dplyr::mutate(displacement = round(displacement, 0)) %>%
+  dplyr::mutate(n_stopovers = round(n_stopovers, 1))
+
+knitr::kable(route_stats_df[,c('routes', 'straightness', 'n_stopovers')])
+```
+
+# Technical details
+
+### Internal model filename
+
+`r sub('\\.hdf5$', '', ll_df$model[i])`
 
 ### eBird Status and Trends data preprocessing
 
@@ -240,41 +284,4 @@ for(i in seq_along(d_vars)){
   ptext(0.05, .9, var, pos = 4)
 }
 
-```
-
-
-
-### Simulated route map (n = 10)
-
-```{r route_map, echo = FALSE, message = FALSE}
-rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals = TRUE)
-  print(
-    BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE) +
-      ggplot2::labs(title = NULL)
-  )
-```
-
-### Route characteristics
-
-```{r route_stats, echo = FALSE, message = FALSE}
-
-route_stats_df <- dplyr::bind_rows(
-  ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
-  as.data.frame(
-    readRDS(
-      file.path(
-        params$output_path,
-        'real_track_stats.rds'
-      )
-    )
-  )
-) %>%
-  dplyr::mutate(routes = c('simulated (n = 100)', 'real tracking data')) %>%
-  dplyr::select('routes', everything()) %>%
-  dplyr::mutate(straightness = round(straightness, 2)) %>%
-  dplyr::mutate(length = round(length, 0)) %>%
-  dplyr::mutate(displacement = round(displacement, 0)) %>%
-  dplyr::mutate(n_stopovers = round(n_stopovers, 1))
-
-knitr::kable(route_stats_df[,c('routes', 'straightness', 'n_stopovers')])
 ```
