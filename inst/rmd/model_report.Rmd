@@ -61,8 +61,8 @@ out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels =
 qdf[out_row, 'color'] <- out_color
 # Simulated routes: number of stopovers
 out_row <- match('Simulated routes: number of stopovers', qdf$criterion)
-x <- abs((mdf$n_stopovers[2] - mdf$n_stopovers[1])/mdf$n_stopovers[1])
-out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
+x <- abs((mdf$n_stopovers[2] - mdf$n_stopovers[1]))
+out_color <- convert_to_color_category(x, breaks = c(0, 0.5, 1, Inf), labels = c("green", "yellow", "red"))
 qdf[out_row, 'color'] <- out_color
 
 # Convert color column to qualitative assessment descriptor word
