@@ -8,8 +8,8 @@ batch_flow(
   one_species,
   params = list(my_species = character(0), gpu_ram = 10, my_res = 100, output_nickname =
     as.character(Sys.Date()), grid_search_type = "new", grid_search_list = list(de_ratio
-    = c(2, 4, 8, 16), obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999), dist_pow = seq(from
-    = 0.1, to = 0.9, by = 0.1), dist_weight = NA_real_, ent_weight = NA_real_),
+    = c(2, 4, 6, 8, 10), obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999), dist_pow =
+    seq(from = 0.1, to = 0.9, by = 0.1), dist_weight = NA_real_, ent_weight = NA_real_),
     batch_hdf_path = the$batch_hdf_path, banding_output_path = the$banding_output_path,
     season = "prebreeding", model_selection = "real_tracking")
 )
