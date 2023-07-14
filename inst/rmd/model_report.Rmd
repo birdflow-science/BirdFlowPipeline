@@ -18,7 +18,7 @@ options(rgl.useNULL = TRUE) # Suppress the separate window
 ### Model quality assessment (please read limitations document)
 
 ```{r qual_glance, echo = FALSE}
-
+old_knitr_table_format <- options()$knitr.table.format
 qdf <- data.frame(
   criterion = c(
     'Correlation with Status and Trends',
@@ -74,6 +74,9 @@ qdf$assessment <- dplyr::case_match(qdf$color,
 qdf$assessment <- kableExtra::cell_spec(qdf$assessment, background = qdf$color)
 kableExtra::kable(qdf[,c('criterion', 'assessment')], format = "html", escape = FALSE) %>%
   kableExtra::kable_styling()
+
+# restore table formatting
+options(knitr.table.format = old_knitr_table_format)
 ```
 
 ### Simulated route map (n = 10)
