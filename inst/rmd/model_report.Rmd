@@ -9,9 +9,26 @@ knitr::opts_chunk$set(echo = TRUE)
 # https://github.com/STAT545-UBC/Discussion/issues/136
 options(knitr.table.format = 'markdown')
 options(rgl.useNULL = TRUE) # Suppress the separate window
+
+## Ethan's code addition
+# is_html flag will be TRUE if knitting to html and FALSE if knitting to 
+# other formats or using RStudio preview
+is_html <- FALSE
+if(!rstudioapi::isAvailable())
+ is_html <- "html_document" %in% rmarkdown::all_output_formats(knitr::current_input())
 ```
 
 ### Target season: `r params$season`
+
+```{asis ethan_code_block_logo_rel_link, eval = is_html}
+
+<a href="https://birdflow-science.github.io/BirdFlowR/"><img src="/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/model_release_staging/logo.png" align="right" height="139" /></a>
+
+<br>
+
+<a href = "../index.html"><< Back to BirdFlow model collection</a>
+<hr>
+```
 
 # Quick summary
 
@@ -286,5 +303,11 @@ for(i in seq_along(d_vars)){
   abline(v = sel_val, col = "red")  
   ptext(0.05, .9, var, pos = 4)
 }
+
+```
+
+```{asis back_rel_link, eval = is_html}
+<br>
+<a href = "../index.html"><< Back to BirdFlow model collection</a>
 
 ```
