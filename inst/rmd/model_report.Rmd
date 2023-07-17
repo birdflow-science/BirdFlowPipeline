@@ -26,7 +26,7 @@ if(!rstudioapi::isAvailable())
 
 <br>
 
-<a href = "../index.html"><< Back to BirdFlow model collection</a>
+<a href = "./index.html"><< Back to BirdFlow model collection</a>
 <hr>
 ```
 
@@ -308,6 +308,6 @@ for(i in seq_along(d_vars)){
 
 ```{asis back_rel_link, eval = is_html}
 <br>
-<a href = "../index.html"><< Back to BirdFlow model collection</a>
+<a href = "./index.html"><< Back to BirdFlow model collection</a>
 
 ```
