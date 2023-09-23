@@ -45,6 +45,7 @@ batch_flow <- function(
       batch_hdf_path = the$batch_hdf_path,
       banding_output_path = the$banding_output_path,
       season = 'prebreeding',
+      truncate_season = FALSE,
       model_selection = 'real_tracking'
     )
 ){

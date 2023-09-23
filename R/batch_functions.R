@@ -23,7 +23,8 @@ preprocess_species_wrapper <- function(params) {
           species = params$my_species,
           out_dir = pp_dir,
           gpu_ram = params$gpu_ram,
-          res = params$my_res)
+          res = params$my_res,
+          season = dplyr::if_else(params$truncate_season, params$season, 'all'))
       )
     )
   )
