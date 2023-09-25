@@ -41,7 +41,7 @@ preprocess_species_wrapper <- function(params) {
   preprocessed_file <- list.files(path = pp_dir,
                                   pattern = paste0('^', params$my_species, '.*', params$my_res, 'km.*\\.hdf5$'),
                                   full.names = TRUE)
-  invisible(file.copy(preprocessed_file, params$hdf_dir))
+  invisible(file.copy(preprocessed_file, params$hdf_dir, overwrite = TRUE))
   if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
   params
 }
