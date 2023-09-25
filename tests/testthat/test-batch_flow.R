@@ -40,6 +40,7 @@ test_that("batch_flow works", {
         batch_hdf_path = test_hdf_dir,
         banding_output_path = test_output_path,
         season = 'prebreeding',
+        truncate_season = FALSE,
         model_selection = 'real_tracking'
       )
     )
