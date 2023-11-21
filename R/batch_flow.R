@@ -73,21 +73,22 @@ ll_df <- batch_evaluate_models(params, track_info)
 
 ll_df <- rank_models(ll_df, params)
 
+# save model evaluation RDS
+saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
+
 ## Plotting
 
 # make PCA evaluation plot
 
-model_evaluation_biplot(ll_df, params)
-
-# Plot likelihood results cube
-make_3d_plot('color_ll', 'll', ll_df, params)
-# Plot null likelihood cube
-make_3d_plot('color_nll', 'nll', ll_df, params)
-# Plot correlation cube
-make_3d_plot('color_cor', 'cor', ll_df, params)
-
-# save model evaluation RDS
-saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
+if (nrow(ll_df) > 1){
+  model_evaluation_biplot(ll_df, params)
+  
+  # Plot likelihood results cube
+  make_3d_plot('color_ll', 'll', ll_df, params)
+  # Plot null likelihood cube
+  make_3d_plot('color_nll', 'nll', ll_df, params)
+  # Plot correlation cube
+  make_3d_plot('color_cor', 'cor', ll_df, params)
 
 # create model reports for top 5 models
 
@@ -148,7 +149,7 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
                         libdir = "libs",
                         selfcontained = TRUE
 )
-
+} # end if ll_df rows > 1
 } # big function end
 
 #' Grid search, model selection, and model evaluation for multiple species on the cluster, with error handling

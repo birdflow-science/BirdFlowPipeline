@@ -445,6 +445,11 @@ rank_models <- function(ll_df, params){
         str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
         nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
       )
+  } else if (params$model_selection == 'averaged_parameters') {
+    ll_df <- ll_df %>%
+      dplyr::mutate(
+        dummy_d = rep(1, nrow(ll_df)),
+      )
   } else {
     stop('invalid model_selection in params')
   }
