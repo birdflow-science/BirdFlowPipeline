@@ -30,6 +30,7 @@ preprocess_species_wrapper <- function(params) {
   )
   # return res
   params$my_res <- BirdFlowR::res(bf)[1] / 1000
+  params$ebirdst_year <- bf$metadata$ebird_version_year
   # set up directories
   params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
   params$hdf_dir <- file.path(params$batch_hdf_path, paste0(params$my_species, '_', params$my_res, 'km'))
@@ -91,7 +92,8 @@ birdflow_modelfit <- function(
     obs_weight = 1,
     learning_rate = 0.1,
     training_steps = 600,
-    rng_seed = 17
+    rng_seed = 17,
+    ebirdst_year
 ){
   python_exit_code <- system2('python',
           args = c(
@@ -105,7 +107,8 @@ birdflow_modelfit <- function(
             paste0('--obs_weight=', obs_weight),
             paste0('--learning_rate=', learning_rate),
             paste0('--training_steps=', training_steps),
-            paste0('--rng_seed=', rng_seed)
+            paste0('--rng_seed=', rng_seed),
+            paste0('--ebirdst_year=', ebirdst_year)
           ))
   stopifnot(python_exit_code == 0)
 }
@@ -139,12 +142,14 @@ birdflow_modelfit_args_df <- function(params){
   hdf_dir <- params$hdf_dir
   my_species <- params$my_species
   my_res <- params$my_res
+  ebirdst_year <- params$ebirdst_year
   stopifnot(!is.null(grid_search_type) && grid_search_type %in% c('old', 'new'))
   # base df without grid search parameters
   orig <- data.frame(
     mydir = hdf_dir,
     mysp = my_species,
-    myres = my_res
+    myres = my_res,
+    ebirdst_year = ebirdst_year
   )
   orig$id <- seq_len(nrow(orig))
   grid_search_list$id <- orig$id
