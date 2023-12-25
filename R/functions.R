@@ -192,7 +192,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     bf = bf)
   rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
   route_stats <- rts_stats(rts)
-  transitions_files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/tracking_data',
+  transitions_files <- list.files(the$tracking_data_path,
                                pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
                                full.names = TRUE)
   if (length(transitions_files) > 0){

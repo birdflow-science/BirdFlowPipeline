@@ -74,7 +74,7 @@ tracks_to_rts <- function(df, bf, params){
   # required for calculating n_stopovers from trajr::TrajStepLengths()
   df$x <- BirdFlowR::i_to_x(i = df$i, bf)
   df$y <- BirdFlowR::i_to_y(i = df$i, bf)
-  df$date <- get_dates(bf)$date[df$timestep]
+  df$date <- BirdFlowR::get_dates(bf)$date[df$timestep]
   df <- df[,c('x', 'y', 'route_id', 'timestep', 'date', 'i')]
   df <- df %>% dplyr::group_by(.data$route_id) %>% dplyr::arrange(.data$timestep)
   df <- as.data.frame(stats::na.omit(df))
@@ -97,7 +97,7 @@ tracks_to_rts <- function(df, bf, params){
 #' @returns rts_stats from the actual tracks
 #' @export
 real_track_stats <- function(ll_df, params){
-  tracks_files <- list.files('/work/pi_drsheldon_umass_edu/birdflow_modeling/dslager_umass_edu/tracking_data',
+  tracks_files <- list.files(the$tracking_data_path,
                              pattern = paste0("^", params$my_species, ".*tracks.*\\.csv"),
                              full.names = TRUE)
   if (length(tracks_files) > 0){

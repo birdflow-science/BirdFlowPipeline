@@ -79,6 +79,7 @@ refactor_hyperparams <- function(de_ratio, obs_prop, digits = 5){
 #' @param learning_rate Argument for `update_hdf.py`.
 #' @param training_steps Argument for `update_hdf.py`.
 #' @param rng_seed Argument for `update_hdf.py`.
+#' @param ebirdst_year Argument for `update_hdf.py`.
 #' @seealso [birdflow_modelfit_args_df()], [batch_modelfit_wrapper()]
 #' @export
 birdflow_modelfit <- function(

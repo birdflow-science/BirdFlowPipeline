@@ -16,7 +16,8 @@ birdflow_modelfit(
   obs_weight = 1,
   learning_rate = 0.1,
   training_steps = 600,
-  rng_seed = 17
+  rng_seed = 17,
+  ebirdst_year
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ birdflow_modelfit(
 \item{training_steps}{Argument for \code{update_hdf.py}.}
 
 \item{rng_seed}{Argument for \code{update_hdf.py}.}
+
+\item{ebirdst_year}{Argument for \code{update_hdf.py}.}
 }
 \description{
 Function to fit BirdFlow model by executing \code{update_hdf.py} in Python.

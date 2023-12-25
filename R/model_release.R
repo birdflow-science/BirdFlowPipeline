@@ -9,8 +9,7 @@
 stage_model_release <- function(
     output_directory,
     desirability_rank,
-    staging_directory = file.path('/work/pi_drsheldon_umass_edu/birdflow_modeling',
-                                  'dslager_umass_edu/model_release_staging')
+    staging_directory = the$model_release_staging_path
     ){
   ll_df <- readRDS(file.path(output_directory, 'll_df.rds'))
   params <-readRDS(file.path(output_directory, 'params.rds'))

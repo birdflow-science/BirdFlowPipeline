@@ -7,8 +7,7 @@
 stage_model_release(
   output_directory,
   desirability_rank,
-  staging_directory = file.path("/work/pi_drsheldon_umass_edu/birdflow_modeling",
-    "dslager_umass_edu/model_release_staging")
+  staging_directory = the$model_release_staging_path
 )
 }
 \arguments{
