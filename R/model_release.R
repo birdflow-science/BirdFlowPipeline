@@ -41,7 +41,7 @@ rebuild_model_reports <- function(output_directory, model_numbers = 1:5){
   params <-readRDS(file.path(output_directory, 'params.rds'))
   for (i in model_numbers){
     bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[i]))
-    rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "banding"), 
+    rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "BirdFlowPipeline"), 
                       output_file = paste0("model_report", i, ".html"), output_dir = params$output_path)
   }
 }

@@ -1,8 +1,8 @@
 # See here for system.file() modifications in next line:
 # http://www.dahl-jacobsen.dk/data/2019/04/03/the-inst-folder-in-other-r-packages/
-cluster.functions <- makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', package = 'banding', lib.loc = .libPaths()[1], mustWork = TRUE),
+cluster.functions <- makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', package = 'BirdFlowPipeline', lib.loc = .libPaths()[1], mustWork = TRUE),
                                                array.jobs = TRUE,
-                                               nodename = banding:::the$login_node)
+                                               nodename = BirdFlowPipeline:::the$login_node)
 default.resources <- list(
   ncpus = 1,
   chunks.as.arrayjobs = TRUE,

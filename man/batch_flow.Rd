@@ -42,7 +42,7 @@ batch_flow(
 }\if{html}{\out{</div>}}}
 }
 \value{
-function is used for its many side effects, according to configuration settings in \code{as.list(banding:::the)}
+function is used for its many side effects, according to configuration settings in \code{as.list(BirdFlowPipeline:::the)}
 \itemize{
 \item create destination directories as needed
 \item write preprocessed hdf5 file

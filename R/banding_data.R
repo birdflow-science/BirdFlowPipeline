@@ -43,17 +43,17 @@ download_banding_files <- function(banding_raw_path) {
     dir.create(banding_raw_path)
   }
   # Download files
-  for (i in seq_len(nrow(banding::banding_raw_file_urls))) {
+  for (i in seq_len(nrow(BirdFlowPipeline::banding_raw_file_urls))) {
     # download in reverse order (earlier files are huge)
     file_path <-
-      file.path(banding_raw_path, banding::banding_raw_file_urls$name[i])
-    message(banding::banding_raw_file_urls$name[i])
+      file.path(banding_raw_path, BirdFlowPipeline::banding_raw_file_urls$name[i])
+    message(BirdFlowPipeline::banding_raw_file_urls$name[i])
     # keep trying the download until successful, up to 3x
     count <- 0
     repeat {
       count <- count + 1
       tryCatch({
-        utils::download.file(banding::banding_raw_file_urls$url[i], file_path)
+        utils::download.file(BirdFlowPipeline::banding_raw_file_urls$url[i], file_path)
         break
       }, error = function(e){
         cat("ERROR:", conditionMessage(e), "\n")
@@ -98,7 +98,7 @@ process_file_set <- function(collapse_list_item, banding_raw_path, banding_rds_p
   df <- preprocess_exclusions(df)
   df <- preprocess_with_recovery(df)
   df <- preprocess_sort_band_date(df)
-  df <- dplyr::left_join(df, dplyr::select(banding::taxonomy_crosswalk, c("BBL_SPECIES_ID", "EBIRDST_CODE")), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
+  df <- dplyr::left_join(df, dplyr::select(BirdFlowPipeline::taxonomy_crosswalk, c("BBL_SPECIES_ID", "EBIRDST_CODE")), by = dplyr::join_by('SPECIES_ID' == 'BBL_SPECIES_ID'))
   # write species rds files
   for (species in unique(stats::na.omit(df$EBIRDST_CODE))){
     print(species)
@@ -127,7 +127,7 @@ batch_preprocess_raw_files_to_rds <- function(banding_raw_path, banding_rds_path
   # Some file sets need to be collapsed together for processing because same ebirdst taxa span multiple files
   
   # make together_list from taxonomy_crosswalk object
-  tc <- banding::taxonomy_crosswalk %>%
+  tc <- BirdFlowPipeline::taxonomy_crosswalk %>%
     dplyr::select(.data$BBL_GRP, .data$EBIRDST_CODE) %>%
     dplyr::filter(!is.na(.data$EBIRDST_CODE))
   together_list <- split(tc, tc$EBIRDST_CODE)
@@ -136,7 +136,7 @@ batch_preprocess_raw_files_to_rds <- function(banding_raw_path, banding_rds_path
   together_list <- lapply(together_list, sort)
   together_list <- unname(together_list)
   
-  suffix_vec <- sort(unique(banding::taxonomy_crosswalk$BBL_GRP))
+  suffix_vec <- sort(unique(BirdFlowPipeline::taxonomy_crosswalk$BBL_GRP))
   
   collapse_list <- combine_together_list(suffix_vec, together_list)
   collapse_list <- lapply(collapse_list, function(i) file.path(banding_raw_path, paste0('NABBP_2022_grp', i, '.csv')))
@@ -151,7 +151,7 @@ batch_preprocess_raw_files_to_rds <- function(banding_raw_path, banding_rds_path
                        more.args = list(banding_raw_path = banding_raw_path,
                                         banding_rds_path = banding_rds_path),
                        reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                                                      conf.file = system.file('batchtools.conf.R', package = 'banding')
+                                                      conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')
                        ))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = list(walltime = 60,

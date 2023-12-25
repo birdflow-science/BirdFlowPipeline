@@ -10,7 +10,7 @@ multiple_species_batch(multispecies_vector)
 \item{multispecies_vector}{a character vector that contains a valid inputs to \code{\link[ebirdst:get_species]{ebirdst::get_species()}}, e.g., eBird 6-letter codes or valid common names.}
 }
 \value{
-function is used for its many side effects, according to configuration settings in \code{as.list(banding:::the)}
+function is used for its many side effects, according to configuration settings in \code{as.list(BirdFlowPipeline:::the)}
 \itemize{
 \item create destination directories as needed
 \item write preprocessed hdf5 files

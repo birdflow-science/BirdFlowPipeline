@@ -41,7 +41,7 @@ batch_data_availability <- function() {
   batchtools::batchMap(banding_data_availability,
                        rds_files,
                        reg = batchtools::makeRegistry(paste(make_timestamp(), my_suffix, sep = '_'),
-                                                      conf.file = system.file('batchtools.conf.R', package = 'banding')
+                                                      conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')
                        ))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = list(walltime = 30,

@@ -212,7 +212,7 @@ batch_modelfit_wrapper <- function(params){
     success <- FALSE
     batchtools::batchMap(fun = birdflow_modelfit,
                          args = modelfit_args_df,
-                         reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'banding')))
+                         reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                            resources = modelfit_resources)
     success <- batchtools::waitForJobs()
@@ -252,7 +252,7 @@ batch_evaluate_models <- function(params, track_info){
                        files,
                        more.args = list(track_info = track_info, params = params),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
-                                                      conf.file = system.file('batchtools.conf.R', package = 'banding')))
+                                                      conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = evaluation_resources)
   success <- batchtools::waitForJobs()

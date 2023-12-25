@@ -11,7 +11,7 @@ test_that("banding_raw_file_urls test download", {
 })
 
 test_that("combine_together_list works", {
-  suffix_vec <- sort(unique(banding::taxonomy_crosswalk$BBL_GRP))
+  suffix_vec <- sort(unique(BirdFlowPipeline::taxonomy_crosswalk$BBL_GRP))
   together_list <- list(c("_02", "_03"), c("_42", "_43"), c("_55", "_56"))
   test_result <- list("_01", c("_02", "_03"), "_04", "_05", "_06", "_07", "_08", 
                       "_09", "_10", "_11", "_12", "_13", "_14", "_15", "_16", "_17", 

@@ -21,7 +21,7 @@
 #' ```
 #' @param one_species a character vector of length 1 that is a valid input to [ebirdst::get_species()], e.g., an eBird 6-letter code or a valid common name
 #'
-#' @returns function is used for its many side effects, according to configuration settings in `as.list(banding:::the)`
+#' @returns function is used for its many side effects, according to configuration settings in `as.list(BirdFlowPipeline:::the)`
 #'  * create destination directories as needed
 #'  * write preprocessed hdf5 file
 #'  * write modelfit hdf5 files
@@ -94,7 +94,7 @@ if (nrow(ll_df) > 1){
 
 for (i in 1:5){
   bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[i]))
-  rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "banding"), 
+  rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "BirdFlowPipeline"), 
                     output_file = paste0("model_report", i, ".html"), output_dir = params$output_path)
 }
 
@@ -154,7 +154,7 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
 
 #' Grid search, model selection, and model evaluation for multiple species on the cluster, with error handling
 #' @param multispecies_vector a character vector that contains a valid inputs to [ebirdst::get_species()], e.g., eBird 6-letter codes or valid common names.
-#' @returns function is used for its many side effects, according to configuration settings in `as.list(banding:::the)`
+#' @returns function is used for its many side effects, according to configuration settings in `as.list(BirdFlowPipeline:::the)`
 #'  * create destination directories as needed
 #'  * write preprocessed hdf5 files
 #'  * write modelfit hdf5 files
