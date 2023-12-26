@@ -10,8 +10,8 @@ batch_flow(
     as.character(Sys.Date()), grid_search_type = "new", grid_search_list = list(de_ratio
     = c(2, 4, 6, 8, 10), obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999), dist_pow =
     seq(from = 0.1, to = 0.9, by = 0.1), dist_weight = NA_real_, ent_weight = NA_real_),
-    batch_hdf_path = the$batch_hdf_path, banding_output_path = the$banding_output_path,
-    season = "prebreeding", truncate_season = FALSE, model_selection = "real_tracking")
+    hdf_path = the$hdf_path, output_path = the$output_path, season = "prebreeding",
+    truncate_season = FALSE, model_selection = "real_tracking")
 )
 }
 \arguments{

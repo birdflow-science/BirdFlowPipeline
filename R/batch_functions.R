@@ -33,10 +33,10 @@ preprocess_species_wrapper <- function(params) {
   params$ebirdst_year <- bf$metadata$ebird_version_year
   # set up directories
   params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
-  params$hdf_dir <- file.path(params$batch_hdf_path, paste0(params$my_species, '_', params$my_res, 'km'))
+  params$hdf_dir <- file.path(params$hdf_path, paste0(params$my_species, '_', params$my_res, 'km'))
   dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create(params$banding_output_path, showWarnings = FALSE)
-  params$output_path <- file.path(params$banding_output_path, params$output_fullname)
+  dir.create(params$output_path, showWarnings = FALSE)
+  params$output_path <- file.path(params$output_path, params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   # move preprocessed file to modelfit directory
   preprocessed_file <- list.files(path = pp_dir,

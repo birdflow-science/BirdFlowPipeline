@@ -37,8 +37,8 @@ test_that("batch_flow works", {
           dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
           dist_weight = NA_real_,
           ent_weight = NA_real_),
-        batch_hdf_path = test_hdf_dir,
-        banding_output_path = test_output_path,
+        hdf_path = test_hdf_dir,
+        output_path = test_output_path,
         season = 'prebreeding',
         truncate_season = FALSE,
         model_selection = 'real_tracking'
