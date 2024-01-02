@@ -1,3 +1,4 @@
+This package contains functions to fit, select, and evaluate BirdFlow models on the Unity cluster. This README contains basic setup instructions, which should be sufficient for other users within the `pi_drsheldon_umass_edu` Unity group getting started using this package.
 
 ## 1. Setup a passwordless SSH connection to the Unity login node
 
@@ -5,7 +6,15 @@ This is necessary for automated submission of sbatch jobs to Unity from within R
 
 First, we need to [set up the SSH keys](https://www.redhat.com/sysadmin/passwordless-ssh).
 
-From a [Unity terminal window](https://ood.unity.rc.umass.edu/pun/sys/shell/ssh/login-node-round-robin.unity.rc.umass.edu), enter this command and hit enter. Hit enter again when asked if you want to create a passphrase.
+Open up a [Unity terminal window](https://ood.unity.rc.umass.edu/pun/sys/shell/ssh/login-node-round-robin.unity.rc.umass.edu).
+
+You might be able to re-use an existing SSH key if you already did this but it's probably recommended unless you were using it for a similar purpose. Check for existing keys:
+
+```
+ls -l ~/.ssh
+```
+
+To create a new key, enter this command and hit enter. Hit enter again when asked if you want to create a passphrase. It's easier if we don't use one, and this is all occurring within Unity and within your home directory, which is already fairly secure, but your mileage may vary.
 
 ```
 ssh-keygen
@@ -24,24 +33,24 @@ User <yourusername_umass_edu>
 IdentityFile ~/.ssh/<your_unity_private_key_filename_created_in_last_step>
 ```
 
-Now, copy over the SSH public key to the server with the following command:
+Now, copy over the SSH public key to the server with the following command. You'll need to customize the command if you were not using the default key name.
 
 ```
 ssh-copy-id <yourusername_umass_edu>@login1
 ```
 
-Now, try SSHing into the login node from a compute node. First, get a command line on a compute node:
+Now, try SSHing into the login node from a compute node. First, get a command line on a compute node by entering this on a login node terminal:
 
 ```
 salloc -c 6 -p cpu
 ```
-The terminal prompt should now show that you are on a compute node. Now, try SSHing back into the login node. If you are asked whether to want to add the server to known hosts, type `yes` and hit enter.
+The terminal prompt should change and show that you are on a compute node. Now, try SSHing back into the login node. If you are asked whether to want to add the server to known hosts, type `yes` and hit enter.
 
 ```
 ssh login1
 ```
 
-If your prompt now says you're on the login node, it means your compute nodes should now be able to submit jobs to the login node in an automated fashion.
+You might need to enter your Unity password the first time. If your prompt now changes again to say you're on the login node, it means your compute nodes should now be able to submit jobs to the login node in an automated fashion, with keys only and no passwords required.
 
 ## 2. Setup binary R package installation on Unity
 
@@ -63,7 +72,9 @@ options(HTTPUserAgent = sprintf(
 ))
 ```
 
-## Add the following to your `~/.Renviron` file so that the `ebirdst` package recognizes you as a known user for downloading eBird Status and Trends data
+## 3. Set up eBird Status and Trends API key
+
+Add the following to your `~/.Renviron` file so that the `ebirdst` package recognizes you as a known user for downloading eBird Status and Trends data
 
 ```
 EBIRDST_KEY='your_ebirdst_api_key'
@@ -71,7 +82,7 @@ EBIRDST_KEY='your_ebirdst_api_key'
 
 You may need to restart R and/or RStudio for this to start working.
 
-## Set up a [GitHub Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) 
+## 4. Set up your [GitHub Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) 
 
 Follow the instructions here for setting up a [GitHub PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens), and then add the following line to your `~/.bashrc` file:
 
@@ -91,7 +102,7 @@ Keep in mind that for some eventual scenarios, you might want/need to put this i
 GITHUB_PAT='your_github_PAT_alphanumeric'
 ```
 
-## Configure git
+## 5. Configure git
 
 You can view your current git configuration by using this command at the Unity command line:
 
@@ -115,7 +126,7 @@ git config --list --global
 
 Try your initial GitHub login by attempting to git clone a private GitHub repository that you have access to. When it asks you for your password, don't use your actual GitHub password.  Use your GitHub PAT from the above step. This can be tricky to set up, but if it works, you will no longer need to enter your GitHub password when using git.
 
-## Developing for Python/GPU in Rstudio using the container
+## 6. (Optional) Tips for developing for Python/GPU in Rstudio using the container
 
 (First time only) make sure this line is in your `~/.Renviron` file on Unity:
 ```
