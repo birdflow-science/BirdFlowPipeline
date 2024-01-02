@@ -4,12 +4,12 @@
 \name{BirdFlowPipeline-package}
 \alias{BirdFlowPipeline}
 \alias{BirdFlowPipeline-package}
-\title{BirdFlowPipeline: What the Package Does (One Line, Title Case)}
+\title{BirdFlowPipeline: Tools for fitting, selecting, and evaluating BirdFlow models on Unity}
 \description{
-What the package does (one paragraph).
+Tools for fitting, selecting, and evaluating BirdFlow models on Unity.
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: David Slager \email{slager@users.noreply.github.com} (\href{https://orcid.org/0000-0003-2525-2039}{ORCID})
 
 }
 \keyword{internal}
