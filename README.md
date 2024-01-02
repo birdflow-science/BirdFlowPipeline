@@ -140,7 +140,7 @@ Go to [Unity OnDemand](https://ood.unity.rc.umass.edu/pun/sys/dashboard/batch_co
 2. partition: `gpu` (use `gpu,gpu-preempt` if under 2 hours walltime)
 3. memory: `11`
 4. gpu count: `1`
-5. [Advanced] Override Rstudio image location: `/work/pi_drsheldon_umass_edu/birdflow_modeling/python_R_container/<current_image_name.sif>`
+5. [Advanced] Override Rstudio image location: `/work/pi_drsheldon_umass_edu/birdflow_modeling/BirdFlowContainer/BirdFlowContainer.sif`
 6. Use default or blank values for the other fields
 
 Once your session is active, click the blue button to connect to Rstudio server. Once in Rstudio, you can go to File > New Project, and select (or create) a directory in which to work. For example you might want to select the top level of a clone of Miguel's birdflow repo. The bottom right should now show the files in the directory you selected. The container should already include all the needed python libraries to run `update_hdf.py`.
