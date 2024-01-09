@@ -31,4 +31,6 @@ test_that("unity configuration works if on unity", {
   expect_equal(http_option, http_expected)
   # test that EBIRDST_KEY environment variable is correctly set
   expect_true(Sys.getenv('EBIRDST_KEY') != "")
+  # test that warning about X11 from rgl package in rstudio is being avoided
+  expect_true(getOption('rgl.useNULL'))
 })

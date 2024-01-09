@@ -54,7 +54,7 @@ You might need to enter your Unity password the first time. If your prompt now c
 
 ## 2. Setup binary R package installation on Unity
 
-Ensure that your `~/.Rprofile` file contains the following lines, so that binary packages are attempted to be installed first via [Posit Public Package Manger](https://packagemanager.posit.co/client/#/repos/cran/setup), followed by installing source packages on CRAN. This will greatly speed up package installs.
+Ensure that your `~/.Rprofile` file contains the following lines, so that binary packages are attempted to be installed first via [Posit Public Package Manger](https://packagemanager.posit.co/client/#/repos/cran/setup), followed by installing source packages on CRAN. This will greatly speed up package installs. The last line avoids a warning about X11 from the rgl package in Rstudio.
 
 ```
 options(repos = c(
@@ -70,6 +70,7 @@ options(HTTPUserAgent = sprintf(
   getRversion(),
   paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])
 ))
+options(rgl.useNULL = TRUE)
 ```
 
 ## 3. Set up eBird Status and Trends API key
