@@ -22,6 +22,7 @@ Imports:
     grDevices,
     gridExtra,
     htmlwidgets,
+    kableExtra,
     magrittr,
     rgl,
     rhdf5,
