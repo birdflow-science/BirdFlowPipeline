@@ -24,7 +24,7 @@ This creates a public/private key pair in your home directory on Unity. Your hom
 
 Next, create a shortcut to SSH into Unity more easily:
 
-Add the following to the file `~/.ssh/config`:
+Add the following to the file `~/.ssh/config`, removing all angled brackets:
 
 ```
 Host login1
@@ -33,7 +33,7 @@ User <yourusername_umass_edu>
 IdentityFile ~/.ssh/<your_unity_private_key_filename_created_in_last_step>
 ```
 
-Now, copy over the SSH public key to the server with the following command. You'll need to customize the command if you were not using the default key name.
+Now, copy over the SSH public key to the server with the following command, removing all angled brackets. You'll need to customize the command if you were not using the default key name.
 
 ```
 ssh-copy-id <yourusername_umass_edu>@login1
@@ -42,7 +42,7 @@ ssh-copy-id <yourusername_umass_edu>@login1
 Now, try SSHing into the login node from a compute node. First, get a command line on a compute node by entering this on a login node terminal:
 
 ```
-salloc -c 6 -p cpu
+salloc -c 2 -p cpu
 ```
 The terminal prompt should change and show that you are on a compute node. Now, try SSHing back into the login node. If you are asked whether to want to add the server to known hosts, type `yes` and hit enter.
 
@@ -84,6 +84,8 @@ You may need to restart R and/or RStudio for this to start working.
 
 ## 4. Set up your [GitHub Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) 
 
+This step is optional, but will mean you are not required to always enter your GitHub password.
+
 Follow the instructions here for setting up a [GitHub PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens), and then add the following line to your `~/.bashrc` file:
 
 ```
@@ -104,7 +106,7 @@ GITHUB_PAT='your_github_PAT_alphanumeric'
 
 ## 5. Configure git
 
-You can view your current git configuration by using this command at the Unity command line:
+This step is also optional, for streamlining your use of git/github. You can view your current git configuration by using this command at the Unity command line:
 
 ```
 git config --list --global
@@ -126,7 +128,47 @@ git config --list --global
 
 Try your initial GitHub login by attempting to git clone a private GitHub repository that you have access to. When it asks you for your password, don't use your actual GitHub password.  Use your GitHub PAT from the above step. This can be tricky to set up, but if it works, you will no longer need to enter your GitHub password when using git.
 
-## 6. (Optional) Tips for developing for Python/GPU in Rstudio using the container
+## 6. Install and test BirdFlowPipeline
+
+First, clone BirdFlowPipeline into your home directory, then enter the BirdFlowPipeline directory
+
+```
+cd ~
+git clone https://github.com/birdflow-science/BirdFlowPipeline
+cd BirdFlowPipeline
+```
+
+Launch Rstudio Server from the BirdFlowContainer image, following the [instructions in the README](https://github.com/birdflow-science/BirdFlowContainer) for BirdFlowContainer
+
+In Rstudio, open the R Project file located at `~/BirdFlowPipeline/BirdFlowPipeline.Rproj`
+
+Run this in the R console to check that the Unity tests all pass without error:
+
+```
+devtools::test(filter = 'unity')
+```
+
+Install BirdFlowPipeline and any necessary dependencies. Some restarts of R or the RStudio container may be required if package installation does not all progress in one step.
+
+```
+devtools::install()
+```
+
+When all packages are successfully installed, you should be able to load the package like this without error:
+
+```
+library(BirdFlowPipeline)
+```
+
+Run the complete test suite for BirdFlowPipeline.  This will submit test jobs to Unity and check that output files are successfully created in a temporary directory:
+
+```
+devtools::test()
+```
+
+
+
+## 7. (Optional) Tips for developing for Python/GPU in Rstudio using the container
 
 (First time only) make sure this line is in your `~/.Renviron` file on Unity:
 ```
