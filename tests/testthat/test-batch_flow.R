@@ -41,7 +41,9 @@ test_that("batch_flow works", {
         output_path = test_output_path,
         season = 'prebreeding',
         truncate_season = FALSE,
-        model_selection = 'real_tracking'
+        model_selection = 'real_tracking',
+        clip = NULL,
+        skip_quality_checks = FALSE
       )
     )
   )

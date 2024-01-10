@@ -24,7 +24,9 @@ preprocess_species_wrapper <- function(params) {
           out_dir = pp_dir,
           gpu_ram = params$gpu_ram,
           res = params$my_res,
-          season = dplyr::if_else(params$truncate_season, params$season, 'all'))
+          season = dplyr::if_else(params$truncate_season, params$season, 'all'),
+          clip = params$clip,
+          skip_quality_checks = params$skip_quality_checks)
       )
     )
   )

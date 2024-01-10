@@ -46,7 +46,9 @@ batch_flow <- function(
       output_path = the$output_path,
       season = 'prebreeding',
       truncate_season = FALSE,
-      model_selection = 'real_tracking'
+      model_selection = 'real_tracking',
+      clip = NULL,
+      skip_quality_checks = FALSE
     )
 ){
 params$my_species <- one_species
