@@ -48,7 +48,8 @@ batch_flow <- function(
       truncate_season = FALSE,
       model_selection = 'real_tracking',
       clip = NULL,
-      skip_quality_checks = FALSE
+      skip_quality_checks = FALSE,
+      fit_only = FALSE
     )
 ){
 params$my_species <- one_species
@@ -61,6 +62,11 @@ saveRDS(params, file.path(params$output_path, 'params.rds'))
 # Batch fit models
 
 batch_modelfit_wrapper(params)
+
+# Exit if fitting only
+if (isTRUE(params$fit_only)){
+  return(NULL)
+}
 
 # Load and save track info
 

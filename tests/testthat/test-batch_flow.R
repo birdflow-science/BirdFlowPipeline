@@ -43,7 +43,8 @@ test_that("batch_flow works", {
         truncate_season = FALSE,
         model_selection = 'real_tracking',
         clip = NULL,
-        skip_quality_checks = FALSE
+        skip_quality_checks = FALSE,
+        fit_only = FALSE
       )
     )
   )

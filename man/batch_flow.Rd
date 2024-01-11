@@ -12,7 +12,8 @@ batch_flow(
     seq(from = 0.1, to = 0.9, by = 0.1), dist_weight = NA_real_, ent_weight = NA_real_),
     hdf_path = the$hdf_path, output_path = the$output_path, season = "prebreeding",
     truncate_season = FALSE, model_selection = "real_tracking", clip = NULL,
-    skip_quality_checks = FALSE)
+    skip_quality_checks = FALSE, 
+     fit_only = FALSE)
 )
 }
 \arguments{
