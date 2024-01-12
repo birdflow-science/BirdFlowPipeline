@@ -33,7 +33,7 @@ batch_flow <- function(
     params = list(
       my_species = character(0),
       gpu_ram = 10,
-      my_res = 100,
+      my_res = 150,
       output_nickname = as.character(Sys.Date()),
       grid_search_type = 'new',
       grid_search_list = list(
