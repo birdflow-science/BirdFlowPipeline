@@ -192,7 +192,7 @@ You can get a python console by issuing the `reticulate::repl_python()` in the R
 
 Very soon, Unity OnDemand will offer a way to use Jupyter Lab instead of Rstudio to work interactively in Python on a container.
 
-## Description of what happens when you run `batch_flow('amewoo')`
+## 8. Description of what happens when you run `batch_flow('amewoo')`
 
 This command kicks off the "standard pipeline" for fitting a BirdFlow model using tracking data, developed by Dave Slager in 2023. Much of the computation happens in parallel via batch jobs on the Unity cluster. See also: `?BirdFlowPipeline::batch_flow`
 
@@ -239,3 +239,10 @@ These model reports can then be examined for quality control prior to releasing 
 - `stage_model_release()` is a helper to move a user-selected model report to the release staging folder to be put into the public model collection.
 - `rebuild_model_reports()` is a helper to rebuild the model reports, for example, if you've actively working on changing the model report RMD file.
 Ethan currently (January 2024) has another codebase that refreshes the Birdflow model collections website when the model_release_staging folder is changed.
+
+## 9. Miscellaneous package components and comments
+
+This package also contains some ancillary things that are a bit outside of the "standard pipeline"
+- `data_availability.R` contains old functions (including a batch function) to assess how much banding data is available for all species in this large dataset
+- `pit_calibration.R` contains functions related to PIT calibration. This is used in the standard pipeline `batch_flow()` with model_selection = `real_tracking` but could use a code review and re-write. It currently uses Benjamin's transitions files, but should be rewritten so that it uses the new `BirdFlowR` tracking data preprocessing, and probably a new function to create transitions data from that as well. Ideally, there could be a `the$` path for standardized tracking data similar to how banding data is currently handled, and the pipeline could always just look for tracking data there.
+- `functions.R` mostly contains functions already covered in `batch_flow()` above, but also has some old functions at the top of the file related to preprocessing banding data, which should probably be moved to the banding.data.R file.
