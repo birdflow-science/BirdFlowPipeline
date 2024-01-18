@@ -26,7 +26,7 @@ combine_together_list <- function(suffix_vec, together_list) {
 #' @returns Function exists for its side effects, namely downloading the files listed in package data object [banding_raw_file_urls]
 #' @seealso [banding_raw_file_urls]
 #' @export
-download_banding_files <- function(banding_raw_path) {
+download_banding_files <- function(banding_raw_path = the$banding_raw_path) {
   # keep oringal option for download timeout when finished or error
   old_timeout_option <- options()$timeout
   on.exit({
