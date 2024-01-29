@@ -75,6 +75,13 @@ options(rgl.useNULL = TRUE)
 
 ## 3. Set up eBird Status and Trends API key
 
+Either [request a new key](https://ebird.github.io/ebirdst/#data-access),
+or run the command below in R on your local machine to retrieve an existing key.
+
+```
+Sys.getenv("EBIRDST_KEY")
+```
+
 Add the following to your `~/.Renviron` file so that the `ebirdst` package recognizes you as a known user for downloading eBird Status and Trends data
 
 ```
@@ -152,7 +159,7 @@ devtools::test(filter = 'unity')
 Install BirdFlowPipeline and any necessary dependencies. Some restarts of R or the RStudio container may be required if package installation does not all progress in one step.
 
 ```
-devtools::install()
+devtools::install(dependencies = TRUE)
 ```
 
 When all packages are successfully installed, you should be able to load the package like this without error:
