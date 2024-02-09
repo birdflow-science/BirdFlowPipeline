@@ -4,7 +4,7 @@
 \alias{download_banding_files}
 \title{Download raw USGS banding files}
 \usage{
-download_banding_files(banding_raw_path)
+download_banding_files(banding_raw_path = the$banding_raw_path)
 }
 \arguments{
 \item{banding_raw_path}{Path to which to download the files. If not provided, it will download to \code{the$banding_raw_path}}
