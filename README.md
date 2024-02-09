@@ -221,6 +221,8 @@ The `batch_flow()` function has two arguments: 1) The species to use, and 2) a p
   
 ### Steps of `batch_flow`
 
+![](./man/figures/schema.png)
+
 The first thing that happens is preprocessing. The `preprocess_species_wrapper` function also sets up directories and updates the `my_res` and `ebirdst_year` items in `params`. The wrapper saves the `hdf` to a temporary directory before copying it over to the actual directory, because `res` needs to be calculated by preprocess_species before the final item can be named appropriately.
 
 The next thing that happens is the Python modelfits. These will happen in parallel on the cluster, which is all set up by `batch_modelfit_wrapper()`. The function `birdflow_modelfit_args_df()` does grid-expand of all the modelfit parameters for the grid search, checks the hdf directory to see if any hdf files are already present, and deletes unneeded hdf files and pares down the list of models yet to fit as necessary. This reduces the number of GPU jobs used, especially during troubleshooting and debugging of larger grid searches. The output of `birdflow_modelfit_args_df()` is mapped by row to `birdflow_modelfit()` by `batchtools::batchMap`, which maps the grid search entries to an Sbatch array job to be sent to the cluster. The `birdflow_modelfit()` function is just an R wrapper to call Python, with a little bit of error handling so that a Python error also throws an R error.
