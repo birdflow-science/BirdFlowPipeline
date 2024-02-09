@@ -70,25 +70,25 @@ refactor_hyperparams <- function(de_ratio, obs_prop, digits = 5){
 
 #' Function to fit BirdFlow model by executing `update_hdf.py` in Python. 
 #'   Arguments typically passed from [batch_modelfit_wrapper()] via [birdflow_modelfit_args_df()]
-#' @param mypy Path of `update_hdf.py` Python script.
-#' @param mydir Argument for `update_hdf.py`.
-#' @param mysp Argument for `update_hdf.py`.
-#' @param myres Argument for `update_hdf.py`.
-#' @param dist_weight Argument for `update_hdf.py`.
-#' @param ent_weight Argument for `update_hdf.py`.
-#' @param dist_pow Argument for `update_hdf.py`.
-#' @param obs_weight Argument for `update_hdf.py`.
-#' @param learning_rate Argument for `update_hdf.py`.
+#' @param py_script Path of Python script to fit a model (`update_hdf.py`)
+#' @param dir Argument for `update_hdf.py` - the directory for output
+#' @param species Argument for `update_hdf.py` - the species code to fit
+#' @param res Argument for `update_hdf.py` - the model resolution
+#' @param dist_weight Argument for `update_hdf.py` - the distance weight
+#' @param ent_weight Argument for `update_hdf.py` - the entropy weight 
+#' @param dist_pow Argument for `update_hdf.py` - the distance power 
+#' @param obs_weight Argument for `update_hdf.py` - the observation weight
+#' @param learning_rate Argument for `update_hdf.py`
 #' @param training_steps Argument for `update_hdf.py`.
 #' @param rng_seed Argument for `update_hdf.py`.
 #' @param ebirdst_year Argument for `update_hdf.py`.
 #' @seealso [birdflow_modelfit_args_df()], [batch_modelfit_wrapper()]
 #' @export
 birdflow_modelfit <- function(
-    mypy = file.path(the$python_repo_path, 'update_hdf.py'),
-    mydir,
-    mysp,
-    myres,
+    species,
+    dir,
+    py_script = file.path(the$python_repo_path, 'update_hdf.py'),
+    res,
     dist_weight,
     ent_weight,
     dist_pow,
@@ -96,14 +96,51 @@ birdflow_modelfit <- function(
     learning_rate = 0.1,
     training_steps = 600,
     rng_seed = 17,
-    ebirdst_year
+    ebirdst_year,
+    mypy = lifecycle::deprecated(),
+    mydir = lifecycle::deprecated(),
+    mysp  = lifecycle::deprecated(),
+    myres = lifecycle::deprecated()
+    
 ){
+  
+  
+  # Handle deprecated arguments
+  if(lifecycle::is_present("mypy")){
+    lifecycle::deprecate_warn("0.0.0.9002", 
+                              what = "birdflow_model_fit(mypy)", 
+                              with = "birdflow_model_fit(py_script)")
+    py_pcript <- mypy
+  }
+  if(lifecycle::is_present("mydir")){
+    lifecycle::deprecate_warn("0.0.0.9002", 
+                            what = "birdflow_model_fit(mydir)", 
+                            with = "birdflow_model_fit(preprocess_dir)")
+    preprocess_dir <- mydir
+  }
+  
+  if(lifecycle::is_present("mysp")){
+    lifecycle::deprecate_warn("0.0.0.9002", 
+                              what = "birdflow_model_fit(mysp)", 
+                              with = "birdflow_model_fit(species)")
+    species <- mysp
+  }
+  
+  
+  if(lifecycle::is_present("myres")){
+    lifecycle::deprecate_warn("0.0.0.9002", 
+                              what = "birdflow_model_fit(myres)", 
+                              with = "birdflow_model_fit(res)")
+    res <- myres
+  }
+  
+  
   python_exit_code <- system2('python',
           args = c(
-            mypy,
-            mydir,
-            mysp,
-            myres,
+            py_script,
+            dir,
+            species,
+            res,
             paste0('--dist_weight=', dist_weight),
             paste0('--ent_weight=', ent_weight),
             paste0('--dist_pow=', dist_pow),
