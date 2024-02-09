@@ -221,7 +221,7 @@ The `batch_flow()` function has two arguments: 1) The species to use, and 2) a p
   
 ### Steps of `batch_flow`
 
-![](man/figures/schema.png)
+![](man/figures/Schema.png)
 
 The first thing that happens is preprocessing. The `preprocess_species_wrapper` function also sets up directories and updates the `my_res` and `ebirdst_year` items in `params`. The wrapper saves the `hdf` to a temporary directory before copying it over to the actual directory, because `res` needs to be calculated by preprocess_species before the final item can be named appropriately.
 
