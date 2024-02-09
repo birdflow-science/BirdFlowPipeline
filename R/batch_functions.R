@@ -308,13 +308,13 @@ batch_evaluate_models <- function(params, track_info){
     success <- batchtools::waitForJobs()
   }
   stopifnot(isTRUE(success))
-  ll_df <- batchtools::reduceResultsList() %>%
+  eval_metrics <- batchtools::reduceResultsList() %>%
     lapply(function(i){i$df}) %>%
     (data.table::rbindlist) %>%
     (dplyr::as_tibble) %>%
     (dplyr::arrange)(-.data$ll)
   # replace ll and nll with 0 if all NAs
-  if (all(is.na(ll_df$ll))) {ll_df$ll <- 0}
-  if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}
-  ll_df
+  if (all(is.na(eval_metrics$ll))) {eval_metrics$ll <- 0}
+  if (all(is.na(eval_metrics$nll))) {eval_metrics$nll <- 0}
+  eval_metrics
 }

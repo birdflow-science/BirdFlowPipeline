@@ -54,12 +54,12 @@ test_that("batch_flow works", {
   test_output_path <- file.path(test_output_path, output_fullname)
   test_output_files <- list.files(test_output_path)
   test_hdf_files <- list.files(file.path(test_hdf_dir, paste0(test_species, '_', test_res, 'km')), full.names = TRUE)
-  expect_no_error(ll_df <- readRDS(file.path(test_output_path, 'll_df.rds')))
+  expect_no_error(eval_metrics <- readRDS(file.path(test_output_path, 'eval_metrics.rds')))
   # two file sizes -- unfitted hdf5 and fitted hdf5s
   expect_equal(length(unique(file.size(test_hdf_files))), 2)
-  # nrow(ll_df) is same as number of modelfit files
+  # nrow(eval_metrics) is same as number of modelfit files
   test_modelfit_files <- grep('km\\.hdf5', test_hdf_files, invert = TRUE, value = TRUE)
-  expect_setequal(basename(test_modelfit_files), ll_df$model)
+  expect_setequal(basename(test_modelfit_files), eval_metrics$model)
   # desirability graphs
   expect_true(
     all(

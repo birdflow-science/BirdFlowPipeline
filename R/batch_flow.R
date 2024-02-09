@@ -75,33 +75,33 @@ saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
 
 # Batch model evaluation
 
-ll_df <- batch_evaluate_models(params, track_info)
+eval_metrics <- batch_evaluate_models(params, track_info)
 
 # Model selection and ranking with desirability
 
-ll_df <- rank_models(ll_df, params)
+eval_metrics <- rank_models(eval_metrics, params)
 
 # save model evaluation RDS
-saveRDS(ll_df, file.path(params$output_path, 'll_df.rds'))
+saveRDS(eval_metrics, file.path(params$output_path, 'eval_metrics.rds'))
 
 ## Plotting
 
 # make PCA evaluation plot
 
-if (nrow(ll_df) > 1){
-  model_evaluation_biplot(ll_df, params)
+if (nrow(eval_metrics) > 1){
+  model_evaluation_biplot(eval_metrics, params)
   
   # Plot likelihood results cube
-  make_3d_plot('color_ll', 'll', ll_df, params)
+  make_3d_plot('color_ll', 'll', eval_metrics, params)
   # Plot null likelihood cube
-  make_3d_plot('color_nll', 'nll', ll_df, params)
+  make_3d_plot('color_nll', 'nll', eval_metrics, params)
   # Plot correlation cube
-  make_3d_plot('color_cor', 'cor', ll_df, params)
+  make_3d_plot('color_cor', 'cor', eval_metrics, params)
 
 # create model reports for top 5 models
 
 for (i in 1:5){
-  bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[i]))
+  bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[i]))
   rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "BirdFlowPipeline"), 
                     output_file = paste0("model_report", i, ".html"), output_dir = params$output_path)
 }
@@ -110,14 +110,14 @@ for (i in 1:5){
 
 for (i in 1:5){
   pdf(file.path(params$output_path, paste0('desirability', i, '.pdf')))
-  quick_visualize_routes(i, df = ll_df, dir = params$hdf_dir, season = params$season)
+  quick_visualize_routes(i, df = eval_metrics, dir = params$hdf_dir, season = params$season)
   dev.off()
 }
 
 # graph tradeoff
 
 pdf(file.path(params$output_path, 'straightness_vs_end_traverse_cor.pdf'))
-plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = params$species)
+plot(eval_metrics$end_traverse_cor, eval_metrics$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = params$species)
 dev.off()
 
 # Visualize model with best LL
@@ -127,7 +127,7 @@ dev.off()
 ## 3d plot of straightness, end_traverse_cor, and ll
 
 rgl::plot3d(
-  x = ll_df$ll, y = ll_df$straightness, z = ll_df$end_traverse_cor,
+  x = eval_metrics$ll, y = eval_metrics$straightness, z = eval_metrics$end_traverse_cor,
   col = 'gray',
   type = 's',
   xlab="ll", ylab="straightness", zlab="end_traverse_cor")
@@ -144,7 +144,7 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
 ## 3d plot of stopover, straightness, and end_traverse_cor
 
 rgl::plot3d(
-  x = ll_df$n_stopovers, y = ll_df$straightness, z = ll_df$end_traverse_cor,
+  x = eval_metrics$n_stopovers, y = eval_metrics$straightness, z = eval_metrics$end_traverse_cor,
   col = 'gray',
   type = 's',
   xlab="n_stopovers", ylab="straightness", zlab="end_traverse_cor")
@@ -157,7 +157,7 @@ htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
                         libdir = "libs",
                         selfcontained = TRUE
 )
-} # end if ll_df rows > 1
+} # end if eval_metrics rows > 1
 } # big function end
 
 #' Grid search, model selection, and model evaluation for multiple species on the cluster, with error handling

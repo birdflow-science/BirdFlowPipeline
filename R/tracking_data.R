@@ -1,6 +1,6 @@
 # scripts to get the n_stopovers and straightness of the actual tracks
 
-#args:  ll_df, params
+#args:  eval_metrics, params
 
 # get a birdflow model from this run, for CRS/pixel info
 
@@ -92,11 +92,11 @@ tracks_to_rts <- function(df, bf, params){
 
 #' Calculate rts_stats from real tracks file(s)
 #'
-#' @param ll_df The ll_df containing at least one valid model name, from which to load bf object for CRS/grid
+#' @param eval_metrics The eval_metrics data frame containing at least one valid model name, from which to load bf object for CRS/grid
 #' @param params The params object, containing at least the hdf_dir from which to learn bf object
 #' @returns rts_stats from the actual tracks
 #' @export
-real_track_stats <- function(ll_df, params){
+real_track_stats <- function(eval_metrics, params){
   tracks_files <- list.files(the$tracking_data_path,
                              pattern = paste0("^", params$species, ".*tracks.*\\.csv"),
                              full.names = TRUE)
@@ -111,7 +111,7 @@ real_track_stats <- function(ll_df, params){
     tracks <- as.data.frame(data.table::rbindlist(tracks_df_list, fill = TRUE))
     tracks <- rename_tracking_columns(tracks, 'timestamp', 'lon', 'lat', 'indiv')
     # Convert tracks to routes, using a birdflow object grid from this modelset
-    bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[1]))
+    bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[1]))
     rts <- tracks_to_rts(tracks, bf, params)
     # Get track data
     return(rts_stats(rts))

@@ -2,18 +2,19 @@
 % Please edit documentation in R/functions.R
 \name{rank_models}
 \alias{rank_models}
-\title{Rank the models in a ll_df}
+\title{Rank the models in an eval_metrics data frame}
 \usage{
-rank_models(ll_df, params)
+rank_models(eval_metrics, params)
 }
 \arguments{
-\item{ll_df}{The ll_df, often produced by recombining results from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{eval_metrics}{The eval_metrics data frame often produced by
+recombining results from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
 
 \item{params}{The standard params list, which includes \code{model_selection} method}
 }
 \value{
-Updated ll_df including desirability columns
+Updated eval_metrics including desirability columns
 }
 \description{
-Rank the models in a ll_df
+Rank the models in an eval_metrics data frame
 }

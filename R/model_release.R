@@ -11,13 +11,13 @@ stage_model_release <- function(
     desirability_rank,
     staging_directory = the$model_release_staging_path
     ){
-  ll_df <- readRDS(file.path(output_directory, 'll_df.rds'))
+  eval_metrics <- readRDS(file.path(output_directory, 'eval_metrics.rds'))
   params <-readRDS(file.path(output_directory, 'params.rds'))
   filename_base <- paste(params$species, params$season, sep = '_')
   rds_new_filename <- paste0(filename_base, '.Rds')
   html_new_filename <- paste0(filename_base, '.html')
   # Put Rds of chosen model in staging
-  bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[desirability_rank]))
+  bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[desirability_rank]))
   saveRDS(bf, file.path(staging_directory, rds_new_filename))
   # Put html model report for chosen model in staging
   invisible(
@@ -37,10 +37,10 @@ stage_model_release <- function(
 #' @returns Side effects, rebuilt Html files in output directory
 #' @export
 rebuild_model_reports <- function(output_directory, model_numbers = 1:5){
-  ll_df <- readRDS(file.path(output_directory, 'll_df.rds'))
+  eval_metrics <- readRDS(file.path(output_directory, 'eval_metrics.rds'))
   params <-readRDS(file.path(output_directory, 'params.rds'))
   for (i in model_numbers){
-    bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, ll_df$model[i]))
+    bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[i]))
     rmarkdown::render(system.file("rmd", "model_report.Rmd", package = "BirdFlowPipeline"), 
                       output_file = paste0("model_report", i, ".html"), output_dir = params$output_path)
   }

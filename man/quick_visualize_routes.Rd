@@ -2,13 +2,13 @@
 % Please edit documentation in R/functions.R
 \name{quick_visualize_routes}
 \alias{quick_visualize_routes}
-\title{Quick visualize a spring migration routes simulation from ll_df by row number}
+\title{Quick visualize a spring migration routes simulation from eval_metrics by row number}
 \usage{
 quick_visualize_routes(
   i,
   n = 10,
   season = "prebreeding",
-  df = ll_df,
+  df = eval_metrics,
   dir = hdf_dir
 )
 }
@@ -19,7 +19,7 @@ quick_visualize_routes(
 
 \item{season}{season for which to simulate route, parseable by \code{\link[BirdFlowR:lookup_season_timesteps]{BirdFlowR::lookup_season_timesteps()}}}
 
-\item{df}{a \code{ll_df} produced by \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{df}{a \code{eval_metrics} produced by \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
 
 \item{dir}{hdf5 directory from \code{params} list.  Need to refactor some of these arguments}
 }
@@ -27,7 +27,7 @@ quick_visualize_routes(
 side effect is an interactive plot
 }
 \description{
-Quick visualize a spring migration routes simulation from ll_df by row number
+Quick visualize a spring migration routes simulation from eval_metrics by row number
 }
 \seealso{
 \code{\link[BirdFlowR:lookup_season_timesteps]{BirdFlowR::lookup_season_timesteps()}}, \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}

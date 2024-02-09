@@ -4,14 +4,14 @@
 \alias{make_3d_plot}
 \title{3d plot function}
 \usage{
-make_3d_plot(color_column, suffix, ll_df, params)
+make_3d_plot(color_column, suffix, eval_metrics, params)
 }
 \arguments{
 \item{color_column}{column to use for the colors}
 
 \item{suffix}{suffix to use for output filenames}
 
-\item{ll_df}{data.frame produced from rbindlist-ing output from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{eval_metrics}{data.frame produced from rbindlist-ing output from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
 
 \item{params}{the standard params list object, see \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}}
 }
