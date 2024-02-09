@@ -19,7 +19,7 @@
 #'   ent_weight = NA_real_
 #' )
 #' ```
-#' @param one_species a character vector of length 1 that is a valid input to [ebirdst::get_species()], e.g., an eBird 6-letter code or a valid common name
+#' @param species a character vector of length 1 that is a valid input to [ebirdst::get_species()], e.g., an eBird 6-letter code or a valid common name
 #'
 #' @returns function is used for its many side effects, according to configuration settings in `as.list(BirdFlowPipeline:::the)`
 #'  * create destination directories as needed
@@ -29,12 +29,12 @@
 #' @seealso [multiple_species_batch()]
 #' @export
 batch_flow <- function(
-    one_species,
+    species,
     params = list(
-      my_species = character(0),
+      species = character(0),
       gpu_ram = 10,
-      my_res = 150,
-      output_nickname = as.character(Sys.Date()),
+      res = 150,
+      suffix = as.character(Sys.Date()),
       grid_search_type = 'new',
       grid_search_list = list(
         de_ratio = c(2, 4, 6, 8, 10),
@@ -52,7 +52,7 @@ batch_flow <- function(
       fit_only = FALSE
     )
 ){
-params$my_species <- one_species
+params$species <- species
 
 # preprocess species and set up directories
 
@@ -70,7 +70,7 @@ if (isTRUE(params$fit_only)){
 
 # Load and save track info
 
-track_info <- make_tracks(file.path(the$banding_rds_path, paste0(params$my_species, '.rds')))
+track_info <- make_tracks(file.path(the$banding_rds_path, paste0(params$species, '.rds')))
 saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
 
 # Batch model evaluation
@@ -117,7 +117,7 @@ for (i in 1:5){
 # graph tradeoff
 
 pdf(file.path(params$output_path, 'straightness_vs_end_traverse_cor.pdf'))
-plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = params$my_species)
+plot(ll_df$end_traverse_cor, ll_df$straightness, xlab = 'end traverse correlation', ylab = 'route straightness', main = params$species)
 dev.off()
 
 # Visualize model with best LL

@@ -193,7 +193,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
   rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
   route_stats <- rts_stats(rts)
   transitions_files <- list.files(the$tracking_data_path,
-                               pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
+                               pattern = paste0("^", params$species, ".*transitions.*\\.csv"),
                                full.names = TRUE)
   if (length(transitions_files) > 0){
     transitions_df_list <- lapply(transitions_files, utils::read.csv)
@@ -270,7 +270,7 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   # 
   # # To save to a file:
   htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
-                          file = file.path(params$output_path, paste0(params$my_species, "_", params$my_res, "km_3dscatter_", suffix, ".html")),
+                          file = file.path(params$output_path, paste0(params$species, "_", params$res, "km_3dscatter_", suffix, ".html")),
                           libdir = "libs",
                           selfcontained = TRUE
   )

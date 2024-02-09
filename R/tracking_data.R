@@ -98,7 +98,7 @@ tracks_to_rts <- function(df, bf, params){
 #' @export
 real_track_stats <- function(ll_df, params){
   tracks_files <- list.files(the$tracking_data_path,
-                             pattern = paste0("^", params$my_species, ".*tracks.*\\.csv"),
+                             pattern = paste0("^", params$species, ".*tracks.*\\.csv"),
                              full.names = TRUE)
   if (length(tracks_files) > 0){
     tracks_df_list <- lapply(tracks_files, data.table::fread)

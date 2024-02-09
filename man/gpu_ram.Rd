@@ -2,12 +2,12 @@
 % Please edit documentation in R/gpu_ram.R
 \name{gpu_ram}
 \alias{gpu_ram}
-\title{Calculate the GPU Ram, in GB, required to fit a model}
+\title{Calculate the GPU RAM needed for a model}
 \usage{
 gpu_ram(bf, max_param_per_gpu_gb = NULL)
 }
 \arguments{
-\item{bf}{A likely incomplete BirdFlow model object}
+\item{bf}{A BirdFlow model object}
 
 \item{max_param_per_gb}{The number of parameters that can be fit with each
 GB of GPU ram. If \code{NULL}, the default the value from
@@ -15,10 +15,10 @@ GB of GPU ram. If \code{NULL}, the default the value from
 is empirically wrong.}
 }
 \value{
-The GB of GPU Ram that was or will be required to fit \code{bf}
+The GB of GPU RAM that was or will be required to fit \code{bf}
 }
 \description{
-Calculate the GPU Ram, in GB, required to fit a model
+Calculate the GPU RAM needed for a model
 }
 \examples{
 bf <- BirdFlowModels::amewoo

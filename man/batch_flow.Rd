@@ -5,19 +5,18 @@
 \title{Grid search, model selection, and model evaluation for one species on the cluster}
 \usage{
 batch_flow(
-  one_species,
-  params = list(my_species = character(0), gpu_ram = 10, my_res = 150, output_nickname =
+  species,
+  params = list(species = character(0), gpu_ram = 10, res = 150, suffix =
     as.character(Sys.Date()), grid_search_type = "new", grid_search_list = list(de_ratio
     = c(2, 4, 6, 8, 10), obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999), dist_pow =
     seq(from = 0.1, to = 0.9, by = 0.1), dist_weight = NA_real_, ent_weight = NA_real_),
     hdf_path = the$hdf_path, output_path = the$output_path, season = "prebreeding",
     truncate_season = FALSE, model_selection = "real_tracking", clip = NULL,
-    skip_quality_checks = FALSE, 
-     fit_only = FALSE)
+    skip_quality_checks = FALSE, fit_only = FALSE)
 )
 }
 \arguments{
-\item{one_species}{a character vector of length 1 that is a valid input to \code{\link[ebirdst:get_species]{ebirdst::get_species()}}, e.g., an eBird 6-letter code or a valid common name}
+\item{species}{a character vector of length 1 that is a valid input to \code{\link[ebirdst:get_species]{ebirdst::get_species()}}, e.g., an eBird 6-letter code or a valid common name}
 
 \item{params}{a list of standard parameters, typically constructed by complex default argument.
 \itemize{

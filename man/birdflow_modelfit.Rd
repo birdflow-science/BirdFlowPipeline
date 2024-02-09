@@ -6,10 +6,10 @@
 Arguments typically passed from \code{\link[=batch_modelfit_wrapper]{batch_modelfit_wrapper()}} via \code{\link[=birdflow_modelfit_args_df]{birdflow_modelfit_args_df()}}}
 \usage{
 birdflow_modelfit(
-  mypy = file.path(the$python_repo_path, "update_hdf.py"),
-  mydir,
-  mysp,
-  myres,
+  species,
+  dir,
+  py_script = file.path(the$python_repo_path, "update_hdf.py"),
+  res,
   dist_weight,
   ent_weight,
   dist_pow,
@@ -17,27 +17,31 @@ birdflow_modelfit(
   learning_rate = 0.1,
   training_steps = 600,
   rng_seed = 17,
-  ebirdst_year
+  ebirdst_year,
+  mypy = lifecycle::deprecated(),
+  mydir = lifecycle::deprecated(),
+  mysp = lifecycle::deprecated(),
+  myres = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{mypy}{Path of \code{update_hdf.py} Python script.}
+\item{species}{Argument for \code{update_hdf.py} - the species code to fit}
 
-\item{mydir}{Argument for \code{update_hdf.py}.}
+\item{dir}{Argument for \code{update_hdf.py} - the directory for output}
 
-\item{mysp}{Argument for \code{update_hdf.py}.}
+\item{py_script}{Path of Python script to fit a model (\code{update_hdf.py})}
 
-\item{myres}{Argument for \code{update_hdf.py}.}
+\item{res}{Argument for \code{update_hdf.py} - the model resolution}
 
-\item{dist_weight}{Argument for \code{update_hdf.py}.}
+\item{dist_weight}{Argument for \code{update_hdf.py} - the distance weight}
 
-\item{ent_weight}{Argument for \code{update_hdf.py}.}
+\item{ent_weight}{Argument for \code{update_hdf.py} - the entropy weight}
 
-\item{dist_pow}{Argument for \code{update_hdf.py}.}
+\item{dist_pow}{Argument for \code{update_hdf.py} - the distance power}
 
-\item{obs_weight}{Argument for \code{update_hdf.py}.}
+\item{obs_weight}{Argument for \code{update_hdf.py} - the observation weight}
 
-\item{learning_rate}{Argument for \code{update_hdf.py}.}
+\item{learning_rate}{Argument for \code{update_hdf.py}}
 
 \item{training_steps}{Argument for \code{update_hdf.py}.}
 

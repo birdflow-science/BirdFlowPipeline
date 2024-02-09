@@ -14,16 +14,16 @@ make_timestamp <- function(tz = the$tz){
 #'
 #' @export
 preprocess_species_wrapper <- function(params) {
-  params$my_species <- ebirdst::get_species(params$my_species)
+  params$species <- ebirdst::get_species(params$species)
   pp_dir <- tempdir()
   suppressMessages(
     invisible(
       utils::capture.output(
         bf <- BirdFlowR::preprocess_species(
-          species = params$my_species,
+          species = params$species,
           out_dir = pp_dir,
           gpu_ram = params$gpu_ram,
-          res = params$my_res,
+          res = params$res,
           season = dplyr::if_else(params$truncate_season, params$season, 'all'),
           clip = params$clip,
           skip_quality_checks = params$skip_quality_checks)
@@ -31,18 +31,18 @@ preprocess_species_wrapper <- function(params) {
     )
   )
   # return res
-  params$my_res <- BirdFlowR::res(bf)[1] / 1000
+  params$res <- BirdFlowR::res(bf)[1] / 1000
   params$ebirdst_year <- bf$metadata$ebird_version_year
   # set up directories
-  params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
-  params$hdf_dir <- file.path(params$hdf_path, paste0(params$my_species, '_', params$my_res, 'km'))
+  params$output_fullname <- paste0(params$species, '_', params$res, 'km', '_', params$suffix)
+  params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
   dir.create(params$hdf_dir, showWarnings = FALSE)
   dir.create(params$output_path, showWarnings = FALSE)
   params$output_path <- file.path(params$output_path, params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   # move preprocessed file to modelfit directory
   preprocessed_file <- list.files(path = pp_dir,
-                                  pattern = paste0('^', params$my_species, '.*', params$my_res, 'km.*\\.hdf5$'),
+                                  pattern = paste0('^', params$species, '.*', params$res, 'km.*\\.hdf5$'),
                                   full.names = TRUE)
   invisible(file.copy(preprocessed_file, params$hdf_dir, overwrite = TRUE))
   if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
@@ -180,15 +180,15 @@ birdflow_modelfit_args_df <- function(params){
   grid_search_type <- params$grid_search_type
   grid_search_list <- params$grid_search_list
   hdf_dir <- params$hdf_dir
-  my_species <- params$my_species
-  my_res <- params$my_res
+  species <- params$species
+  res <- params$res
   ebirdst_year <- params$ebirdst_year
   stopifnot(!is.null(grid_search_type) && grid_search_type %in% c('old', 'new'))
   # base df without grid search parameters
   orig <- data.frame(
     mydir = hdf_dir,
-    mysp = my_species,
-    myres = my_res,
+    species = species,
+    res = res,
     ebirdst_year = ebirdst_year
   )
   orig$id <- seq_len(nrow(orig))
@@ -283,7 +283,7 @@ batch_modelfit_wrapper <- function(params){
 #' @export
 batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,
-                      pattern = paste0('^', params$my_species, '.*', params$my_res, 'km_.*\\.hdf5$'),
+                      pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
   evaluation_resources <- list(walltime = 25, memory = 8)
   success <- FALSE

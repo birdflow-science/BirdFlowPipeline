@@ -140,7 +140,7 @@ knitr::kable(route_stats_df[,c('routes', 'straightness', 'n_stopovers')])
 ### eBird Status and Trends data preprocessing
 
 - version year: `r bf$metadata$ebird_version_year`
-- raster resolution: `r params$my_res` km
+- raster resolution: `r params$res` km
 
 ### Grid search setup
 

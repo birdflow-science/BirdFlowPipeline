@@ -13,7 +13,7 @@ stage_model_release <- function(
     ){
   ll_df <- readRDS(file.path(output_directory, 'll_df.rds'))
   params <-readRDS(file.path(output_directory, 'params.rds'))
-  filename_base <- paste(params$my_species, params$season, sep = '_')
+  filename_base <- paste(params$species, params$season, sep = '_')
   rds_new_filename <- paste0(filename_base, '.Rds')
   html_new_filename <- paste0(filename_base, '.html')
   # Put Rds of chosen model in staging

@@ -24,12 +24,12 @@ test_that("batch_flow works", {
   test_output_path <- tempdir2
   expect_no_error(
     batch_flow(
-      one_species = test_species,
+      species = test_species,
       params = list(
-        my_species = character(0),
+        species = character(0),
         gpu_ram = 10,
-        my_res = test_res,
-        output_nickname = 'TEST',
+        res = test_res,
+        suffix = 'TEST',
         grid_search_type = 'new',
         grid_search_list = list(
           de_ratio = 8,
