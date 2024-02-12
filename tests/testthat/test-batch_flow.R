@@ -25,27 +25,24 @@ test_that("batch_flow works", {
   expect_no_error(
     batch_flow(
       species = test_species,
-      params = list(
-        species = character(0),
-        gpu_ram = 10,
-        res = test_res,
-        suffix = 'TEST',
-        grid_search_type = 'new',
-        grid_search_list = list(
-          de_ratio = 8,
-          obs_prop = c(0.95, 0.99),
-          dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
-          dist_weight = NA_real_,
-          ent_weight = NA_real_),
-        hdf_path = test_hdf_dir,
-        output_path = test_output_path,
-        season = 'prebreeding',
-        truncate_season = FALSE,
-        model_selection = 'real_tracking',
-        clip = NULL,
-        skip_quality_checks = FALSE,
-        fit_only = FALSE
-      )
+      gpu_ram = 10,
+      res = test_res,
+      suffix = 'TEST',
+      grid_search_type = 'new',
+      grid_search_list = list(
+        de_ratio = 8,
+        obs_prop = c(0.95, 0.99),
+        dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+        dist_weight = NA_real_,
+        ent_weight = NA_real_),
+      hdf_path = test_hdf_dir,
+      base_output_path = test_output_path,
+      season = 'prebreeding',
+      truncate_season = FALSE,
+      model_selection = 'real_tracking',
+      clip = NULL,
+      skip_quality_checks = FALSE,
+      fit_only = FALSE
     )
   )
   expect_true(file.exists(test_hdf_dir))

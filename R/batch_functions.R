@@ -37,8 +37,9 @@ preprocess_species_wrapper <- function(params) {
   params$output_fullname <- paste0(params$species, '_', params$res, 'km', '_', params$suffix)
   params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
   dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create(params$output_path, showWarnings = FALSE)
-  params$output_path <- file.path(params$output_path, params$output_fullname)
+  dir.create(params$base_output_path, showWarnings = FALSE)
+  params$output_path <- file.path(params$base_output_path, 
+                                  params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   # move preprocessed file to modelfit directory
   preprocessed_file <- list.files(path = pp_dir,
