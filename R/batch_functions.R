@@ -26,6 +26,7 @@ preprocess_species_wrapper <- function(params) {
           res = params$res,
           season = dplyr::if_else(params$truncate_season, params$season, 'all'),
           clip = params$clip,
+          crs = params$crs,
           skip_quality_checks = params$skip_quality_checks)
       )
     )
@@ -33,6 +34,7 @@ preprocess_species_wrapper <- function(params) {
   # return res
   params$res <- BirdFlowR::res(bf)[1] / 1000
   params$ebirdst_year <- bf$metadata$ebird_version_year
+  
   # set up directories
   params$output_fullname <- paste0(params$species, '_', params$res, 'km', '_', params$suffix)
   params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
@@ -41,7 +43,8 @@ preprocess_species_wrapper <- function(params) {
   params$output_path <- file.path(params$base_output_path, 
                                   params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
-  # move preprocessed file to modelfit directory
+  
+  # move preprocessed file to hdf_dir
   preprocessed_file <- list.files(path = pp_dir,
                                   pattern = paste0('^', params$species, '.*', params$res, 'km.*\\.hdf5$'),
                                   full.names = TRUE)
@@ -64,13 +67,14 @@ preprocess_species_wrapper <- function(params) {
 refactor_hyperparams <- function(de_ratio, obs_prop, digits = 5){
   x = (de_ratio - de_ratio * obs_prop) / (de_ratio * obs_prop + obs_prop)
   y = (1 - obs_prop) / (de_ratio * obs_prop + obs_prop)
-  c(dist_weight = signif(x, digits),
+  list(dist_weight = signif(x, digits),
     ent_weight = signif(y, digits)
   )
 }
 
 #' Function to fit BirdFlow model by executing `update_hdf.py` in Python. 
-#'   Arguments typically passed from [batch_modelfit_wrapper()] via [birdflow_modelfit_args_df()]
+#'   Arguments typically passed from [batch_modelfit_wrapper()] via 
+#'   [birdflow_modelfit_args_df()]
 #' @param py_script Path of Python script to fit a model (`update_hdf.py`)
 #' @param dir Argument for `update_hdf.py` - the directory for output
 #' @param species Argument for `update_hdf.py` - the species code to fit
@@ -86,9 +90,9 @@ refactor_hyperparams <- function(de_ratio, obs_prop, digits = 5){
 #' @seealso [birdflow_modelfit_args_df()], [batch_modelfit_wrapper()]
 #' @export
 birdflow_modelfit <- function(
-    species,
-    dir,
     py_script = file.path(the$python_repo_path, 'update_hdf.py'),
+    dir,
+    species,
     res,
     dist_weight,
     ent_weight,
@@ -97,51 +101,15 @@ birdflow_modelfit <- function(
     learning_rate = 0.1,
     training_steps = 600,
     rng_seed = 17,
-    ebirdst_year,
-    mypy = lifecycle::deprecated(),
-    mydir = lifecycle::deprecated(),
-    mysp  = lifecycle::deprecated(),
-    myres = lifecycle::deprecated()
-    
+    ebirdst_year
 ){
-  
-  
-  # Handle deprecated arguments
-  if(lifecycle::is_present("mypy")){
-    lifecycle::deprecate_warn("0.0.0.9002", 
-                              what = "birdflow_model_fit(mypy)", 
-                              with = "birdflow_model_fit(py_script)")
-    py_pcript <- mypy
-  }
-  if(lifecycle::is_present("mydir")){
-    lifecycle::deprecate_warn("0.0.0.9002", 
-                            what = "birdflow_model_fit(mydir)", 
-                            with = "birdflow_model_fit(preprocess_dir)")
-    preprocess_dir <- mydir
-  }
-  
-  if(lifecycle::is_present("mysp")){
-    lifecycle::deprecate_warn("0.0.0.9002", 
-                              what = "birdflow_model_fit(mysp)", 
-                              with = "birdflow_model_fit(species)")
-    species <- mysp
-  }
-  
-  
-  if(lifecycle::is_present("myres")){
-    lifecycle::deprecate_warn("0.0.0.9002", 
-                              what = "birdflow_model_fit(myres)", 
-                              with = "birdflow_model_fit(res)")
-    res <- myres
-  }
-  
   
   python_exit_code <- system2('python',
           args = c(
             py_script,
-            dir,
-            species,
-            res,
+            dir,  # root
+            species, # species
+            res,  # resolution
             paste0('--dist_weight=', dist_weight),
             paste0('--ent_weight=', ent_weight),
             paste0('--dist_pow=', dist_pow),
@@ -187,7 +155,7 @@ birdflow_modelfit_args_df <- function(params){
   stopifnot(!is.null(grid_search_type) && grid_search_type %in% c('old', 'new'))
   # base df without grid search parameters
   orig <- data.frame(
-    mydir = hdf_dir,
+    dir = hdf_dir,
     species = species,
     res = res,
     ebirdst_year = ebirdst_year
@@ -198,11 +166,10 @@ birdflow_modelfit_args_df <- function(params){
 
   # if the grid search type is new, calculate dist_weight and ent_weight
   if (grid_search_type == "new"){
-    for (i in seq_len(nrow(df))){
-      xy <- refactor_hyperparams(df$de_ratio[i], df$obs_prop[i])
-      df$dist_weight[i] <- xy["dist_weight"]
-      df$ent_weight[i] <- xy["ent_weight"]
-    }
+    xy <- refactor_hyperparams(df$de_ratio, df$obs_prop)
+    df$dist_weight <- xy$dist_weight
+    df$ent_weight <- xy$ent_weight
+    
     df$de_ratio <- NULL
     df$obs_prop <- NULL
   }
@@ -250,9 +217,14 @@ batch_modelfit_wrapper <- function(params){
   modelfit_args_df <- birdflow_modelfit_args_df(params)
   if (nrow(modelfit_args_df) > 0){
     success <- FALSE
-    batchtools::batchMap(fun = birdflow_modelfit,
-                         args = modelfit_args_df,
-                         reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
+    batchtools::batchMap(
+      fun = birdflow_modelfit,
+      args = modelfit_args_df,
+      reg = batchtools::makeRegistry(
+        file.path(params$output_path, paste0(make_timestamp(), '_mf')),
+        conf.file = system.file('batchtools.conf.R', 
+                                package = 'BirdFlowPipeline')))
+    
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                            resources = modelfit_resources)
     success <- batchtools::waitForJobs()
