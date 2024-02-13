@@ -22,22 +22,28 @@ the model cells in km.  Set to \code{NULL} to fit the finest resolution possible
 with the allocated \code{gpu_ram}.}
     \item{\code{suffix}}{Characters to append to the output directory and model file
 names.}
-    \item{\code{grid_search_type}}{Either \code{"new"} if the search uses the newer
-parameterization of \code{dist_pow}, \code{obs_prop}, and \code{de_ratio}; or \code{"old"} for
-the original parameterization of \code{dist_pow}, \code{dist_weight}, and
-\code{ent_weight}.  In either case there is a hidden parameter
-\code{obs_weight} which is always set to 1.}
-    \item{\code{grid_search_list}}{These parameters control the loss function used by
-\href{https://github.com/birdflow-science/BirdFlowPy}{BirdFlowPy}.
+    \item{\code{grid_search_type}}{Either \code{"old"} to specify all the Python
+hyperparameters (\code{dist_pow}, \code{dist_weight}, and
+\code{ent_weight}) directly; or\code{"new"} to uses the alternative paramerization of
+\code{dist_pow}, \code{obs_prop}, and \code{de_ratio} which are passed to the
+\code{refactor_hyperparameters} function to generate the Python parameters.
+In either case there is a hidden python parameter \code{obs_weight} which is
+always set to 1 when called from \strong{BirdFlowPipeline}.
+\code{"new"} is the current default behavior because the ratio between distance
+weight and entropy weight heavily determines the behavior of the model.
+These hyperparameters are highly sensitive and refactoring them in this
+way makes it easier to intuit about and appears to create better
+coverage and performance of the "grid" search.}
+    \item{\code{grid_search_list}}{These parameters are  used
+in  the loss function by \href{https://github.com/birdflow-science/BirdFlowPy}{BirdFlowPy}.
 They are also used in the grid search when running \code{\link[=batch_flow]{batch_flow()}}.
 All six possible parameters are in the list even though two of them won't
-be used  - which two depends on  \code{grid_search_type}.
-The default values are vectors appropriate for \code{batch_flow()} and are
+be used  - which two depends on  \code{grid_search_type}. They are
 the set of values that will be combined factorially in the grid
-search.
+search. The default values represent our currently prefered approach.
 
-\emph{New} and \emph{Old} indicate which setting of \code{grid_search_type} they are
-used with.
+\emph{New} and \emph{Old} below indicate which setting of \code{grid_search_type} they
+are used with.
 \describe{
 \item{\code{de_ratio}}{ \emph{New} The ratio of the distance weight to entropy weight
 in the loss function that is optimized while fitting the models}
@@ -51,14 +57,17 @@ function.}
 \item{\code{ent_weight}}{\emph{Old} The weight assigned to entropy in the loss
 function.}
 }}
-    \item{\code{hdf_path}}{The path to the directory in which to store preprocessed
-models. \strong{Change to "preprocess_dir? - ebp}}
+    \item{\code{hdf_path}}{The path to the base directory in which hdf5 preprocessed and
+fitted models are stored.}
+    \item{\code{hdf_dir}}{The path to the directory in which this run's hdf5
+preprocessed and fit models are stored. Set by
+\code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}} to \verb{<hdf_path>/<species>_<res>km/}.}
     \item{\code{base_output_path}}{The base path for fitted models, model reports,
 and other output.}
     \item{\code{output_fullname}}{Initially \code{NULL} this is set by
-\link{preprocess_speceies_warpper} to \code{"<species>_<res>km<suffix>"}.}
+\link{preprocess_species_wrapper} to \code{"<species>_<res>km<suffix>"}.}
     \item{\code{output_path}}{Initially \code{NULL} this is set by
-\link{preprocess_speceies_warpper} to \code{"<base_output_dir>_<output_fullname>"}.}
+\link{preprocess_species_wrapper} to \code{"<base_output_dir>_<output_fullname>"}.}
     \item{\code{season}}{This is used in two ways:  (1) to filter movement data
 (I think just tracks? - ebp) before evaluating the model and (2)
 if \code{truncate_season} is \code{TRUE} it is passed to
@@ -82,9 +91,9 @@ targeted to observed values from real tracking, but no PIT scores.)}
 function parameters are fixed - typically to average values - in which
 case no model selection is performed.}
 }}
-    \item{\code{clip}}{This is passed to \code{\link[=preprocess_species]{preprocess_species()}} to define a clipping
-polygon to use while preprocessing - only areas within the polygon are
-included in the model.  Although that function takes multiple formats,
+    \item{\code{clip}}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
+clipping polygon to use while preprocessing - only areas within the polygon
+are included in the model.  Although that function takes multiple formats,
 a path to a shapefile is recommened for \emph{BirdFlowPipeline} as complex
 objects might not work.}
     \item{\code{skip_quality_checks}}{Passed to \code{\link[=preprocess_species]{preprocess_species()}} if \code{TRUE} an
@@ -92,6 +101,8 @@ error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebi
 below three.  If \code{TRUE} then attempt to fit the model regardless of quality.}
     \item{\code{fit_only}}{Set to \code{TRUE} to fit a model without a grid search,
 model evaluation, model ranking, or model reports.}
+    \item{\code{ebirdst_year}}{The version year of the ebirdst package. This shouldn't
+be set by users.}
   }}
 }
 \value{

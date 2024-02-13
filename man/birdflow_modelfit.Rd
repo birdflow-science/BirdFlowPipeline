@@ -3,12 +3,13 @@
 \name{birdflow_modelfit}
 \alias{birdflow_modelfit}
 \title{Function to fit BirdFlow model by executing \code{update_hdf.py} in Python.
-Arguments typically passed from \code{\link[=batch_modelfit_wrapper]{batch_modelfit_wrapper()}} via \code{\link[=birdflow_modelfit_args_df]{birdflow_modelfit_args_df()}}}
+Arguments typically passed from \code{\link[=batch_modelfit_wrapper]{batch_modelfit_wrapper()}} via
+\code{\link[=birdflow_modelfit_args_df]{birdflow_modelfit_args_df()}}}
 \usage{
 birdflow_modelfit(
-  species,
-  dir,
   py_script = file.path(the$python_repo_path, "update_hdf.py"),
+  dir,
+  species,
   res,
   dist_weight,
   ent_weight,
@@ -17,19 +18,15 @@ birdflow_modelfit(
   learning_rate = 0.1,
   training_steps = 600,
   rng_seed = 17,
-  ebirdst_year,
-  mypy = lifecycle::deprecated(),
-  mydir = lifecycle::deprecated(),
-  mysp = lifecycle::deprecated(),
-  myres = lifecycle::deprecated()
+  ebirdst_year
 )
 }
 \arguments{
-\item{species}{Argument for \code{update_hdf.py} - the species code to fit}
+\item{py_script}{Path of Python script to fit a model (\code{update_hdf.py})}
 
 \item{dir}{Argument for \code{update_hdf.py} - the directory for output}
 
-\item{py_script}{Path of Python script to fit a model (\code{update_hdf.py})}
+\item{species}{Argument for \code{update_hdf.py} - the species code to fit}
 
 \item{res}{Argument for \code{update_hdf.py} - the model resolution}
 
@@ -51,7 +48,8 @@ birdflow_modelfit(
 }
 \description{
 Function to fit BirdFlow model by executing \code{update_hdf.py} in Python.
-Arguments typically passed from \code{\link[=batch_modelfit_wrapper]{batch_modelfit_wrapper()}} via \code{\link[=birdflow_modelfit_args_df]{birdflow_modelfit_args_df()}}
+Arguments typically passed from \code{\link[=batch_modelfit_wrapper]{batch_modelfit_wrapper()}} via
+\code{\link[=birdflow_modelfit_args_df]{birdflow_modelfit_args_df()}}
 }
 \seealso{
 \code{\link[=birdflow_modelfit_args_df]{birdflow_modelfit_args_df()}}, \code{\link[=batch_modelfit_wrapper]{batch_modelfit_wrapper()}}

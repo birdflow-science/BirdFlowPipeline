@@ -3,6 +3,9 @@
 *Note* for existing old output to work with the changes below we'll have to 
 update file names:   
   * "ll_df.rds" to "eval_metrics.rds"
+  
+Add `batch_species()` and `preprocess_and_fit()` for fitting species to fixed
+hyperparameters. 
 
 Vectorize `refactor_hyperparams()` and add test for it.
 
