@@ -14,7 +14,9 @@ make_timestamp <- function(tz = the$tz){
 #'
 #' @export
 preprocess_species_wrapper <- function(params) {
+
   params$species <- ebirdst::get_species(params$species)
+
   pp_dir <- tempdir()
   suppressMessages(
     invisible(
@@ -31,25 +33,28 @@ preprocess_species_wrapper <- function(params) {
       )
     )
   )
-  # return res
+  # Update parameters
+  
   params$res <- BirdFlowR::res(bf)[1] / 1000
   params$ebirdst_year <- bf$metadata$ebird_version_year
-  
-  # set up directories
   params$output_fullname <- paste0(params$species, '_', params$res, 'km', '_', params$suffix)
   params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
+  params$output_path <- file.path(params$base_output_path, params$output_fullname)
+
+  # Create directories
+  
   dir.create(params$hdf_dir, showWarnings = FALSE)
   dir.create(params$base_output_path, showWarnings = FALSE)
-  params$output_path <- file.path(params$base_output_path, 
-                                  params$output_fullname)
   dir.create(params$output_path, showWarnings = FALSE)
   
   # move preprocessed file to hdf_dir
+  
   preprocessed_file <- list.files(path = pp_dir,
                                   pattern = paste0('^', params$species, '.*', params$res, 'km.*\\.hdf5$'),
                                   full.names = TRUE)
   invisible(file.copy(preprocessed_file, params$hdf_dir, overwrite = TRUE))
   if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
+  
   params
 }
 
