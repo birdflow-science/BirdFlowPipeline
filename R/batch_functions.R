@@ -43,17 +43,35 @@ preprocess_species_wrapper <- function(params) {
 
   # Create directories
   
-  dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create(params$base_output_path, showWarnings = FALSE)
-  dir.create(params$output_path, showWarnings = FALSE)
+  dir.create(params$hdf_dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(params$output_path, showWarnings = FALSE, recursive = TRUE)
   
-  # move preprocessed file to hdf_dir
+  # move preprocessed file to hdf_dir 
   
-  preprocessed_file <- list.files(path = pp_dir,
+  temp_preprocessed_file <- list.files(path = pp_dir,
                                   pattern = paste0('^', params$species, '.*', params$res, 'km.*\\.hdf5$'),
                                   full.names = TRUE)
-  invisible(file.copy(preprocessed_file, params$hdf_dir, overwrite = TRUE))
-  if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
+  
+  stopifnot(length(temp_preprocessed_file) == 1, 
+                   file.exists(temp_preprocessed_file))
+ 
+
+  preprocess_file_name <- basename(temp_preprocessed_file)
+  final_preprocess_file <- file.path(params$hdf_dir, preprocess_file_name)
+  use_rename <- TRUE  
+  # testing renaming instead of copying. It should be more efficient but
+  # might not work if different drives.
+  if(use_rename){
+    if(file.exists(final_preprocess_file))
+      file.remove(final_preprocess_file)
+    file.rename(temp_preprocessed_file, final_preprocess_file)
+  } else {
+    # Old way: copy and then delete original
+    file.copy(temp_preprocessed_file, params$hdf_dir, overwrite = TRUE)
+    if (file.exists(temp_preprocessed_file)) 
+      file.remove(temp_preprocessed_file)
+  } 
+  stopifnot(file.exists(final_preprocess_file))
   
   params
 }

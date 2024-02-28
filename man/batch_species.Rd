@@ -106,9 +106,10 @@ case no model selection is performed.}
 }}
     \item{\code{clip}}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
 clipping polygon to use while preprocessing - only areas within the polygon
-are included in the model.  Although that function takes multiple formats,
-a path to a shapefile is recommened for \emph{BirdFlowPipeline} as complex
-objects might not work.}
+are included in the model.}
+    \item{\code{crs}}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define the coordinate
+reference system for the model. With the default of \code{NULL} the CRS
+is set to the CRS assigned to the species by eBird status and trends.}
     \item{\code{skip_quality_checks}}{Passed to \code{\link[=preprocess_species]{preprocess_species()}} if \code{TRUE} an
 error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebirdst::ebirdst_runs} are
 below three.  If \code{TRUE} then attempt to fit the model regardless of quality.}
@@ -119,5 +120,6 @@ be set by users.}
   }}
 }
 \description{
-Fit many species with identical parameters
+Batch fit many species without to fixed loss function parameters without
+tuning, evaluation, or reports.
 }

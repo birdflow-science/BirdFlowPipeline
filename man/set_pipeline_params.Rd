@@ -22,6 +22,7 @@ set_pipeline_params(
   truncate_season = FALSE,
   model_selection = "real_tracking",
   clip = NULL,
+  crs = NULL,
   skip_quality_checks = FALSE,
   fit_only = FALSE,
   ebirdst_year = ebirdst::ebirdst_version()$version_year
@@ -124,9 +125,11 @@ case no model selection is performed.}
 
 \item{clip}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
 clipping polygon to use while preprocessing - only areas within the polygon
-are included in the model.  Although that function takes multiple formats,
-a path to a shapefile is recommened for \emph{BirdFlowPipeline} as complex
-objects might not work.}
+are included in the model.}
+
+\item{crs}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define the coordinate
+reference system for the model. With the default of \code{NULL} the CRS
+is set to the CRS assigned to the species by eBird status and trends.}
 
 \item{skip_quality_checks}{Passed to \code{\link[=preprocess_species]{preprocess_species()}} if \code{TRUE} an
 error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebirdst::ebirdst_runs} are
@@ -137,10 +140,6 @@ model evaluation, model ranking, or model reports.}
 
 \item{ebirdst_year}{The version year of the ebirdst package. This shouldn't
 be set by users.}
-
-\item{crs}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define the coordinate
-reference system for the model. With the default of \code{NULL} the CRS
-is set to the CRS assigned to the species by eBird status and trends.}
 }
 \value{
 A parameter list to be used for \code{batch_flow()} and related functions

@@ -93,9 +93,7 @@
 #' }
 #' @param clip This is passed to [BirdFlowR::preprocess_species()] to define a
 #' clipping polygon to use while preprocessing - only areas within the polygon
-#' are included in the model.  Although that function takes multiple formats, 
-#' a path to a shapefile is recommened for *BirdFlowPipeline* as complex
-#' objects might not work.
+#' are included in the model.
 #' @param crs Passed to [BirdFlowR::preprocess_species()] to define the coordinate 
 #' reference system for the model. With the default of `NULL` the CRS
 #' is set to the CRS assigned to the species by eBird status and trends.
@@ -140,11 +138,14 @@ set_pipeline_params <- function(
     truncate_season = FALSE,
     model_selection = 'real_tracking',
     clip = NULL,
+    crs = NULL,
     skip_quality_checks = FALSE,
     fit_only = FALSE, 
     ebirdst_year = ebirdst::ebirdst_version()$version_year
 ){
   params <- as.list(environment())
+  
+  ## Check parameters
   
   # Make sure output_fullname and output_directory are NULL.
   # Previously these weren't exposed to the user. I like having all the params
@@ -156,5 +157,12 @@ set_pipeline_params <- function(
   if(!is.null(params$output_path))
     stop("output_path should be NULL. Support for other values may be added later.")
   
+  # Check crs and clip
+  
+  # preprocess_species does this too. Checking here throws immediate error
+  if(!is.null(params$crs)){
+    params$crs <- terra::crs(params$crs)
+  }
+
   return(params)
 }
