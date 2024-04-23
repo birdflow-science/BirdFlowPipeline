@@ -4,9 +4,9 @@
 #' This is primarily intended for use by [batch_species()] but could
 #' also be called directly to fit a single species. 
 #' 
-#' @param species 
+#' @param species A species code appropriate for [ebirdst::get_species()].
 #' @param params A parameter list similar to that returned by
-#' [set_pipleline_paramaters()] but for this function each of the
+#' [set_pipeline_params()] but for this function each of the
 #' `grid_search` parameter list items should be a single value.
 #'
 #' @return This function is called for the side affect of creating a fitted

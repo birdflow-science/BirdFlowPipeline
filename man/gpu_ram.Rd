@@ -9,10 +9,10 @@ gpu_ram(bf, max_param_per_gpu_gb = NULL)
 \arguments{
 \item{bf}{A BirdFlow model object}
 
-\item{max_param_per_gb}{The number of parameters that can be fit with each
-GB of GPU ram. If \code{NULL}, the default the value from
-\code{BirdFlowOptions()} is used. The only reason to set it here is if that value
-is empirically wrong.}
+\item{max_param_per_gpu_gb}{The number of parameters that can be fit with
+each GB of GPU ram. If \code{NULL}, the default the value from
+\code{\link[BirdFlowR:birdflow_options]{BirdFlowR::birdflow_options()}}` is used.
+The only reason to set it here is if that value is empirically wrong.}
 }
 \value{
 The GB of GPU RAM that was or will be required to fit \code{bf}

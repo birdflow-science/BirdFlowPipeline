@@ -7,10 +7,10 @@
 preprocess_and_fit(species, params)
 }
 \arguments{
-\item{species}{}
+\item{species}{A species code appropriate for \code{\link[ebirdst:get_species]{ebirdst::get_species()}}.}
 
 \item{params}{A parameter list similar to that returned by
-\code{\link[=set_pipleline_paramaters]{set_pipleline_paramaters()}} but for this function each of the
+\code{\link[=set_pipeline_params]{set_pipeline_params()}} but for this function each of the
 \code{grid_search} parameter list items should be a single value.}
 }
 \value{

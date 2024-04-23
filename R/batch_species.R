@@ -13,7 +13,7 @@
 #' @inheritDotParams set_pipeline_params -species -grid_search_type 
 #' @importMethodsFrom terra crs
 #' @importMethodsFrom terra vect
-#' @return
+#' @return Nothing is returned.
 #' @export
 batch_species <- function(
     species,

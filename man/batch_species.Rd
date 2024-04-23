@@ -119,7 +119,10 @@ model evaluation, model ranking, or model reports.}
 be set by users.}
   }}
 }
+\value{
+Nothing is returned.
+}
 \description{
-Batch fit many species without to fixed loss function parameters without
+Batch fit many species with fixed loss function parameters without
 tuning, evaluation, or reports.
 }
