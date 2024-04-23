@@ -2,7 +2,7 @@
  
 #' Fit many species with identical parameters
 #' 
-#' Batch fit many species without to fixed loss function parameters without
+#' Batch fit many species with fixed loss function parameters without
 #' tuning, evaluation, or reports.
 #'
 #' @param species A vector of species codes or common names to fit. Must work
