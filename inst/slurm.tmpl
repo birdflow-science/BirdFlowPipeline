@@ -40,6 +40,10 @@ log.file = fs::path_expand(log.file)
 ## Export value of DEBUGME environemnt var to slave
 export DEBUGME=<%= Sys.getenv("DEBUGME") %>
 
+## Export value of EBIRDST_KEY environemnt var to slave
+export EBIRDST_KEY=<%= Sys.getenv("EBIRDST_KEY") %>
+
+
 TZ='America/Los_Angeles' date
 whoami
 hostname

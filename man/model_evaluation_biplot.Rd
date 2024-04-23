@@ -4,10 +4,10 @@
 \alias{model_evaluation_biplot}
 \title{PCA biplot hyperparameters evaluation}
 \usage{
-model_evaluation_biplot(ll_df, params)
+model_evaluation_biplot(eval_metrics, params)
 }
 \arguments{
-\item{ll_df}{data.frame produced from rbindlist-ing output from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{eval_metrics}{data.frame produced from rbindlist-ing output from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
 
 \item{params}{the standard params list object, see \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}}
 }

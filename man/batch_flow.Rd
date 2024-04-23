@@ -2,58 +2,122 @@
 % Please edit documentation in R/batch_flow.R
 \name{batch_flow}
 \alias{batch_flow}
-\title{Grid search, model selection, and model evaluation for one species on the cluster}
+\title{Grid search, model selection, and model evaluation for one species}
 \usage{
-batch_flow(
-  one_species,
-  params = list(my_species = character(0), gpu_ram = 10, my_res = 150, output_nickname =
-    as.character(Sys.Date()), grid_search_type = "new", grid_search_list = list(de_ratio
-    = c(2, 4, 6, 8, 10), obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999), dist_pow =
-    seq(from = 0.1, to = 0.9, by = 0.1), dist_weight = NA_real_, ent_weight = NA_real_),
-    hdf_path = the$hdf_path, output_path = the$output_path, season = "prebreeding",
-    truncate_season = FALSE, model_selection = "real_tracking", clip = NULL,
-    skip_quality_checks = FALSE, 
-     fit_only = FALSE)
-)
+batch_flow(species, ...)
 }
 \arguments{
-\item{one_species}{a character vector of length 1 that is a valid input to \code{\link[ebirdst:get_species]{ebirdst::get_species()}}, e.g., an eBird 6-letter code or a valid common name}
+\item{species}{A single eBird 6-letter code or common name describing
+a species recognized by \code{\link[ebirdst:get_species]{ebirdst::get_species()}}.}
 
-\item{params}{a list of standard parameters, typically constructed by complex default argument.
-\itemize{
-\item example \code{old} grid search list:
-}
+\item{...}{
+  Arguments passed on to \code{\link[=set_pipeline_params]{set_pipeline_params}}
+  \describe{
+    \item{\code{gpu_ram}}{Set the GPU RAM allocation in GB when fitting
+the models.  It is also passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} and
+if \code{res} is set to \code{NULL} that function will set the \code{res} to the smallest
+round number that can be fit with the allocated ram.}
+    \item{\code{res}}{The resolution of model. Specifically the height and width of
+the model cells in km.  Set to \code{NULL} to fit the finest resolution possible
+with the allocated \code{gpu_ram}.}
+    \item{\code{suffix}}{Characters to append to the output directory and model file
+names.}
+    \item{\code{grid_search_type}}{Either \code{"old"} to specify all the Python
+hyperparameters (\code{dist_pow}, \code{dist_weight}, and
+\code{ent_weight}) directly; or\code{"new"} to uses the alternative paramerization of
+\code{dist_pow}, \code{obs_prop}, and \code{de_ratio} which are passed to the
+\code{refactor_hyperparameters} function to generate the Python parameters.
+In either case there is a hidden python parameter \code{obs_weight} which is
+always set to 1 when called from \strong{BirdFlowPipeline}.
+\code{"new"} is the current default behavior because the ratio between distance
+weight and entropy weight heavily determines the behavior of the model.
+These hyperparameters are highly sensitive and refactoring them in this
+way makes it easier to intuit about and appears to create better
+coverage and performance of the "grid" search.}
+    \item{\code{grid_search_list}}{These parameters are  used
+in  the loss function by \href{https://github.com/birdflow-science/BirdFlowPy}{BirdFlowPy}.
+They are also used in the grid search when running \code{\link[=batch_flow]{batch_flow()}}.
+All six possible parameters are in the list even though two of them won't
+be used  - which two depends on  \code{grid_search_type}. They are
+the set of values that will be combined factorially in the grid
+search. The default values represent our currently prefered approach.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{grid_search_list <- list(
- dist_weight = seq(from = 0.0008, to = 0.0018, length.out = 5),
- ent_weight = seq(from = 0.00015, to = 0.0004, length.out = 5),
- dist_pow = seq(from = 0.1, to = .9, length.out = 5)
-)
-}\if{html}{\out{</div>}}
-\itemize{
-\item example \code{new} grid search list:
-}
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{grid_search_list <- list(
- de_ratio = c(2, 4, 8, 16),
- obs_prop = c(0.95, 0.975, 0.99, 0.999, 0.9999),
- dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
- dist_weight = NA_real_,
- ent_weight = NA_real_
-)
-}\if{html}{\out{</div>}}}
+\emph{New} and \emph{Old} below indicate which setting of \code{grid_search_type} they
+are used with.
+\describe{
+\item{\code{de_ratio}}{ \emph{New} The ratio of the distance weight to entropy weight
+in the loss function that is optimized while fitting the models}
+\item{\code{obs_prop}}{ \emph{New} The proportion of the total weight (among
+observation, distance, and entropy weights), that is assigned to the
+observation weight in the loss function.}
+\item{\code{dist_pow}}{ \emph{New and Old} The power used to transform movement
+distances prior to weighting them in the loss function}
+\item{\code{dist_weight}}{\emph{Old} The weight assigned to distances in the loss
+function.}
+\item{\code{ent_weight}}{\emph{Old} The weight assigned to entropy in the loss
+function.}
+}}
+    \item{\code{hdf_path}}{The path to the base directory in which hdf5 preprocessed and
+fitted models are stored.}
+    \item{\code{hdf_dir}}{The path to the directory in which this run's hdf5
+preprocessed and fit models are stored. Set by
+\code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}} to \verb{<hdf_path>/<species>_<res>km/}.}
+    \item{\code{base_output_path}}{The base path for fitted models, model reports,
+and other output.}
+    \item{\code{output_fullname}}{Initially \code{NULL} this is set by
+\link{preprocess_species_wrapper} to \code{"<species>_<res>km<suffix>"}.}
+    \item{\code{output_path}}{Initially \code{NULL} this is set by
+\link{preprocess_species_wrapper} to \code{"<base_output_dir>_<output_fullname>"}.}
+    \item{\code{season}}{This is used in two ways:  (1) to filter movement data
+(I think just tracks? - ebp) before evaluating the model and (2)
+if \code{truncate_season} is \code{TRUE} it is passed to
+\code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}, producing a model that is truncated to
+just that season.}
+    \item{\code{truncate_season}}{If \code{TRUE} the model will be truncated to \code{season} and
+marginals for transitions outside of the season won't be fit or included.}
+    \item{\code{model_selection}}{Set how model selection is performed within
+\code{\link[=rank_models]{rank_models()}} as called from \code{\link[=batch_flow]{batch_flow()}}.  It should be one of:
+\describe{
+\item{\code{"str_etc"}}{Straightness and traverse correlation only.}
+\item{\code{"pit_etc"}}{PIT metrics and traverse correlation only.}
+\item{\code{"real_tracking"}}{Tracking-focused model selection, this
+includes traverse correlation; PIT scores; and straightness and
+n_stopovers targeted to observed values from real
+tracking data.}
+\item{\code{"real_tracking_no_cal"}}{Tracking-focused model selection,
+this includes traverse correlation; and straightness and n_stopovers
+targeted to observed values from real tracking, but no PIT scores.)}
+\item{\code{"averaged_parameters"}}{This is a place holder for when the loss
+function parameters are fixed - typically to average values - in which
+case no model selection is performed.}
+}}
+    \item{\code{clip}}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
+clipping polygon to use while preprocessing - only areas within the polygon
+are included in the model.}
+    \item{\code{crs}}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define the coordinate
+reference system for the model. With the default of \code{NULL} the CRS
+is set to the CRS assigned to the species by eBird status and trends.}
+    \item{\code{skip_quality_checks}}{Passed to \code{\link[=preprocess_species]{preprocess_species()}} if \code{TRUE} an
+error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebirdst::ebirdst_runs} are
+below three.  If \code{TRUE} then attempt to fit the model regardless of quality.}
+    \item{\code{fit_only}}{Set to \code{TRUE} to fit a model without a grid search,
+model evaluation, model ranking, or model reports.}
+    \item{\code{ebirdst_year}}{The version year of the ebirdst package. This shouldn't
+be set by users.}
+  }}
 }
 \value{
-function is used for its many side effects, according to configuration settings in \code{as.list(BirdFlowPipeline:::the)}
+function is used for its many side effects, according to
+configuration settings in \code{as.list(BirdFlowPipeline:::the)}
 \itemize{
 \item create destination directories as needed
 \item write preprocessed hdf5 file
 \item write modelfit hdf5 files
-\item write output files, plots, and maps for model evaluation and visualization
+\item write reports, plots, and maps for model evaluation and visualization
 }
 }
 \description{
-Grid search, model selection, and model evaluation for one species on the cluster
+Grid search, model selection, and model evaluation for one species
 }
 \seealso{
 \code{\link[=multiple_species_batch]{multiple_species_batch()}}

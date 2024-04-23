@@ -193,7 +193,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
   rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
   route_stats <- rts_stats(rts)
   transitions_files <- list.files(the$tracking_data_path,
-                               pattern = paste0("^", params$my_species, ".*transitions.*\\.csv"),
+                               pattern = paste0("^", params$species, ".*transitions.*\\.csv"),
                                full.names = TRUE)
   if (length(transitions_files) > 0){
     transitions_df_list <- lapply(transitions_files, utils::read.csv)
@@ -243,25 +243,25 @@ evaluate_model <- function(bf, modelname, track_info, params){
 #' 3d plot function
 #' @param color_column column to use for the colors
 #' @param suffix suffix to use for output filenames
-#' @param ll_df data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
+#' @param eval_metrics data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
 #' @param params the standard params list object, see [preprocess_species_wrapper()]
 #' @seealso [batch_evaluate_models()], [evaluate_model()], [preprocess_species_wrapper()]
 #' @returns side-effect is a plot file created
 #' @export
-make_3d_plot <- function(color_column, suffix, ll_df, params){
+make_3d_plot <- function(color_column, suffix, eval_metrics, params){
   ## color_column can be color_ll, color_nll, or color_cor
 
   # Set the plot colors
-  ll_df$color_ll <- grDevices::hcl.colors(15, rev = TRUE)[cut(ll_df$ll, 15)]
-  ll_df <- ll_df %>% dplyr::mutate(color_nll = dplyr::if_else(.data$ll < .data$nll, '#ffffff', .data$color_ll))
+  eval_metrics$color_ll <- grDevices::hcl.colors(15, rev = TRUE)[cut(eval_metrics$ll, 15)]
+  eval_metrics <- eval_metrics %>% dplyr::mutate(color_nll = dplyr::if_else(.data$ll < .data$nll, '#ffffff', .data$color_ll))
   cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
   cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
   cor_colors <- c('#FFFFFF', grDevices::hcl.colors(3, rev = TRUE))
-  ll_df$color_cor <- cor_colors[cut(ll_df$end_traverse_cor, breaks = cor_breaks)]
+  eval_metrics$color_cor <- cor_colors[cut(eval_metrics$end_traverse_cor, breaks = cor_breaks)]
 
   rgl::plot3d(
-    x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow, 
-    col = ll_df[[color_column]], 
+    x = eval_metrics$ent_weight, y = eval_metrics$dist_weight, z = eval_metrics$dist_pow, 
+    col = eval_metrics[[color_column]], 
     type = 's', 
     radius = .02,
     xlab="ent_weight", ylab="dist_weight", zlab="dist_pow")
@@ -270,7 +270,7 @@ make_3d_plot <- function(color_column, suffix, ll_df, params){
   # 
   # # To save to a file:
   htmlwidgets::saveWidget(rgl::rglwidget(width = 520, height = 520),
-                          file = file.path(params$output_path, paste0(params$my_species, "_", params$my_res, "km_3dscatter_", suffix, ".html")),
+                          file = file.path(params$output_path, paste0(params$species, "_", params$res, "km_3dscatter_", suffix, ".html")),
                           libdir = "libs",
                           selfcontained = TRUE
   )
@@ -298,16 +298,16 @@ rts_stats <- function(rts){
 }
 
 #' PCA biplot hyperparameters evaluation
-#' @param ll_df data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
+#' @param eval_metrics data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
 #' @param params the standard params list object, see [preprocess_species_wrapper()]
 #' @seealso [batch_evaluate_models()], [preprocess_species_wrapper()]
 #' @returns side effect is a plot written to file
 #' @export
-model_evaluation_biplot <- function(ll_df, params){
+model_evaluation_biplot <- function(eval_metrics, params){
   # workaround for unexported method ggfortify:::autoplot.princomp()
   requireNamespace('ggfortify', quietly = TRUE)
   outfile <- file.path(params$output_path, 'pca_evaluation.pdf')
-  if (length(unique(ll_df$ll)) == 1) {ll_df$ll <- NULL}
+  if (length(unique(eval_metrics$ll)) == 1) {eval_metrics$ll <- NULL}
   pca_columns <- c(
     'ent_weight',
     'dist_weight',
@@ -318,8 +318,8 @@ model_evaluation_biplot <- function(ll_df, params){
     'length',
     'displacement'
   )
-  pca_columns <- pca_columns[pca_columns %in% names(ll_df)]
-  fit <- stats::princomp(ll_df[,pca_columns], cor = TRUE)
+  pca_columns <- pca_columns[pca_columns %in% names(eval_metrics)]
+  fit <- stats::princomp(eval_metrics[,pca_columns], cor = TRUE)
   pdf(outfile, 13, 5.5)
   plot1 <- ggplot2::autoplot(fit, color = 'straightness',
                     loadings = TRUE,
@@ -348,24 +348,24 @@ model_evaluation_biplot <- function(ll_df, params){
     ggplot2::scale_color_viridis_c()
   
   suppressWarnings({
-    gridExtra::grid.arrange(plot1, plot2, top = substr(ll_df$model[1], 1, 6), ncol=2)
+    gridExtra::grid.arrange(plot1, plot2, top = substr(eval_metrics$model[1], 1, 6), ncol=2)
     })
   dev.off()
 }
 
-#' Quick visualize a spring migration routes simulation from ll_df by row number
+#' Quick visualize a spring migration routes simulation from eval_metrics by row number
 #' @param i row number in `df` from which to extract model
 #' @param n number of routes to simulate for visualization
 #' @param season season for which to simulate route, parseable by [BirdFlowR::lookup_season_timesteps()]
-#' @param df a `ll_df` produced by [batch_evaluate_models()]
+#' @param df a `eval_metrics` produced by [batch_evaluate_models()]
 #' @param dir hdf5 directory from `params` list.  Need to refactor some of these arguments
 #' @seealso [BirdFlowR::lookup_season_timesteps()], [batch_evaluate_models()]
 #' @returns side effect is an interactive plot
 #' @export
-quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df, dir = hdf_dir){
-  ll_df <- df
+quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = eval_metrics, dir = hdf_dir){
+  eval_metrics <- df
   hdf_dir <- dir
-  bf <- BirdFlowR::import_birdflow(file.path(hdf_dir, ll_df$model[i]))
+  bf <- BirdFlowR::import_birdflow(file.path(hdf_dir, eval_metrics$model[i]))
   # 
   # ## Plot map route_migration spring msap
   # 
@@ -373,32 +373,33 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = ll_df
   print(
     {
       BirdFlowR::plot_routes(rts, bf, use_seasonal_colors = FALSE) +
-        ggplot2::labs(title = ll_df$model[i])
+        ggplot2::labs(title = eval_metrics$model[i])
     }
   )
 }
 
-#' Rank the models in a ll_df
+#' Rank the models in an eval_metrics data frame
 #'
-#' @param ll_df The ll_df, often produced by recombining results from [batch_evaluate_models()]
+#' @param eval_metrics The eval_metrics data frame often produced by 
+#' recombining results from [batch_evaluate_models()]
 #' @param params The standard params list, which includes `model_selection` method
-#' @returns Updated ll_df including desirability columns
+#' @returns Updated eval_metrics including desirability columns
 #' @export
-rank_models <- function(ll_df, params){
+rank_models <- function(eval_metrics, params){
   # remove any existing desirability columns (for interactive scripting)
-  ll_df <- ll_df %>% (dplyr::select)(-dplyr::ends_with("_d"))
-  ll_df$overall_des <- NULL
+  eval_metrics <- eval_metrics %>% (dplyr::select)(-dplyr::ends_with("_d"))
+  eval_metrics$overall_des <- NULL
   # Calculate desirability columns depending on chosen criteria set
   if (params$model_selection == 'str_etc'){
     # straightness and end traverse correlation only
-    ll_df <- ll_df %>%
+    eval_metrics <- eval_metrics %>%
       dplyr::mutate(
         str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
         etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE)
       )
   } else if (params$model_selection == 'pit_etc'){
     # PIT metrics and end traverse correlation only
-    ll_df <- ll_df %>%
+    eval_metrics <- eval_metrics %>%
       dplyr::mutate(
         d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
         d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
@@ -410,14 +411,14 @@ rank_models <- function(ll_df, params){
     # Tracking-focused model selection
     # Includes traverse correlation, PIT scores, and
     # straightness + n_stopovers targetted to observed values from real tracking
-    real_track_stats <- real_track_stats(ll_df, params)
+    real_track_stats <- real_track_stats(eval_metrics, params)
     # save real_track_stats RDS
     saveRDS(real_track_stats, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
       !is.na(real_track_stats$straightness),
       !is.na(real_track_stats$n_stopovers)
     )
-    ll_df <- ll_df %>%
+    eval_metrics <- eval_metrics %>%
       dplyr::mutate(
         d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
         d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
@@ -432,37 +433,37 @@ rank_models <- function(ll_df, params){
     # Includes traverse correlation, and
     # straightness + n_stopovers targetted to observed values from real tracking
     # But no PIT scores!
-    real_track_stats <- real_track_stats(ll_df, params)
+    real_track_stats <- real_track_stats(eval_metrics, params)
     # save real_track_stats RDS
     saveRDS(real_track_stats, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
       !is.na(real_track_stats$straightness),
       !is.na(real_track_stats$n_stopovers)
     )
-    ll_df <- ll_df %>%
+    eval_metrics <- eval_metrics %>%
       dplyr::mutate(
         etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
         str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
         nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
       )
   } else if (params$model_selection == 'averaged_parameters') {
-    ll_df <- ll_df %>%
+    eval_metrics <- eval_metrics %>%
       dplyr::mutate(
-        dummy_d = rep(1, nrow(ll_df)),
+        dummy_d = rep(1, nrow(eval_metrics)),
       )
   } else {
     stop('invalid model_selection in params')
   }
 
   # Calculate overall desirability using desirability columns ending with '_d'
-  ll_df <- ll_df %>% dplyr::mutate(
+  eval_metrics <- eval_metrics %>% dplyr::mutate(
     overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
     )
-  # Do desirability rankings (and return the new ll_df)
-  ll_df %>% (dplyr::arrange)(-.data$overall_des)
+  # Do desirability rankings (and return the new eval_metrics)
+  eval_metrics %>% (dplyr::arrange)(-.data$overall_des)
   #
   # # old code
-  # ll_df %>%
+  # eval_metrics %>%
   #   # create new desirability columns
   #   ## Previous desirability:  Used just end traverse correlation and straigthness like this, but models were underdispersed
   #   # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE)

@@ -14,38 +14,65 @@ make_timestamp <- function(tz = the$tz){
 #'
 #' @export
 preprocess_species_wrapper <- function(params) {
-  params$my_species <- ebirdst::get_species(params$my_species)
+
+  params$species <- ebirdst::get_species(params$species)
+
   pp_dir <- tempdir()
   suppressMessages(
     invisible(
       utils::capture.output(
         bf <- BirdFlowR::preprocess_species(
-          species = params$my_species,
+          species = params$species,
           out_dir = pp_dir,
           gpu_ram = params$gpu_ram,
-          res = params$my_res,
+          res = params$res,
           season = dplyr::if_else(params$truncate_season, params$season, 'all'),
           clip = params$clip,
+          crs = params$crs,
           skip_quality_checks = params$skip_quality_checks)
       )
     )
   )
-  # return res
-  params$my_res <- BirdFlowR::res(bf)[1] / 1000
+  # Update parameters
+  
+  params$res <- BirdFlowR::res(bf)[1] / 1000
   params$ebirdst_year <- bf$metadata$ebird_version_year
-  # set up directories
-  params$output_fullname <- paste0(params$my_species, '_', params$my_res, 'km', '_', params$output_nickname)
-  params$hdf_dir <- file.path(params$hdf_path, paste0(params$my_species, '_', params$my_res, 'km'))
-  dir.create(params$hdf_dir, showWarnings = FALSE)
-  dir.create(params$output_path, showWarnings = FALSE)
-  params$output_path <- file.path(params$output_path, params$output_fullname)
-  dir.create(params$output_path, showWarnings = FALSE)
-  # move preprocessed file to modelfit directory
-  preprocessed_file <- list.files(path = pp_dir,
-                                  pattern = paste0('^', params$my_species, '.*', params$my_res, 'km.*\\.hdf5$'),
+  params$output_fullname <- paste0(params$species, '_', params$res, 'km', '_', params$suffix)
+  params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
+  params$output_path <- file.path(params$base_output_path, params$output_fullname)
+
+  # Create directories
+  
+  dir.create(params$hdf_dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(params$output_path, showWarnings = FALSE, recursive = TRUE)
+  
+  # move preprocessed file to hdf_dir 
+  
+  temp_preprocessed_file <- list.files(path = pp_dir,
+                                  pattern = paste0('^', params$species, '.*', params$res, 'km.*\\.hdf5$'),
                                   full.names = TRUE)
-  invisible(file.copy(preprocessed_file, params$hdf_dir, overwrite = TRUE))
-  if (file.exists(preprocessed_file)) invisible(file.remove(preprocessed_file))
+  
+  stopifnot(length(temp_preprocessed_file) == 1, 
+                   file.exists(temp_preprocessed_file))
+ 
+
+  preprocess_file_name <- basename(temp_preprocessed_file)
+  final_preprocess_file <- file.path(params$hdf_dir, preprocess_file_name)
+  use_rename <- TRUE  
+  # testing renaming instead of copying. It should be more efficient but
+  # might not work if different drives.
+  if(use_rename){
+    if(file.exists(final_preprocess_file))
+      file.remove(final_preprocess_file)
+    file.rename(temp_preprocessed_file, final_preprocess_file)
+  } else {
+    # Old way: copy and then delete original
+    file.copy(temp_preprocessed_file, params$hdf_dir, overwrite = TRUE)
+    if (file.exists(temp_preprocessed_file)) 
+      file.remove(temp_preprocessed_file)
+  } 
+  stopifnot(file.exists(final_preprocess_file))
+  
   params
 }
 
@@ -63,32 +90,33 @@ preprocess_species_wrapper <- function(params) {
 refactor_hyperparams <- function(de_ratio, obs_prop, digits = 5){
   x = (de_ratio - de_ratio * obs_prop) / (de_ratio * obs_prop + obs_prop)
   y = (1 - obs_prop) / (de_ratio * obs_prop + obs_prop)
-  c(dist_weight = signif(x, digits),
+  list(dist_weight = signif(x, digits),
     ent_weight = signif(y, digits)
   )
 }
 
 #' Function to fit BirdFlow model by executing `update_hdf.py` in Python. 
-#'   Arguments typically passed from [batch_modelfit_wrapper()] via [birdflow_modelfit_args_df()]
-#' @param mypy Path of `update_hdf.py` Python script.
-#' @param mydir Argument for `update_hdf.py`.
-#' @param mysp Argument for `update_hdf.py`.
-#' @param myres Argument for `update_hdf.py`.
-#' @param dist_weight Argument for `update_hdf.py`.
-#' @param ent_weight Argument for `update_hdf.py`.
-#' @param dist_pow Argument for `update_hdf.py`.
-#' @param obs_weight Argument for `update_hdf.py`.
-#' @param learning_rate Argument for `update_hdf.py`.
+#'   Arguments typically passed from [batch_modelfit_wrapper()] via 
+#'   [birdflow_modelfit_args_df()]
+#' @param py_script Path of Python script to fit a model (`update_hdf.py`)
+#' @param dir Argument for `update_hdf.py` - the directory for output
+#' @param species Argument for `update_hdf.py` - the species code to fit
+#' @param res Argument for `update_hdf.py` - the model resolution
+#' @param dist_weight Argument for `update_hdf.py` - the distance weight
+#' @param ent_weight Argument for `update_hdf.py` - the entropy weight 
+#' @param dist_pow Argument for `update_hdf.py` - the distance power 
+#' @param obs_weight Argument for `update_hdf.py` - the observation weight
+#' @param learning_rate Argument for `update_hdf.py`
 #' @param training_steps Argument for `update_hdf.py`.
 #' @param rng_seed Argument for `update_hdf.py`.
 #' @param ebirdst_year Argument for `update_hdf.py`.
 #' @seealso [birdflow_modelfit_args_df()], [batch_modelfit_wrapper()]
 #' @export
 birdflow_modelfit <- function(
-    mypy = file.path(the$python_repo_path, 'update_hdf.py'),
-    mydir,
-    mysp,
-    myres,
+    py_script = file.path(the$python_repo_path, 'update_hdf.py'),
+    dir,
+    species,
+    res,
     dist_weight,
     ent_weight,
     dist_pow,
@@ -98,12 +126,13 @@ birdflow_modelfit <- function(
     rng_seed = 17,
     ebirdst_year
 ){
+  
   python_exit_code <- system2('python',
           args = c(
-            mypy,
-            mydir,
-            mysp,
-            myres,
+            py_script,
+            dir,  # root
+            species, # species
+            res,  # resolution
             paste0('--dist_weight=', dist_weight),
             paste0('--ent_weight=', ent_weight),
             paste0('--dist_pow=', dist_pow),
@@ -143,15 +172,15 @@ birdflow_modelfit_args_df <- function(params){
   grid_search_type <- params$grid_search_type
   grid_search_list <- params$grid_search_list
   hdf_dir <- params$hdf_dir
-  my_species <- params$my_species
-  my_res <- params$my_res
+  species <- params$species
+  res <- params$res
   ebirdst_year <- params$ebirdst_year
   stopifnot(!is.null(grid_search_type) && grid_search_type %in% c('old', 'new'))
   # base df without grid search parameters
   orig <- data.frame(
-    mydir = hdf_dir,
-    mysp = my_species,
-    myres = my_res,
+    dir = hdf_dir,
+    species = species,
+    res = res,
     ebirdst_year = ebirdst_year
   )
   orig$id <- seq_len(nrow(orig))
@@ -160,11 +189,10 @@ birdflow_modelfit_args_df <- function(params){
 
   # if the grid search type is new, calculate dist_weight and ent_weight
   if (grid_search_type == "new"){
-    for (i in seq_len(nrow(df))){
-      xy <- refactor_hyperparams(df$de_ratio[i], df$obs_prop[i])
-      df$dist_weight[i] <- xy["dist_weight"]
-      df$ent_weight[i] <- xy["ent_weight"]
-    }
+    xy <- refactor_hyperparams(df$de_ratio, df$obs_prop)
+    df$dist_weight <- xy$dist_weight
+    df$ent_weight <- xy$ent_weight
+    
     df$de_ratio <- NULL
     df$obs_prop <- NULL
   }
@@ -212,9 +240,14 @@ batch_modelfit_wrapper <- function(params){
   modelfit_args_df <- birdflow_modelfit_args_df(params)
   if (nrow(modelfit_args_df) > 0){
     success <- FALSE
-    batchtools::batchMap(fun = birdflow_modelfit,
-                         args = modelfit_args_df,
-                         reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_mf')), conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
+    batchtools::batchMap(
+      fun = birdflow_modelfit,
+      args = modelfit_args_df,
+      reg = batchtools::makeRegistry(
+        file.path(params$output_path, paste0(make_timestamp(), '_mf')),
+        conf.file = system.file('batchtools.conf.R', 
+                                package = 'BirdFlowPipeline')))
+    
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                            resources = modelfit_resources)
     success <- batchtools::waitForJobs()
@@ -246,7 +279,7 @@ batch_modelfit_wrapper <- function(params){
 #' @export
 batch_evaluate_models <- function(params, track_info){
   files <- list.files(path = params$hdf_dir,
-                      pattern = paste0('^', params$my_species, '.*', params$my_res, 'km_.*\\.hdf5$'),
+                      pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
   evaluation_resources <- list(walltime = 25, memory = 8)
   success <- FALSE
@@ -271,13 +304,13 @@ batch_evaluate_models <- function(params, track_info){
     success <- batchtools::waitForJobs()
   }
   stopifnot(isTRUE(success))
-  ll_df <- batchtools::reduceResultsList() %>%
+  eval_metrics <- batchtools::reduceResultsList() %>%
     lapply(function(i){i$df}) %>%
     (data.table::rbindlist) %>%
     (dplyr::as_tibble) %>%
     (dplyr::arrange)(-.data$ll)
   # replace ll and nll with 0 if all NAs
-  if (all(is.na(ll_df$ll))) {ll_df$ll <- 0}
-  if (all(is.na(ll_df$nll))) {ll_df$nll <- 0}
-  ll_df
+  if (all(is.na(eval_metrics$ll))) {eval_metrics$ll <- 0}
+  if (all(is.na(eval_metrics$nll))) {eval_metrics$nll <- 0}
+  eval_metrics
 }

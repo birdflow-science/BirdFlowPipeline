@@ -11,7 +11,7 @@ test_that("evaluate_model works for no-tracking data species", {
         obs_df = BirdFlowModels::rewbla_observations,
         int_df = BirdFlowModels::rewbla_intervals
       ),
-      params = list(my_species = 'rewbla', output_path = tempdir1)
+      params = list(species = 'rewbla', output_path = tempdir1)
     )
   })
   # when these 4 tests fail, it probably means we have new test model

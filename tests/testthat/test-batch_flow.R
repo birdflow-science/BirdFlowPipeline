@@ -24,28 +24,25 @@ test_that("batch_flow works", {
   test_output_path <- tempdir2
   expect_no_error(
     batch_flow(
-      one_species = test_species,
-      params = list(
-        my_species = character(0),
-        gpu_ram = 10,
-        my_res = test_res,
-        output_nickname = 'TEST',
-        grid_search_type = 'new',
-        grid_search_list = list(
-          de_ratio = 8,
-          obs_prop = c(0.95, 0.99),
-          dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
-          dist_weight = NA_real_,
-          ent_weight = NA_real_),
-        hdf_path = test_hdf_dir,
-        output_path = test_output_path,
-        season = 'prebreeding',
-        truncate_season = FALSE,
-        model_selection = 'real_tracking',
-        clip = NULL,
-        skip_quality_checks = FALSE,
-        fit_only = FALSE
-      )
+      species = test_species,
+      gpu_ram = 10,
+      res = test_res,
+      suffix = 'TEST',
+      grid_search_type = 'new',
+      grid_search_list = list(
+        de_ratio = 8,
+        obs_prop = c(0.95, 0.99),
+        dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+        dist_weight = NA_real_,
+        ent_weight = NA_real_),
+      hdf_path = test_hdf_dir,
+      base_output_path = test_output_path,
+      season = 'prebreeding',
+      truncate_season = FALSE,
+      model_selection = 'real_tracking',
+      clip = NULL,
+      skip_quality_checks = FALSE,
+      fit_only = FALSE
     )
   )
   expect_true(file.exists(test_hdf_dir))
@@ -54,12 +51,12 @@ test_that("batch_flow works", {
   test_output_path <- file.path(test_output_path, output_fullname)
   test_output_files <- list.files(test_output_path)
   test_hdf_files <- list.files(file.path(test_hdf_dir, paste0(test_species, '_', test_res, 'km')), full.names = TRUE)
-  expect_no_error(ll_df <- readRDS(file.path(test_output_path, 'll_df.rds')))
+  expect_no_error(eval_metrics <- readRDS(file.path(test_output_path, 'eval_metrics.rds')))
   # two file sizes -- unfitted hdf5 and fitted hdf5s
   expect_equal(length(unique(file.size(test_hdf_files))), 2)
-  # nrow(ll_df) is same as number of modelfit files
+  # nrow(eval_metrics) is same as number of modelfit files
   test_modelfit_files <- grep('km\\.hdf5', test_hdf_files, invert = TRUE, value = TRUE)
-  expect_setequal(basename(test_modelfit_files), ll_df$model)
+  expect_setequal(basename(test_modelfit_files), eval_metrics$model)
   # desirability graphs
   expect_true(
     all(

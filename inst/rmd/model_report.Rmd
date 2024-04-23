@@ -51,17 +51,17 @@ convert_to_color_category <- function(x, breaks, labels){
 }
 # Correlation with Status and Trends
 out_row <- match('Correlation with Status and Trends', qdf$criterion)
-x <- ll_df$end_traverse_cor[i]
+x <- eval_metrics$end_traverse_cor[i]
 out_color <- convert_to_color_category(x, breaks = c(0, 0.95, 0.975, 1), labels = c("red", "yellow", "green"))
 qdf[out_row, 'color'] <- out_color
 # Model calibration
 out_row <- match('Model calibration', qdf$criterion)
-x <- ll_df$d_pit_in_95[i]
+x <- eval_metrics$d_pit_in_95[i]
 out_color <- convert_to_color_category(x, breaks = c(0, 0.6, 0.8, 1), labels = c("red", "yellow", "green"))
 qdf[out_row, 'color'] <- out_color
 # real vs. simulated route metrics df, duplicated code in other chunk below
 mdf <- dplyr::bind_rows(
-  ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
+  eval_metrics[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
   as.data.frame(
     readRDS(
       file.path(
@@ -111,7 +111,7 @@ rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals 
 ```{r route_stats, echo = FALSE, message = FALSE}
 
 route_stats_df <- dplyr::bind_rows(
-  ll_df[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
+  eval_metrics[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
   as.data.frame(
     readRDS(
       file.path(
@@ -135,12 +135,12 @@ knitr::kable(route_stats_df[,c('routes', 'straightness', 'n_stopovers')])
 
 ### Internal model filename
 
-`r sub('\\.hdf5$', '', ll_df$model[i])`
+`r sub('\\.hdf5$', '', eval_metrics$model[i])`
 
 ### eBird Status and Trends data preprocessing
 
 - version year: `r bf$metadata$ebird_version_year`
-- raster resolution: `r params$my_res` km
+- raster resolution: `r params$res` km
 
 ### Grid search setup
 
@@ -187,17 +187,17 @@ Parameters for grid expansion (left); hyperparameters passed to model fitting pr
 rgl::clear3d()
 rgl::mfrow3d(nr = 1, nc = 2)
 
-cols_3d <- rep('gray', nrow(ll_df))
+cols_3d <- rep('gray', nrow(eval_metrics))
 cols_3d[i] <- 'red'
 
 rgl::plot3d(
-  x = ll_df$de_ratio, y = ll_df$obs_prop, z = ll_df$dist_pow,
+  x = eval_metrics$de_ratio, y = eval_metrics$obs_prop, z = eval_metrics$dist_pow,
   col = cols_3d,
   type = 's',
   xlab="de_ratio", ylab="obs_prop", zlab="dist_pow")
 
 rgl::plot3d(
-  x = ll_df$ent_weight, y = ll_df$dist_weight, z = ll_df$dist_pow,
+  x = eval_metrics$ent_weight, y = eval_metrics$dist_weight, z = eval_metrics$dist_pow,
   col = cols_3d,
   type = 's',
   xlab="ent_weight", ylab="dist_weight", zlab="dist_pow")
@@ -210,7 +210,7 @@ rgl::rglwidget()
 
 ```{r hypers, echo = FALSE}
 knitr::kable(
-  ll_df[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
+  eval_metrics[i, c('de_ratio', 'obs_prop', 'dist_pow', 'dist_weight', 'ent_weight', 'obs_weight')]
   )
 ```
 
@@ -234,13 +234,13 @@ knitr::kable(
 # Table
 
 knitr::kable(
-  signif(ll_df[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')],
+  signif(eval_metrics[i, c('end_traverse_cor', 'pit_row', 'pit_col', 'pit_in_95')],
          digits = 3)
   )
 
 # Plots
 
-pit_data_path <- file.path(params$output_path, 'pit_data', paste0(sub('\\.hdf5$', '', ll_df$model[i]), '_pit.rds'))
+pit_data_path <- file.path(params$output_path, 'pit_data', paste0(sub('\\.hdf5$', '', eval_metrics$model[i]), '_pit.rds'))
 pit_calibration_obj <- readRDS(pit_data_path)
 pit_plots_report(pit_calibration_obj, params)
 ```
@@ -253,7 +253,7 @@ Overall desirability rank within grid search: `r i`
 ```{r desirability_tab, echo = FALSE}
 # Table
 knitr::kable(
-  round(ll_df[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')],
+  round(eval_metrics[i, c('d_pit_row', 'd_pit_col', 'd_pit_in_95', 'pit_d', 'etc_d', 'str_d', 'nso_d', 'overall_des')],
         digits = 3),
   caption = 'desirability sub-scores for this model'
 )
@@ -264,8 +264,8 @@ Desirability sub-scores for this model vs. all models in this grid search
 ```{r desirability_graph, echo = FALSE, message = FALSE}
 
 # Graph
-d_vars <- grep('^d_|_d$|overall_des$', names(ll_df), value = TRUE)
-df <- ll_df[,d_vars]
+d_vars <- grep('^d_|_d$|overall_des$', names(eval_metrics), value = TRUE)
+df <- eval_metrics[,d_vars]
 df$color <- rep('black', nrow(df))
 df$color[i] <- 'red'
 df <- tidyr::pivot_longer(df, tidyr::all_of(d_vars), names_to = 'variable', values_to = 'desirability')

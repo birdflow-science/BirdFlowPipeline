@@ -24,6 +24,7 @@ Imports:
     htmlwidgets,
     kableExtra,
     magrittr,
+    readr,
     rgl,
     rhdf5,
     rlang,

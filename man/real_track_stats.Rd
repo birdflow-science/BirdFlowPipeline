@@ -4,10 +4,10 @@
 \alias{real_track_stats}
 \title{Calculate rts_stats from real tracks file(s)}
 \usage{
-real_track_stats(ll_df, params)
+real_track_stats(eval_metrics, params)
 }
 \arguments{
-\item{ll_df}{The ll_df containing at least one valid model name, from which to load bf object for CRS/grid}
+\item{eval_metrics}{The eval_metrics data frame containing at least one valid model name, from which to load bf object for CRS/grid}
 
 \item{params}{The params object, containing at least the hdf_dir from which to learn bf object}
 }
