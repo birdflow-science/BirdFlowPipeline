@@ -1,0 +1,90 @@
+---
+title: test
+output: html_document
+params:
+  hdf: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/Americas/acafly_100km/acafly_2022_100km_obs1.0_ent0.001924_dist0.008177_pow0.4167.hdf5"
+  flux: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/Americas/acafly_100km/acafly_flux.rds"
+  anim: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/Americas/acafly_100km/acafly_anim.gif"
+  html: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/model_release_staging/flux/acafly.html"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# fix issue of tables not being formatted properly in html
+# https://github.com/STAT545-UBC/Discussion/issues/136
+options(knitr.table.format = 'markdown')
+options(rgl.useNULL = TRUE) # Suppress the separate window
+
+## Ethan's code addition
+# is_html flag will be TRUE if knitting to html and FALSE if knitting to 
+# other formats or using RStudio preview
+is_html <- FALSE
+if(!rstudioapi::isAvailable())
+ is_html <- "html_document" %in% rmarkdown::all_output_formats(knitr::current_input())
+
+
+library(BirdFlowR)
+bf <- import_birdflow(params$hdf)
+
+performance <- distribution_performance(bf)
+
+si <- bf$species
+
+month_day <- function(x){
+  x <- lubridate::as_date(x) 
+  paste(lubridate::month(x, label = TRUE, abbr = FALSE), lubridate::mday(x))
+}
+
+
+```
+---
+title: `r species(bf)` Flux
+---
+
+
+```{asis ethan_code_block_logo_rel_link, eval = is_html}
+
+<a href="https://birdflow-science.github.io/BirdFlowR/">
+<img src="https://birdflow-science.github.io/BirdFlowR/logo.png" align="right" height="139" />
+</a>
+
+<br>
+
+<a href = "./index.html"><< Species Index</a>
+<hr>
+```
+
+
+## Species
+Species: `r species(bf)`  (`r species(bf, "scientific")`)  
+Prebreeding migration: `r month_day(si$prebreeding_migration_start)` to 
+`r month_day(si$prebreeding_migration_end)`  
+Postbreeding migration: `r month_day(si$postbreeding_migration_start)` to 
+`r month_day(si$postbreeding_migration_end)`)  
+
+## Abundance and Flux
+
+```{r animation, echo=FALSE}
+ knitr::include_graphics(params$anim)
+
+
+```
+
+
+## eBird
+Data quality: `r si$prebreeding_migration_quality`, 
+`r si$breeding_quality`, 
+`r si$postbreeding_migration_quality`, 
+`r si$nonbreeding_quality`
+(prebreeding, breeding, postbreeding, and nonbeeding)  
+Version year: `r get_metadata(bf, "ebird_version_year")`   
+Release year: `r get_metadata(bf, "ebird_release_year")`   
+
+## BirdFlow
+Model date: `r lubridate::as_date(get_metadata(bf, "birdflow_model_date"))`  
+Traverse correlation: `r round(performance$st_traverse_cor, 4)`  
+Mean step correlation: `r round(performance$mean_step_cor, 4)`  
+Min step correlation: `r round(performance$min_step_cor, 4)`  
+
+   
+

@@ -1,4 +1,15 @@
-# BirdFlowPipeline (development version)
+# BirdFlowPipeline 0.0.0.9003
+Batch Flux
+
+New functions
+* `batch_flux()`  Launch flux on slurm in parallel via batchtools
+* `process_flux()` Wrap `BirdFlowR::flux()` and add importing the 
+ model from a file and writing the result to a file.
+* `make_flux_index()`  Create an html index to a directory of flux reports.
+* `make_flux_report()` Create an html flux report.  
+* `get_job_efficiency()` Get the efficiency of a completed slurm job.
+
+# BirdFlowPipeline 0.0.0.9002
 
 *Note* for existing old output to work with the changes below we'll have to 
 update file names:   
@@ -37,7 +48,7 @@ Vectorize  `birdflow_modelfit_args_df()` and add test to make sure end result
 is the same. 
 
 
-## BirdFlowPipeline 0.0.9001
+## BirdFlowPipeline 0.0.0.9001
 Feb 9, 2024
 
 * Add NEWS.md
