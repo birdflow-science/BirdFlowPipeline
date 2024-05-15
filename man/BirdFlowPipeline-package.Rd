@@ -11,5 +11,16 @@ Tools for fitting, selecting, and evaluating BirdFlow models on Unity.
 \author{
 \strong{Maintainer}: David Slager \email{slager@users.noreply.github.com} (\href{https://orcid.org/0000-0003-2525-2039}{ORCID})
 
+Authors:
+\itemize{
+  \item Ethan Plunkett \email{plunkett@umass.edu} (\href{https://orcid.org/0000-0003-4405-2251}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item BirdFlow-Science [copyright holder]
+  \item National Science Foundation [funder]
+}
+
 }
 \keyword{internal}

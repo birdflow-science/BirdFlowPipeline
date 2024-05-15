@@ -1,6 +1,10 @@
 # See here for system.file() modifications in next line:
-# http://www.dahl-jacobsen.dk/data/2019/04/03/the-inst-folder-in-other-r-packages/
-cluster.functions <- makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', package = 'BirdFlowPipeline', lib.loc = .libPaths()[1], mustWork = TRUE),
+# http://www.dahl-jacobsen.dk/data/2019/04/03/the-inst-folder-in-other-r-packages/\
+# EBP - I dropped the [1] after .libPaths() as it wasn't finding the 
+# package on the processing nodes.  I think BirdFlowPipeline will only ever
+# be installed in the library location that's in the users home directory
+# so there's not much benefit of telling it which library to install from.
+cluster.functions <- makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', package = 'BirdFlowPipeline', lib.loc = .libPaths(), mustWork = TRUE),
                                                array.jobs = TRUE,
                                                nodename = BirdFlowPipeline:::the$login_node)
 default.resources <- list(

@@ -1,9 +1,13 @@
 Package: BirdFlowPipeline
 Title: Tools for fitting, selecting, and evaluating BirdFlow models on Unity
-Version: 0.0.0.9001
+Version: 0.0.0.9003
 Authors@R: 
-    person("David", "Slager", , "slager@users.noreply.github.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-2525-2039"))
+   c(person("David", "Slager", , "slager@users.noreply.github.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2525-2039")),
+     person("Ethan", "Plunkett",  email = "plunkett@umass.edu", role = c("aut"),
+           comment = c(ORCID = "0000-0003-4405-2251")),
+     person("BirdFlow-Science", role = "cph"),
+     person("National Science Foundation", role = "fnd"))
 Description: Tools for fitting, selecting, and evaluating BirdFlow models on Unity.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -16,11 +20,13 @@ Imports:
     desirability2,
     dplyr,
     ebirdst,
+    fs,
     geodist,
     ggfortify,
     ggplot2,
     grDevices,
     gridExtra,
+    hms,
     htmlwidgets,
     kableExtra,
     magrittr,
@@ -34,7 +40,8 @@ Imports:
     terra,
     tidyr,
     trajr,
-    utils
+    utils,
+    yaml
 Depends: 
     R (>= 2.10)
 Suggests: 
