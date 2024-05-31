@@ -22,7 +22,9 @@ if(!rstudioapi::isAvailable())
 
 ```{asis ethan_code_block_logo_rel_link, eval = is_html}
 
-<a href="https://birdflow-science.github.io/BirdFlowR/"><img src="/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/model_release_staging/logo.png" align="right" height="139" /></a>
+<a href="https://birdflow-science.github.io/BirdFlowR/">
+<img src="https://birdflow-science.github.io/BirdFlowR/logo.png" align="right" height="139" />
+</a>
 
 <br>
 
