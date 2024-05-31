@@ -58,9 +58,10 @@ preprocess_species_wrapper <- function(params) {
 
   preprocess_file_name <- basename(temp_preprocessed_file)
   final_preprocess_file <- file.path(params$hdf_dir, preprocess_file_name)
-  use_rename <- TRUE  
+  use_rename <- FALSE  
   # testing renaming instead of copying. It should be more efficient but
   # might not work if different drives.
+  # Some tests failed with rename.
   if(use_rename){
     if(file.exists(final_preprocess_file))
       file.remove(final_preprocess_file)
