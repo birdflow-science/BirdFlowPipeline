@@ -1,3 +1,15 @@
+# BirdFlowPipeline 0.0.0.9004
+2024-05-31
+
+* Adapt to Unity updates. Changed the slurm template file sligtly to avoid 
+triggering an erronious error "Request a CPU Partition for CPU jobs".
+* Switch report logo source to github so it doesn't depend on a local file - 
+which was deleted. 
+* Rollback change in `batch_flow()` so that hdf files are copied and then 
+deleted.  Moving doesn't work across drives and casused an error in the unit
+tests.
+* Export`batch_flux()
+
 # BirdFlowPipeline 0.0.0.9003
 Batch Flux
 

@@ -9,18 +9,19 @@
 #'  appropriate.
 #'
 #' @return A list with items:
-#' \item{"job_id"}{slurm job id - without array suffix}
-#' \item{"array_job_id"}{slurm job id with array suffix}
-#' \item{"state"}{The job state}
-#' \item{"cores"}{How many cores did the job use.}
-#' \item{"cpu_utilized"}{How much CPU time was used.}, 
-#' \item{"cpu_efficiency"}{CPU efficiency}, 
-#' \item{"walltime"}{ Job wall-clock time (ellapsed time) in h:m:s format"}
-#' \item{"memory_utilized"}{Memory utilized in human readible format with (varying) units"}, 
-#' \item{"memory_efficiency"}{Memory efficiency.}, 
-#' \item{"mem_gb"}{Utilized memory in GiB (bytes * 1024^3)}
-#' \item{wall_min}{Job wall-clock time in decimal minutes}
+#' \item{`job_id`}{slurm job id - without array suffix}
+#' \item{`array_job_id`}{slurm job id with array suffix}
+#' \item{`state`}{The job state}
+#' \item{`cores`}{How many cores did the job use.}
+#' \item{`cpu_utilized`}{How much CPU time was used.}
+#' \item{`cpu_efficiency`}{CPU efficiency}
+#' \item{`walltime`}{ Job wall-clock time (ellapsed time) in h:m:s format}
+#' \item{`memory_utilized`}{Memory utilized in human readible format with (varying) units}
+#' \item{`memory_efficiency`}{Memory efficiency.}
+#' \item{`mem_gb`}{Utilized memory in GiB (bytes * 1024^3)}
+#' \item{`wall_min`}{Job wall-clock time in decimal minutes}
 #' @export
+#' @seealso [batchtools::findJobs()]
 get_job_efficiency <- function(id) {
   stopifnot(length(id) == 1)
   cmd <- paste("seff ", id, sep = "")

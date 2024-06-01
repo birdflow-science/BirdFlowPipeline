@@ -27,7 +27,7 @@ directory will be a concatenation of \code{"batch_flux"}, the date, and \code{"_
 
 \item{memory}{GB of memory allocated for each flux calculation.}
 
-\item{walltime}{Ellapsed time in minutes allocated to the job.}
+\item{walltime}{Elapsed time in minutes allocated to the job.}
 }
 \value{
 Nothing is returned.
