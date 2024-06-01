@@ -12,21 +12,24 @@ appropriate.}
 }
 \value{
 A list with items:
-\item{"job_id"}{slurm job id - without array suffix}
-\item{"array_job_id"}{slurm job id with array suffix}
-\item{"state"}{The job state}
-\item{"cores"}{How many cores did the job use.}
-\item{"cpu_utilized"}{How much CPU time was used.},
-\item{"cpu_efficiency"}{CPU efficiency},
-\item{"walltime"}{ Job wall-clock time (ellapsed time) in h:m:s format"}
-\item{"memory_utilized"}{Memory utilized in human readible format with (varying) units"},
-\item{"memory_efficiency"}{Memory efficiency.},
-\item{"mem_gb"}{Utilized memory in GiB (bytes * 1024^3)}
-\item{wall_min}{Job wall-clock time in decimal minutes}
+\item{\code{job_id}}{slurm job id - without array suffix}
+\item{\code{array_job_id}}{slurm job id with array suffix}
+\item{\code{state}}{The job state}
+\item{\code{cores}}{How many cores did the job use.}
+\item{\code{cpu_utilized}}{How much CPU time was used.}
+\item{\code{cpu_efficiency}}{CPU efficiency}
+\item{\code{walltime}}{ Job wall-clock time (ellapsed time) in h:m:s format}
+\item{\code{memory_utilized}}{Memory utilized in human readible format with (varying) units}
+\item{\code{memory_efficiency}}{Memory efficiency.}
+\item{\code{mem_gb}}{Utilized memory in GiB (bytes * 1024^3)}
+\item{\code{wall_min}}{Job wall-clock time in decimal minutes}
 }
 \description{
 \code{get_job_efficiency()} calls the shell command \code{"seff"} on the job ID
 via \code{\link[batchtools:runOSCommand]{batchtools::runOSCommand()}}, which uses ssh to connect to a login
 node before running the command.  The resulting output is then parsed
 into an R list.
+}
+\seealso{
+\code{\link[batchtools:findJobs]{batchtools::findJobs()}}
 }

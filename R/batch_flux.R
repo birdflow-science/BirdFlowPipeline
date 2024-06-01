@@ -14,8 +14,9 @@
 #' the first path in `model_paths` will be used.  Either way the registry 
 #' directory will be a concatenation of `"batch_flux"`, the date, and `"_mf"`.
 #' @param memory GB of memory allocated for each flux calculation. 
-#' @param walltime Ellapsed time in minutes allocated to the job.
+#' @param walltime Elapsed time in minutes allocated to the job.
 #' @return Nothing is returned.
+#' @export
 batch_flux <- function(model_paths, flux_paths = NULL, base_path = NULL,
                        memory = 12, walltime = 180 ) {
   
