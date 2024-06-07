@@ -62,7 +62,7 @@ batch_species <- function(
       conf.file = system.file('batchtools.conf.R', 
                               package = 'BirdFlowPipeline')))
   
-    max_retrys <- 2  # set to 2 when everything is working, 0 for debugging
+    max_retrys <- 1  # set to 2 when everything is working, 0 for debugging
     retrys <- 0
     success <- FALSE
     while(!success && retrys <= max_retrys){
