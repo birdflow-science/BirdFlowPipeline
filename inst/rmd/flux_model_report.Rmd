@@ -2,10 +2,12 @@
 title: test
 output: html_document
 params:
-  hdf: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/Americas/acafly_100km/acafly_2022_100km_obs1.0_ent0.001924_dist0.008177_pow0.4167.hdf5"
-  flux: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/Americas/acafly_100km/acafly_flux.rds"
-  anim: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/Americas/acafly_100km/acafly_anim.gif"
-  html: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/model_release_staging/flux/acafly.html"
+  hdf: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/americas/acafly_100km/acafly_2022_100km_obs1.0_ent0.001924_dist0.008177_pow0.4167.hdf5"
+  flux: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/americas/aldfly_100km/aldfly_flux.rds"
+  anim: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/americas/aldfly_100km/aldfly_anim.gif"
+  html: "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/model_release_staging/flux/aldfly.html"
+  prevlink: "./acafly.html"
+  nextlink: "./allhum.html"
 ---
 
 ```{r setup, include=FALSE}
@@ -18,10 +20,7 @@ options(rgl.useNULL = TRUE) # Suppress the separate window
 ## Ethan's code addition
 # is_html flag will be TRUE if knitting to html and FALSE if knitting to 
 # other formats or using RStudio preview
-is_html <- FALSE
-if(!rstudioapi::isAvailable())
- is_html <- "html_document" %in% rmarkdown::all_output_formats(knitr::current_input())
-
+is_html <- TRUE
 
 library(BirdFlowR)
 bf <- import_birdflow(params$hdf)
@@ -50,10 +49,42 @@ title: `r species(bf)` Flux
 
 <br>
 
-<a href = "./index.html"><< Species Index</a>
-<hr>
+<a href = "./index.html"><< Species Index</a><br>
 ```
 
+
+
+```{r prev_next, echo = FALSE}
+# This adds < prev | next > navigation.  
+# as long as at least one of prev and next is not NULL
+# If one of them is null then the corresponding link is dropped.
+has_prev <- !is.null(params$prevlink)  && !is.na(params$prevlink)
+has_next <- !is.null(params$nextlink)  && !is.na(params$nextlink)
+
+if(!has_prev && !has_next){
+  prevnext <- ""
+} else {
+  prevnext <- paste0(
+    ifelse(has_prev, 
+           paste0("<a href = \"", params$prevlink, "\">"),
+           ""),
+    "< prev", 
+    ifelse(has_prev, "</a>", ""),
+    " | ", 
+    ifelse(has_next, 
+           paste0("<a href = \"", params$nextlink, "\">"),
+           ""),
+    "next >", 
+    ifelse(has_next, "</a>", ""), 
+    "\n<br>\n"
+  )
+}
+
+
+if (is_html) knitr::raw_html({
+  paste0(prevnext, "<hr>")  
+})
+```
 
 ## Species
 Species: `r species(bf)`  (`r species(bf, "scientific")`)  

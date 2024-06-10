@@ -1,3 +1,9 @@
+
+# BirdFlowPipeline 0.0.0.9005
+2024-06-07
+
+Add `prev` and `next` buttons to flux model reports.
+
 # BirdFlowPipeline 0.0.0.9004
 2024-05-31
 

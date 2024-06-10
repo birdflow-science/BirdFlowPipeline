@@ -4,7 +4,7 @@
 \alias{make_flux_report}
 \title{Make flux report}
 \usage{
-make_flux_report(hdf, flux, anim, html)
+make_flux_report(hdf, flux, anim, html, prevlink, nextlink)
 }
 \arguments{
 \item{hdf}{path to HDF5 model file}
@@ -14,6 +14,11 @@ make_flux_report(hdf, flux, anim, html)
 \item{anim}{path to abundance and flux animation GIF}
 
 \item{html}{path to output html file}
+
+\item{prevlink}{relative path to the previous species report or NULL if
+there is none.}
+
+\item{nextlink}{relative path to the next species report or NULL if none.}
 }
 \value{
 Nothing is returned, a report is created at \code{html}
@@ -28,7 +33,7 @@ location before knitting.
 \examples{
 \dontrun{
 base <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline"
-dir <- file.path(base, "/Americas/acafly_100km")
+dir <- file.path(base, "/americas/acafly_100km")
 html_dir <-file.path(base, "model_release_staging/flux/")
 hdf <- file.path(
   dir, 
@@ -36,9 +41,13 @@ hdf <- file.path(
 flux <- file.path(dir, "acafly_flux.rds")
 anim <- file.path(dir, "acafly_anim.gif")
 html <- file.path(html_dir, "acafly.html")
+prevlink <- NULL
+nextlink <- "./adafly.html"
 make_flux_report(hdf = hdf), 
                 flux = flux, 
                 anim = anim, 
-                html = html)
+                html = html,
+                prevlink = prevlink, 
+                nextlink = nextlink)
 }
 }
