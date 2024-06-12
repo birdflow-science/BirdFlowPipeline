@@ -47,7 +47,9 @@ batch_species <- function(
   # Set cluster resources needed by each task
   modelfit_resources <- list(walltime = 15,
                              ngpus = 1,
-                             memory = params$gpu_ram + 1)
+                             memory = params$gpu_ram + 1,
+                             prefer.gpu = NULL, 
+                             constraint.gpur = NULL)
   
   # Drop species from params  (will be passed separately)
   params$species <- NA

@@ -1,3 +1,29 @@
+# BirdFlowPipeline 0.0.0.9006
+2024-06-12
+
+Update how resources are requested on slurm to fit large GPU RAM models
+
+* Add `#SBATCH --constraint vram[X]` where `[X]` is various levels of 
+GB GPU RAM, to `slurm.tmpl`. 
+The `vram[X]` constraint is only included when running with GPUs and the level of 
+`[X]` is automatically set to the lowest level that is higher than the memory 
+requested for the job in `modelfit_resources`. 
+For a list of the supported levels see the 
+[unity constraint list.](https://docs.unity.rc.umass.edu/documentation/cluster_specs/features/).
+* If `resources$prefer.gpu` or `resources$constraint.gpu` are set to `NULL` or 
+`NA` than the corresponding lines are dropped in `slurm.tmpl`, these constraints
+were taking preference over the `vram[X]` constraints causing jobs to run
+on nodes that didn't support the requested GPU RAM.
+* `batch_species()` now sets `prefer.gpu` and `constraint.gpu` to `NULL`. 
+The other `batch_` functions are not changed but in the future 
+setting `modelfitresources$` `contraint.gpu` and `prefer.gpu` to `NULL` would 
+allow for fitting larger models with those functions, but lose the GPU 
+preferences Dave had set.
+* `batch_flux()` now will  request the `cpu-preemt` and `cpu-long` partitions
+if the walltime requested exceeds 24 hours. Previously you could request more
+time with walltime but if the job ended up on the `cpu` queue it would still 
+timeout after 24 hours. 
+
 
 # BirdFlowPipeline 0.0.0.9005
 2024-06-07

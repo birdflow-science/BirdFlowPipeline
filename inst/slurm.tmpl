@@ -31,16 +31,28 @@ log.file = fs::path_expand(log.file)
 #SBATCH --cpus-per-task=<%= resources$ncpus %>
 #SBATCH --mem=<%= resources$memory %>G
 #SBATCH --exclude=toltec-cpu[001-007],gypsum-gpu172
-<%= if (!is.null(resources$ngpus)) sprintf("#SBATCH --gpus=%i\n", resources$ngpus) -%>
-<%= if (!is.null(resources$ngpus)) paste0("#SBATCH --constraint=", resources$constraint.gpu, '\n') -%>
-<%= if (!is.null(resources$ngpus)) paste0("#SBATCH --prefer=", resources$prefer.gpu, '\n') -%>
-<%= paste0("#SBATCH --partition=", if (!is.null(resources$ngpus)) resources$partition.gpu else resources$partition.cpu) %>
-<%= if (array.jobs && resources$chunks.as.arrayjobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (array.jobs && resources$chunks.as.arrayjobs) {if (!is.null(resources$ngpus)) sprintf("%%%i", resources$max.arrayjobs.gpu) else sprintf("%%%i", resources$max.arrayjobs.cpu)} else "" %>
+<% 
+# Define variables for gpu ram
+is_gpu <- !is.null(resources$ngpus) 
+# See https://docs.unity.rc.umass.edu/documentation/cluster_specs/features/
+# for vram levels  e.g. "#SBATCH --constraint vram16""
+vram_levels <- c(8,11,12,16,23,32,40,48,80) # 
+vram <- min(vram_levels[vram_levels >= resources$memory])
+has_constraint <- !is.null(resources$contraint.gpu) && !is.na(resources$constraint.gpu)
+has_prefer <- !is.null(resources$prefer.gpu) && !is.na(resources$prefer.gpu)
+-%>
 
-## Export value of DEBUGME environemnt var to slave
+<%= if (is_gpu) sprintf("#SBATCH --gpus=%i\n", resources$ngpus) -%>
+<%= if (is_gpu && has_constraint) paste0("#SBATCH --constraint=", resources$constraint.gpu, '\n') -%>
+<%= if (is_gpu && has_prefer) paste0("#SBATCH --prefer=", resources$prefer.gpu, '\n') -%>
+<%= paste0("#SBATCH --partition=", if (is_gpu) resources$partition.gpu else resources$partition.cpu) %>
+<%= if (array.jobs && resources$chunks.as.arrayjobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (array.jobs && resources$chunks.as.arrayjobs) {if (!is.null(resources$ngpus)) sprintf("%%%i", resources$max.arrayjobs.gpu) else sprintf("%%%i", resources$max.arrayjobs.cpu)} else "" %>
+<%= if (is_gpu) paste0("#SBATCH --constraint=vram", vram, '\n') -%>
+
+## Export value of DEBUGME environemnt var
 export DEBUGME=<%= Sys.getenv("DEBUGME") %>
 
-## Export value of EBIRDST_KEY environemnt var to slave
+## Export value of EBIRDST_KEY environemnt var
 export EBIRDST_KEY=<%= Sys.getenv("EBIRDST_KEY") %>
 
 

@@ -17,8 +17,11 @@
 #' @param walltime Elapsed time in minutes allocated to the job.
 #' @return Nothing is returned.
 #' @export
-batch_flux <- function(model_paths, flux_paths = NULL, base_path = NULL,
-                       memory = 12, walltime = 180 ) {
+batch_flux <- function(model_paths, 
+                       flux_paths = NULL, 
+                       base_path = NULL,
+                       memory = 12, 
+                       walltime = 180) {
   
   start <- Sys.time()
   
@@ -31,6 +34,11 @@ batch_flux <- function(model_paths, flux_paths = NULL, base_path = NULL,
   modelfit_resources <- list(walltime = walltime,
                              ncpus = 1,
                              memory = memory)
+  
+  # The "cpu" partition doesn't work for jobs over 24 hours.
+  # Long jobs can run on cpu-preemt or cpu-long
+  if(walltime >= 1440)
+    modelfit_resources$partition.cpu <- 'cpu-preempt,cpu-long'
   
   if(is.null(base_path)){
     base_path <- dirname(model_paths[1])
@@ -50,6 +58,8 @@ batch_flux <- function(model_paths, flux_paths = NULL, base_path = NULL,
       file.dir = reg_dir,
       conf.file = system.file('batchtools.conf.R',
                               package = 'BirdFlowPipeline')))
+
+  
   
   max_retries <- 0  # set to 2 when everything is working, 0 for debugging
   
