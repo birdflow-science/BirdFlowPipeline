@@ -117,6 +117,7 @@ below three.  If \code{TRUE} then attempt to fit the model regardless of quality
 model evaluation, model ranking, or model reports.}
     \item{\code{ebirdst_year}}{The version year of the ebirdst package. This shouldn't
 be set by users.}
+    \item{\code{trim_quantile}}{Passed to \code{\link[=preprocess_species]{preprocess_species()}}.}
   }}
 }
 \value{

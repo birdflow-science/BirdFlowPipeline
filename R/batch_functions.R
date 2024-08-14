@@ -29,7 +29,9 @@ preprocess_species_wrapper <- function(params) {
           season = dplyr::if_else(params$truncate_season, params$season, 'all'),
           clip = params$clip,
           crs = params$crs,
-          skip_quality_checks = params$skip_quality_checks)
+          skip_quality_checks = params$skip_quality_checks, 
+          trim_quantile = params$trim_quantile
+          )
       )
     )
   )

@@ -25,7 +25,8 @@ set_pipeline_params(
   crs = NULL,
   skip_quality_checks = FALSE,
   fit_only = FALSE,
-  ebirdst_year = ebirdst::ebirdst_version()$version_year
+  ebirdst_year = ebirdst::ebirdst_version()$version_year,
+  trim_quantile = NULL
 )
 }
 \arguments{
@@ -140,6 +141,8 @@ model evaluation, model ranking, or model reports.}
 
 \item{ebirdst_year}{The version year of the ebirdst package. This shouldn't
 be set by users.}
+
+\item{trim_quantile}{Passed to \code{\link[=preprocess_species]{preprocess_species()}}.}
 }
 \value{
 A parameter list to be used for \code{batch_flow()} and related functions
