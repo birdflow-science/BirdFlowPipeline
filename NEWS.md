@@ -1,3 +1,12 @@
+# BirdFlowPipeline 0.0.0.9007
+2024-08-14
+
+Add handling of `trim_quantile` argument to `BirdFlowR::preprocess_species()` 
+to the pipeline functions. The default of `NULL` (no trimming) is set in
+`set_pipeline_parameters()` but can be overridden by setting another value
+when calling `batch_species()` or `batch_flow()` 
+
+
 # BirdFlowPipeline 0.0.0.9006
 2024-06-12
 

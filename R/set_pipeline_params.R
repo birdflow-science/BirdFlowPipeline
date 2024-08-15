@@ -105,6 +105,7 @@
 #' model evaluation, model ranking, or model reports. 
 #' @param ebirdst_year The version year of the ebirdst package. This shouldn't 
 #' be set by users.
+#' @param trim_quantile Passed to [preprocess_species()].
 #' @return A parameter list to be used for `batch_flow()` and related functions
 #' @export
 #' @examples
@@ -141,7 +142,8 @@ set_pipeline_params <- function(
     crs = NULL,
     skip_quality_checks = FALSE,
     fit_only = FALSE, 
-    ebirdst_year = ebirdst::ebirdst_version()$version_year
+    ebirdst_year = ebirdst::ebirdst_version()$version_year,
+    trim_quantile = NULL
 ){
   params <- as.list(environment())
   
