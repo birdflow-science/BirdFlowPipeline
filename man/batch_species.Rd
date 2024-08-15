@@ -12,6 +12,7 @@ batch_species(
   dist_pow = 0.4167,
   dist_weight = 0.008177,
   ent_weight = 0.001924,
+  show_progress = TRUE,
   ...
 )
 }
@@ -34,6 +35,10 @@ coverage and performance of the "grid" search.}
 
 \item{de_ratio, obs_prop, dist_pow, dist_weight, ent_weight}{loss function
 parameters see definition in \code{grid_search_list} below under \code{...}}
+
+\item{show_progress}{If \code{TRUE} \code{batch_species()} will display a progress bar
+and wait for all the launched jobs to finish. If \code{FALSE} \code{batch_species()}
+will exit immediately after launching.}
 
 \item{...}{
   Arguments passed on to \code{\link[=set_pipeline_params]{set_pipeline_params}}

@@ -1,3 +1,17 @@
+# BirdFlowPipeline 0.0.0.9008
+2024-08-15
+
+* Add `show_progress` argument to `batch_species()` and `batch_flux()` if
+`FALSE` the functions execute immediately after launching.  This facilitates
+programmatically calling them in a loop to adjust computing resources to 
+varied run times and memory requirements.
+
+* New `inst/rmd/footer.Rmd` has links to BirdFlow and eBird and the
+eBird disclaimer in a standard format.  It is inserted in the end of  
+`flux_index.Rmd`, `flux_report.Rmd`, and`model_report.Rmd`.  Most of these
+documents had the links, none previously had the disclaimer.  
+
+
 # BirdFlowPipeline 0.0.0.9007
 2024-08-14
 

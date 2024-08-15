@@ -117,5 +117,10 @@ Traverse correlation: `r round(performance$st_traverse_cor, 4)`
 Mean step correlation: `r round(performance$mean_step_cor, 4)`  
 Min step correlation: `r round(performance$min_step_cor, 4)`  
 
-   
+
+```{r footer, child = system.file("rmd/footer.Rmd", package = "BirdFlowPipeline")}
+## Note footer document is taken from the installed package 
+## devtools::load_all() is NOT sufficient to update it
+```
+
 
