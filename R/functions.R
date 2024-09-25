@@ -176,7 +176,7 @@ import_birdflow_and_evaluate <- function(path, ...){
 #' `evaluate_model` calculates
 #'  * Log likelihood of banding data with 
 #'   [BirdFlowR::interval_log_likelihood()]
-#'  * Probability integral transform (PIT) calibration of tracking data with [pit_calibration()]
+#'  * Probability integral transform (PIT) calibration of tracking data with `pit_calibration()`
 #'  * Synthetic route statistics with [BirdFlowR::route()] and [rts_stats()]
 #'
 #' @param bf A birdflow model object, often passed from [import_birdflow_and_evaluate()]
@@ -185,7 +185,7 @@ import_birdflow_and_evaluate <- function(path, ...){
 #' @param track_info Object produced from [make_tracks()]
 #' @param params Standard params object created by [set_pipeline_params]
 #'  The `species`, `season`, and `output_path` elements will be used. `params` 
-#'  will also be passed on to [pit_calibration()] and [pit_plots()].
+#'  will also be passed on to `pit_calibration()` and `pit_plots()`.
 #' @seealso [make_tracks()], [batch_evaluate_models()], [import_birdflow_and_evaluate()]
 #' @returns A list:
 #'  * `df` 1-row data.frame of model descriptors and metrics 

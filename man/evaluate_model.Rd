@@ -9,13 +9,14 @@ evaluate_model(bf, modelname, track_info, params)
 \arguments{
 \item{bf}{A birdflow model object, often passed from \code{\link[=import_birdflow_and_evaluate]{import_birdflow_and_evaluate()}}}
 
-\item{modelname}{A name for the model, often the basename of the model path}
+\item{modelname}{A name used to label the model in result tables.
+Often the basename of the model path.}
 
 \item{track_info}{Object produced from \code{\link[=make_tracks]{make_tracks()}}}
 
 \item{params}{Standard params object created by \link{set_pipeline_params}
 The \code{species}, \code{season}, and \code{output_path} elements will be used. \code{params}
-will also be passed on to \code{\link[=pit_calibration]{pit_calibration()}} and \code{\link[=pit_plots]{pit_plots()}}.}
+will also be passed on to \code{pit_calibration()} and \code{pit_plots()}.}
 }
 \value{
 A list:
@@ -26,7 +27,13 @@ A list:
 }
 }
 \description{
-Evaluate a BirdFlow model
+\code{evaluate_model} calculates
+\itemize{
+\item Log likelihood of banding data with
+\code{\link[BirdFlowR:interval_log_likelihood]{BirdFlowR::interval_log_likelihood()}}
+\item Probability integral transform (PIT) calibration of tracking data with \code{pit_calibration()}
+\item Synthetic route statistics with \code{\link[BirdFlowR:route]{BirdFlowR::route()}} and \code{\link[=rts_stats]{rts_stats()}}
+}
 }
 \seealso{
 \code{\link[=make_tracks]{make_tracks()}}, \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}, \code{\link[=import_birdflow_and_evaluate]{import_birdflow_and_evaluate()}}
