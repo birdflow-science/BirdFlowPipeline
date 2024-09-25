@@ -51,44 +51,53 @@ qdf <- data.frame(
 convert_to_color_category <- function(x, breaks, labels){
   as.character(cut(x = x, breaks = breaks, labels = labels))
 }
+
+
 # Correlation with Status and Trends
 out_row <- match('Correlation with Status and Trends', qdf$criterion)
 x <- eval_metrics$end_traverse_cor[i]
 out_color <- convert_to_color_category(x, breaks = c(0, 0.95, 0.975, 1), labels = c("red", "yellow", "green"))
 qdf[out_row, 'color'] <- out_color
+
 # Model calibration
-out_row <- match('Model calibration', qdf$criterion)
-x <- eval_metrics$d_pit_in_95[i]
-out_color <- convert_to_color_category(x, breaks = c(0, 0.6, 0.8, 1), labels = c("red", "yellow", "green"))
-qdf[out_row, 'color'] <- out_color
+if ("d_pit_in_95" %in% names(eval_metrics)) {
+  out_row <- match('Model calibration', qdf$criterion)
+  x <- eval_metrics$d_pit_in_95[i]
+  out_color <- convert_to_color_category(x, breaks = c(0, 0.6, 0.8, 1), labels = c("red", "yellow", "green"))
+  qdf[out_row, 'color'] <- out_color
+}
+
 # real vs. simulated route metrics df, duplicated code in other chunk below
-mdf <- dplyr::bind_rows(
-  eval_metrics[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
-  as.data.frame(
-    readRDS(
-      file.path(
-        params$output_path,
-        'real_track_stats.rds'
-      )
-    )
+real_track_stat_path <-   file.path(params$output_path, 'real_track_stats.rds')
+if(file.exists(real_track_stat_path)){
+  mdf <- dplyr::bind_rows(
+    eval_metrics[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
+    as.data.frame(readRDS(real_track_stat_path))
   )
-)
-# Simulated routes: straightness
-out_row <- match('Simulated routes: straightness', qdf$criterion)
-x <- abs((mdf$straightness[2] - mdf$straightness[1])/mdf$straightness[1])
-out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
-qdf[out_row, 'color'] <- out_color
-# Simulated routes: number of stopovers
-out_row <- match('Simulated routes: number of stopovers', qdf$criterion)
-x <- abs((mdf$n_stopovers[2] - mdf$n_stopovers[1])/mdf$n_stopovers[1])
-out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
-qdf[out_row, 'color'] <- out_color
+  
+  # Simulated routes: straightness
+  out_row <- match('Simulated routes: straightness', qdf$criterion)
+  x <- abs((mdf$straightness[2] - mdf$straightness[1])/mdf$straightness[1])
+  out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
+  qdf[out_row, 'color'] <- out_color
+  
+  # Simulated routes: number of stopovers
+  out_row <- match('Simulated routes: number of stopovers', qdf$criterion)
+  x <- abs((mdf$n_stopovers[2] - mdf$n_stopovers[1])/mdf$n_stopovers[1])
+  out_color <- convert_to_color_category(x, breaks = c(0, 0.2, 0.4, Inf), labels = c("green", "yellow", "red"))
+  qdf[out_row, 'color'] <- out_color
+}
+
 
 # Convert color column to qualitative assessment descriptor word
 qdf$assessment <- dplyr::case_match(qdf$color,
                                     'green' ~ 'good',
                                     'yellow' ~ 'acceptable',
                                     'red' ~ 'tentative')
+
+# Drop rows for metrics that weren't used
+qdf <-  qdf[!is.na(qdf$assessment), , drop = FALSE]
+
 # Render table
 qdf$assessment <- kableExtra::cell_spec(qdf$assessment, background = qdf$color)
 kableExtra::kable(qdf[,c('criterion', 'assessment')], format = "html", escape = FALSE) %>%
@@ -111,6 +120,7 @@ rts <- BirdFlowR::route(bf = bf, n = 10, season = params$season, from_marginals 
 ### Route characteristics
 
 ```{r route_stats, echo = FALSE, message = FALSE}
+
 
 route_stats_df <- dplyr::bind_rows(
   eval_metrics[i, c('straightness', 'length', 'displacement', 'n_stopovers')],
@@ -308,8 +318,41 @@ for(i in seq_along(d_vars)){
 
 ```
 
+
+## Learn more
+
+----
+
+- [BirdFlow project](https://birdflow-science.github.io/)  
+- [BirdFlowR package](https://birdflow-science.github.io/BirdFlowR/) ([source](https://github.com/birdflow-science/BirdFlowR))
+- [BirdFlowPy](https://github.com/birdflow-science/BirdFlowPy)
+- [BirdFlow: Learning Seasonal Bird Movements from Citizen Science Data](https://www.biorxiv.org/content/10.1101/2022.04.12.488057v1) 
+  Miguel Fuentes, Benjamin M. Van Doren, Daniel Fink, Daniel Sheldon 
+  bioRxiv 2022.04.12.488057; 
+  doi:[https://doi.org/10.1101/2022.04.12.488057](https://doi.org/10.1101/2022.04.12.488057)
+- [eBird Status and Trends]( https://ebird.org/science/status-and-trends) 
+  Fink, D., T. Auer, A. Johnston, M. Strimas-Mackey, S. Ligocki, O. Robinson, 
+  W. Hochachka, L. Jaromczyk, C. Crowley, K. Dunham, A. Stillman, I. Davies, 
+  A. Rodewald, V. Ruiz-Gutierrez, C. Wood. 2023.
+  [eBird Status and Trends]( https://ebird.org/science/status-and-trends), 
+  Data Version: 2022; Released: 2023. Cornell Lab of
+  Ornithology, Ithaca, New York. 
+  [https://doi.org/10.2173/ebirdst.2022](https://doi.org/10.2173/ebirdst.2022)
+
+----
+
+
 ```{asis back_rel_link, eval = is_html}
 <br>
 <a href = "./index.html"><< Back to BirdFlow model collection</a>
 
 ```
+
+
+
+```{r footer, child = system.file("rmd/footer.Rmd", package = "BirdFlowPipeline")}
+## Note footer document is taken from the installed package 
+## devtools::load_all() is NOT sufficient to update it
+```
+
+

@@ -1,3 +1,6 @@
+# probability integral transform (PIT) calibration (Gneiting et al., 2007)
+# See calibration section of
+# https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.14052
 pit_calibration <- function(bf, transitions, params) {
   
   # one_hot vector of starting cell

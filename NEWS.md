@@ -1,3 +1,25 @@
+# BirdFlowPipeline 0.0.0.9009
+2024-09-25
+
+* Minor updates to model reports. This was in an attempt to adapt the model 
+reports for tuned models to work for models fit with averaged hyperparameters.
+Ultimately these changes weren't used but I cleaned up some documentation and
+added comments in the process so decided to keep the changes. 
+
+# BirdFlowPipeline 0.0.0.9008
+2024-08-15
+
+* Add `show_progress` argument to `batch_species()` and `batch_flux()` if
+`FALSE` the functions execute immediately after launching.  This facilitates
+programmatically calling them in a loop to adjust computing resources to 
+varied run times and memory requirements.
+
+* New `inst/rmd/footer.Rmd` has links to BirdFlow and eBird and the
+eBird disclaimer in a standard format.  It is inserted in the end of  
+`flux_index.Rmd`, `flux_report.Rmd`, and`model_report.Rmd`.  Most of these
+documents had the links, none previously had the disclaimer.  
+
+
 # BirdFlowPipeline 0.0.0.9007
 2024-08-14
 

@@ -9,7 +9,8 @@ batch_flux(
   flux_paths = NULL,
   base_path = NULL,
   memory = 12,
-  walltime = 180
+  walltime = 180,
+  show_progress = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,10 @@ directory will be a concatenation of \code{"batch_flux"}, the date, and \code{"_
 \item{memory}{GB of memory allocated for each flux calculation.}
 
 \item{walltime}{Elapsed time in minutes allocated to the job.}
+
+\item{show_progress}{If \code{TRUE} \code{batch_flux()} will display a progress bar
+and wait for all the launched jobs to finish. If \code{FALSE} \code{batch_flux()}
+will exit immediately after launching.}
 }
 \value{
 Nothing is returned.
