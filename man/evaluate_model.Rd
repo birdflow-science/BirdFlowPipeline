@@ -13,7 +13,9 @@ evaluate_model(bf, modelname, track_info, params)
 
 \item{track_info}{Object produced from \code{\link[=make_tracks]{make_tracks()}}}
 
-\item{params}{Standard params object}
+\item{params}{Standard params object created by \link{set_pipeline_params}
+The \code{species}, \code{season}, and \code{output_path} elements will be used. \code{params}
+will also be passed on to \code{\link[=pit_calibration]{pit_calibration()}} and \code{\link[=pit_plots]{pit_plots()}}.}
 }
 \value{
 A list:
