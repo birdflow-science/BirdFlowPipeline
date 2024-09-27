@@ -4,6 +4,7 @@ output: html_document
 params:
   index: ""
   collection_url: "https:/example_url/"
+  collection_description: ""
 ---
 
 ```{r setup, include=FALSE, echo = FALSE}
@@ -33,6 +34,8 @@ sv <- index$report_exists
 index$model[sv] <- paste0("[", index$model[sv], "](./",
                           index$model[sv], ".html)")
 
+has_model_reports <- any(sv)
+
 # Round size in MB
 index$size <- round(index$size, 2)
 
@@ -59,6 +62,10 @@ alt_logo_url <-  "../../man/figures/logo.png"
 if (!file.exists(logo_url) && file.exists(alt_logo_url))
   logo_url <- alt_logo_url
 
+
+has_collection_description = params$collection_description != ""
+
+
 ```
 
 <a href="https://birdflow-science.github.io/BirdFlowR/"><img src="`r logo_url`" align="right" height="139" /></a>
@@ -80,7 +87,15 @@ predict where birds at a known location and time are likely to be at another
 point in time. 
 
 **eBird S&T code** links to eBird information on the species.  
-**Model** links to a report on the model.
+`r ifelse(has_model_reports, "**Model** links to a report on the model.", "")`
+
+```{r collection description header, eval= has_collection_description, results = 'asis'}
+
+cat("----\n\n")
+
+cat(params$collection_description, "\n\n")
+
+```
 
 ----
 
@@ -119,18 +134,9 @@ rts <- route(bf, 5, season = "prebreeding")
 plot(rts)
 ```
 
-## Learn more
 
-----
-
-- [BirdFlow project](https://birdflow-science.github.io/)  
-- [BirdFlowR package](https://birdflow-science.github.io/BirdFlowR/) ([source](https://github.com/birdflow-science/BirdFlowR))
-- [BirdFlowPy](https://github.com/birdflow-science/BirdFlowPy)
-- [BirdFlow: Learning Seasonal Bird Movements from Citizen Science Data](https://www.biorxiv.org/content/10.1101/2022.04.12.488057v1) Miguel Fuentes, Benjamin M. Van Doren, Daniel Fink, Daniel Sheldon bioRxiv 2022.04.12.488057; doi: https://doi.org/10.1101/2022.04.12.488057
-
-
-----
-
-Collection URL: `r collection_url`  
-Last updated: `r lubridate::today(tzone = "EST")`
+```{r footer, child = system.file("rmd/footer.Rmd", package = "BirdFlowPipeline")}
+## Note footer document is taken from the installed package 
+## devtools::load_all() is NOT sufficient to update it
+```
 

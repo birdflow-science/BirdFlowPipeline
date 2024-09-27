@@ -16,11 +16,17 @@
 #'
 #' @param collection_url The final URL for the BirdFlow collection (where it
 #' will be served).
+#' 
+#' @param description Optional text for an additional section to be inserted
+#'  into the markdown document as is.   
+#'  The intent is to allow describing this particular collection.
+#'  The first line should start with "## " and the section header, 
+#'  followed by a blank line and description text. 
 #'
 #' @export
 #' @keywords internal
 #'
-build_collection_index <- function(dir, collection_url) {
+build_collection_index <- function(dir, collection_url, description = "") {
 
 
   index_path <- file.path(dir, "index.Rds")
@@ -140,7 +146,9 @@ build_collection_index <- function(dir, collection_url) {
     rmarkdown::render(
       input = rmd_file,
       output_file = file.path(dir, "index.html"),
-      params = list(index = index, collection_url = collection_url),
+      params = list(index = index, 
+                    collection_url = collection_url,
+                    collection_description = description),
       quiet = TRUE)
   })
   file.remove(rmd_file)

@@ -1,7 +1,17 @@
+# BirdFlowPipeline 0.0.0.9010
+2024-09-26
+
+Add `build_collection_index()`
+
+* Move `build_collection_index()` from **BirdFlowR** to **BirdFlowPipeline**. 
+* Add `description` argument to allow inserting collection specific
+  markdown.
+* Switch to the standard footer:  `rmd/footer.Rmd`
+
 # BirdFlowPipeline 0.0.0.9009
 2024-09-25
 
-* Minor updates to model reports. This was in an attempt to adapt the model 
+* Minor updates to model reports. This was in an attempt to adapt the model
 reports for tuned models to work for models fit with averaged hyperparameters.
 Ultimately these changes weren't used but I cleaned up some documentation and
 added comments in the process so decided to keep the changes. 

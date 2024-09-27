@@ -16,6 +16,8 @@ test_that("Build collection index works", {
 
   collection_url <- "https://fake-url.com"
 
+  description <- "## The heading\n\nOther text."
+  
   expect_no_error(build_collection_index(dir, collection_url))
 
   expect_true(file.exists(file.path(dir, "index.html")))
