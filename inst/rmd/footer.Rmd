@@ -18,7 +18,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Learn more
 
-- [BirdFlow project](https://birdflow-science.github.io/)  
+BirdFlow is a joint project between the 
+[University of Massachusetts Amherst](https://www.cics.umass.edu/) and 
+the [Cornell Lab of Ornithology](https://www.birds.cornell.edu/home/). 
+It is funded by the [US National Science Foundation](https://www.nsf.gov/)
+
+- [BirdFlow project page](https://birdflow-science.github.io/)  
 - [BirdFlowR package](https://birdflow-science.github.io/BirdFlowR/) ([source](https://github.com/birdflow-science/BirdFlowR))
 - [BirdFlowPy](https://github.com/birdflow-science/BirdFlowPy)
 - [BirdFlow: Learning Seasonal Bird Movements from Citizen Science Data](https://www.biorxiv.org/content/10.1101/2022.04.12.488057v1) 
@@ -36,9 +41,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ----
 
-#### Disclamer
+#### Disclaimer
 This material uses data from the eBird Status and Trends Project at the Cornell
-Lab of Ornithology, eBird.org. Any opinions, findings, and conclusions or 
+Lab of Ornithology, [eBird.org](eBird.org). 
+Any opinions, findings, and conclusions or 
 recommendations expressed in this material are those of the author(s) and do 
 not necessarily reflect the views of the Cornell Lab of Ornithology.
 
