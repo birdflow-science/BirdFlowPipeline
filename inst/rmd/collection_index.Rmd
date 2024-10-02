@@ -81,7 +81,7 @@ has_collection_description = params$collection_description != ""
 
 ```{r collection description header, eval= has_collection_description, results = 'asis'}
 # User supplied description
-cat("----\n\n")
+cat("\n\n")
 
 cat(params$collection_description, "\n\n")
 
