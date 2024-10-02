@@ -1,3 +1,10 @@
+# BirdFlowPipeline 0.0.0.9011
+2024-10-02
+
+Add `title` argument to `build_collection_index()` and drop the default
+description from the document when a custom description is supplied.
+Default description is now in `rmd/collection_description.Rmd`.
+
 # BirdFlowPipeline 0.0.0.9010
 2024-09-26
 

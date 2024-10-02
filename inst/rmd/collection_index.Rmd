@@ -1,11 +1,16 @@
 ---
-title: "BirdFlowR Model Collection"
 output: html_document
 params:
+  title: "BirdFlowR Model Collection"
   index: ""
   collection_url: "https:/example_url/"
   collection_description: ""
 ---
+
+---
+title: `r params$title`
+---
+
 
 ```{r setup, include=FALSE, echo = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -74,35 +79,30 @@ has_collection_description = params$collection_description != ""
    
 ----
 
-## Overview
-
-This BirdFlow model collection contains fitted models of bird movement
-trained from 
-[eBird Status and Trends (S&T)](https://science.ebird.org/en/status-and-trends) 
-weekly distributions. They can be
-used with the 
-[BirdFlowR R Package](https://birdflow-science.github.io/BirdFlowR/) to generate
-synthetic migration routes or to 
-predict where birds at a known location and time are likely to be at another 
-point in time. 
-
-**eBird S&T code** links to eBird information on the species.  
-`r ifelse(has_model_reports, "**Model** links to a report on the model.", "")`
-
 ```{r collection description header, eval= has_collection_description, results = 'asis'}
-
+# User supplied description
 cat("----\n\n")
 
 cat(params$collection_description, "\n\n")
 
 ```
 
+```{r default description, child = system.file("rmd/collection_description.Rmd", package = "BirdFlowPipeline"), eval = !has_collection_description}
+# Default description
+## Note: the document is taken from the installed package 
+## devtools::load_all() is NOT sufficient to update it
+```
+
+
+**eBird S&T code** links to eBird information on the species.  
+`r ifelse(has_model_reports, "**Model** links to a report on the model.", "")`
+
 ----
 
 ## Models
 
 
-```{r table}
+```{r table, echo = FALSE}
 knitr::kable(index)
 ```
 
