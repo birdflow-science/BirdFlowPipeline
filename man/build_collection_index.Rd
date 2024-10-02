@@ -4,7 +4,12 @@
 \alias{build_collection_index}
 \title{Convert a directory of BirdFlow models into a collection}
 \usage{
-build_collection_index(dir, collection_url)
+build_collection_index(
+  dir,
+  collection_url,
+  description = NULL,
+  title = "BirdFlowR Model Collection"
+)
 }
 \arguments{
 \item{dir}{A local directory for containing BirdFlow models saved as \code{.Rds}
@@ -13,6 +18,16 @@ will be extracted from the BirdFlow object.}
 
 \item{collection_url}{The final URL for the BirdFlow collection (where it
 will be served).}
+
+\item{description}{Optional text for an section to be inserted
+into the markdown document as is and in place of the default
+description.
+The intent is to allow describing this particular collection.
+The first line should start with "## " and the section header,
+followed by a blank line and description text or additional markdown.}
+
+\item{title}{The page title. Will appear as a level one heading and as the
+formal title of the page.}
 }
 \description{
 A BirdFlow model collection consists of 1 or more BirdFlow objects each
