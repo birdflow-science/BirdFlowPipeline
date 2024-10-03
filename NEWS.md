@@ -1,3 +1,15 @@
+# BirdFlowPipeline 0.0.0.9012
+2024-10-03
+
+Add license to footer. Three variables optionally defined in the parent 
+.Rmd affect the licence.
+* `is_html`  controls whether the license is defined as html or markdown,
+   html version is fancier.  It will default to `TRUE` if not defined.
+* `focal_species` For species specific version of the license this should 
+be the common name of the species.
+* `doc_url` The URL (in final location) of the current document.  
+
+
 # BirdFlowPipeline 0.0.0.9011
 2024-10-02
 

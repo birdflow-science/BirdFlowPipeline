@@ -6,6 +6,18 @@ output: html_document
 ```{r setup footer, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+
+# These are optionally defined in the parent markdown document and affect 
+# the licence link and text
+has_species <- exists("focal_species")
+has_url <- exists("doc_url")
+
+# is_html should be defined in parent document but is patched here
+# for test rendering the child independently
+if(!exists("is_html"))
+  is_html <- TRUE
+
+
 # This document exists to provide a standard footer with links to more
 # information and the required eBird citation.
 
@@ -38,6 +50,55 @@ It is funded by the [US National Science Foundation](https://www.nsf.gov/)
   Data Version: 2022; Released: 2023. Cornell Lab of
   Ornithology, Ithaca, New York. 
   [https://doi.org/10.2173/ebirdst.2022](https://doi.org/10.2173/ebirdst.2022)
+
+----
+
+### License
+
+```{r license, eval = TRUE, echo = FALSE, results = "asis"}
+
+link_to_model <- has_url && has_species
+
+if(is_html){
+  license <- paste0(
+    '<p xmlns:cc="http://creativecommons.org/ns#" ',
+    'xmlns:dct="http://purl.org/dc/terms/">',
+    ifelse(link_to_model, 
+           paste0('<a property="dct:title" rel="cc:attributionURL" ', 
+                  'href="', doc_url, '">', focal_species, 
+                  ' BirdFlow Model</a>'), 
+           "Bird Flow Models"),
+    ' by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" ', 
+    'href="https://birdflow-science.github.io/">BirdFlowScience</a>',
+    ifelse(link_to_model, ' is ', ' are '),
+    'licensed under ', 
+    '<a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" ', 
+    'target="_blank" rel="license noopener noreferrer" ', 
+    'style="display:inline-block;">',
+    'CC BY 4.0',
+    '<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" ', 
+    'src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt="">',
+    '<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" ', 
+    'src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt="">',
+    '</a></p>', sep = "")
+} else {
+  if (link_to_model) {
+    license <- paste0(
+      "[", focal_species, " BirdFlow Model](", doc_url, ") © 2024 by ", 
+      "[BirdFlowScience](https://birdflow-science.github.io/) is licensed under",
+      " [CC BY 4.0 ![](https://chooser-beta.creativecommons.org/img/cc-logo.f0ab4ebe.svg)", 
+      sep = "")
+  } else {
+    license <- paste0(
+      "BirdFlow Models © 2024 by ", 
+      "[BirdFlowScience](https://birdflow-sciece.github.io/) are licensed under",
+      " [CC BY 4.0 ![](https://chooser-beta.creativecommons.org/img/cc-logo.f0ab4ebe.svg)", 
+      sep = "")
+  }
+}
+
+cat("\n", license, "\n", sep ="")
+```
 
 ----
 
