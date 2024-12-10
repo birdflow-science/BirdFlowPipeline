@@ -186,6 +186,12 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'
 #' @export
 evaluate_model <- function(bf, modelname, track_info, params){
+
+  win_prob <- BirdFlowR::get_distance_metric(
+    intervals = as.data.frame(track_info$int_df),
+    observations = as.data.frame(track_info$obs_df),
+    bf = bf) # a value of wining_proba_by_distance_metric
+    
   my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
@@ -224,6 +230,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
     end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
+    win_prob = win_prob,
     ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
     nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
     ll_raw_n = nrow(my_ll),
@@ -451,6 +458,11 @@ rank_models <- function(eval_metrics, params){
       dplyr::mutate(
         dummy_d = rep(1, nrow(eval_metrics)),
       )
+  } else if (params$model_selection == 'distance_metric') {
+    eval_metrics <- eval_metrics %>%
+      dplyr::mutate(
+        win_prob_d = desirability2::d_max(.data$win_prob, use_data = TRUE),
+      )
   } else {
     stop('invalid model_selection in params')
   }
@@ -486,3 +498,4 @@ rank_models <- function(eval_metrics, params){
   #     overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
   #   )
 }
+
