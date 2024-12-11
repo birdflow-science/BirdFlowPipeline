@@ -45,6 +45,7 @@ batch_flow <- function(species, ...){
   # Batch model evaluation
   
   eval_metrics <- batch_evaluate_models(params, track_info)
+  print(colnames(eval_metrics))
   
   # Model selection and ranking with desirability
   
