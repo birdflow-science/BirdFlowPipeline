@@ -15,13 +15,17 @@
 #' directory will be a concatenation of `"batch_flux"`, the date, and `"_mf"`.
 #' @param memory GB of memory allocated for each flux calculation. 
 #' @param walltime Elapsed time in minutes allocated to the job.
+#' @param show_progress If `TRUE` `batch_flux()` will display a progress bar 
+#' and wait for all the launched jobs to finish. If `FALSE` `batch_flux()` 
+#' will exit immediately after launching.
 #' @return Nothing is returned.
 #' @export
 batch_flux <- function(model_paths, 
                        flux_paths = NULL, 
                        base_path = NULL,
                        memory = 12, 
-                       walltime = 180) {
+                       walltime = 180, 
+                       show_progress = TRUE) {
   
   start <- Sys.time()
   
@@ -78,8 +82,14 @@ batch_flux <- function(model_paths,
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), 
                                          chunk = 1L),
                            resources = modelfit_resources)
-    success <- batchtools::waitForJobs()
-    retries <- retries + 1
+    if(show_progress){
+      success <- batchtools::waitForJobs()
+      retries <- retries + 1
+    } else {
+      # If not showing progress than don't wait for jobs, look for errors,
+      # or attempt to relaunch problems.
+      success <- TRUE 
+    }
   }
   
   if (!isTRUE(success)) {
@@ -92,8 +102,12 @@ batch_flux <- function(model_paths,
     stop("Not all runs competed.  First error message:\n", first_err_msg)
   }
   
-  end <- Sys.time()
-  diff <- end - start
-  message("batch_flux() completed successfully after ", 
-          format(diff, digits = 4), ".")
+  if(show_progress){
+    message("batch_flux() launched on ", length(model_paths), " models")  
+  } else {
+    end <- Sys.time()
+    diff <- end - start
+    message("batch_flux() completed successfully after ", 
+            format(diff, digits = 4), ".")
+  }
 }
