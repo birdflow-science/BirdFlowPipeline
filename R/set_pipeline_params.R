@@ -62,15 +62,12 @@
 #' @param hdf_dir The path to the directory in which this run's hdf5 
 #' preprocessed and fit models are stored. Set by 
 #' [preprocess_species_wrapper()] to `<hdf_path>/<species>_<res>km/`.
-#' @param base_output_path  The base path for model stats, reports,
-#'  and other output derived from the models. 
-#'  [preprocess_species_wrapper()] to 
+#' @param base_output_path  The base path for fitted models, model reports,
+#'  and other output.
 #' @param output_fullname Initially `NULL` this is set by 
 #' [preprocess_species_wrapper] to `"<species>_<res>km<suffix>"`. 
 #' @param output_path Initially `NULL` this is set by
-#' [preprocess_species_wrapper] to `"<base_output_path>/<output_fullname>"`.
-#' Note `output_path` is used to store model stats and reports but the model 
-#' itself is stored in `hdf_dir`.
+#' [preprocess_species_wrapper] to `"<base_output_dir>_<output_fullname>"`.
 #' @param season This is used in two ways:  (1) to filter movement data
 #'  (I think just tracks? - ebp) before evaluating the model and (2) 
 #'  if `truncate_season` is `TRUE` it is passed to  

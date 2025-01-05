@@ -172,20 +172,12 @@ import_birdflow_and_evaluate <- function(path, ...){
 }
 
 #' Evaluate a BirdFlow model
-#' 
-#' `evaluate_model` calculates
-#'  * Log likelihood of banding data with 
-#'   [BirdFlowR::interval_log_likelihood()]
-#'  * Probability integral transform (PIT) calibration of tracking data with `pit_calibration()`
-#'  * Synthetic route statistics with [BirdFlowR::route()] and [rts_stats()]
 #'
 #' @param bf A birdflow model object, often passed from [import_birdflow_and_evaluate()]
-#' @param modelname A name used to label the model in result tables.
-#' Often the basename of the model path.
+#' @param modelname A name for the model, often the basename of the model path
 #' @param track_info Object produced from [make_tracks()]
-#' @param params Standard params object created by [set_pipeline_params]
-#'  The `species`, `season`, and `output_path` elements will be used. `params` 
-#'  will also be passed on to `pit_calibration()` and `pit_plots()`.
+#' @param params Standard params object
+#'
 #' @seealso [make_tracks()], [batch_evaluate_models()], [import_birdflow_and_evaluate()]
 #' @returns A list:
 #'  * `df` 1-row data.frame of model descriptors and metrics 
@@ -194,29 +186,18 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'
 #' @export
 evaluate_model <- function(bf, modelname, track_info, params){
-<<<<<<< HEAD
 
   win_prob <- BirdFlowR::get_distance_metric(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf) # a value of wining_proba_by_distance_metric
     
-=======
-  
-  # Process banding data to make log likelihood 
-  # Note "track_info" is banding data
->>>>>>> main
   my_ll <- BirdFlowR::interval_log_likelihood(
     intervals = as.data.frame(track_info$int_df),
     observations = as.data.frame(track_info$obs_df),
     bf = bf)
-  
-  # Generate synthetic routes and route stats (straightness etc)
   rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
   route_stats <- rts_stats(rts)
-
-  # Perform PIT evaluation of tracking data if there is any
-  # Note: transitions_files hold the tracking data
   transitions_files <- list.files(the$tracking_data_path,
                                pattern = paste0("^", params$species, ".*transitions.*\\.csv"),
                                full.names = TRUE)
@@ -233,16 +214,13 @@ evaluate_model <- function(bf, modelname, track_info, params){
     pit_calibration_obj <- pit_calibration(bf, transitions, params)
     pit_plots(pit_calibration_obj, params, modelname)
   } else {
-    # NA's for pit calibration if no tracking data 
     pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_, res = data.frame(in_95_set = NA_real_))
   }
-  # Write PIT calibration (on tracking data)
   dir.create(file.path(params$output_path, 'pit_data'), showWarnings = FALSE)
   pit_data_filename <- paste0(sub('\\.hdf5$', "", modelname), '_pit.rds')
   outfile <- file.path(file.path(params$output_path, 'pit_data'), pit_data_filename)
   saveRDS(pit_calibration_obj, outfile)
   
-  # Combine all the metrics
   out_df <- dplyr::tibble(
     model = modelname,
     obs_weight = safe_numeric(bf$metadata$hyperparameters$obs_weight),
@@ -265,9 +243,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     pit_col = pit_calibration_obj$D_col,
     pit_in_95 = sum(pit_calibration_obj$res$in_95_set,na.rm=T)/length(pit_calibration_obj$res$in_95_set)
   )
-  
-  # Return list this is usually assigned to "my_ll"
-  # components represnt, metrics, banding observations, and banding intervals
+  #my_ll
   list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)
 }
 
