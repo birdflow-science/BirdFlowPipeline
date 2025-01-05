@@ -1,6 +1,6 @@
 Package: BirdFlowPipeline
 Title: Tools for fitting, selecting, and evaluating BirdFlow models on Unity
-Version: 0.0.0.9007
+Version: 0.0.0.9012
 Authors@R: 
    c(person("David", "Slager", , "slager@users.noreply.github.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2525-2039")),

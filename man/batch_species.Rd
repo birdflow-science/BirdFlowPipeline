@@ -12,6 +12,7 @@ batch_species(
   dist_pow = 0.4167,
   dist_weight = 0.008177,
   ent_weight = 0.001924,
+  show_progress = TRUE,
   ...
 )
 }
@@ -34,6 +35,10 @@ coverage and performance of the "grid" search.}
 
 \item{de_ratio, obs_prop, dist_pow, dist_weight, ent_weight}{loss function
 parameters see definition in \code{grid_search_list} below under \code{...}}
+
+\item{show_progress}{If \code{TRUE} \code{batch_species()} will display a progress bar
+and wait for all the launched jobs to finish. If \code{FALSE} \code{batch_species()}
+will exit immediately after launching.}
 
 \item{...}{
   Arguments passed on to \code{\link[=set_pipeline_params]{set_pipeline_params}}
@@ -75,12 +80,15 @@ fitted models are stored.}
     \item{\code{hdf_dir}}{The path to the directory in which this run's hdf5
 preprocessed and fit models are stored. Set by
 \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}} to \verb{<hdf_path>/<species>_<res>km/}.}
-    \item{\code{base_output_path}}{The base path for fitted models, model reports,
-and other output.}
+    \item{\code{base_output_path}}{The base path for model stats, reports,
+and other output derived from the models.
+\code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}} to}
     \item{\code{output_fullname}}{Initially \code{NULL} this is set by
 \link{preprocess_species_wrapper} to \code{"<species>_<res>km<suffix>"}.}
     \item{\code{output_path}}{Initially \code{NULL} this is set by
-\link{preprocess_species_wrapper} to \code{"<base_output_dir>_<output_fullname>"}.}
+\link{preprocess_species_wrapper} to \code{"<base_output_path>/<output_fullname>"}.
+Note \code{output_path} is used to store model stats and reports but the model
+itself is stored in \code{hdf_dir}.}
     \item{\code{season}}{This is used in two ways:  (1) to filter movement data
 (I think just tracks? - ebp) before evaluating the model and (2)
 if \code{truncate_season} is \code{TRUE} it is passed to

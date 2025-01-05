@@ -7,6 +7,9 @@
 #'
 #' @param species A vector of species codes or common names to fit. Must work
 #' with [ebirdst::get_species()]
+#' @param show_progress If `TRUE` `batch_species()` will display a progress bar 
+#' and wait for all the launched jobs to finish. If `FALSE` `batch_species()` 
+#' will exit immediately after launching.
 #' @inheritParams set_pipeline_params
 #' @param de_ratio,obs_prop,dist_pow,dist_weight,ent_weight loss function 
 #' parameters see definition in `grid_search_list` below under `...` 
@@ -23,6 +26,7 @@ batch_species <- function(
     dist_pow = 4.167e-01,
     dist_weight = 8.177e-03,
     ent_weight = 1.924e-03,
+    show_progress = TRUE,
     ...
  ){
   start <- Sys.time()
@@ -74,8 +78,14 @@ batch_species <- function(
       batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), 
                                            chunk = 1L),
                              resources = modelfit_resources)
-      success <- batchtools::waitForJobs()
-      retrys <- retrys + 1
+      if(show_progress){
+        success <- batchtools::waitForJobs()
+        retrys <- retrys + 1
+      } else {
+        # If not showing progress than don't wait for jobs, look for errors,
+        # or attempt to relaunch problems.
+        success <- TRUE
+      }
     }
     
     if (!isTRUE(success)) {
@@ -87,8 +97,11 @@ batch_species <- function(
       cat("\n\nRegistry directory:", reg_dir, "\n")
       stop("Not all runs competed.  First error message:\n", first_err_msg)
     }
-    
-    end <- Sys.time()
-    diff <- end - start
-    message("batch_species() completed successfully after ", format(diff, digits = 4), ".")
+    if(show_progress){
+      message("batch_species() launched ", length(species), " models")  
+    } else {
+      end <- Sys.time()
+      diff <- end - start
+      message("batch_species() completed successfully after ", format(diff, digits = 4), ".")
+    }
 }
