@@ -43,9 +43,7 @@ batch_flow <- function(species, ...){
   saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
   
   # Batch model evaluation
-  
   eval_metrics <- batch_evaluate_models(params, track_info)
-  print(colnames(eval_metrics))
   
   # Model selection and ranking with desirability
   

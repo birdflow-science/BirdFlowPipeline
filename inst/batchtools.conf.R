@@ -4,6 +4,7 @@
 # package on the processing nodes.  I think BirdFlowPipeline will only ever
 # be installed in the library location that's in the users home directory
 # so there's not much benefit of telling it which library to install from.
+
 cluster.functions <- 
   makeClusterFunctionsSlurm(template = system.file('slurm.tmpl', 
                                                    package = 'BirdFlowPipeline', 

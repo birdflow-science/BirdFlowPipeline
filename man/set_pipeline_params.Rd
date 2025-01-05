@@ -20,7 +20,7 @@ set_pipeline_params(
   output_path = NULL,
   season = "prebreeding",
   truncate_season = FALSE,
-  model_selection = "real_tracking",
+  model_selection = "distance_metric",
   clip = NULL,
   crs = NULL,
   skip_quality_checks = FALSE,

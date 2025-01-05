@@ -216,7 +216,7 @@ birdflow_modelfit_args_df <- function(params){
     args <- args %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
     hdf_df <- hdf_df %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
     # Delete unneeded hdf5s
-    extra_hdf5s <- dplyr::anti_join(hdf_df, args, by = dplyr::join_by('mysp' == 'mysp', 'myres' == 'myres', 'dist_pow' == 'dist_pow', 'dist_weight' == 'dist_weight', 'ent_weight' == 'ent_weight')) %>%
+    extra_hdf5s <- dplyr::anti_join(hdf_df, args, by = dplyr::join_by('mysp' == 'species', 'myres' == 'res', 'dist_pow' == 'dist_pow', 'dist_weight' == 'dist_weight', 'ent_weight' == 'ent_weight')) %>%
       dplyr::pull(.data$hdf5_path)
     if (length(extra_hdf5s) > 0){
       invisible(file.remove(extra_hdf5s))
@@ -224,7 +224,7 @@ birdflow_modelfit_args_df <- function(params){
         paste('Deleted', length(extra_hdf5s), 'previously fitted models not needed for this grid search')
       )
     }
-    dplyr::anti_join(args, hdf_df, by = dplyr::join_by('mysp' == 'mysp', 'myres' == 'myres', 'dist_pow' == 'dist_pow', 'dist_weight' == 'dist_weight', 'ent_weight' == 'ent_weight'))
+    dplyr::anti_join(args, hdf_df, by = dplyr::join_by('species' == 'mysp', 'res' == 'myres', 'dist_pow' == 'dist_pow', 'dist_weight' == 'dist_weight', 'ent_weight' == 'ent_weight'))
   } else {
     args
   }
@@ -294,6 +294,8 @@ batch_evaluate_models <- function(params, track_info){
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                          resources = evaluation_resources)
   success <- batchtools::waitForJobs()
+  print(batchtools::getStatus())
+  
   if (! isTRUE(success)) {
     message('Requeuing jobs that expired or had an error, attempt 1 of 2')
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
@@ -306,6 +308,7 @@ batch_evaluate_models <- function(params, track_info){
                            resources = evaluation_resources)
     success <- batchtools::waitForJobs()
   }
+
   stopifnot(isTRUE(success))
   eval_metrics <- batchtools::reduceResultsList() %>%
     lapply(function(i){i$df}) %>%
