@@ -30,7 +30,7 @@ log.file = fs::path_expand(log.file)
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=<%= resources$ncpus %>
 #SBATCH --mem=<%= resources$memory %>G
-#SBATCH --exclude=toltec-cpu[001-007],gypsum-gpu172
+#SBATCH --exclude=toltec-cpu[001-007]
 <% 
 # Define variables for gpu ram
 is_gpu <- !is.null(resources$ngpus) 
