@@ -418,12 +418,12 @@ rank_models <- function(eval_metrics, params){
     # Tracking-focused model selection
     # Includes traverse correlation, PIT scores, and
     # straightness + n_stopovers targetted to observed values from real tracking
-    real_track_stats <- real_track_stats(eval_metrics, params)
+    real_track_stats_res <- real_track_stats(eval_metrics, params)
     # save real_track_stats RDS
-    saveRDS(real_track_stats, file.path(params$output_path, 'real_track_stats.rds'))
+    saveRDS(real_track_stats_res, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
-      !is.na(real_track_stats$straightness),
-      !is.na(real_track_stats$n_stopovers)
+      !is.na(real_track_stats_res$straightness),
+      !is.na(real_track_stats_res$n_stopovers)
     )
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
@@ -432,26 +432,26 @@ rank_models <- function(eval_metrics, params){
         d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
         pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
         etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
-        str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
-        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
+        str_d = desirability2::d_min(abs(.data$straightness - real_track_stats_res$straightness), use_data = TRUE),
+        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats_res$n_stopovers), use_data = TRUE)
       )
   } else if (params$model_selection == 'real_tracking_no_cal'){
     # Tracking-focused model selection
     # Includes traverse correlation, and
     # straightness + n_stopovers targetted to observed values from real tracking
     # But no PIT scores!
-    real_track_stats <- real_track_stats(eval_metrics, params)
+    real_track_stats_res <- real_track_stats(eval_metrics, params)
     # save real_track_stats RDS
-    saveRDS(real_track_stats, file.path(params$output_path, 'real_track_stats.rds'))
+    saveRDS(real_track_stats_res, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
-      !is.na(real_track_stats$straightness),
-      !is.na(real_track_stats$n_stopovers)
+      !is.na(real_track_stats_res$straightness),
+      !is.na(real_track_stats_res$n_stopovers)
     )
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
         etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
-        str_d = desirability2::d_min(abs(.data$straightness - real_track_stats$straightness), use_data = TRUE),
-        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats$n_stopovers), use_data = TRUE)
+        str_d = desirability2::d_min(abs(.data$straightness - real_track_stats_res$straightness), use_data = TRUE),
+        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats_res$n_stopovers), use_data = TRUE)
       )
   } else if (params$model_selection == 'averaged_parameters') {
     eval_metrics <- eval_metrics %>%
