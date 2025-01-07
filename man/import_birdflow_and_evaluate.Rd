@@ -7,7 +7,7 @@
 import_birdflow_and_evaluate(path, ...)
 }
 \arguments{
-\item{path}{Path of hdf5 to pass to \code{\link[BirdFlowR:export_import_birdflow]{BirdFlowR::import_birdflow()}}.}
+\item{path}{Path of hdf5 to pass to \code{\link[BirdFlowR:import_birdflow]{BirdFlowR::import_birdflow()}}.}
 
 \item{...}{Further arguments passed to \code{\link[=evaluate_model]{evaluate_model()}}}
 }

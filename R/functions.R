@@ -49,6 +49,92 @@ preprocess_calc_distance_days <- function(df){
     (dplyr::ungroup)
 }
 
+
+
+#' Load banding data
+#' 
+#' @param banding_rds_path file path to `.rds` file containing raw banding data
+#' @param max_band_tracks maximum number of band_tracks to output, downsample if necessary
+#' @param max_preprocess  maximum number of bands to preprocess, downsample if necessary
+#' @param min_dist_m minimum distance in meters between origin and destination to retain a band_track
+#' @param max_days maximum number of days between origin and destination to retain a band_track
+#' @returns a list:
+#'  * `banding_df` data.frame of observations for banding data
+#' @export
+load_banding_data <- function(
+    banding_rds_path,
+    max_band_tracks = 10000,
+    max_preprocess = 500000,
+    min_dist_m = 15000,
+    max_days = 180){
+  file_exists <- dplyr::if_else(file.exists(banding_rds_path), TRUE, FALSE)
+  if (file_exists){
+    df <- readRDS(banding_rds_path)
+  }
+  if (!file_exists || nrow(df) == 0) {
+    # return zero-row track_info
+    return(list(
+      obs_df = structure(
+        list(
+          BAND = character(0),
+          EVENT_TYPE = character(0),
+          date = structure(numeric(0), class = "Date"),
+          lat = numeric(0),
+          lon = numeric(0),
+          EBIRDST_CODE = character(0),
+          BAND_TRACK = character(0),
+          distance = numeric(0),
+          days = integer(0),
+          when = character(0),
+          id = integer(0)
+        ),
+        row.names = integer(0),
+        class = c("tbl_df",
+                  "tbl", "data.frame")
+      ),
+      int_df = structure(
+        list(
+          BAND_TRACK = character(0),
+          from = integer(0),
+          to = integer(0)
+        ),
+        row.names = integer(0),
+        class = c("tbl_df",
+                  "tbl", "data.frame")
+      )
+    ))
+  }
+  # Downsample to max for preprocessing
+  sampled_bands <- sample(unique(df$BAND), dplyr::if_else(max_preprocess > dplyr::n_distinct(df$BAND), dplyr::n_distinct(df$BAND), max_preprocess))
+  df <- df %>% dplyr::filter(.data$BAND %in% sampled_bands)
+  # Function to convert banding df to an sf object of linestrings of origin-destination tracks
+  # expand to two steps
+  df <- df %>% dplyr::group_by(.data$BAND) %>%
+    dplyr::mutate(count = c(1, rep(2, dplyr::n() - 2), 1)) %>%
+    tidyr::uncount(.data$count) %>%
+    dplyr::mutate(BAND_TRACK = paste(.data$BAND, rep(1:(dplyr::n()/2), each = 2), sep = '_')) %>%
+    (dplyr::ungroup)
+  df <- preprocess_calc_distance_days(df)
+  df <- df %>% dplyr::select(c('BAND', 'EVENT_TYPE', 'EVENT_DATE', 'LAT_DD', 'LON_DD', 'EBIRDST_CODE', 'BAND_TRACK', 'distance', 'days'))
+  df <- df %>% dplyr::group_by(.data$BAND_TRACK) %>%
+    dplyr::filter(.data$distance[2] > min_dist_m / 1000) %>%
+    dplyr::filter(.data$days[2] <= max_days) %>%
+    dplyr::mutate(
+      when = rep(
+        c('from', 'to'), times = dplyr::n() / 2
+      )
+    ) %>%
+    (dplyr::ungroup)
+  # Downsample to max # band_tracks
+  sampled_band_tracks <- sample(unique(df$BAND_TRACK), dplyr::if_else(max_band_tracks > dplyr::n_distinct(df$BAND_TRACK), dplyr::n_distinct(df$BAND_TRACK), max_band_tracks))
+  df <- df %>% dplyr::filter(.data$BAND_TRACK %in% sampled_band_tracks)
+  # Make IDs
+  df$id <- seq_len(nrow(df))
+  banding_df <- df %>% dplyr::rename(date = 'EVENT_DATE', lat = 'LAT_DD', lon = 'LON_DD')
+  return(banding_df)
+}
+
+
 #' Prepare banding data for `BirdFlowR::interval_log_likelihood()`
 #' 
 #' @param banding_rds_path file path to `.rds` file containing raw banding data

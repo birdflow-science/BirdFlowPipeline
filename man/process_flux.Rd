@@ -8,7 +8,7 @@ process_flux(model_path, flux_path)
 }
 \arguments{
 \item{model_path}{Path to a BirdFlow model file, either an HDF5
-to be read with \code{\link[BirdFlowR:export_import_birdflow]{BirdFlowR::import_birdflow()}} or and RDS handled by
+to be read with \code{\link[BirdFlowR:import_birdflow]{BirdFlowR::import_birdflow()}} or and RDS handled by
 \code{\link[=readRDS]{readRDS()}}.}
 
 \item{flux_path}{The path to and RDS file (ending in \code{".rds"}) to write the
