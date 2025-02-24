@@ -18,18 +18,16 @@ batch_flow <- function(species, ...){
          "Use multiple_species_batch()")
   }
   
+  # species = 'amewoo'
   params <- set_pipeline_params(species = species, ...)
   
   # preprocess species and set up directories
-  
   params <- preprocess_species_wrapper(params)
   
   # Save finalized parameters
-  
   saveRDS(params, file.path(params$output_path, 'params.rds'))
   
   # Batch fit models
-  
   batch_modelfit_wrapper(params)
   
   # Exit if fitting only
@@ -38,19 +36,78 @@ batch_flow <- function(species, ...){
   }
   
   # Load and save track info
+  # Here should combine banding and motus data and convert to BirdFlowIntervals class
+  banding_df <- load_banding_transitions_df(file.path(the$banding_rds_path, paste0(params$species, '.rds')))
+  motus_df <- load_motus_transitions_df(file.path(the$motus_rds_path, paste0(params$species, '.rds')))
+  combined_data <- rbind(banding_df, motus_df)
+  combined_data <- na.omit(combined_data)
+  saveRDS(combined_data, file.path(params$output_path, 'all_ground_truth_transitions_df.rds'))
   
-  track_info <- make_tracks(file.path(the$banding_rds_path, paste0(params$species, '.rds')))
-  saveRDS(track_info, file.path(params$output_path, 'track_info.rds'))
+  # Dataframe to Routes
+  if (is.null(banding_df) & !is.null(motus_df)){
+    source <- 'MOTUS'
+  } else if (!is.null(banding_df) & is.null(motus_df)){
+    source <- 'Banding'
+  } else if (!is.null(banding_df) & !is.null(motus_df)){
+    source <- 'Banding & MOTUS'
+  }else {
+    source <- 'No Data'
+  }
+  routes_obj <- BirdFlowR::Routes(combined_data, species=list(), metadata=params$metadata, source=source)
+  
+  # Routes to BirdFlowRoutes to BirdFlowIntervals
+  # Get bf object (for converting to BirdFlowIntervals)
+  pp_dir <- tempdir()
+  bf <- BirdFlowR::preprocess_species(
+    species = params$species,
+    out_dir = pp_dir,
+    gpu_ram = params$gpu_ram,
+    res = params$res,
+    season = dplyr::if_else(params$truncate_season, params$season, 'all'),
+    clip = params$clip,
+    crs = params$crs,
+    skip_quality_checks = params$skip_quality_checks, 
+    trim_quantile = params$trim_quantile
+  )
+  
+  # Get the intervals
+  interval_obj <- routes_obj |> 
+    BirdFlowR::as_BirdFlowRoutes(bf=bf,
+                                 aggregate = "random") |> 
+    BirdFlowR::as_BirdFlowIntervals(max_n=5000,
+                                    min_day_interval=7,
+                                    max_day_interval=180,
+                                    min_km_interval=200,
+                                    max_km_interval=8000)
+  
+  # Train-test split
+  set.seed(42)
+  train_data <- interval_obj$data |> dplyr::sample_frac(0.7)
+  test_data <- dplyr::setdiff(interval_obj$data, train_data)
+  train_data <- BirdFlowIntervals(data=train_data,
+                                  species=interval_obj$species,
+                                  metadata=interval_obj$metadata,
+                                  geom=interval_obj$geom,
+                                  dates=interval_obj$dates,
+                                  source=interval_obj$source)
+  test_data <- BirdFlowIntervals(data=test_data,
+                                  species=interval_obj$species,
+                                  metadata=interval_obj$metadata,
+                                  geom=interval_obj$geom,
+                                  dates=interval_obj$dates,
+                                  source=interval_obj$source)
+  
   
   # Batch model evaluation
-  eval_metrics <- batch_evaluate_models(params, track_info)
+  eval_metrics <- batch_evaluate_models(params, train_data)
+  eval_metrics_test <- batch_evaluate_models(params, test_data)
   
   # Model selection and ranking with desirability
-  
   eval_metrics <- rank_models(eval_metrics, params)
   
   # save model evaluation RDS
   saveRDS(eval_metrics, file.path(params$output_path, 'eval_metrics.rds'))
+  saveRDS(eval_metrics_test, file.path(params$output_path, 'eval_metrics_test.rds'))
   
   ## Plotting
   

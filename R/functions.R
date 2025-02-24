@@ -51,193 +51,6 @@ preprocess_calc_distance_days <- function(df){
 
 
 
-#' Load banding data
-#' 
-#' @param banding_rds_path file path to `.rds` file containing raw banding data
-#' @param max_band_tracks maximum number of band_tracks to output, downsample if necessary
-#' @param max_preprocess  maximum number of bands to preprocess, downsample if necessary
-#' @param min_dist_m minimum distance in meters between origin and destination to retain a band_track
-#' @param max_days maximum number of days between origin and destination to retain a band_track
-#' @returns a list:
-#'  * `banding_df` data.frame of observations for banding data
-#' @export
-load_banding_data <- function(
-    banding_rds_path,
-    max_band_tracks = 10000,
-    max_preprocess = 500000,
-    min_dist_m = 15000,
-    max_days = 180){
-  file_exists <- dplyr::if_else(file.exists(banding_rds_path), TRUE, FALSE)
-  if (file_exists){
-    df <- readRDS(banding_rds_path)
-  }
-  if (!file_exists || nrow(df) == 0) {
-    # return zero-row track_info
-    return(list(
-      obs_df = structure(
-        list(
-          BAND = character(0),
-          EVENT_TYPE = character(0),
-          date = structure(numeric(0), class = "Date"),
-          lat = numeric(0),
-          lon = numeric(0),
-          EBIRDST_CODE = character(0),
-          BAND_TRACK = character(0),
-          distance = numeric(0),
-          days = integer(0),
-          when = character(0),
-          id = integer(0)
-        ),
-        row.names = integer(0),
-        class = c("tbl_df",
-                  "tbl", "data.frame")
-      ),
-      int_df = structure(
-        list(
-          BAND_TRACK = character(0),
-          from = integer(0),
-          to = integer(0)
-        ),
-        row.names = integer(0),
-        class = c("tbl_df",
-                  "tbl", "data.frame")
-      )
-    ))
-  }
-  # Downsample to max for preprocessing
-  sampled_bands <- sample(unique(df$BAND), dplyr::if_else(max_preprocess > dplyr::n_distinct(df$BAND), dplyr::n_distinct(df$BAND), max_preprocess))
-  df <- df %>% dplyr::filter(.data$BAND %in% sampled_bands)
-  # Function to convert banding df to an sf object of linestrings of origin-destination tracks
-  # expand to two steps
-  df <- df %>% dplyr::group_by(.data$BAND) %>%
-    dplyr::mutate(count = c(1, rep(2, dplyr::n() - 2), 1)) %>%
-    tidyr::uncount(.data$count) %>%
-    dplyr::mutate(BAND_TRACK = paste(.data$BAND, rep(1:(dplyr::n()/2), each = 2), sep = '_')) %>%
-    (dplyr::ungroup)
-  df <- preprocess_calc_distance_days(df)
-  df <- df %>% dplyr::select(c('BAND', 'EVENT_TYPE', 'EVENT_DATE', 'LAT_DD', 'LON_DD', 'EBIRDST_CODE', 'BAND_TRACK', 'distance', 'days'))
-  df <- df %>% dplyr::group_by(.data$BAND_TRACK) %>%
-    dplyr::filter(.data$distance[2] > min_dist_m / 1000) %>%
-    dplyr::filter(.data$days[2] <= max_days) %>%
-    dplyr::mutate(
-      when = rep(
-        c('from', 'to'), times = dplyr::n() / 2
-      )
-    ) %>%
-    (dplyr::ungroup)
-  # Downsample to max # band_tracks
-  sampled_band_tracks <- sample(unique(df$BAND_TRACK), dplyr::if_else(max_band_tracks > dplyr::n_distinct(df$BAND_TRACK), dplyr::n_distinct(df$BAND_TRACK), max_band_tracks))
-  df <- df %>% dplyr::filter(.data$BAND_TRACK %in% sampled_band_tracks)
-  # Make IDs
-  df$id <- seq_len(nrow(df))
-  banding_df <- df %>% dplyr::rename(date = 'EVENT_DATE', lat = 'LAT_DD', lon = 'LON_DD')
-  return(banding_df)
-}
-
-
-#' Prepare banding data for `BirdFlowR::interval_log_likelihood()`
-#' 
-#' @param banding_rds_path file path to `.rds` file containing raw banding data
-#' @param max_band_tracks maximum number of band_tracks to output, downsample if necessary
-#' @param max_preprocess  maximum number of bands to preprocess, downsample if necessary
-#' @param min_dist_m minimum distance in meters between origin and destination to retain a band_track
-#' @param max_days maximum number of days between origin and destination to retain a band_track
-#' @returns a list:
-#'  * `obs_df` data.frame of observations for `BirdFlowR::interval_log_likelihood()`
-#'  * `int_df` data.frame of intervals for `BirdFlowR::interval_log_likelihood()`
-#' @seealso [BirdFlowR::interval_log_likelihood()]
-#' @export
-make_tracks <- function(
-    banding_rds_path,
-    max_band_tracks = 10000,
-    max_preprocess = 500000,
-    min_dist_m = 15000,
-    max_days = 180){
-  file_exists <- dplyr::if_else(file.exists(banding_rds_path), TRUE, FALSE)
-  if (file_exists){
-    df <- readRDS(banding_rds_path)
-  }
-  if (!file_exists || nrow(df) == 0) {
-    # return zero-row track_info
-    return(list(
-      obs_df = structure(
-        list(
-          BAND = character(0),
-          EVENT_TYPE = character(0),
-          date = structure(numeric(0), class = "Date"),
-          lat = numeric(0),
-          lon = numeric(0),
-          EBIRDST_CODE = character(0),
-          BAND_TRACK = character(0),
-          distance = numeric(0),
-          days = integer(0),
-          when = character(0),
-          id = integer(0)
-        ),
-        row.names = integer(0),
-        class = c("tbl_df",
-                  "tbl", "data.frame")
-      ),
-      int_df = structure(
-        list(
-          BAND_TRACK = character(0),
-          from = integer(0),
-          to = integer(0)
-        ),
-        row.names = integer(0),
-        class = c("tbl_df",
-                  "tbl", "data.frame")
-      )
-    ))
-  }
-  # Downsample to max for preprocessing
-  sampled_bands <- sample(unique(df$BAND), dplyr::if_else(max_preprocess > dplyr::n_distinct(df$BAND), dplyr::n_distinct(df$BAND), max_preprocess))
-  df <- df %>% dplyr::filter(.data$BAND %in% sampled_bands)
-  # Function to convert banding df to an sf object of linestrings of origin-destination tracks
-  # expand to two steps
-  df <- df %>% dplyr::group_by(.data$BAND) %>%
-    dplyr::mutate(count = c(1, rep(2, dplyr::n() - 2), 1)) %>%
-    tidyr::uncount(.data$count) %>%
-    dplyr::mutate(BAND_TRACK = paste(.data$BAND, rep(1:(dplyr::n()/2), each = 2), sep = '_')) %>%
-    (dplyr::ungroup)
-  df <- preprocess_calc_distance_days(df)
-  df <- df %>% dplyr::select(c('BAND', 'EVENT_TYPE', 'EVENT_DATE', 'LAT_DD', 'LON_DD', 'EBIRDST_CODE', 'BAND_TRACK', 'distance', 'days'))
-  df <- df %>% dplyr::group_by(.data$BAND_TRACK) %>%
-    dplyr::filter(.data$distance[2] > min_dist_m / 1000) %>%
-    dplyr::filter(.data$days[2] <= max_days) %>%
-    dplyr::mutate(
-      when = rep(
-        c('from', 'to'), times = dplyr::n() / 2
-      )
-    ) %>%
-    (dplyr::ungroup)
-  # Downsample to max # band_tracks
-  sampled_band_tracks <- sample(unique(df$BAND_TRACK), dplyr::if_else(max_band_tracks > dplyr::n_distinct(df$BAND_TRACK), dplyr::n_distinct(df$BAND_TRACK), max_band_tracks))
-  df <- df %>% dplyr::filter(.data$BAND_TRACK %in% sampled_band_tracks)
-  # Make IDs
-  df$id <- seq_len(nrow(df))
-  obs_df <- df %>% dplyr::rename(date = 'EVENT_DATE', lat = 'LAT_DD', lon = 'LON_DD')
-  int_df <- df %>% dplyr::select(c('BAND_TRACK', 'when', 'id'))
-  if (nrow(int_df) > 0){
-    # typical behavior if data is present
-    int_df <- tidyr::pivot_wider(int_df, id_cols = 'BAND_TRACK', names_from = 'when', values_from = 'id')
-  } else {
-    # return zero-row data frame with same columns as if there was data
-    int_df <-
-      structure(
-        list(
-          BAND_TRACK = character(0),
-          from = integer(0),
-          to = integer(0)
-        ),
-        row.names = integer(0),
-        class = c("tbl_df",
-                  "tbl", "data.frame")
-      )
-  }
-  return(list(obs_df = obs_df, int_df = int_df))
-}
-
 #' Safely return a real value
 #'
 #' @param x Input
@@ -271,17 +84,10 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'  * `int` = int_df portion from original `track_info`
 #'
 #' @export
-evaluate_model <- function(bf, modelname, track_info, params){
-
-  win_prob <- BirdFlowR::get_distance_metric(
-    intervals = as.data.frame(track_info$int_df),
-    observations = as.data.frame(track_info$obs_df),
-    bf = bf) # a value of wining_proba_by_distance_metric
-    
-  my_ll <- BirdFlowR::interval_log_likelihood(
-    intervals = as.data.frame(track_info$int_df),
-    observations = as.data.frame(track_info$obs_df),
-    bf = bf)
+evaluate_model <- function(bf, modelname, birdflow_intervals, params){
+  # Here the input should be BirdFlowIntervals class, not track_info
+  
+  interval_based_metrics <- BirdFlowR::get_interval_based_metrics(birdflow_intervals, bf = bf)
   rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
   route_stats <- rts_stats(rts)
   transitions_files <- list.files(the$tracking_data_path,
@@ -316,11 +122,23 @@ evaluate_model <- function(bf, modelname, track_info, params){
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
     end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
-    win_prob = win_prob,
-    ll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$log_likelihood, na.rm = TRUE), NA_real_),
-    nll = dplyr::if_else(nrow(my_ll) > 0, sum(my_ll$null_ll, na.rm = TRUE), NA_real_),
-    ll_raw_n = nrow(my_ll),
-    ll_n = length(stats::na.omit(my_ll$log_likelihood)),
+
+    mean_win_prob = interval_based_metrics[['mean_win_prob']],
+    mean_win_distance = interval_based_metrics[['mean_win_distance']],
+    mean_win_distance_fraction = interval_based_metrics[['mean_win_distance_fraction']],
+    mean_global_prob_of_the_banding_starting = interval_based_metrics[['mean_global_prob_of_the_banding_starting']],
+    mean_elapsed_days = interval_based_metrics[['mean_elapsed_days']],
+    mean_elapsed_km = interval_based_metrics[['mean_elapsed_km']],
+    mean_null_ll = interval_based_metrics[['mean_null_ll']],
+    mean_ll = interval_based_metrics[['mean_ll']],
+    area_win_prob_by_time=interval_based_metrics[['area_win_prob_by_time']],
+    area_win_distance_by_time=interval_based_metrics[['area_win_distance_by_time']],
+    area_win_distance_fraction_by_time=interval_based_metrics[['area_win_distance_fraction_by_time']],
+    area_win_prob_by_distance=interval_based_metrics[['area_win_prob_by_distance']],
+    area_win_distance_by_distance=interval_based_metrics[['area_win_distance_by_distance']],
+    area_win_distance_fraction_by_distance=interval_based_metrics[['area_win_distance_fraction_by_distance']],
+    n_intervals=interval_based_metrics[['n_intervals']],
+    
     straightness = route_stats$straightness,
     length = route_stats$length,
     displacement = route_stats$displacement,
@@ -330,7 +148,7 @@ evaluate_model <- function(bf, modelname, track_info, params){
     pit_in_95 = sum(pit_calibration_obj$res$in_95_set,na.rm=T)/length(pit_calibration_obj$res$in_95_set)
   )
   #my_ll
-  list(df = out_df, obs = track_info$obs_df, int = track_info$int_df)
+  list(df = out_df, obs = birdflow_intervals)
 }
 
 #' 3d plot function
@@ -370,12 +188,13 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
 }
 
 #' Calculate route summary statistics
-#' @param rts data.frame object output from `BirdFlowR::route()`
+#' @param rts BirdFlowRoutes object output from `BirdFlowR::route()`
 #' @returns a list of mean summary statistics
-#' @seealso [BirdFlowR::route()]
+#' @seealso [BirdFlowR::route(), BirdFlowR::BirdFlowRoutes()]
 #' @export
 #' 
 rts_stats <- function(rts){
+  rts <- rts$data
   rts_lst <- split(rts, rts$route_id)
   out <- lapply(rts_lst, function(rts){
     rts$ts_sequential <- seq_len(nrow(rts))
@@ -547,7 +366,7 @@ rank_models <- function(eval_metrics, params){
   } else if (params$model_selection == 'distance_metric') {
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
-        win_prob_d = desirability2::d_max(.data$win_prob, use_data = TRUE),
+        area_win_distance_by_time_d = desirability2::d_max(.data$area_win_distance_by_time, use_data = TRUE),
       )
   } else {
     stop('invalid model_selection in params')
@@ -559,29 +378,5 @@ rank_models <- function(eval_metrics, params){
     )
   # Do desirability rankings (and return the new eval_metrics)
   eval_metrics %>% (dplyr::arrange)(-.data$overall_des)
-  #
-  # # old code
-  # eval_metrics %>%
-  #   # create new desirability columns
-  #   ## Previous desirability:  Used just end traverse correlation and straigthness like this, but models were underdispersed
-  #   # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE)
-  #   # str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE)
-  #   dplyr::mutate(
-  #     # etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-  #     str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
-  #     #nso_d = desirability2::d_target(.data$n_stopovers, target = 3.54), ### CHECK ARGS ###
-  #     #str_d = desirability2::d_target(straightness, low = 0.5, target = 0.85, high = 1),
-  #     #ll_d  = desirability2::d_max(ll, use_data = TRUE),
-  #     #str_d = desirability2::d_target(straightness, target = 0.85, low = 0.5, high = 1, scale_low = 1/2, scale_high = 1/2),
-  #     #dsp_d = desirability2::d_max(displacement, low = 0.75 * max(displacement), high = max(displacement)),
-  #     #str_d = desirability2::d_max(.data$straightness, low = 0.5, use_data = TRUE),
-  #     #etc_d = desirability2::d_max(.data$end_traverse_cor, low = 0.9, use_data = TRUE),
-  #     d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
-  #     d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
-  #     d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
-  #     pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
-  #     etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
-  #     overall_des = desirability2::d_overall(dplyr::across(dplyr::ends_with("_d")))
-  #   )
 }
 

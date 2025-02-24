@@ -4,12 +4,12 @@
 \alias{batch_evaluate_models}
 \title{Batch evaluate models on the cluster}
 \usage{
-batch_evaluate_models(params, track_info)
+batch_evaluate_models(params, birdflow_intervals)
 }
 \arguments{
 \item{params}{A list of parameters, as returned by \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}.}
 
-\item{track_info}{A list of track info, as returned by \code{\link[=make_tracks]{make_tracks()}}, and passed internally to \code{\link[BirdFlowR:interval_log_likelihood]{BirdFlowR::interval_log_likelihood()}}.}
+\item{birdflow_intervals}{A BirdFlowIntervals object.}
 }
 \value{
 A data.frame with a row for each model evaluated
@@ -18,5 +18,5 @@ A data.frame with a row for each model evaluated
 Batch evaluate models on the cluster
 }
 \seealso{
-\code{\link[=evaluate_model]{evaluate_model()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}, \code{\link[=make_tracks]{make_tracks()}}, \code{\link[BirdFlowR:interval_log_likelihood]{BirdFlowR::interval_log_likelihood()}}
+\code{\link[=evaluate_model]{evaluate_model()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}, \code{\link[=as_BirdFlowIntervals]{as_BirdFlowIntervals()}}, \code{\link[BirdFlowR:interval_log_likelihood]{BirdFlowR::interval_log_likelihood()}}
 }

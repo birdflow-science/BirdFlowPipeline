@@ -42,6 +42,8 @@ preprocess_species_wrapper <- function(params) {
   params$output_fullname <- paste0(params$species, '_', params$res, 'km', '_', params$suffix)
   params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
   params$output_path <- file.path(params$base_output_path, params$output_fullname)
+  params$geom <- bf$geom
+  params$metadata <- bf$metadata
 
   # Create directories
   
@@ -276,11 +278,11 @@ batch_modelfit_wrapper <- function(params){
 
 #' Batch evaluate models on the cluster
 #' @param params A list of parameters, as returned by [preprocess_species_wrapper()].
-#' @param track_info A list of track info, as returned by [make_tracks()], and passed internally to [BirdFlowR::interval_log_likelihood()].
+#' @param birdflow_intervals A BirdFlowIntervals object.
 #' @returns A data.frame with a row for each model evaluated
-#' @seealso [evaluate_model()], [preprocess_species_wrapper()], [make_tracks()], [BirdFlowR::interval_log_likelihood()]
+#' @seealso [evaluate_model()], [preprocess_species_wrapper()], [as_BirdFlowIntervals()], [BirdFlowR::interval_log_likelihood()]
 #' @export
-batch_evaluate_models <- function(params, track_info){
+batch_evaluate_models <- function(params, birdflow_intervals){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
@@ -288,7 +290,7 @@ batch_evaluate_models <- function(params, track_info){
   success <- FALSE
   batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
-                       more.args = list(track_info = track_info, params = params),
+                       more.args = list(birdflow_intervals = birdflow_intervals, params = params),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
                                                       conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
@@ -314,9 +316,9 @@ batch_evaluate_models <- function(params, track_info){
     lapply(function(i){i$df}) %>%
     (data.table::rbindlist) %>%
     (dplyr::as_tibble) %>%
-    (dplyr::arrange)(-.data$ll)
+    (dplyr::arrange)(-.data$mean_ll)
   # replace ll and nll with 0 if all NAs
-  if (all(is.na(eval_metrics$ll))) {eval_metrics$ll <- 0}
-  if (all(is.na(eval_metrics$nll))) {eval_metrics$nll <- 0}
+  if (all(is.na(eval_metrics$mean_ll))) {eval_metrics$mean_ll <- 0}
+  if (all(is.na(eval_metrics$mean_null_ll))) {eval_metrics$mean_null_ll <- 0}
   eval_metrics
 }
