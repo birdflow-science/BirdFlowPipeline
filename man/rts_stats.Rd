@@ -4,7 +4,7 @@
 \alias{rts_stats}
 \title{Calculate route summary statistics}
 \usage{
-rts_stats(rts)
+rts_stats(rts, remove_head_and_tail_stationaries = FALSE)
 }
 \arguments{
 \item{rts}{BirdFlowRoutes object output from \code{BirdFlowR::route()}}

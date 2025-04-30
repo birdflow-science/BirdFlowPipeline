@@ -84,30 +84,67 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'  * `int` = int_df portion from original `track_info`
 #'
 #' @export
-evaluate_model <- function(bf, modelname, birdflow_intervals, params){
+evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals_one_week, params){
   # Here the input should be BirdFlowIntervals class, not track_info
   
-  interval_based_metrics <- BirdFlowR::get_interval_based_metrics(birdflow_intervals, bf = bf)
-  rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
-  route_stats <- rts_stats(rts)
-  transitions_files <- list.files(the$tracking_data_path,
-                               pattern = paste0("^", params$species, ".*transitions.*\\.csv"),
-                               full.names = TRUE)
-  if (length(transitions_files) > 0){
-    transitions_df_list <- lapply(transitions_files, utils::read.csv)
-    indiv_id_list <- lapply(transitions_df_list, function(i){unique(i$indiv)})
-    # throw error if all the indiv ids are not unique across the different data.frames
-    stopifnot(
-      length(unique(Reduce(c, indiv_id_list))) == sum(sapply(indiv_id_list, function(i){length(unique(i))}))
-    )
-    # Combine potentially multiple tracking data.frames
-    transitions <- as.data.frame(data.table::rbindlist(transitions_df_list, fill = TRUE))
-    # Do PIT calculations
-    pit_calibration_obj <- pit_calibration(bf, transitions, params)
-    pit_plots(pit_calibration_obj, params, modelname)
+  result <- BirdFlowR::get_interval_based_metrics(birdflow_intervals, bf = bf)
+  interval_based_metrics <- result[[1]]
+  metric_for_each_transition <- result[[2]]
+  metric_for_each_transition$route_type <- birdflow_intervals$data$route_type
+  motus_fraction <- mean(c(metric_for_each_transition$route_type)=='motus')
+  banding_fraction <- mean(c(metric_for_each_transition$route_type)=='banding')
+  tracking_fraction <- mean(c(metric_for_each_transition$route_type)=='tracking')
+  saveRDS(metric_for_each_transition, file.path(params$output_path, 'each_transition_evaluation' ,glue::glue('{params$mode}_each_transition_evaluation_{params$transition_type}_{modelname}.rds')))
+  
+  # rts <- BirdFlowR::route(bf = bf, n = 100, season = params$season, from_marginals = TRUE)
+  # route_stats <- rts_stats(rts)
+  
+  ###### UNDER DEVELOPMENT
+  real_track <- get_real_track(bf, params, filter=TRUE)
+  if(is.null(real_track)){
+    route_stats <- list()
+    route_stats$straightness <- NULL
+    route_stats$displacement <- NULL
+    route_stats$n_stopovers <- NULL
+    route_stats$n_stopovers_daves <- NULL
+    route_stats$speed <- NULL
   } else {
-    pit_calibration_obj <- list(D_row = NA_real_, D_col = NA_real_, res = data.frame(in_95_set = NA_real_))
+    splitted_track <- split(real_track$data, real_track$data$route_id)
+    all_route_stats <- list()
+    for (track in splitted_track){
+      the_synth_track <- BirdFlowR::route(bf = bf, n = 10, 
+                                          start = track$timestep[1], end=track$timestep[nrow(track)], 
+                                          x_coord = track$x[1], y_coord = track$y[1], 
+                                          from_marginals = TRUE)
+      route_stats <- rts_stats(the_synth_track)
+      all_route_stats[[length(all_route_stats) + 1]] <- as.data.frame(route_stats)
+    }
+    
+    conditional_rts_stats_res <- as.data.frame(do.call(rbind, all_route_stats))
+    conditional_rts_stats_res <- conditional_rts_stats_res[!is.na(conditional_rts_stats_res$straightness),]
+    route_stats <- colMeans(conditional_rts_stats_res)
+    route_stats_list <- list()
+    for (name in names(route_stats)){
+      route_stats_list[[name]] <- route_stats[[name]]
+    }
+    route_stats <- route_stats_list
   }
+  
+  print('Doing synth routes stats...')
+  synth_routes_prebreeding_migration_route_stats <- rts_stats(BirdFlowR::route(bf = bf, n = 100, season='prebreeding_migration',
+                                                                               from_marginals = TRUE), remove_head_and_tail_stationaries = TRUE)
+  synth_routes_breeding_route_stats <- rts_stats(BirdFlowR::route(bf = bf, n = 100, season='breeding',
+                                                                  from_marginals = TRUE))
+  synth_routes_postbreeding_migration_route_stats <- rts_stats(BirdFlowR::route(bf = bf, n = 100, season='postbreeding_migration',
+                                                                                from_marginals = TRUE), remove_head_and_tail_stationaries = TRUE)
+  synth_routes_nonbreeding_route_stats <- rts_stats(BirdFlowR::route(bf = bf, n = 100, season='nonbreeding',
+                                                                     from_marginals = TRUE))
+  
+  ######
+  # Do PIT calculations
+  pit_calibration_obj <- pit_calibration(bf, birdflow_intervals_one_week$data, params)
+  # pit_plots(pit_calibration_obj, params, modelname)
+
   dir.create(file.path(params$output_path, 'pit_data'), showWarnings = FALSE)
   pit_data_filename <- paste0(sub('\\.hdf5$', "", modelname), '_pit.rds')
   outfile <- file.path(file.path(params$output_path, 'pit_data'), pit_data_filename)
@@ -122,15 +159,43 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, params){
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
     end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
+    end_traverse_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = params$season)$md_traverse_cor,
+    mean_dist_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = params$season)$mean_distr_cor,
+    mean_dist_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = params$season)$mean_distr_cor,
+    min_dist_cor = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = params$season)$min_distr_cor,
+    min_dist_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = params$season)$min_distr_cor,
 
+    end_traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
+    end_traverse_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T)$md_traverse_cor,
+    mean_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
+    mean_dist_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T)$mean_distr_cor,
+    min_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor')$min_distr_cor,
+    min_dist_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T)$min_distr_cor,
+    
     mean_win_prob = interval_based_metrics[['mean_win_prob']],
     mean_win_distance = interval_based_metrics[['mean_win_distance']],
     mean_win_distance_fraction = interval_based_metrics[['mean_win_distance_fraction']],
-    mean_global_prob_of_the_banding_starting = interval_based_metrics[['mean_global_prob_of_the_banding_starting']],
-    mean_elapsed_days = interval_based_metrics[['mean_elapsed_days']],
-    mean_elapsed_km = interval_based_metrics[['mean_elapsed_km']],
     mean_null_ll = interval_based_metrics[['mean_null_ll']],
     mean_ll = interval_based_metrics[['mean_ll']],
+
+    mean_effective_win_distance = interval_based_metrics[['mean_effective_win_distance']],
+    mean_energy_improvement = interval_based_metrics[['mean_energy_improvement']],
+    
+    weighted_mean_win_prob=interval_based_metrics[['weighted_mean_win_prob']],
+    weighted_mean_win_distance=interval_based_metrics[['weighted_mean_win_distance']],
+    weighted_mean_win_distance_fraction=interval_based_metrics[['weighted_mean_win_distance_fraction']],
+    weighted_mean_null_ll=interval_based_metrics[['weighted_mean_null_ll']],
+    weighted_mean_ll=interval_based_metrics[['weighted_mean_ll']],
+    
+    weighted_mean_effective_win_distance=interval_based_metrics[['weighted_mean_effective_win_distance']],
+    weighted_energy_improvement=interval_based_metrics[['weighted_energy_improvement']],
+    weighted_energy_improvement_days_integral=interval_based_metrics[['weighted_energy_improvement_days_integral']],
+    weighted_energy_improvement_kms_integral=interval_based_metrics[['weighted_energy_improvement_kms_integral']],
+    
+    mean_global_prob_of_the_banding_starting = interval_based_metrics[['mean_global_prob_of_the_starting']],
+    mean_elapsed_days = interval_based_metrics[['mean_elapsed_days']],
+    mean_elapsed_km = interval_based_metrics[['mean_elapsed_km']],
+
     area_win_prob_by_time=interval_based_metrics[['area_win_prob_by_time']],
     area_win_distance_by_time=interval_based_metrics[['area_win_distance_by_time']],
     area_win_distance_fraction_by_time=interval_based_metrics[['area_win_distance_fraction_by_time']],
@@ -139,16 +204,39 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, params){
     area_win_distance_fraction_by_distance=interval_based_metrics[['area_win_distance_fraction_by_distance']],
     n_intervals=interval_based_metrics[['n_intervals']],
     
-    straightness = route_stats$straightness,
+    straightness = route_stats$straightness, # of synthetic routes, but conditional on the tracking data starts and ends
     length = route_stats$length,
     displacement = route_stats$displacement,
     n_stopovers = route_stats$n_stopovers,
-    pit_row = pit_calibration_obj$D_row,
-    pit_col = pit_calibration_obj$D_col,
-    pit_in_95 = sum(pit_calibration_obj$res$in_95_set,na.rm=T)/length(pit_calibration_obj$res$in_95_set)
+    n_stopovers_daves = route_stats$n_stopovers_daves,
+    speed = route_stats$speed,
+    
+    # of synthetic routes, and not conditional on the tracking data at all
+    synth_routes_prebreeding_migration_straightness = synth_routes_prebreeding_migration_route_stats$straightness,
+    synth_routes_prebreeding_migration_n_stopovers = synth_routes_prebreeding_migration_route_stats$n_stopovers,
+    synth_routes_prebreeding_migration_speed = synth_routes_prebreeding_migration_route_stats$speed,
+    synth_routes_breeding_straightness = synth_routes_breeding_route_stats$straightness,
+    synth_routes_breeding_n_stopovers = synth_routes_breeding_route_stats$n_stopovers,
+    synth_routes_breeding_speed = synth_routes_breeding_route_stats$speed,
+    synth_routes_postbreeding_migration_straightness = synth_routes_postbreeding_migration_route_stats$straightness,
+    synth_routes_postbreeding_migration_n_stopovers = synth_routes_postbreeding_migration_route_stats$n_stopovers,
+    synth_routes_postbreeding_migration_speed = synth_routes_postbreeding_migration_route_stats$speed,
+    synth_routes_nonbreeding_straightness = synth_routes_nonbreeding_route_stats$straightness,
+    synth_routes_nonbreeding_n_stopovers = synth_routes_nonbreeding_route_stats$n_stopovers,
+    synth_routes_nonbreeding_speed = synth_routes_nonbreeding_route_stats$speed,
+    
+    pit_row = pit_calibration_obj[['D_row']], # The lower (close to 0) the better
+    pit_row_p = pit_calibration_obj[['PIT_row_p']],
+    pit_col = pit_calibration_obj[['D_col']], # The lower (close to 0) the better
+    pit_col_p = pit_calibration_obj[['PIT_col_p']],
+    pit_in_95 = ifelse(is.null(pit_calibration_obj$res), NA, sum(pit_calibration_obj$res$in_95_set,na.rm=T)/length(pit_calibration_obj$res$in_95_set)),
+    
+    training_tracking_fraction = tracking_fraction,
+    training_banding_fraction = banding_fraction,
+    training_motus_fraction = motus_fraction
   )
   #my_ll
-  list(df = out_df, obs = birdflow_intervals)
+  list(df = out_df, obs = birdflow_intervals, metric_for_each_transition=metric_for_each_transition)
 }
 
 #' 3d plot function
@@ -193,21 +281,66 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
 #' @seealso [BirdFlowR::route(), BirdFlowR::BirdFlowRoutes()]
 #' @export
 #' 
-rts_stats <- function(rts){
+rts_stats <- function(rts, remove_head_and_tail_stationaries = FALSE){
   rts <- rts$data
-  rts_lst <- split(rts, rts$route_id)
+  if (length(unique(rts$route_id)) == 1){
+    rts_lst <- list(rts)
+  } else {
+    rts_lst <- split(rts, rts$route_id)
+  }
+  
   out <- lapply(rts_lst, function(rts){
+    if (remove_head_and_tail_stationaries){
+
+      min_rts_stay_id <- min(rts$stay_id)
+      max_rts_stay_id <- max(rts$stay_id)
+      if (rts[rts$stay_id==min_rts_stay_id,]$stay_len[1]>0){
+        ## The first location is a stationary, remove the redundant timesteps
+        the_stationaries <- rts[(rts$stay_id==min_rts_stay_id),]
+        rts <- rbind(the_stationaries[nrow(the_stationaries),], rts[!(rts$stay_id==min_rts_stay_id),])
+      }
+      if (rts[rts$stay_id==max_rts_stay_id,]$stay_len[1]>0){
+        ## The last location is a stationary, remove the redundant timesteps
+        the_stationaries <- rts[(rts$stay_id==max_rts_stay_id),]
+        rts <- rbind(rts[!(rts$stay_id==max_rts_stay_id),], the_stationaries[nrow(the_stationaries),])
+      }
+      if (nrow(rts)==0){
+        return(NULL)
+      }
+    }
+    
     rts$ts_sequential <- seq_len(nrow(rts))
     traj <- trajr::TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
+    
+    rts <- rts[order(rts$date), ]
+    dx <- diff(rts$x)
+    dy <- diff(rts$y)
+    distances <- sqrt(dx^2 + dy^2)
+    total_distance <- sum(distances)
+    total_days <- as.numeric(rts$date[nrow(rts)] - rts$date[1], unite='days')
+    speed <- total_distance / total_days
+    
+    my_intermediate_stays <- rts[
+      (!(rts$stay_id %in% c(min(rts$stay_id), max(rts$stay_id)))) & (rts$stay_len>=7)
+      ,]
+    my_n_stopovers <- my_intermediate_stays$stay_id |> unique() |> length()
+    
     list(
       straightness = trajr::TrajStraightness(traj),
       length = trajr::TrajLength(traj)/1000,
       displacement = trajr::TrajDistance(traj)/1000,
-      n_stopovers = max(sum(trajr::TrajStepLengths(traj) > 0) - 1, 0)
+      n_stopovers_daves = max(sum(trajr::TrajStepLengths(traj) > 0) - 1, 0),
+      speed = speed,
+      n_stopovers = my_n_stopovers
     )
-  }) %>% (data.table::rbindlist) %>% colMeans(na.rm = TRUE) %>% as.list
+  })
+  
+  out <- out[!sapply(out, is.null)]
+  out <- out |> data.table::rbindlist() |> colMeans(na.rm = TRUE) |> as.list()
   out
 }
+
+
 
 #' PCA biplot hyperparameters evaluation
 #' @param eval_metrics data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
@@ -323,30 +456,52 @@ rank_models <- function(eval_metrics, params){
     # Tracking-focused model selection
     # Includes traverse correlation, PIT scores, and
     # straightness + n_stopovers targetted to observed values from real tracking
-    real_track_stats_res <- real_track_stats(eval_metrics, params)
+    bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[1])) # Load a random model
+    real_track <- get_real_track(bf, params, filter=TRUE)
+    real_track_stats_res <- rts_stats(real_track)
     # save real_track_stats RDS
     saveRDS(real_track_stats_res, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
       !is.na(real_track_stats_res$straightness),
       !is.na(real_track_stats_res$n_stopovers)
     )
+    
+    if (sum(is.na(eval_metrics$pit_row))==0){
+      # If the pit are evaluated with enough data
+      eval_metrics <- eval_metrics |> 
+        dplyr::mutate(
+          d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
+          d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
+          d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
+          pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit")))
+        )
+    }
+    
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
-        d_pit_row = desirability2::d_min(.data$pit_row, use_data = TRUE),
-        d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
-        d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
-        pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
         etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
         str_d = desirability2::d_min(abs(.data$straightness - real_track_stats_res$straightness), use_data = TRUE),
-        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats_res$n_stopovers), use_data = TRUE)
+        nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats_res$n_stopovers), use_data = TRUE),
+        straightness_real_track = real_track_stats_res$straightness,
+        n_stopovers_real_track = real_track_stats_res$n_stopovers,
+        n_stopovers_daves_real_track = real_track_stats_res$n_stopovers_daves,
+        speed_real_track = real_track_stats_res$speed,
+        length_real_track = real_track_stats_res$length,
+        straightness_diff = abs(.data$straightness - real_track_stats_res$straightness),
+        n_stopovers_diff = abs(.data$n_stopovers - real_track_stats_res$n_stopovers),
+        speed_diff = abs(.data$speed - real_track_stats_res$speed),
       )
+    
   } else if (params$model_selection == 'real_tracking_no_cal'){
     # Tracking-focused model selection
     # Includes traverse correlation, and
     # straightness + n_stopovers targetted to observed values from real tracking
     # But no PIT scores!
-    real_track_stats_res <- real_track_stats(eval_metrics, params)
-    # save real_track_stats RDS
+    bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[1])) # Load a random model
+    real_track <- get_real_track(bf, params, filter=TRUE)
+    real_track_stats_res <- rts_stats(real_track)
+    
+    # save rts_stats RDS
     saveRDS(real_track_stats_res, file.path(params$output_path, 'real_track_stats.rds'))
     stopifnot(
       !is.na(real_track_stats_res$straightness),

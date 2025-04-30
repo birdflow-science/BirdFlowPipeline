@@ -11,7 +11,8 @@ process_motus_data <- function(){
   
   # Get the species list
   unique_species_common_name <- recovery_data$speciesEnglish |> unique() |> na.omit()
-  eb_taxonomy <- read.csv('data-raw/banding_taxonomy/eBird_Taxonomy_v2021.csv')
+  eb_taxonomy <- ebirdst::ebirdst_runs #read.csv('data-raw/banding_taxonomy/eBird_Taxonomy_v2021.csv')
+  eb_taxonomy <- eb_taxonomy[eb_taxonomy$species_code!='yebsap-example',]
   
   # Loop, preprocess, and save to rds
   sp_count <- 1
@@ -70,8 +71,8 @@ process_motus_data <- function(){
     # sources <- 'MOTUS'
     # routes_obj <- BirdFlowR::Routes(all_routes, species=species, metadata=metadata, source=sources)
     
-    this_species_info <- eb_taxonomy[eb_taxonomy$PRIMARY_COM_NAME==sp,]
-    saveRDS(all_routes, file = paste0(the$motus_rds_path, '/', this_species_info$SPECIES_CODE, '.rds'))
+    this_species_info <- c(eb_taxonomy[eb_taxonomy$common_name==sp,])[1]
+    saveRDS(all_routes, file = paste0(the$motus_rds_path, '/', this_species_info$species_code, '.rds'))
     sp_count <- sp_count + 1
   }
 }

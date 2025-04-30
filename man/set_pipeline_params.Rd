@@ -26,7 +26,8 @@ set_pipeline_params(
   skip_quality_checks = FALSE,
   fit_only = FALSE,
   ebirdst_year = ebirdst::ebirdst_version()$version_year,
-  trim_quantile = NULL
+  trim_quantile = NULL,
+  min_season_quality = 3
 )
 }
 \arguments{

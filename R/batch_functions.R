@@ -30,7 +30,8 @@ preprocess_species_wrapper <- function(params) {
           clip = params$clip,
           crs = params$crs,
           skip_quality_checks = params$skip_quality_checks, 
-          trim_quantile = params$trim_quantile
+          trim_quantile = params$trim_quantile,
+          min_season_quality = params$min_season_quality
           )
       )
     )
@@ -131,7 +132,7 @@ birdflow_modelfit <- function(
     rng_seed = 17,
     ebirdst_year
 ){
-  
+
   python_exit_code <- system2('python',
           args = c(
             py_script,
@@ -239,10 +240,12 @@ birdflow_modelfit_args_df <- function(params){
 #' @seealso [birdflow_modelfit_args_df()] and [birdflow_modelfit()]
 #' @export
 batch_modelfit_wrapper <- function(params){
-  modelfit_resources <- list(walltime = 15,
+  modelfit_resources <- list(walltime = 20,
                              ngpus = 1,
                              memory = params$gpu_ram + 1)
   modelfit_args_df <- birdflow_modelfit_args_df(params)
+  print(paste0('Using py script: ', the$python_repo_path))
+  
   if (nrow(modelfit_args_df) > 0){
     success <- FALSE
     batchtools::batchMap(
@@ -282,15 +285,17 @@ batch_modelfit_wrapper <- function(params){
 #' @returns A data.frame with a row for each model evaluated
 #' @seealso [evaluate_model()], [preprocess_species_wrapper()], [as_BirdFlowIntervals()], [BirdFlowR::interval_log_likelihood()]
 #' @export
-batch_evaluate_models <- function(params, birdflow_intervals){
+# birdflow_intervals=train_data
+# birdflow_intervals_one_week = train_data_one_week
+batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals_one_week){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
-  evaluation_resources <- list(walltime = 25, memory = 8)
+  evaluation_resources <- list(walltime = 200, memory = 10)
   success <- FALSE
   batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
-                       more.args = list(birdflow_intervals = birdflow_intervals, params = params),
+                       more.args = list(birdflow_intervals = birdflow_intervals, birdflow_intervals_one_week = birdflow_intervals_one_week, params = params),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
                                                       conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
@@ -305,6 +310,7 @@ batch_evaluate_models <- function(params, birdflow_intervals){
     success <- batchtools::waitForJobs()
   }
   if (! isTRUE(success)) {
+    print(batchtools::getJobTable())
     message('Requeuing jobs that expired or had an error, attempt 2 of 2')
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = evaluation_resources)

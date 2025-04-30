@@ -4,7 +4,7 @@
 \alias{batch_evaluate_models}
 \title{Batch evaluate models on the cluster}
 \usage{
-batch_evaluate_models(params, birdflow_intervals)
+batch_evaluate_models(params, birdflow_intervals, birdflow_intervals_one_week)
 }
 \arguments{
 \item{params}{A list of parameters, as returned by \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}.}

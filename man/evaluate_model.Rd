@@ -4,7 +4,13 @@
 \alias{evaluate_model}
 \title{Evaluate a BirdFlow model}
 \usage{
-evaluate_model(bf, modelname, birdflow_intervals, params)
+evaluate_model(
+  bf,
+  modelname,
+  birdflow_intervals,
+  birdflow_intervals_one_week,
+  params
+)
 }
 \arguments{
 \item{bf}{A birdflow model object, often passed from \code{\link[=import_birdflow_and_evaluate]{import_birdflow_and_evaluate()}}}
