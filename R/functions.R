@@ -100,7 +100,13 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
   # route_stats <- rts_stats(rts)
   
   ###### UNDER DEVELOPMENT
+  params$season <- 'prebreeding'
   real_track <- get_real_track(bf, params, filter=TRUE)
+  params$season <- 'postbreeding'
+  real_track2 <- get_real_track(bf, params, filter=TRUE)
+  real_track$data <- rbind(real_track$data, real_track2$data)
+  params$season <- 'prebreeding'
+
   if(is.null(real_track)){
     route_stats <- list()
     route_stats$straightness <- NULL
@@ -158,14 +164,24 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     dist_pow = safe_numeric(bf$metadata$hyperparameters$dist_pow),
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
-    traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
-    traverse_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = params$season)$md_traverse_cor,
-    traverse_cor_st = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = params$season)$st_traverse_cor,
-    traverse_cor_st_log = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T, season = params$season)$st_traverse_cor,
-    mean_dist_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = params$season)$mean_distr_cor,
-    mean_dist_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = params$season)$mean_distr_cor,
-    min_dist_cor = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = params$season)$min_distr_cor,
-    min_dist_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = params$season)$min_distr_cor,
+    
+    traverse_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'prebreeding')$md_traverse_cor,
+    traverse_cor_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = 'prebreeding')$md_traverse_cor,
+    traverse_cor_st_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'prebreeding')$st_traverse_cor,
+    traverse_cor_st_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T, season = 'prebreeding')$st_traverse_cor,
+    mean_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'prebreeding')$mean_distr_cor,
+    mean_dist_cor_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = 'prebreeding')$mean_distr_cor,
+    min_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'prebreeding')$min_distr_cor,
+    min_dist_cor_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = 'prebreeding')$min_distr_cor,
+    
+    traverse_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'postbreeding')$md_traverse_cor,
+    traverse_cor_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = 'postbreeding')$md_traverse_cor,
+    traverse_cor_st_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'postbreeding')$st_traverse_cor,
+    traverse_cor_st_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T, season = 'postbreeding')$st_traverse_cor,
+    mean_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'postbreeding')$mean_distr_cor,
+    mean_dist_cor_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = 'postbreeding')$mean_distr_cor,
+    min_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'postbreeding')$min_distr_cor,
+    min_dist_cor_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = 'postbreeding')$min_distr_cor,
 
     traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
     traverse_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T)$md_traverse_cor,
@@ -238,7 +254,17 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     training_tracking_fraction = tracking_fraction,
     training_banding_fraction = banding_fraction,
     training_motus_fraction = motus_fraction
-  )
+  ) |>
+    dplyr::mutate(
+      traverse_cor = (traverse_cor_prebreeding + traverse_cor_postbreeding) / 2,
+      traverse_cor_log = (traverse_cor_log_prebreeding + traverse_cor_log_postbreeding) / 2,
+      traverse_cor_st = (traverse_cor_st_prebreeding + traverse_cor_st_postbreeding) / 2,
+      traverse_cor_st_log = (traverse_cor_st_log_prebreeding + traverse_cor_st_log_postbreeding) / 2,
+      mean_dist_cor = (mean_dist_cor_prebreeding + mean_dist_cor_postbreeding) / 2,
+      mean_dist_cor_log = (mean_dist_cor_log_prebreeding + mean_dist_cor_log_postbreeding) / 2,
+      min_dist_cor = (min_dist_cor_prebreeding + min_dist_cor_postbreeding) / 2,
+      min_dist_cor_log = (min_dist_cor_log_prebreeding + min_dist_cor_log_postbreeding) / 2
+    )
   #my_ll
   list(df = out_df, obs = birdflow_intervals, metric_for_each_transition=metric_for_each_transition)
 }
