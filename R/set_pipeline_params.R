@@ -143,7 +143,7 @@ set_pipeline_params <- function(
     skip_quality_checks = FALSE,
     fit_only = FALSE, 
     ebirdst_year = ebirdst::ebirdst_version()$version_year,
-    trim_quantile = NULL,
+    trim_quantile = 0.99,
     min_season_quality = 3
 ){
   params <- as.list(environment())
@@ -161,7 +161,13 @@ set_pipeline_params <- function(
     stop("output_path should be NULL. Support for other values may be added later.")
   
   # Check crs and clip
-  
+  if(is.null(params$clip)){
+    params$clip <- readRDS(the$standard_range_clip)
+  }
+  if(is.null(params$clip)){
+    params$crs <- readLines(the$standard_crs) |> paste0(collapse = "\n") 
+  }
+
   # preprocess_species does this too. Checking here throws immediate error
   if(!is.null(params$crs)){
     params$crs <- terra::crs(params$crs)
