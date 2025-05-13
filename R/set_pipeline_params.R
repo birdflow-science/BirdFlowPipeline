@@ -164,7 +164,7 @@ set_pipeline_params <- function(
   if(is.null(params$clip)){
     params$clip <- readRDS(the$standard_range_clip)
   }
-  if(is.null(params$clip)){
+  if(is.null(params$crs)){
     params$crs <- readLines(the$standard_crs) |> paste0(collapse = "\n") 
   }
 
