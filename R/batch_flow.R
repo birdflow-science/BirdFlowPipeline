@@ -18,10 +18,11 @@ batch_flow <- function(species, ...){
          "Use multiple_species_batch()")
   }
   
-  # species = 'amewoo'
-  # sp = 'amewoo'
+  # species = sp = 'norpin'
   # sp_output_path <- paste0('/work/pi_drsheldon_umass_edu/birdflow_modeling/yangkang/model_output_hyperparams_distance_metric','/',sp)
-  # params <- set_pipeline_params(species = species, gpu_ram=10, hdf_path = sp_output_path, base_output_path = sp_output_path, model_selection = 'distance_metric')
+  # params <- set_pipeline_params(species = species, gpu_ram=10, hdf_path = sp_output_path, base_output_path = sp_output_path, skip_quality_checks=TRUE,
+  #                               min_season_quality = 1, model_selection = 'distance_metric',
+  #                               suffix='interval_based_eval_using_migration_transitions')
   params <- set_pipeline_params(species = species, ...)
   
   # preprocess species and set up directories
@@ -87,7 +88,7 @@ batch_flow <- function(species, ...){
   
   if (source==''){
     source <- 'No Data'
-  } 
+  }
   
   ## All interval samples
   routes_obj <- BirdFlowR::Routes(combined_data, species=bf$species, source=source)
@@ -140,6 +141,7 @@ batch_flow <- function(species, ...){
                                             dates=interval_obj$dates,
                                             source=interval_obj$source)
   
+  set.seed(42)
   train_data_one_week <- interval_one_week_obj$data |> dplyr::sample_frac(0.7)
   test_data_one_week <- dplyr::setdiff(interval_one_week_obj$data, train_data_one_week)
   train_data_one_week <- BirdFlowR::BirdFlowIntervals(data=train_data_one_week,

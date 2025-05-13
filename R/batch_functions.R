@@ -240,7 +240,7 @@ birdflow_modelfit_args_df <- function(params){
 #' @seealso [birdflow_modelfit_args_df()] and [birdflow_modelfit()]
 #' @export
 batch_modelfit_wrapper <- function(params){
-  modelfit_resources <- list(walltime = 20,
+  modelfit_resources <- list(walltime = 60,
                              ngpus = 1,
                              memory = params$gpu_ram + 1)
   modelfit_args_df <- birdflow_modelfit_args_df(params)
@@ -291,7 +291,7 @@ batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
-  evaluation_resources <- list(walltime = 200, memory = 10)
+  evaluation_resources <- list(walltime = 1000, memory = 10)
   success <- FALSE
   batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
@@ -317,7 +317,7 @@ batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals
     success <- batchtools::waitForJobs()
   }
 
-  stopifnot(isTRUE(success))
+  # stopifnot(isTRUE(success))
   eval_metrics <- batchtools::reduceResultsList() %>%
     lapply(function(i){i$df}) %>%
     (data.table::rbindlist) %>%

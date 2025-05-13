@@ -87,7 +87,7 @@ import_birdflow_and_evaluate <- function(path, ...){
 evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals_one_week, params){
   # Here the input should be BirdFlowIntervals class, not track_info
   
-  result <- BirdFlowR::get_interval_based_metrics(birdflow_intervals, bf = bf)
+  result <- BirdFlowR::calculate_interval_metrics(birdflow_intervals, bf = bf)
   interval_based_metrics <- result[[1]]
   metric_for_each_transition <- result[[2]]
   metric_for_each_transition$route_type <- birdflow_intervals$data$route_type
@@ -158,15 +158,19 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     dist_pow = safe_numeric(bf$metadata$hyperparameters$dist_pow),
     de_ratio = safe_numeric(signif(bf$metadata$hyperparameters$dist_weight / bf$metadata$hyperparameters$ent_weight, 3)),
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
-    end_traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
-    end_traverse_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = params$season)$md_traverse_cor,
+    traverse_cor = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = params$season)$md_traverse_cor,
+    traverse_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = params$season)$md_traverse_cor,
+    traverse_cor_st = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = params$season)$st_traverse_cor,
+    traverse_cor_st_log = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T, season = params$season)$st_traverse_cor,
     mean_dist_cor = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = params$season)$mean_distr_cor,
     mean_dist_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = params$season)$mean_distr_cor,
     min_dist_cor = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = params$season)$min_distr_cor,
     min_dist_cor_log = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = params$season)$min_distr_cor,
 
-    end_traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
-    end_traverse_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T)$md_traverse_cor,
+    traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
+    traverse_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T)$md_traverse_cor,
+    traverse_cor_st_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor')$st_traverse_cor,
+    traverse_cor_st_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T)$st_traverse_cor,
     mean_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
     mean_dist_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T)$mean_distr_cor,
     min_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor')$min_distr_cor,
@@ -256,7 +260,7 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
   cor_breaks <- c(-Inf, 0.9, 0.95, 0.975, Inf)
   cor_labels <- c("< 0.9", "0.9 to <0.95", "0.95 to <0.975", ">= 0.975")
   cor_colors <- c('#FFFFFF', grDevices::hcl.colors(3, rev = TRUE))
-  eval_metrics$color_cor <- cor_colors[cut(eval_metrics$end_traverse_cor, breaks = cor_breaks)]
+  eval_metrics$color_cor <- cor_colors[cut(eval_metrics$traverse_cor, breaks = cor_breaks)]
 
   rgl::plot3d(
     x = eval_metrics$ent_weight, y = eval_metrics$dist_weight, z = eval_metrics$dist_pow, 
@@ -357,7 +361,7 @@ model_evaluation_biplot <- function(eval_metrics, params){
     'ent_weight',
     'dist_weight',
     'dist_pow',
-    'end_traverse_cor',
+    'traverse_cor',
     'll',
     'straightness',
     'length',
@@ -379,7 +383,7 @@ model_evaluation_biplot <- function(eval_metrics, params){
     ggplot2::theme_bw() +
     ggplot2::scale_color_viridis_c(limits = c(0, 1))
   
-  plot2 <- ggplot2::autoplot(fit, color = 'end_traverse_cor',
+  plot2 <- ggplot2::autoplot(fit, color = 'traverse_cor',
                     loadings = TRUE,
                     loadings.label = TRUE,
                     loadings.colour = 'gray',
@@ -440,7 +444,7 @@ rank_models <- function(eval_metrics, params){
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
         str_d = desirability2::d_target(.data$straightness, low = 0.5, target = 0.85, high = 1, use_data = TRUE),
-        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE)
+        etc_d = desirability2::d_max(.data$traverse_cor, use_data = TRUE)
       )
   } else if (params$model_selection == 'pit_etc'){
     # PIT metrics and end traverse correlation only
@@ -450,7 +454,7 @@ rank_models <- function(eval_metrics, params){
         d_pit_col = desirability2::d_min(.data$pit_col, use_data = TRUE),
         d_pit_in_95 = desirability2::d_min(abs(.data$pit_in_95 - 0.95), use_data = TRUE),
         pit_d = desirability2::d_overall(dplyr::across(dplyr::starts_with("d_pit"))),
-        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE)
+        etc_d = desirability2::d_max(.data$traverse_cor, use_data = TRUE)
       )
   } else if (params$model_selection == 'real_tracking'){
     # Tracking-focused model selection
@@ -479,7 +483,7 @@ rank_models <- function(eval_metrics, params){
     
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
-        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
+        etc_d = desirability2::d_max(.data$traverse_cor, use_data = TRUE),
         str_d = desirability2::d_min(abs(.data$straightness - real_track_stats_res$straightness), use_data = TRUE),
         nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats_res$n_stopovers), use_data = TRUE),
         straightness_real_track = real_track_stats_res$straightness,
@@ -509,7 +513,7 @@ rank_models <- function(eval_metrics, params){
     )
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
-        etc_d = desirability2::d_max(.data$end_traverse_cor, use_data = TRUE),
+        etc_d = desirability2::d_max(.data$traverse_cor, use_data = TRUE),
         str_d = desirability2::d_min(abs(.data$straightness - real_track_stats_res$straightness), use_data = TRUE),
         nso_d = desirability2::d_min(abs(.data$n_stopovers - real_track_stats_res$n_stopovers), use_data = TRUE)
       )
