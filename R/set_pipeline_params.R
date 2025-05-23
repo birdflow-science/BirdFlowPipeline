@@ -107,7 +107,7 @@
 #' @param fit_only Set to `TRUE` to fit a model without a grid search,
 #' model evaluation, model ranking, or model reports. 
 #' @param ebirdst_year The version year of the ebirdst package. This shouldn't 
-#' be set by users.
+#' be set by users and any supplied value will be ignored. 
 #' @param trim_quantile Passed to [preprocess_species()].
 #' @return A parameter list to be used for `batch_flow()` and related functions
 #' @export
@@ -145,10 +145,16 @@ set_pipeline_params <- function(
     crs = NULL,
     skip_quality_checks = FALSE,
     fit_only = FALSE, 
-    ebirdst_year = ebirdst::ebirdst_version()$version_year,
+    ebirdst_year = NULL, 
     trim_quantile = NULL
 ){
   params <- as.list(environment())
+  
+  # Resolve ebirdst (status) year
+  params$ebirdst_year <- 
+    ifelse(packageVersion("ebirdst") < package_version("3.2023.0"),
+           ebirdst::ebirdst_version()$version_year,
+           ebirdst::ebirdst_version()$status_version_year)
   
   ## Check parameters
   
@@ -157,6 +163,10 @@ set_pipeline_params <- function(
   # in the list from the start so have added them to this function. 
   # Code in preprocess_species_wrapper() could be updated to support setting
   # these to other values, but for now I'm just enforcing NULL.
+  if(is.null(params$ebirdst_year)) {
+    stop("ebirdst (status) version year could not be resolved. ", 
+         "This is likely due to a change in ebirdst")
+  }
   if(!is.null(params$output_fullname))
     stop("output_fullname should be NULL. Support for other values may be added later.")
   if(!is.null(params$output_path))
