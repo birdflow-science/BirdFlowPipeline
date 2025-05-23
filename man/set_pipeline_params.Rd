@@ -25,7 +25,7 @@ set_pipeline_params(
   crs = NULL,
   skip_quality_checks = FALSE,
   fit_only = FALSE,
-  ebirdst_year = ebirdst::ebirdst_version()$version_year,
+  ebirdst_year = NULL,
   trim_quantile = NULL
 )
 }
@@ -135,7 +135,7 @@ are included in the model.}
 reference system for the model. With the default of \code{NULL} the CRS
 is set to the CRS assigned to the species by eBird status and trends.}
 
-\item{skip_quality_checks}{Passed to \code{\link[=preprocess_species]{preprocess_species()}} if \code{TRUE} an
+\item{skip_quality_checks}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} if \code{TRUE} an
 error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebirdst::ebirdst_runs} are
 below three.  If \code{TRUE} then attempt to fit the model regardless of quality.}
 
@@ -143,9 +143,9 @@ below three.  If \code{TRUE} then attempt to fit the model regardless of quality
 model evaluation, model ranking, or model reports.}
 
 \item{ebirdst_year}{The version year of the ebirdst package. This shouldn't
-be set by users.}
+be set by users and any supplied value will be ignored.}
 
-\item{trim_quantile}{Passed to \code{\link[=preprocess_species]{preprocess_species()}}.}
+\item{trim_quantile}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}.}
 }
 \value{
 A parameter list to be used for \code{batch_flow()} and related functions

@@ -18,6 +18,6 @@ result to.}
 Flux is written to disk nothing is returned.
 }
 \description{
-\code{process_flux()} is a wrapper to \code{\link[=calc_flux]{calc_flux()}} that handles reading the input
+\code{process_flux()} is a wrapper to \code{\link[BirdFlowR:calc_flux]{BirdFlowR::calc_flux()}} that handles reading the input
 model and writing the resulting flux to disk.
 }

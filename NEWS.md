@@ -1,3 +1,21 @@
+# BirdFlowPipeline 0.0.0.9013
+2025-05-23
+
+Update `rts_stats()` it now works with `BirdFlowRoutes` objects as well
+as the data frame precursor to those objects.
+
+Update functions and tests for ebirdst 2.2023.0.
+Tests that depend on the **ebirdst** package version are also now skipped if an
+older version is installed.
+
+Clean up some other testing issues.
+
+Resolve warnings and notes from package check.
+* Cross references missing package anchors
+* Functions not imported from Utils
+
+
+
 # BirdFlowPipeline 0.0.0.9012
 2024-10-03
 

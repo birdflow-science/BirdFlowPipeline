@@ -19,8 +19,10 @@ test_that("Build collection index works", {
   description <- "## The heading\n\nOther text."
 
   title <- "Fake index"
-    
-  expect_no_error(build_collection_index(dir, collection_url))
+  
+  suppressWarnings(
+    expect_no_error(build_collection_index(dir, collection_url))
+  )
 
   expect_true(file.exists(file.path(dir, "index.html")))
   expect_true(file.exists(file.path(dir, "logo.png")))
