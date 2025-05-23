@@ -298,13 +298,23 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
 }
 
 #' Calculate route summary statistics
-#' @param rts data.frame object output from `BirdFlowR::route()`
+#' @param rts BirdFlowRoutes object output from `BirdFlowR::route()` or
+#'   a data frame with the same data. 
 #' @returns a list of mean summary statistics
 #' @seealso [BirdFlowR::route()]
 #' @export
 #' 
 rts_stats <- function(rts){
-  rts_lst <- split(rts, rts$route_id)
+  
+  if(inherits(rts, "data.frame")){
+    # Continue to support older route format
+    data <- rts
+  } else {  
+    # BirdFlowRoutes object
+    data <- rts$data
+  }
+  
+  rts_lst <- split(data, data$route_id)
   out <- lapply(rts_lst, function(rts){
     rts$ts_sequential <- seq_len(nrow(rts))
     traj <- trajr::TrajFromCoords(rts, xCol = 'x', yCol = 'y', timeCol = 'ts_sequential', timeUnits = 'ts')
