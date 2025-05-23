@@ -14,6 +14,7 @@ Tools for fitting, selecting, and evaluating BirdFlow models on Unity.
 Authors:
 \itemize{
   \item Ethan Plunkett \email{plunkett@umass.edu} (\href{https://orcid.org/0000-0003-4405-2251}{ORCID})
+  \item Yangkang Chen \email{chenyangkang24@outlook.com} (\href{https://orcid.org/0000-0003-4996-0881}{ORCID})
 }
 
 Other contributors:

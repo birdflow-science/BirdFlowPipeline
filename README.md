@@ -88,6 +88,11 @@ Add the following to your `~/.Renviron` file so that the `ebirdst` package recog
 EBIRDST_KEY='your_ebirdst_api_key'
 ```
 
+Additionally, if you are on Unity, we have a common shared source of downloaded eBird Status and Trends data, so:
+```
+Sys.setenv(EBIRDST_DATA_DIR = BirdFlowPipeline:::the$st_download_path)
+```
+
 You may need to restart R and/or RStudio for this to start working.
 
 ## 4. Set up your [GitHub Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) 
@@ -162,6 +167,11 @@ Install BirdFlowPipeline and any necessary dependencies. Some restarts of R or t
 devtools::install(dependencies = TRUE)
 ```
 
+If you have the BirdFlowPipeline installed for the old version for whatever reasons. Consider removing them.
+```
+rm -rf /home/yc85_illinois_edu/R/x86_64-pc-linux-gnu-library/4.3/BirdFlowPipeline
+```
+
 When all packages are successfully installed, you should be able to load the package like this without error:
 
 ```
@@ -190,7 +200,7 @@ Go to [Unity OnDemand](https://ood.unity.rc.umass.edu/pun/sys/dashboard/batch_co
 2. partition: `gpu` (use `gpu,gpu-preempt` if under 2 hours walltime)
 3. memory: `11`
 4. gpu count: `1`
-5. [Advanced] Override Rstudio image location: `/work/pi_drsheldon_umass_edu/birdflow_modeling/BirdFlowContainer/BirdFlowContainer.sif`
+5. [Advanced] Override Rstudio image location: `/work/pi_drsheldon_umass_edu/birdflow_modeling/BirdFlowContainer45/BirdFlowContainer.sif`
 6. Use default or blank values for the other fields
 
 Once your session is active, click the blue button to connect to Rstudio server. Once in Rstudio, you can go to File > New Project, and select (or create) a directory in which to work. For example you might want to select the top level of a clone of Miguel's birdflow repo. The bottom right should now show the files in the directory you selected. The container should already include all the needed python libraries to run `update_hdf.py`.

@@ -16,5 +16,5 @@ a list of mean summary statistics
 Calculate route summary statistics
 }
 \seealso{
-\code{\link[BirdFlowR::route(), BirdFlowR:BirdFlowRoutes]{BirdFlowR::route(), BirdFlowR::BirdFlowRoutes()}}
+\code{\link[BirdFlowR:route]{BirdFlowR::route()}}, \code{\link[BirdFlowR:BirdFlowRoutes]{BirdFlowR::BirdFlowRoutes()}}
 }

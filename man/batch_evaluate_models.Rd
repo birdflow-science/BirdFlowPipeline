@@ -18,5 +18,5 @@ A data.frame with a row for each model evaluated
 Batch evaluate models on the cluster
 }
 \seealso{
-\code{\link[=evaluate_model]{evaluate_model()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}, \code{\link[=as_BirdFlowIntervals]{as_BirdFlowIntervals()}}, \code{\link[BirdFlowR:interval_log_likelihood]{BirdFlowR::interval_log_likelihood()}}
+\code{\link[=evaluate_model]{evaluate_model()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}, \code{\link[=as_BirdFlowIntervals]{as_BirdFlowIntervals()}}, \link{\code{\link[BirdFlowR]{interval_log_likelihood}()}}
 }

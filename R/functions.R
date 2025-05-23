@@ -1,5 +1,4 @@
 # pre-processing functions
-
 preprocess_data_types <- function(df){
   # coerce ambiguous dates to NAs
   # convert codes for 1st, 2nd, and last 10 days of month to their midpoint
@@ -166,31 +165,19 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     obs_prop = safe_numeric(signif(1 / (1 + bf$metadata$hyperparameters$dist_weight + bf$metadata$hyperparameters$ent_weight), 4)),
     
     traverse_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'prebreeding')$md_traverse_cor,
-    traverse_cor_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = 'prebreeding')$md_traverse_cor,
     traverse_cor_st_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'prebreeding')$st_traverse_cor,
-    traverse_cor_st_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T, season = 'prebreeding')$st_traverse_cor,
     mean_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'prebreeding')$mean_distr_cor,
-    mean_dist_cor_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = 'prebreeding')$mean_distr_cor,
     min_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'prebreeding')$min_distr_cor,
-    min_dist_cor_log_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = 'prebreeding')$min_distr_cor,
     
     traverse_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'postbreeding')$md_traverse_cor,
-    traverse_cor_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T, season = 'postbreeding')$md_traverse_cor,
     traverse_cor_st_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'postbreeding')$st_traverse_cor,
-    traverse_cor_st_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T, season = 'postbreeding')$st_traverse_cor,
     mean_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'postbreeding')$mean_distr_cor,
-    mean_dist_cor_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T, season = 'postbreeding')$mean_distr_cor,
     min_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'postbreeding')$min_distr_cor,
-    min_dist_cor_log_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T, season = 'postbreeding')$min_distr_cor,
 
     traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
-    traverse_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', log=T)$md_traverse_cor,
     traverse_cor_st_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor')$st_traverse_cor,
-    traverse_cor_st_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', log=T)$st_traverse_cor,
     mean_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
-    mean_dist_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', log=T)$mean_distr_cor,
     min_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor')$min_distr_cor,
-    min_dist_cor_log_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', log=T)$min_distr_cor,
     
     mean_win_prob = interval_based_metrics[['mean_win_prob']],
     mean_win_distance = interval_based_metrics[['mean_win_distance']],
@@ -198,7 +185,6 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     mean_null_ll = interval_based_metrics[['mean_null_ll']],
     mean_ll = interval_based_metrics[['mean_ll']],
 
-    mean_effective_win_distance = interval_based_metrics[['mean_effective_win_distance']],
     mean_energy_improvement = interval_based_metrics[['mean_energy_improvement']],
     
     weighted_mean_win_prob=interval_based_metrics[['weighted_mean_win_prob']],
@@ -207,21 +193,12 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     weighted_mean_null_ll=interval_based_metrics[['weighted_mean_null_ll']],
     weighted_mean_ll=interval_based_metrics[['weighted_mean_ll']],
     
-    weighted_mean_effective_win_distance=interval_based_metrics[['weighted_mean_effective_win_distance']],
     weighted_energy_improvement=interval_based_metrics[['weighted_energy_improvement']],
-    weighted_energy_improvement_days_integral=interval_based_metrics[['weighted_energy_improvement_days_integral']],
-    weighted_energy_improvement_kms_integral=interval_based_metrics[['weighted_energy_improvement_kms_integral']],
     
     mean_global_prob_of_the_banding_starting = interval_based_metrics[['mean_global_prob_of_the_starting']],
     mean_elapsed_days = interval_based_metrics[['mean_elapsed_days']],
     mean_elapsed_km = interval_based_metrics[['mean_elapsed_km']],
 
-    area_win_prob_by_time=interval_based_metrics[['area_win_prob_by_time']],
-    area_win_distance_by_time=interval_based_metrics[['area_win_distance_by_time']],
-    area_win_distance_fraction_by_time=interval_based_metrics[['area_win_distance_fraction_by_time']],
-    area_win_prob_by_distance=interval_based_metrics[['area_win_prob_by_distance']],
-    area_win_distance_by_distance=interval_based_metrics[['area_win_distance_by_distance']],
-    area_win_distance_fraction_by_distance=interval_based_metrics[['area_win_distance_fraction_by_distance']],
     n_intervals=interval_based_metrics[['n_intervals']],
     
     straightness = route_stats$straightness, # of synthetic routes, but conditional on the tracking data starts and ends
@@ -257,15 +234,12 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
   ) |>
     dplyr::mutate(
       traverse_cor = (traverse_cor_prebreeding + traverse_cor_postbreeding) / 2,
-      traverse_cor_log = (traverse_cor_log_prebreeding + traverse_cor_log_postbreeding) / 2,
       traverse_cor_st = (traverse_cor_st_prebreeding + traverse_cor_st_postbreeding) / 2,
-      traverse_cor_st_log = (traverse_cor_st_log_prebreeding + traverse_cor_st_log_postbreeding) / 2,
       mean_dist_cor = (mean_dist_cor_prebreeding + mean_dist_cor_postbreeding) / 2,
-      mean_dist_cor_log = (mean_dist_cor_log_prebreeding + mean_dist_cor_log_postbreeding) / 2,
       min_dist_cor = (min_dist_cor_prebreeding + min_dist_cor_postbreeding) / 2,
-      min_dist_cor_log = (min_dist_cor_log_prebreeding + min_dist_cor_log_postbreeding) / 2
     )
   #my_ll
+  print(out_df)
   list(df = out_df, obs = birdflow_intervals, metric_for_each_transition=metric_for_each_transition)
 }
 
@@ -308,7 +282,7 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
 #' Calculate route summary statistics
 #' @param rts BirdFlowRoutes object output from `BirdFlowR::route()`
 #' @returns a list of mean summary statistics
-#' @seealso [BirdFlowR::route(), BirdFlowR::BirdFlowRoutes()]
+#' @seealso [BirdFlowR::route()], [BirdFlowR::BirdFlowRoutes()]
 #' @export
 #' 
 rts_stats <- function(rts, remove_head_and_tail_stationaries = FALSE){
@@ -488,6 +462,10 @@ rank_models <- function(eval_metrics, params){
     # straightness + n_stopovers targetted to observed values from real tracking
     bf <- BirdFlowR::import_birdflow(file.path(params$hdf_dir, eval_metrics$model[1])) # Load a random model
     real_track <- get_real_track(bf, params, filter=TRUE)
+    if (is.null(real_track)) {
+      return(NULL)
+    } 
+    
     real_track_stats_res <- rts_stats(real_track)
     # save real_track_stats RDS
     saveRDS(real_track_stats_res, file.path(params$output_path, 'real_track_stats.rds'))
@@ -551,7 +529,7 @@ rank_models <- function(eval_metrics, params){
   } else if (params$model_selection == 'distance_metric') {
     eval_metrics <- eval_metrics %>%
       dplyr::mutate(
-        area_win_distance_by_time_d = desirability2::d_max(.data$area_win_distance_by_time, use_data = TRUE),
+        dummy_d = rep(1, nrow(eval_metrics)),
       )
   } else {
     stop('invalid model_selection in params')

@@ -2,6 +2,9 @@
 #'
 #' @param species A single eBird 6-letter code or common name describing 
 #' a species recognized by [ebirdst::get_species()].
+#' @param training_n_transitions The number of training transitions to use. For learning curve analysis.
+#' @param training_CV The number of CV to use during model fitting.
+#' @param use_cached_data Whether to use the cached training and validation data if there are any
 #' @inheritDotParams set_pipeline_params -species
 #' @returns function is used for its many side effects, according to 
 #' configuration settings in `as.list(BirdFlowPipeline:::the)`
@@ -11,8 +14,8 @@
 #'  * write reports, plots, and maps for model evaluation and visualization
 #' @seealso [multiple_species_batch()]
 #' @export
-batch_flow <- function(species, ...){
-  
+batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_cached_data=FALSE, cached_path=NULL, ...){
+
   if(!length(species) == 1){
     stop("batch_flow() only works with one species. ", 
          "Use multiple_species_batch()")
@@ -57,77 +60,58 @@ batch_flow <- function(species, ...){
   # Routes to BirdFlowRoutes to BirdFlowIntervals
   # Load and save track info
   # Here should combine banding and motus data and convert to BirdFlowIntervals class
-  banding_df <- load_banding_transitions_df(file.path(BirdFlowPipeline:::the$banding_rds_path, paste0(params$species, '.rds')))
-  motus_df <- load_motus_transitions_df(file.path(BirdFlowPipeline:::the$motus_rds_path, paste0(params$species, '.rds')))
-  track_birdflowroutes_obj <- get_real_track(bf, params, filter=FALSE) # Real track. Not filtered by season. All year round.
-  combined_data <- rbind(banding_df, motus_df, track_birdflowroutes_obj$data[,c('route_id','date','lon','lat','route_type')])
-  combined_data <- na.omit(combined_data)
-  saveRDS(combined_data, file.path(params$output_path, 'all_ground_truth_transitions_df.rds'))
-
-  # Dataframe to Routes
-  source <- ''
-  if (!is.null(banding_df)){
-    if (source==''){
-      source <- 'Banding'
-    } else {
-      source <- paste0(source, ' & ', 'Banding')
+  all_ground_truth_transitions_df_path1 <- file.path(params$output_path, 'all_ground_truth_transitions_df.rds')
+  all_ground_truth_transitions_df_path2 <- file.path(cached_path, 'all_ground_truth_transitions_df.rds')
+  interval_obj_path <- file.path(cached_path, 'interval_obj.rds')
+  interval_one_week_obj_path <- file.path(cached_path, 'interval_one_week_obj.rds')
+  
+  if (use_cached_data &&
+      file.exists(all_ground_truth_transitions_df_path2) &&
+      file.exists(interval_obj_path) &&
+      file.exists(interval_one_week_obj_path)) {
+    if (is.null(cached_path)) {
+      stop('Have to provide cached_path if using cache!')
     }
-  } else if (!is.null(motus_df)){
-    if (source==''){
-      source <- 'MOTUS'
-    } else {
-      source <- paste0(source, ' & ', 'MOTUS')
+    print('Loading cached training/validation data...')
+    combined_routes_data <- readRDS(all_ground_truth_transitions_df_path2) # cached dir
+    interval_obj <- readRDS(interval_obj_path) # cached dir
+    interval_one_week_obj <- readRDS(interval_one_week_obj_path) # cached dir
+    saveRDS(combined_routes_data, all_ground_truth_transitions_df_path1) # normal dir
+    
+  } else {
+    if (use_cached_data) {
+      print('Althought use_cached_data, no cached data available.')
     }
-  } else if (!is.null(track_birdflowroutes_obj)){
-    if (source==''){
-      source <- 'Tracking'
-    } else {
-      source <- paste0(source, ' & ', 'Tracking')
+    res <- get_ground_truth_routes_intervals_and_one_week_intervals(params, bf)
+    combined_routes_data <- res[['combined_routes_data']]
+    interval_obj <- res[['interval_obj']]
+    interval_one_week_obj <- res[['interval_one_week_obj']]
+    
+    saveRDS(combined_routes_data, all_ground_truth_transitions_df_path1) # normal dir
+    if (!is.null(cached_path)) {
+      saveRDS(combined_routes_data, all_ground_truth_transitions_df_path2) # cached dir
+      saveRDS(interval_obj, interval_obj_path) # cached dir
+      saveRDS(interval_one_week_obj, interval_one_week_obj_path) # cached dir
     }
   }
   
-  if (source==''){
-    source <- 'No Data'
-  }
-  
-  ## All interval samples
-  routes_obj <- BirdFlowR::Routes(combined_data, species=bf$species, source=source)
-  if (nrow(routes_obj$data)==0){
-    stop("No Transition data available")
-  }
-  birdflow_routes_obj <- routes_obj |> BirdFlowR::as_BirdFlowRoutes(bf=bf)
-  interval_obj <- birdflow_routes_obj |>
-    BirdFlowR::as_BirdFlowIntervals(max_n=10000,
-                                    min_day_interval=1,
-                                    max_day_interval=180,
-                                    min_km_interval=0,
-                                    max_km_interval=8000)
-  # Filter intervals to ask at least one leg in the migration season
-  target_timesteps <- c(BirdFlowR::lookup_season_timesteps(bf, season='prebreeding'), 
-    BirdFlowR::lookup_season_timesteps(bf, season='postbreeding'))
-  interval_obj$data <- interval_obj$data[(interval_obj$data$timestep1 %in% target_timesteps) | (interval_obj$data$timestep2 %in% target_timesteps),]
-  
-  if (is.null(interval_obj)){
-    stop("No intervals available")
-  }
-  
-  # One week samples
-  routes_one_week_obj <- BirdFlowR::Routes(combined_data, species=bf$species, source=source)
-  interval_one_week_obj <- routes_one_week_obj |> BirdFlowR::as_BirdFlowRoutes(bf=bf) |>
-    BirdFlowR::as_BirdFlowIntervals(max_n=10000,
-                                    min_day_interval=1,
-                                    max_day_interval=13,
-                                    min_km_interval=0,
-                                    max_km_interval=8000)
-  interval_one_week_obj$data <-interval_one_week_obj$data[interval_one_week_obj$data$timestep2 - interval_one_week_obj$data$timestep1 == 1,]
-  # Filter intervals to ask at least one leg in the migration season
-  interval_one_week_obj$data <- interval_one_week_obj$data[(interval_one_week_obj$data$timestep1 %in% target_timesteps) | (interval_one_week_obj$data$timestep2 %in% target_timesteps),]
   params$transition_type <- 'all_combined'
   
   # Train-test split
   set.seed(42)
-  train_data <- interval_obj$data |> dplyr::sample_frac(0.7)
+  train_data <- interval_obj$data |> dplyr::sample_frac(0.7, replace = FALSE)
   test_data <- dplyr::setdiff(interval_obj$data, train_data)
+  set.seed(42)
+  if (is.null(training_n_transitions)) {
+    ## Nothing happens
+  } else {
+    if (nrow(train_data) < training_n_transitions) {
+      stop(glue::glue('Cannot sample {training_n_transitions} transitions -- not enough data.'))
+    } else {
+      train_data <- train_data|> dplyr::sample_n(training_n_transitions, replace = FALSE) ## Subsample, for learning curve analysis
+    }
+  }
+
   train_data <- BirdFlowR::BirdFlowIntervals(data=train_data,
                                              species=interval_obj$species,
                                              metadata=interval_obj$metadata,
@@ -142,7 +126,7 @@ batch_flow <- function(species, ...){
                                             source=interval_obj$source)
   
   set.seed(42)
-  train_data_one_week <- interval_one_week_obj$data |> dplyr::sample_frac(0.7)
+  train_data_one_week <- interval_one_week_obj$data |> dplyr::sample_frac(0.7, replace = FALSE)
   test_data_one_week <- dplyr::setdiff(interval_one_week_obj$data, train_data_one_week)
   train_data_one_week <- BirdFlowR::BirdFlowIntervals(data=train_data_one_week,
                                                       species=interval_one_week_obj$species,
@@ -167,33 +151,57 @@ batch_flow <- function(species, ...){
     dir.create(file.path(params$output_path, 'each_transition_evaluation'))
   }
   
-  params$mode <- 'train'
-  eval_metrics_train <- batch_evaluate_models(params, train_data, train_data_one_week)
-  params$mode <- 'test'
-  eval_metrics_test <- batch_evaluate_models(params, test_data, test_data_one_week)
+  if (!is.numeric(training_CV)) {
+    stop('training_CV should be numeric!')
+  }
   
-  # Model selection and ranking with desirability
-  params$mode <- 'train'
-  params$model_selection <- 'distance_metric'
-  eval_metrics_train1 <- rank_models(eval_metrics_train, params)
-  saveRDS(eval_metrics_train1, file.path(params$output_path, glue::glue('eval_metrics_train_distance_metric_all_combined.rds')))
+  idx <- sample.int(nrow(train_data$data))
+  if (training_CV==1) {
+    parts <- list(`1`=idx)
+  } else {
+    parts <- split(
+      idx,
+      cut(seq_along(idx), breaks = training_CV, labels = FALSE)
+    )
+  }
   
-  tryCatch({
+  ## Run CV
+  for (cv_iter in names(parts)) {
+    the_idx <- parts[[as.character(cv_iter)]]
+    this_training_data <- train_data
+    this_training_data$data <- this_training_data$data[the_idx, ]
+    
+    params$mode <- 'train'
+    eval_metrics_train <- batch_evaluate_models(params, this_training_data, train_data_one_week)
+    params$model_selection <- 'distance_metric'
+    eval_metrics_train1 <- rank_models(eval_metrics_train, params)
+    
+    ## Decide appendix names
+    if (length(names(parts)) > 1) {
+      output_name_appendix <- glue::glue('_cv{cv_iter}')
+    } else {
+      output_name_appendix <- ''
+    }
+    
+    saveRDS(eval_metrics_train1, file.path(params$output_path, glue::glue('eval_metrics_train_distance_metric_all_combined{output_name_appendix}.rds')))
+    
+    ## Model ranking using real tracking data
     params$model_selection <- 'real_tracking'
     eval_metrics_train2 <- rank_models(eval_metrics_train, params)
-    saveRDS(eval_metrics_train2, file.path(params$output_path, glue::glue('eval_metrics_train_multi_objective_all_combined.rds')))
-  }, error = function(e) {
-    cat("ERROR:", conditionMessage(e), "\n")
-    cat("Tracking data might not be available for this species")
-  })
-  
+    if (is.null(eval_metrics_train2)) {
+      print("Tracking data might not be available for this species")
+    }
+    saveRDS(eval_metrics_train2, file.path(params$output_path, glue::glue('eval_metrics_train_multi_objective_all_combined{output_name_appendix}.rds')))
+
+  ## Evaluate on test set
   params$mode <- 'test'
+  eval_metrics_test <- batch_evaluate_models(params, test_data, test_data_one_week)
   params$model_selection <- 'distance_metric'
   eval_metrics_test <- rank_models(eval_metrics_test, params)
   saveRDS(eval_metrics_test, file.path(params$output_path, glue::glue('eval_metrics_test_distance_metric_all_combined.rds')))
   
   eval_metrics <- eval_metrics_test
-
+  }
 
   ## Plotting
   # make PCA evaluation plot

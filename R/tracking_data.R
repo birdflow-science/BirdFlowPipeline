@@ -88,7 +88,11 @@ get_real_track <- function(bf, params, filter=FALSE){
       # appropriate season tracks only. This is because the n_stopover and straightness only make sense during migration.
       rts$data <- rts$data |> dplyr::filter(.data$timestep %in% BirdFlowR::lookup_season_timesteps(bf, params$season))
     }
-      
+    
+    if (length(rts$data)==0) {
+      return(NULL)
+    }
+    
     return(rts)
   }
 }

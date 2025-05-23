@@ -26,7 +26,7 @@ set_pipeline_params(
   skip_quality_checks = FALSE,
   fit_only = FALSE,
   ebirdst_year = ebirdst::ebirdst_version()$version_year,
-  trim_quantile = NULL,
+  trim_quantile = 0.99,
   min_season_quality = 3
 )
 }
@@ -35,7 +35,7 @@ set_pipeline_params(
 calling function.}
 
 \item{gpu_ram}{Set the GPU RAM allocation in GB when fitting
-the models.  It is also passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} and
+the models.  It is also passed to BirdFlowR::preprocess_species() and
 if \code{res} is set to \code{NULL} that function will set the \code{res} to the smallest
 round number that can be fit with the allocated ram.}
 
@@ -102,7 +102,7 @@ and other output.}
 \item{season}{This is used in two ways:  (1) to filter movement data
 (I think just tracks? - ebp) before evaluating the model and (2)
 if \code{truncate_season} is \code{TRUE} it is passed to
-\code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}, producing a model that is truncated to
+BirdFlowR::preprocess_species(), producing a model that is truncated to
 just that season.}
 
 \item{truncate_season}{If \code{TRUE} the model will be truncated to \code{season} and
@@ -125,11 +125,11 @@ function parameters are fixed - typically to average values - in which
 case no model selection is performed.}
 }}
 
-\item{clip}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
+\item{clip}{This is passed to BirdFlowR::preprocess_species() to define a
 clipping polygon to use while preprocessing - only areas within the polygon
 are included in the model.}
 
-\item{crs}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define the coordinate
+\item{crs}{Passed to BirdFlowR::preprocess_species() to define the coordinate
 reference system for the model. With the default of \code{NULL} the CRS
 is set to the CRS assigned to the species by eBird status and trends.}
 

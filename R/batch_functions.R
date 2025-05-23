@@ -283,7 +283,7 @@ batch_modelfit_wrapper <- function(params){
 #' @param params A list of parameters, as returned by [preprocess_species_wrapper()].
 #' @param birdflow_intervals A BirdFlowIntervals object.
 #' @returns A data.frame with a row for each model evaluated
-#' @seealso [evaluate_model()], [preprocess_species_wrapper()], [as_BirdFlowIntervals()], [BirdFlowR::interval_log_likelihood()]
+#' @seealso [evaluate_model()], [preprocess_species_wrapper()], [as_BirdFlowIntervals()], [\code{\link[BirdFlowR]{interval_log_likelihood}()}]
 #' @export
 # birdflow_intervals=train_data
 # birdflow_intervals_one_week = train_data_one_week
@@ -302,7 +302,8 @@ batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals
                          resources = evaluation_resources)
   success <- batchtools::waitForJobs()
   print(batchtools::getStatus())
-  
+
+
   if (! isTRUE(success)) {
     message('Requeuing jobs that expired or had an error, attempt 1 of 2')
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),

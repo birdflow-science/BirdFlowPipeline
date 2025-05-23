@@ -1,3 +1,5 @@
+#' @import BirdFlowR
+NULL
 
 #' Function to set BirdFlowPipeline parameters
 #' 
@@ -14,7 +16,7 @@
 #' @param species The species to fit, it should be set by the user or the
 #' calling function.
 #' @param gpu_ram Set the GPU RAM allocation in GB when fitting 
-#'  the models.  It is also passed to [BirdFlowR::preprocess_species()] and 
+#'  the models.  It is also passed to BirdFlowR::preprocess_species() and 
 #'  if `res` is set to `NULL` that function will set the `res` to the smallest
 #'  round number that can be fit with the allocated ram.
 #' @param res The resolution of model. Specifically the height and width of 
@@ -71,7 +73,7 @@
 #' @param season This is used in two ways:  (1) to filter movement data
 #'  (I think just tracks? - ebp) before evaluating the model and (2) 
 #'  if `truncate_season` is `TRUE` it is passed to  
-#'  [BirdFlowR::preprocess_species()], producing a model that is truncated to 
+#'  BirdFlowR::preprocess_species(), producing a model that is truncated to 
 #'  just that season.
 #' @param truncate_season If `TRUE` the model will be truncated to `season` and
 #' marginals for transitions outside of the season won't be fit or included.
@@ -91,10 +93,10 @@
 #'  function parameters are fixed - typically to average values - in which
 #'  case no model selection is performed.}
 #' }
-#' @param clip This is passed to [BirdFlowR::preprocess_species()] to define a
+#' @param clip This is passed to BirdFlowR::preprocess_species() to define a
 #' clipping polygon to use while preprocessing - only areas within the polygon
 #' are included in the model.
-#' @param crs Passed to [BirdFlowR::preprocess_species()] to define the coordinate 
+#' @param crs Passed to BirdFlowR::preprocess_species() to define the coordinate 
 #' reference system for the model. With the default of `NULL` the CRS
 #' is set to the CRS assigned to the species by eBird status and trends.
 #' @param skip_quality_checks Passed to [preprocess_species()] if `TRUE` an

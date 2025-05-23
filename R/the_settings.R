@@ -16,3 +16,10 @@ the$tracking_data_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeli
 the$model_release_staging_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/model_release_staging'
 the$standard_crs <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/crs_and_clip/americas_crs.wkt'
 the$standard_range_clip <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/crs_and_clip/western_hemisphere.rds'
+the$st_download_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/status_and_trends'
+
+Sys.setenv(EBIRDST_DATA_DIR = the$st_download_path)
+install.packages('data.table')
+
+
+

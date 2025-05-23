@@ -60,17 +60,7 @@ process_motus_data <- function(){
     }
     
     all_routes <- do.call(rbind, all_routes)
-    
-    ## Not doing this -- Just save the dataframe format
-    # species <- list(
-    #   species_code = this_species_info$SPECIES_CODE,
-    #   scientific_name = this_species_info$SCI_NAME,
-    #   common_name = this_species_info$PRIMARY_COM_NAME
-    # )
-    # metadata <- list()
-    # sources <- 'MOTUS'
-    # routes_obj <- BirdFlowR::Routes(all_routes, species=species, metadata=metadata, source=sources)
-    
+
     this_species_info <- c(eb_taxonomy[eb_taxonomy$common_name==sp,])[1]
     saveRDS(all_routes, file = paste0(the$motus_rds_path, '/', this_species_info$species_code, '.rds'))
     sp_count <- sp_count + 1
