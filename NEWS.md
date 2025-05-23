@@ -1,3 +1,72 @@
+# BirdFlowPipeline 0.0.0.9013
+2025-05-23
+
+Update `rts_stats()` it now works with `BirdFlowRoutes` objects as well
+as the data frame precursor to those objects.
+
+Update functions and tests for ebirdst 2.2023.0.
+Tests that depend on the **ebirdst** package version are also now skipped if an
+older version is installed.
+
+Clean up some other testing issues.
+
+Resolve warnings and notes from package check.
+* Cross references missing package anchors
+* Functions not imported from Utils
+
+
+
+# BirdFlowPipeline 0.0.0.9012
+2024-10-03
+
+Add license to footer. Three variables optionally defined in the parent 
+.Rmd affect the licence.
+* `is_html`  controls whether the license is defined as html or markdown,
+   html version is fancier.  It will default to `TRUE` if not defined.
+* `focal_species` For species specific version of the license this should 
+be the common name of the species.
+* `doc_url` The URL (in final location) of the current document.  
+
+
+# BirdFlowPipeline 0.0.0.9011
+2024-10-02
+
+Add `title` argument to `build_collection_index()` and drop the default
+description from the document when a custom description is supplied.
+Default description is now in `rmd/collection_description.Rmd`.
+
+# BirdFlowPipeline 0.0.0.9010
+2024-09-26
+
+Add `build_collection_index()`
+
+* Move `build_collection_index()` from **BirdFlowR** to **BirdFlowPipeline**. 
+* Add `description` argument to allow inserting collection specific
+  markdown.
+* Switch to the standard footer:  `rmd/footer.Rmd`
+
+# BirdFlowPipeline 0.0.0.9009
+2024-09-25
+
+* Minor updates to model reports. This was in an attempt to adapt the model
+reports for tuned models to work for models fit with averaged hyperparameters.
+Ultimately these changes weren't used but I cleaned up some documentation and
+added comments in the process so decided to keep the changes. 
+
+# BirdFlowPipeline 0.0.0.9008
+2024-08-15
+
+* Add `show_progress` argument to `batch_species()` and `batch_flux()` if
+`FALSE` the functions execute immediately after launching.  This facilitates
+programmatically calling them in a loop to adjust computing resources to 
+varied run times and memory requirements.
+
+* New `inst/rmd/footer.Rmd` has links to BirdFlow and eBird and the
+eBird disclaimer in a standard format.  It is inserted in the end of  
+`flux_index.Rmd`, `flux_report.Rmd`, and`model_report.Rmd`.  Most of these
+documents had the links, none previously had the disclaimer.  
+
+
 # BirdFlowPipeline 0.0.0.9007
 2024-08-14
 

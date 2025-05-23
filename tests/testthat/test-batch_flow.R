@@ -22,29 +22,29 @@ test_that("batch_flow works", {
   })
   test_hdf_dir <- tempdir1
   test_output_path <- tempdir2
-  expect_no_error(
-    batch_flow(
-      species = test_species,
-      gpu_ram = 10,
-      res = test_res,
-      suffix = 'TEST',
-      grid_search_type = 'new',
-      grid_search_list = list(
-        de_ratio = 8,
-        obs_prop = c(0.95, 0.99),
-        dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
-        dist_weight = NA_real_,
-        ent_weight = NA_real_),
-      hdf_path = test_hdf_dir,
-      base_output_path = test_output_path,
-      season = 'prebreeding',
-      truncate_season = FALSE,
-      model_selection = 'real_tracking',
-      clip = NULL,
-      skip_quality_checks = FALSE,
-      fit_only = FALSE
-    )
-  )
+  suppressWarnings(
+    expect_no_error(
+      batch_flow(
+        species = test_species,
+        gpu_ram = 10,
+        res = test_res,
+        suffix = 'TEST',
+        grid_search_type = 'new',
+        grid_search_list = list(
+          de_ratio = 8,
+          obs_prop = c(0.95, 0.99),
+          dist_pow = seq(from = 0.2, to = 0.8, by = 0.15),
+          dist_weight = NA_real_,
+          ent_weight = NA_real_),
+        hdf_path = test_hdf_dir,
+        base_output_path = test_output_path,
+        season = 'prebreeding',
+        truncate_season = FALSE,
+        model_selection = 'real_tracking',
+        clip = NULL,
+        skip_quality_checks = FALSE,
+        fit_only = FALSE
+      )))
   expect_true(file.exists(test_hdf_dir))
   expect_true(file.exists(test_output_path))
   output_fullname <- paste(test_species, paste0(test_res, 'km'), 'TEST', sep = '_')

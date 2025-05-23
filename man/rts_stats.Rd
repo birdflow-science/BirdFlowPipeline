@@ -7,7 +7,8 @@
 rts_stats(rts, remove_head_and_tail_stationaries = FALSE)
 }
 \arguments{
-\item{rts}{BirdFlowRoutes object output from \code{BirdFlowR::route()}}
+\item{rts}{BirdFlowRoutes object output from \code{BirdFlowR::route()} or
+a data frame with the same data.}
 }
 \value{
 a list of mean summary statistics

@@ -99,15 +99,15 @@ NULL
 #' @param crs Passed to BirdFlowR::preprocess_species() to define the coordinate 
 #' reference system for the model. With the default of `NULL` the CRS
 #' is set to the CRS assigned to the species by eBird status and trends.
-#' @param skip_quality_checks Passed to [preprocess_species()] if `TRUE` an
-#' @param skip_quality_checks Passed to [preprocess_species()] if `TRUE` an
+#' @param skip_quality_checks Passed to [BirdFlowR::preprocess_species()] if `TRUE` an
+#' @param skip_quality_checks Passed to [BirdFlowR::preprocess_species()] if `TRUE` an
 #' error will be thrown if season quality values in [ebirdst::ebirdst_runs] are
 #' below three.  If `TRUE` then attempt to fit the model regardless of quality.
 #' @param fit_only Set to `TRUE` to fit a model without a grid search,
 #' model evaluation, model ranking, or model reports. 
 #' @param ebirdst_year The version year of the ebirdst package. This shouldn't 
-#' be set by users.
-#' @param trim_quantile Passed to [preprocess_species()].
+#' be set by users and any supplied value will be ignored. 
+#' @param trim_quantile Passed to [BirdFlowR::preprocess_species()].
 #' @return A parameter list to be used for `batch_flow()` and related functions
 #' @export
 #' @examples
@@ -144,13 +144,24 @@ set_pipeline_params <- function(
     crs = NULL,
     skip_quality_checks = FALSE,
     fit_only = FALSE, 
-    ebirdst_year = ebirdst::ebirdst_version()$version_year,
+    ebirdst_year = NULL,
     trim_quantile = 0.99,
     min_season_quality = 3
 ){
   params <- as.list(environment())
   
+  # Resolve ebirdst (status) year
+  params$ebirdst_year <- 
+    ifelse(utils::packageVersion("ebirdst") < package_version("3.2023.0"),
+           ebirdst::ebirdst_version()$version_year,
+           ebirdst::ebirdst_version()$status_version_year)
+  
   ## Check parameters
+  
+  if(is.null(params$ebirdst_year)) {
+    stop("ebirdst (status) version year could not be resolved. ", 
+         "This is likely due to a change in ebirdst")
+  }
   
   # Make sure output_fullname and output_directory are NULL.
   # Previously these weren't exposed to the user. I like having all the params

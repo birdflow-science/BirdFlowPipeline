@@ -280,19 +280,29 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
 }
 
 #' Calculate route summary statistics
-#' @param rts BirdFlowRoutes object output from `BirdFlowR::route()`
+#' @param rts BirdFlowRoutes object output from `BirdFlowR::route()` or
+#'   a data frame with the same data. 
 #' @returns a list of mean summary statistics
 #' @seealso [BirdFlowR::route()], [BirdFlowR::BirdFlowRoutes()]
 #' @export
 #' 
-rts_stats <- function(rts, remove_head_and_tail_stationaries = FALSE){
-  rts <- rts$data
-  if (length(unique(rts$route_id)) == 1){
-    rts_lst <- list(rts)
-  } else {
-    rts_lst <- split(rts, rts$route_id)
+rts_stats <- function(rts){
+
+  if(inherits(rts, "data.frame")){
+    # Continue to support older route format
+    data <- rts
+  } else {  
+    # BirdFlowRoutes object
+    data <- rts$data
   }
   
+  ## Deal with only one track scenarios
+  if (length(unique(data$route_id)) == 1){
+    rts_lst <- list(data)
+  } else {
+    rts_lst <- split(rdatats, data$route_id)
+  }
+
   out <- lapply(rts_lst, function(rts){
     if (remove_head_and_tail_stationaries){
 

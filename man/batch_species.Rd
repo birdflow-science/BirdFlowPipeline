@@ -110,14 +110,14 @@ are included in the model.}
     \item{\code{crs}}{Passed to BirdFlowR::preprocess_species() to define the coordinate
 reference system for the model. With the default of \code{NULL} the CRS
 is set to the CRS assigned to the species by eBird status and trends.}
-    \item{\code{skip_quality_checks}}{Passed to \code{\link[=preprocess_species]{preprocess_species()}} if \code{TRUE} an
+    \item{\code{skip_quality_checks}}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} if \code{TRUE} an
 error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebirdst::ebirdst_runs} are
 below three.  If \code{TRUE} then attempt to fit the model regardless of quality.}
     \item{\code{fit_only}}{Set to \code{TRUE} to fit a model without a grid search,
 model evaluation, model ranking, or model reports.}
     \item{\code{ebirdst_year}}{The version year of the ebirdst package. This shouldn't
-be set by users.}
-    \item{\code{trim_quantile}}{Passed to \code{\link[=preprocess_species]{preprocess_species()}}.}
+be set by users and any supplied value will be ignored.}
+    \item{\code{trim_quantile}}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}.}
   }}
 }
 \value{
