@@ -16,6 +16,8 @@ ls -l ~/.ssh
 
 To create a new key, enter this command and hit enter. Hit enter again when asked if you want to create a passphrase. It's easier if we don't use one, and this is all occurring within Unity and within your home directory, which is already fairly secure, but your mileage may vary.
 
+Should note that before calling ssh-keygen, you should make sure you're on login1 and ssh login1 if not. Otherwise, you can end up creating a key for the wrong login node.
+
 ```
 ssh-keygen
 ```
@@ -36,8 +38,10 @@ IdentityFile ~/.ssh/<your_unity_private_key_filename_created_in_last_step>
 Now, copy over the SSH public key to the server with the following command, removing all angled brackets. You'll need to customize the command if you were not using the default key name.
 
 ```
-ssh-copy-id <yourusername_umass_edu>@login1
+ssh-copy-id i ~/.ssh/<your_unity_private_key_filename_created_in_last_step> <yourusername_umass_edu>@login1
 ```
+
+Try to make sure which key is the right one and copy the right one.
 
 Now, try SSHing into the login node from a compute node. First, get a command line on a compute node by entering this on a login node terminal:
 
