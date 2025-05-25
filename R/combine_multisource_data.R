@@ -16,20 +16,17 @@ combine_and_save_ground_truth_data <- function(species) {
     min_season_quality = 1
   )
   params <- preprocess_species_wrapper(params)
-  params$sp_output_path_routes <- paste0(BirdFlowPipeline:::the$combined_data_path_routes,
-                                         '/',
-                                         species,
-                                         '.hdf5')
-  params$sp_output_path_birdflowroutes <- paste0(BirdFlowPipeline:::the$combined_data_path_birdflowroutes,
-                                                 '/',
-                                                 species,
-                                                 '.hdf5')
+  
+  params$sp_output_path_routes <- paste0(
+    BirdFlowPipeline:::the$combined_data_path_routes,
+    '/', species, '.hdf5')
+  params$sp_output_path_birdflowroutes <- paste0(
+    BirdFlowPipeline:::the$combined_data_path_birdflowroutes,
+    '/', species, '.hdf5')
   params$sp_output_path_birdflowintervals <- paste0(
     BirdFlowPipeline:::the$combined_data_path_birdflowintervals,
-    '/',
-    species,
-    '.hdf5'
-  )
+    '/', species, '.hdf5')
+  
   if (!dir.exists(BirdFlowPipeline:::the$combined_data_path_routes)) {
     dir.create(BirdFlowPipeline:::the$combined_data_path_routes,
                recursive = TRUE)
@@ -147,13 +144,16 @@ combine_data_for_all_sp <- function() {
   unique_names <- c(
     gsub('.rds','',list.files(the$motus_rds_path)),
     gsub('.rds','',list.files(the$banding_rds_path)),
-    sub("_.*", "", list.files(the$tracking_data_path, recursive = F, include.dirs=F, pattern = "\\.csv$", full.names = FALSE))
+    sub("_.*", "", list.files(the$tracking_data_path, recursive = F, 
+                              include.dirs=F, pattern = "\\.csv$", 
+                              full.names = FALSE))
   ) |> unique()
   
   n <- length(unique_names)
   pb <- txtProgressBar(min = 0, max = n, style = 3)
   
-  for (sp in unique_names) {
+  for (i in seq_along(unique_names)) {
+    sp <- unique_names[i]
     tryCatch({
       combine_and_save_ground_truth_data(sp)
     }, 
