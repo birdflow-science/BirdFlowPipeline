@@ -66,7 +66,7 @@ tracks_to_rts <- function(df, bf, params){
 #' @returns the BirdFlowRoutes object of the real track
 #' @export
 get_real_track <- function(bf, params, filter=FALSE){
-  tracks_files <- list.files(the$tracking_data_path,
+  tracks_files <- list.files(BirdFlowPipeline:::the$tracking_data_path,
                              pattern = paste0("^", params$species, ".*tracks.*\\.csv"),
                              full.names = TRUE)
   if (length(tracks_files) == 0){
