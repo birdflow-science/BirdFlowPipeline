@@ -11,7 +11,7 @@ process_motus_data <- function(){
   
   # Get the species list
   unique_species_common_name <- recovery_data$speciesEnglish |> 
-    unique() |> na.omit()
+    unique() |> stats::na.omit()
   eb_taxonomy <- ebirdst::ebirdst_runs
   eb_taxonomy <- eb_taxonomy[eb_taxonomy$species_code!='yebsap-example',]
   
@@ -41,7 +41,7 @@ process_motus_data <- function(){
     print(sp_count)
     # get species-specific data
     species_recovery <- recovery_data[recovery_data$species_code==sp_code,]
-    species_id <- na.omit(species_recovery$speciesID)[1] # Get the only species id
+    species_id <- stats::na.omit(species_recovery$speciesID)[1] # Get the only species id
     unique_deployment_id <- species_recovery$tagDeployID |> unique()
     
     route_id <- 1

@@ -76,7 +76,7 @@ combine_and_save_ground_truth_data <- function(species) {
       , c('route_id', 'date', 'lon', 'lat', 'route_type')
       ]
     )
-  combined_data <- na.omit(combined_data)
+  combined_data <- stats::na.omit(combined_data)
 
   # Dataframe to Routes
   source <- ''

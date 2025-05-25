@@ -73,6 +73,8 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'
 #' @param bf A birdflow model object, often passed from [import_birdflow_and_evaluate()]
 #' @param modelname A name for the model, often the basename of the model path
+#' @param birdflow_intervals The BirdFlowIntervals object for evaluation
+#' @param birdflow_intervals_one_week The one-week BirdFlowIntervals object for evaluation
 #' @param params Standard params object
 #'
 #' @seealso [batch_evaluate_models()], [import_birdflow_and_evaluate()]

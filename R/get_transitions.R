@@ -10,7 +10,7 @@ get_ground_truth_routes_intervals_and_one_week_intervals <- function(params, bf)
   motus_df <- load_motus_transitions_df(file.path(the$motus_rds_path, paste0(params$species, '.rds')))
   track_birdflowroutes_obj <- get_real_track(bf, params, filter=FALSE) # Real track. Not filtered by season. All year round.
   combined_data <- rbind(banding_df, motus_df, track_birdflowroutes_obj$data[,c('route_id','date','lon','lat','route_type')])
-  combined_data <- na.omit(combined_data)
+  combined_data <- stats::na.omit(combined_data)
   
   ## 02. Dataframe to Routes
   source <- ''

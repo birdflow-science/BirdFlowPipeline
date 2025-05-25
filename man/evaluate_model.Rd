@@ -17,6 +17,10 @@ evaluate_model(
 
 \item{modelname}{A name for the model, often the basename of the model path}
 
+\item{birdflow_intervals}{The BirdFlowIntervals object for evaluation}
+
+\item{birdflow_intervals_one_week}{The one-week BirdFlowIntervals object for evaluation}
+
 \item{params}{Standard params object}
 }
 \value{

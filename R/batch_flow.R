@@ -14,6 +14,7 @@
 #'  * write modelfit hdf5 files
 #'  * write reports, plots, and maps for model evaluation and visualization
 #' @seealso [multiple_species_batch()]
+#' @import glue
 #' @export
 batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_cached_data=FALSE, cached_path=NULL, ...){
 
