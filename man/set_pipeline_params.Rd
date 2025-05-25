@@ -26,7 +26,8 @@ set_pipeline_params(
   skip_quality_checks = FALSE,
   fit_only = FALSE,
   ebirdst_year = NULL,
-  trim_quantile = NULL
+  trim_quantile = 0.99,
+  min_season_quality = 3
 )
 }
 \arguments{
@@ -143,6 +144,10 @@ model evaluation, model ranking, or model reports.}
 be set by users and any supplied value will be ignored.}
 
 \item{trim_quantile}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}.}
+
+\item{min_season_quality}{The minimum score of any season. If the score of
+any season of the eBird Status and Trends product does not reach the score,
+not fitting the model.}
 }
 \value{
 A parameter list to be used for \code{batch_flow()} and related functions

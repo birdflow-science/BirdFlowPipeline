@@ -108,6 +108,9 @@ NULL
 #' @param ebirdst_year The version year of the ebirdst package. This shouldn't 
 #' be set by users and any supplied value will be ignored. 
 #' @param trim_quantile Passed to [BirdFlowR::preprocess_species()].
+#' @param min_season_quality The minimum score of any season. If the score of 
+#' any season of the eBird Status and Trends product does not reach the score,
+#' not fitting the model.
 #' @return A parameter list to be used for `batch_flow()` and related functions
 #' @export
 #' @examples

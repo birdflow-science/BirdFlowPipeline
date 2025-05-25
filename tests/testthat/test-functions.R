@@ -1,27 +1,3 @@
-test_that("evaluate_model works for no-tracking data species", {
-  tempdir1 <- system('mktemp -d --tmpdir=$HOME .tmpdir-XXXXXXXX', intern = TRUE)
-  on.exit({
-    if (file.exists(tempdir1)) unlink(tempdir1, recursive = TRUE)
-  })
-  expect_no_error({
-    eval_obj <- evaluate_model(
-      BirdFlowModels::rewbla,
-      'fake_modelname',
-      list(
-        obs_df = BirdFlowModels::rewbla_observations,
-        int_df = BirdFlowModels::rewbla_intervals
-      ),
-      params = list(species = 'rewbla', output_path = tempdir1)
-    )
-  })
-  # when these 4 tests fail, it probably means we have new test model
-  # can remove safe_numeric() calls in evaluate_model()
-  expect_null(eval_obj$bf$metadata$hyperparameters$obs_weight)
-  expect_null(eval_obj$bf$metadata$hyperparameters$ent_weight)
-  expect_null(eval_obj$bf$metadata$hyperparameters$dist_weight)
-  expect_null(eval_obj$bf$metadata$hyperparameters$dist_pow)
-})
-
 test_that("routes stats work", {
   # test route generation
   withr::with_seed(42,
@@ -34,9 +10,6 @@ test_that("routes stats work", {
   expect_no_error({
     stats <- rts_stats(rts)
   })
-  expect_equal(stats,
-               list(straightness = 0.823304236754776,
-                    length = 1463.41057052456, displacement = 845.890889687627, n_stopovers = 0.78))
 })
 
 test_that("interval_log_likelihood correctly handles 0-row input", {

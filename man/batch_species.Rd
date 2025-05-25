@@ -118,6 +118,9 @@ model evaluation, model ranking, or model reports.}
     \item{\code{ebirdst_year}}{The version year of the ebirdst package. This shouldn't
 be set by users and any supplied value will be ignored.}
     \item{\code{trim_quantile}}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}.}
+    \item{\code{min_season_quality}}{The minimum score of any season. If the score of
+any season of the eBird Status and Trends product does not reach the score,
+not fitting the model.}
   }}
 }
 \value{

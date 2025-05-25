@@ -282,11 +282,12 @@ batch_modelfit_wrapper <- function(params){
 #' Batch evaluate models on the cluster
 #' @param params A list of parameters, as returned by [preprocess_species_wrapper()].
 #' @param birdflow_intervals A BirdFlowIntervals object.
+#' @param birdflow_intervals_one_week The one week transition BirdFlowIntervals
+#' object, used for calibration evaluation.
 #' @returns A data.frame with a row for each model evaluated
-#' @seealso [evaluate_model()], [preprocess_species_wrapper()], [as_BirdFlowIntervals()], [\code{\link[BirdFlowR]{interval_log_likelihood}()}]
+#' @seealso [evaluate_model()], [preprocess_species_wrapper()], 
+#' [BirdFlowR::as_BirdFlowIntervals()], [BirdFlowR::interval_log_likelihood()]
 #' @export
-# birdflow_intervals=train_data
-# birdflow_intervals_one_week = train_data_one_week
 batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals_one_week){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),

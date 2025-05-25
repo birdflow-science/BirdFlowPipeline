@@ -1,5 +1,8 @@
 # Functions to combine multisource data
 
+#' Combining the multsource data for one species
+#' @param species the species to process specified by species code 
+#'
 #' @export
 combine_and_save_ground_truth_data <- function(species) {
   
@@ -18,25 +21,25 @@ combine_and_save_ground_truth_data <- function(species) {
   params <- preprocess_species_wrapper(params)
   
   params$sp_output_path_routes <- paste0(
-    BirdFlowPipeline:::the$combined_data_path_routes,
+    the$combined_data_path_routes,
     '/', species, '.hdf5')
   params$sp_output_path_birdflowroutes <- paste0(
-    BirdFlowPipeline:::the$combined_data_path_birdflowroutes,
+    the$combined_data_path_birdflowroutes,
     '/', species, '.hdf5')
   params$sp_output_path_birdflowintervals <- paste0(
-    BirdFlowPipeline:::the$combined_data_path_birdflowintervals,
+    the$combined_data_path_birdflowintervals,
     '/', species, '.hdf5')
   
-  if (!dir.exists(BirdFlowPipeline:::the$combined_data_path_routes)) {
-    dir.create(BirdFlowPipeline:::the$combined_data_path_routes,
+  if (!dir.exists(the$combined_data_path_routes)) {
+    dir.create(the$combined_data_path_routes,
                recursive = TRUE)
   }
-  if (!dir.exists(BirdFlowPipeline:::the$combined_data_path_birdflowroutes)) {
-    dir.create(BirdFlowPipeline:::the$combined_data_path_birdflowroutes,
+  if (!dir.exists(the$combined_data_path_birdflowroutes)) {
+    dir.create(the$combined_data_path_birdflowroutes,
                recursive = TRUE)
   }
-  if (!dir.exists(BirdFlowPipeline:::the$combined_data_path_birdflowintervals)) {
-    dir.create(BirdFlowPipeline:::the$combined_data_path_birdflowintervals,
+  if (!dir.exists(the$combined_data_path_birdflowintervals)) {
+    dir.create(the$combined_data_path_birdflowintervals,
                recursive = TRUE)
   }
   
@@ -56,11 +59,11 @@ combine_and_save_ground_truth_data <- function(species) {
 
   # Combine all the data
   banding_df <- load_banding_transitions_df(file.path(
-    BirdFlowPipeline:::the$banding_rds_path,
+    the$banding_rds_path,
     paste0(params$species, '.rds')
   ))
   motus_df <- load_motus_transitions_df(file.path(
-    BirdFlowPipeline:::the$motus_rds_path,
+    the$motus_rds_path,
     paste0(params$species, '.rds')
   ))
   track_birdflowroutes_obj <- get_real_track(bf, params, filter = FALSE) 
@@ -138,8 +141,11 @@ combine_and_save_ground_truth_data <- function(species) {
   interval_obj <- BirdFlowR::read_BirdFlowIntervals(params$sp_output_path_birdflowintervals)
 }
 
+
+#' Combining the multsource data for all species
+#'
 #' @export
-# Run all species
+#'
 combine_data_for_all_sp <- function() {
   unique_names <- c(
     gsub('.rds','',list.files(the$motus_rds_path)),

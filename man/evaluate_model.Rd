@@ -18,20 +18,16 @@ evaluate_model(
 \item{modelname}{A name for the model, often the basename of the model path}
 
 \item{params}{Standard params object}
-
-\item{track_info}{Object produced from \code{\link[=make_tracks]{make_tracks()}}}
 }
 \value{
 A list:
 \itemize{
 \item \code{df} 1-row data.frame of model descriptors and metrics
-\item \code{obs} obs_df portion from original \code{track_info}
-\item \code{int} = int_df portion from original \code{track_info}
 }
 }
 \description{
 Evaluate a BirdFlow model
 }
 \seealso{
-\code{\link[=make_tracks]{make_tracks()}}, \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}, \code{\link[=import_birdflow_and_evaluate]{import_birdflow_and_evaluate()}}
+\code{\link[=batch_evaluate_models]{batch_evaluate_models()}}, \code{\link[=import_birdflow_and_evaluate]{import_birdflow_and_evaluate()}}
 }

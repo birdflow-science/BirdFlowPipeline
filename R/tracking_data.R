@@ -63,10 +63,11 @@ tracks_to_rts <- function(df, bf, params){
 #'
 #' @param bf The BirdFlow model object
 #' @param params The params object, containing at least the hdf_dir from which to learn bf object
+#' @param filter If True, only include data points that fall within the params$season.
 #' @returns the BirdFlowRoutes object of the real track
 #' @export
 get_real_track <- function(bf, params, filter=FALSE){
-  tracks_files <- list.files(BirdFlowPipeline:::the$tracking_data_path,
+  tracks_files <- list.files(the$tracking_data_path,
                              pattern = paste0("^", params$species, ".*tracks.*\\.csv"),
                              full.names = TRUE)
   if (length(tracks_files) == 0){

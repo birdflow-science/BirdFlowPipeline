@@ -1,5 +1,7 @@
 # Load banding and MOTUS tracks dataframes
 
+#' Load banding data
+#' @param banding_rds_path The banding RDS path of the species
 #' @export
 load_banding_transitions_df <- function(banding_rds_path){
   
@@ -25,6 +27,8 @@ load_banding_transitions_df <- function(banding_rds_path){
   return(band_df)
 }
 
+#' Load Motus data
+#' @param motus_rds_path The motus RDS path of the species
 #' @export
 load_motus_transitions_df <- function(motus_rds_path){
   

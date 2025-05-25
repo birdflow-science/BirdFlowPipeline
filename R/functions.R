@@ -73,14 +73,11 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'
 #' @param bf A birdflow model object, often passed from [import_birdflow_and_evaluate()]
 #' @param modelname A name for the model, often the basename of the model path
-#' @param track_info Object produced from [make_tracks()]
 #' @param params Standard params object
 #'
-#' @seealso [make_tracks()], [batch_evaluate_models()], [import_birdflow_and_evaluate()]
+#' @seealso [batch_evaluate_models()], [import_birdflow_and_evaluate()]
 #' @returns A list:
 #'  * `df` 1-row data.frame of model descriptors and metrics 
-#'  * `obs` obs_df portion from original `track_info`
-#'  * `int` = int_df portion from original `track_info`
 #'
 #' @export
 evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals_one_week, params){
@@ -282,11 +279,14 @@ make_3d_plot <- function(color_column, suffix, eval_metrics, params){
 #' Calculate route summary statistics
 #' @param rts BirdFlowRoutes object output from `BirdFlowR::route()` or
 #'   a data frame with the same data. 
+#' @param remove_head_and_tail_stationaries Whether to remove the head and tail
+#' Stationary period. Useful when the calculaton is across multiple seasons (
+#' e.g., From nonbreeding to breeding)
 #' @returns a list of mean summary statistics
 #' @seealso [BirdFlowR::route()], [BirdFlowR::BirdFlowRoutes()]
 #' @export
 #' 
-rts_stats <- function(rts){
+rts_stats <- function(rts, remove_head_and_tail_stationaries = FALSE){
 
   if(inherits(rts, "data.frame")){
     # Continue to support older route format
@@ -300,7 +300,7 @@ rts_stats <- function(rts){
   if (length(unique(data$route_id)) == 1){
     rts_lst <- list(data)
   } else {
-    rts_lst <- split(rdatats, data$route_id)
+    rts_lst <- split(data, data$route_id)
   }
 
   out <- lapply(rts_lst, function(rts){

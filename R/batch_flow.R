@@ -5,6 +5,7 @@
 #' @param training_n_transitions The number of training transitions to use. For learning curve analysis.
 #' @param training_CV The number of CV to use during model fitting.
 #' @param use_cached_data Whether to use the cached training and validation data if there are any
+#' @param cached_path If use caching, which path to export to.
 #' @inheritDotParams set_pipeline_params -species
 #' @returns function is used for its many side effects, according to 
 #' configuration settings in `as.list(BirdFlowPipeline:::the)`

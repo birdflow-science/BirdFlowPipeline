@@ -10,6 +10,8 @@ get_real_track(bf, params, filter = FALSE)
 \item{bf}{The BirdFlow model object}
 
 \item{params}{The params object, containing at least the hdf_dir from which to learn bf object}
+
+\item{filter}{If True, only include data points that fall within the params$season.}
 }
 \value{
 the BirdFlowRoutes object of the real track
