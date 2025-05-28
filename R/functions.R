@@ -85,7 +85,7 @@ import_birdflow_and_evaluate <- function(path, ...){
 evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals_one_week, params){
   # Here the input should be BirdFlowIntervals class, not track_info
   
-  result <- BirdFlowR::calculate_interval_metrics(birdflow_intervals, bf = bf)
+  result <- BirdFlowR::calc_interval_metrics(birdflow_intervals, bf = bf)
   interval_based_metrics <- result[[1]]
   metric_for_each_transition <- result[[2]]
   metric_for_each_transition$route_type <- birdflow_intervals$data$route_type
@@ -167,12 +167,16 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     traverse_cor_st_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'prebreeding')$st_traverse_cor,
     mean_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'prebreeding')$mean_distr_cor,
     min_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'prebreeding')$min_distr_cor,
+    MAPE_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'MAPE', season = 'prebreeding')$MAPE,
+    sMAPE_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'sMAPE', season = 'prebreeding')$sMAPE,
     
     traverse_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'postbreeding')$md_traverse_cor,
     traverse_cor_st_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'postbreeding')$st_traverse_cor,
     mean_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'postbreeding')$mean_distr_cor,
     min_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'postbreeding')$min_distr_cor,
-
+    MAPE_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'MAPE', season = 'postbreeding')$MAPE,
+    sMAPE_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'sMAPE', season = 'postbreeding')$sMAPE,
+    
     traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
     traverse_cor_st_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor')$st_traverse_cor,
     mean_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
@@ -236,6 +240,8 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
       traverse_cor_st = (traverse_cor_st_prebreeding + traverse_cor_st_postbreeding) / 2,
       mean_dist_cor = (mean_dist_cor_prebreeding + mean_dist_cor_postbreeding) / 2,
       min_dist_cor = (min_dist_cor_prebreeding + min_dist_cor_postbreeding) / 2,
+      MAPE = (MAPE_prebreeding + MAPE_postbreeding) / 2,
+      sMAPE = (sMAPE_prebreeding + sMAPE_postbreeding) / 2
     )
   #my_ll
   print(out_df)
