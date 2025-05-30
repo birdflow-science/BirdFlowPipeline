@@ -111,8 +111,8 @@ combine_and_save_ground_truth_data <- function(species) {
   if (nrow(routes_obj$data) == 0) {
     stop("No Routes data available")
   }
-  BirdFlowR::write_Rotues(routes_obj, params$sp_output_path_routes)
-  routes_obj <- BirdFlowR::read_Rotues(params$sp_output_path_routes)
+  BirdFlowR::write_rotues(routes_obj, params$sp_output_path_routes)
+  routes_obj <- BirdFlowR::read_rotues(params$sp_output_path_routes)
   
   # BirdFlowRoutes
   birdflow_routes_obj <- routes_obj |> BirdFlowR::as_BirdFlowRoutes(bf =
@@ -122,7 +122,7 @@ combine_and_save_ground_truth_data <- function(species) {
   }
   
   BirdFlowR::write_BirdFlowRotues(birdflow_routes_obj, params$sp_output_path_birdflowroutes)
-  birdflow_routes_obj <- BirdFlowR::read_BirdFlowRotues(params$sp_output_path_birdflowroutes)
+  birdflow_routes_obj <- BirdFlowR::read_routes(params$sp_output_path_birdflowroutes)
   
   # BirdFlowIntervals
   interval_obj <- birdflow_routes_obj |>
@@ -131,14 +131,14 @@ combine_and_save_ground_truth_data <- function(species) {
       min_day_interval = 1,
       max_day_interval = 270,
       min_km_interval = 0,
-      max_km_interval = 8000
+      max_km_interval = 10000
     )
   if (nrow(interval_obj$data) == 0) {
     stop("No transition data available after extractions")
   }
   
-  BirdFlowR::write_BirdFlowIntervals(interval_obj, params$sp_output_path_birdflowintervals)
-  interval_obj <- BirdFlowR::read_BirdFlowIntervals(params$sp_output_path_birdflowintervals)
+  BirdFlowR::write_intervals(interval_obj, params$sp_output_path_birdflowintervals)
+  interval_obj <- BirdFlowR::read_intervals(params$sp_output_path_birdflowintervals)
 }
 
 
