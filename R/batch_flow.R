@@ -16,18 +16,31 @@
 #' @seealso [multiple_species_batch()]
 #' @import glue
 #' @export
-batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_cached_data=FALSE, cached_path=NULL, ...){
+batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, 
+                       use_cached_data=TRUE, ...){
 
   if(!length(species) == 1){
     stop("batch_flow() only works with one species. ", 
          "Use multiple_species_batch()")
   }
   
-  # species = sp = 'norpin'
-  # sp_output_path <- paste0('/work/pi_drsheldon_umass_edu/birdflow_modeling/yangkang/model_output_hyperparams_distance_metric','/',sp)
-  # params <- set_pipeline_params(species = species, gpu_ram=10, hdf_path = sp_output_path, base_output_path = sp_output_path, skip_quality_checks=TRUE,
-  #                               min_season_quality = 1, model_selection = 'distance_metric',
+  # species = sp = 'amewoo'
+  # training_n_transitions=NULL
+  # training_CV=1
+  # use_cached_data=T
+  # cached_path = "/project/pi_drsheldon_umass_edu/birdflow/batch_model_validation/model_output_hyperparams_distance_metric/amewoo"
+  # 
+  # gpu_ram = 10
+  # hdf_path = "/project/pi_drsheldon_umass_edu/birdflow/batch_model_validation/model_output_hyperparams_distance_metric/amewoo"
+  # base_output_path = "/project/pi_drsheldon_umass_edu/birdflow/batch_model_validation/model_output_hyperparams_distance_metric/amewoo"
+  # model_selection = 'distance_metric'
+  # suffix='interval_based_eval_using_migration_transitions'
+  # params <- set_pipeline_params(species = species, gpu_ram = 10,
+  #                               hdf_path = "/project/pi_drsheldon_umass_edu/birdflow/batch_model_validation/model_output_hyperparams_distance_metric/amewoo",
+  #                               base_output_path = "/project/pi_drsheldon_umass_edu/birdflow/batch_model_validation/model_output_hyperparams_distance_metric/amewoo",
+  #                               model_selection = 'distance_metric',
   #                               suffix='interval_based_eval_using_migration_transitions')
+  
   params <- set_pipeline_params(species = species, ...)
   
   # preprocess species and set up directories
@@ -59,30 +72,33 @@ batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_
   )
   bf$metadata <- params$metadata
   
-  # Routes to BirdFlowRoutes to BirdFlowIntervals
-  # Load and save track info
-  # Here should combine banding and motus data and convert to BirdFlowIntervals class
+  # Load consensus data or load from multtsouce on the fly
   all_ground_truth_transitions_df_path1 <- file.path(params$output_path, 'all_ground_truth_transitions_df.rds')
-  all_ground_truth_transitions_df_path2 <- file.path(cached_path, 'all_ground_truth_transitions_df.rds')
-  interval_obj_path <- file.path(cached_path, 'interval_obj.rds')
-  interval_one_week_obj_path <- file.path(cached_path, 'interval_one_week_obj.rds')
+  consensus_routes_path <- paste0(the$combined_data_path_routes, '/', species, '.hdf5')
+  consensus_interval_path <- paste0(the$combined_data_path_birdflowintervals, '/', species, '.hdf5')
   
   if (use_cached_data &&
-      file.exists(all_ground_truth_transitions_df_path2) &&
-      file.exists(interval_obj_path) &&
-      file.exists(interval_one_week_obj_path)) {
-    if (is.null(cached_path)) {
-      stop('Have to provide cached_path if using cache!')
-    }
+      file.exists(consensus_routes_path) &&
+      file.exists(consensus_interval_path)) {
     print('Loading cached training/validation data...')
-    combined_routes_data <- readRDS(all_ground_truth_transitions_df_path2) # cached dir
-    interval_obj <- readRDS(interval_obj_path) # cached dir
-    interval_one_week_obj <- readRDS(interval_one_week_obj_path) # cached dir
+    
+    ## combined_routes_data
+    combined_routes_obj <- BirdFlowR::read_routes(consensus_routes_path)
+    combined_routes_data <- combined_routes_obj$data
     saveRDS(combined_routes_data, all_ground_truth_transitions_df_path1) # normal dir
+    
+    ## Intervals
+    interval_obj <- BirdFlowR::read_intervals(consensus_interval_path)
+    target_timesteps <- c(BirdFlowR::lookup_season_timesteps(bf, season='prebreeding'),  # Filter intervals to ask at least one leg in the migration season
+                          BirdFlowR::lookup_season_timesteps(bf, season='postbreeding'))
+    interval_obj$data <- interval_obj$data[(interval_obj$data$timestep1 %in% target_timesteps) | (interval_obj$data$timestep2 %in% target_timesteps),]
+    interval_one_week_obj <- interval_obj
+    interval_one_week_obj$data <-interval_one_week_obj$data[interval_one_week_obj$data$timestep2 - interval_one_week_obj$data$timestep1 == 1,]
     
   } else {
     if (use_cached_data) {
-      print('Althought use_cached_data, no cached data available.')
+      stop('Althought use_cached_data, no cached data available. Maybe be data is not abundant for this species. 
+           Or maybe you need a new version of the consensus data.')
     }
     res <- get_ground_truth_routes_intervals_and_one_week_intervals(params, bf)
     combined_routes_data <- res[['combined_routes_data']]
@@ -90,13 +106,19 @@ batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_
     interval_one_week_obj <- res[['interval_one_week_obj']]
     
     saveRDS(combined_routes_data, all_ground_truth_transitions_df_path1) # normal dir
-    if (!is.null(cached_path)) {
-      saveRDS(combined_routes_data, all_ground_truth_transitions_df_path2) # cached dir
-      saveRDS(interval_obj, interval_obj_path) # cached dir
-      saveRDS(interval_one_week_obj, interval_one_week_obj_path) # cached dir
-    }
   }
   
+  if (nrow(interval_obj$data) <= 20) {
+    stop('Not enough transition data!')
+  }
+  
+  ## For MC
+  routes_data_for_mc <- combined_routes_data |> 
+    BirdFlowR::Routes(species=bf$species,
+                       source=bf$source) |> 
+    BirdFlowR::as_BirdFlowRoutes(bf=bf)
+  
+  #
   params$transition_type <- 'all_combined'
   
   # Train-test split
@@ -174,7 +196,7 @@ batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_
     this_training_data$data <- this_training_data$data[the_idx, ]
     
     params$mode <- 'train'
-    eval_metrics_train <- batch_evaluate_models(params, this_training_data, train_data_one_week)
+    eval_metrics_train <- batch_evaluate_models(params, this_training_data, train_data_one_week, routes_data_for_mc)
     params$model_selection <- 'distance_metric'
     eval_metrics_train1 <- rank_models(eval_metrics_train, params)
     
@@ -197,7 +219,7 @@ batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_
 
   ## Evaluate on test set
   params$mode <- 'test'
-  eval_metrics_test <- batch_evaluate_models(params, test_data, test_data_one_week)
+  eval_metrics_test <- batch_evaluate_models(params, test_data, test_data_one_week, NULL) # routes_data_for_mc
   params$model_selection <- 'distance_metric'
   eval_metrics_test <- rank_models(eval_metrics_test, params)
   saveRDS(eval_metrics_test, file.path(params$output_path, glue::glue('eval_metrics_test_distance_metric_all_combined.rds')))

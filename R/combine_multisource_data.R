@@ -21,7 +21,7 @@ combine_and_save_ground_truth_data <- function(species) {
   params <- preprocess_species_wrapper(params)
   
   params$sp_output_path_routes <- paste0(
-    the$combined_data_path_routes,
+    BirdFlowPipeline:::the$combined_data_path_routes,
     '/', species, '.hdf5')
   params$sp_output_path_birdflowroutes <- paste0(
     the$combined_data_path_birdflowroutes,

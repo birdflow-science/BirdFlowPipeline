@@ -288,7 +288,7 @@ batch_modelfit_wrapper <- function(params){
 #' @seealso [evaluate_model()], [preprocess_species_wrapper()], 
 #' [BirdFlowR::as_BirdFlowIntervals()], [BirdFlowR::interval_log_likelihood()]
 #' @export
-batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals_one_week){
+batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals_one_week, routes_data_for_mc){
   files <- list.files(path = params$hdf_dir,
                       pattern = paste0('^', params$species, '.*', params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
@@ -296,7 +296,10 @@ batch_evaluate_models <- function(params, birdflow_intervals, birdflow_intervals
   success <- FALSE
   batchtools::batchMap(import_birdflow_and_evaluate,
                        files,
-                       more.args = list(birdflow_intervals = birdflow_intervals, birdflow_intervals_one_week = birdflow_intervals_one_week, params = params),
+                       more.args = list(birdflow_intervals = birdflow_intervals, 
+                                        birdflow_intervals_one_week = birdflow_intervals_one_week, 
+                                        params = params,
+                                        routes_data_for_mc=routes_data_for_mc),
                        reg = batchtools::makeRegistry(file.path(params$output_path, paste0(make_timestamp(), '_ll')),
                                                       conf.file = system.file('batchtools.conf.R', package = 'BirdFlowPipeline')))
   batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),

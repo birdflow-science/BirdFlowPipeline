@@ -82,8 +82,10 @@ import_birdflow_and_evaluate <- function(path, ...){
 #'  * `df` 1-row data.frame of model descriptors and metrics 
 #'
 #' @export
-evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals_one_week, params){
+evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals_one_week, params, routes_data_for_mc){
   # Here the input should be BirdFlowIntervals class, not track_info
+  
+  connectivity_res <- calc_connectivity_metric(routes_data_for_mc, bf = bf, n_boot=5)
   
   result <- BirdFlowR::calc_interval_metrics(birdflow_intervals, bf = bf)
   interval_based_metrics <- result[[1]]
@@ -167,20 +169,27 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
     traverse_cor_st_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'prebreeding')$st_traverse_cor,
     mean_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'prebreeding')$mean_distr_cor,
     min_dist_cor_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'prebreeding')$min_distr_cor,
-    MAPE_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'MAPE', season = 'prebreeding')$MAPE,
-    sMAPE_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'sMAPE', season = 'prebreeding')$sMAPE,
+    # MAPE_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'MAPE', season = 'prebreeding')$MAPE,
+    # sMAPE_prebreeding = BirdFlowR::distribution_performance(bf, metrics = 'sMAPE', season = 'prebreeding')$sMAPE,
     
     traverse_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor', season = 'postbreeding')$md_traverse_cor,
     traverse_cor_st_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor', season = 'postbreeding')$st_traverse_cor,
     mean_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor', season = 'postbreeding')$mean_distr_cor,
     min_dist_cor_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor', season = 'postbreeding')$min_distr_cor,
-    MAPE_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'MAPE', season = 'postbreeding')$MAPE,
-    sMAPE_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'sMAPE', season = 'postbreeding')$sMAPE,
+    # MAPE_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'MAPE', season = 'postbreeding')$MAPE,
+    # sMAPE_postbreeding = BirdFlowR::distribution_performance(bf, metrics = 'sMAPE', season = 'postbreeding')$sMAPE,
     
     traverse_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'md_traverse_cor')$md_traverse_cor,
     traverse_cor_st_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'st_traverse_cor')$st_traverse_cor,
     mean_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'mean_distr_cor')$mean_distr_cor,
     min_dist_cor_whole_year = BirdFlowR::distribution_performance(bf, metrics = 'min_distr_cor')$min_distr_cor,
+    
+    obs_mc_prebreeding=connectivity_res[['obs_mc_prebreeding']],
+    sim_mc_prebreeding=connectivity_res[['sim_mc_prebreeding']],
+    sim_mc_rangewide_prebreeding=connectivity_res[['sim_mc_rangewide_prebreeding']],
+    obs_mc_postbreeding=connectivity_res[['obs_mc_postbreeding']],
+    sim_mc_postbreeding=connectivity_res[['sim_mc_postbreeding']],
+    sim_mc_rangewide_postbreeding=connectivity_res[['sim_mc_rangewide_postbreeding']],
     
     mean_win_prob = interval_based_metrics[['mean_win_prob']],
     mean_win_distance = interval_based_metrics[['mean_win_distance']],
@@ -240,8 +249,23 @@ evaluate_model <- function(bf, modelname, birdflow_intervals, birdflow_intervals
       traverse_cor_st = (traverse_cor_st_prebreeding + traverse_cor_st_postbreeding) / 2,
       mean_dist_cor = (mean_dist_cor_prebreeding + mean_dist_cor_postbreeding) / 2,
       min_dist_cor = (min_dist_cor_prebreeding + min_dist_cor_postbreeding) / 2,
-      MAPE = (MAPE_prebreeding + MAPE_postbreeding) / 2,
-      sMAPE = (sMAPE_prebreeding + sMAPE_postbreeding) / 2
+      # MAPE = (MAPE_prebreeding + MAPE_postbreeding) / 2,
+      # sMAPE = (sMAPE_prebreeding + sMAPE_postbreeding) / 2
+      abs_connectivity_diff_prebreeding = if (!is.na(connectivity_res[['sim_mc_prebreeding']]) && !is.na(connectivity_res[['obs_mc_prebreeding']])) abs(connectivity_res[['sim_mc_prebreeding']] - connectivity_res[['obs_mc_prebreeding']]) else NA_real_,
+      connectivity_diff_prebreeding = if (!is.na(connectivity_res[['sim_mc_prebreeding']]) && !is.na(connectivity_res[['obs_mc_prebreeding']])) connectivity_res[['sim_mc_prebreeding']] - connectivity_res[['obs_mc_prebreeding']] else NA_real_,
+      abs_connectivity_diff_postbreeding = if (!is.na(connectivity_res[['sim_mc_postbreeding']]) && !is.na(connectivity_res[['obs_mc_postbreeding']])) abs(connectivity_res[['sim_mc_postbreeding']] - connectivity_res[['obs_mc_postbreeding']]) else NA_real_,
+      connectivity_diff_postbreeding = if (!is.na(connectivity_res[['sim_mc_postbreeding']]) && !is.na(connectivity_res[['obs_mc_postbreeding']])) connectivity_res[['sim_mc_postbreeding']] - connectivity_res[['obs_mc_postbreeding']] else NA_real_,
+      
+      abs_connectivity_diff = dplyr::coalesce(
+        (abs_connectivity_diff_prebreeding + abs_connectivity_diff_postbreeding) / 2,
+        abs_connectivity_diff_prebreeding,
+        abs_connectivity_diff_postbreeding
+      ),
+      connectivity_diff = dplyr::coalesce(
+        (connectivity_diff_prebreeding + connectivity_diff_postbreeding) / 2,
+        connectivity_diff_prebreeding,
+        connectivity_diff_postbreeding
+      ),
     )
   #my_ll
   print(out_df)
