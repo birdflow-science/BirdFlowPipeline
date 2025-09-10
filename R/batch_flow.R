@@ -23,11 +23,6 @@ batch_flow <- function(species, training_n_transitions=NULL, training_CV=1, use_
          "Use multiple_species_batch()")
   }
   
-  # species = sp = 'norpin'
-  # sp_output_path <- paste0('/work/pi_drsheldon_umass_edu/birdflow_modeling/yangkang/model_output_hyperparams_distance_metric','/',sp)
-  # params <- set_pipeline_params(species = species, gpu_ram=10, hdf_path = sp_output_path, base_output_path = sp_output_path, skip_quality_checks=TRUE,
-  #                               min_season_quality = 1, model_selection = 'distance_metric',
-  #                               suffix='interval_based_eval_using_migration_transitions')
   params <- set_pipeline_params(species = species, ...)
   
   # preprocess species and set up directories
