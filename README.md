@@ -263,50 +263,59 @@ These model reports can then be examined for quality control prior to releasing 
 - `rebuild_model_reports()` is a helper to rebuild the model reports, for example, if you've actively working on changing the model report RMD file.
 Ethan currently (January 2024) has another codebase that refreshes the Birdflow model collections website when the model_release_staging folder is changed.
 
-## 9. Miscellaneous package components and comments
 
-This package also contains some ancillary things that are a bit outside of the "standard pipeline"
-- `data_availability.R` contains old functions (including a batch function) to assess how much banding data is available for all species in this large dataset
-- `pit_calibration.R` contains functions related to PIT calibration. This is used in the standard pipeline `batch_flow()` with model_selection = `real_tracking` but could use a code review and re-write. It currently uses Benjamin's transitions files, but should be rewritten so that it uses the new `BirdFlowR` tracking data preprocessing, and probably a new function to create transitions data from that as well. Ideally, there could be a `the$` path for standardized tracking data similar to how banding data is currently handled, and the pipeline could always just look for tracking data there.
-- `functions.R` mostly contains functions already covered in `batch_flow()` above, but also has some old functions at the top of the file related to preprocessing banding data, which should probably be moved to the banding.data.R file.
+## Transition data
 
-## 10. Functions for preprocessing banding data from USGS BBL
+1. Never, ever, use raw CSV files for model tuning/validation. Read the rds instead. They are in `the$banding_rds_path`, `the$motus_rds_path`, and `the$tracking_rds_path`. They are standardized format with columns `[date, lat, lon, route_id, route_type]`, although the banding data rds has slightly different column names but contain all the information. But to load them easier, instead of querying the rds files manually, use `load_banding_df`, `load_motus_df`, and `load_tracking_df` functions so that the output is always `[date, lat, lon, route_id, route_type]`.
+2. If new data are included for banding, motus, or tracking, make sure to run the following functions correspondingly to generate those rds files: `preprocess_banding_data_to_rds()`, `preprocess_tracking_data_to_rds()`, `process_motus_data_to_rds()`
+3. 
 
-The package file `R/banding_data.R`contains several functions for preprocessing raw banding data from USGS. Here's an overview of what these functions can accomplish:
-  - Download raw banding data once (it's dozens of GB of data for hundreds of taxa)
-  - Do basic preprocessing quality checks on the data
-  - Crosswalk the USGS taxonomy to the eBird Status and Trends taxonomy (see details below)
-  - Output a standardized RDS file for each eBird species
-    - This goes into a special directory on Unity known to `BirdFlowPipeline` via the `the` environment within the package.
-  - The output RDS file can then be consistently used downstream, e.g. by BirdFlowPipeline functions or other analyses.
-  
-The code is a bit old (circa spring 2023), but this is how it works:
-- The package contains the HTML source (`data-raw/htmlpage.htm`) of the [USGS webpage](https://dx.doi.org/10.5066/P9BSM38F) that contains the URLs for downloading the actual raw banding data files . As of January 2024, looks like this DOI/webpage is no longer the most recent version, so this could probably use an update.
-- During package development, the script `data-raw/banding_raw_data` was run. This script web scrapes the HTML file for the actual download URLs, and saves those URLs as package internal data object `BirdFlowPipeline::banding_raw_file_urls`. That object was then committed into the package.
-- The function `download_banding_files()` reads that data object with the URLs, and then downloads the banding data files, with restarts, to the banding raw data path specified in the package-internal `the` environment (see `R/the_settings.R`)
-- The function `combine_together_list()` allows you to specify which raw banding files need to be processed at the same time.  This is the case when 2 or more subspecies are in *different* raw banding files, and these subspecies need to be merged together into the same ebirdst species.
-  - Some USGS banding data is reported as subspecies
-  - need to merge multiple subspecies of data into one eBird species
-  - need to specify which taxon combinations these are
-      - sometimes, the taxa which need to be merged into one are even in separate raw datafiles
-      - in other words, some groups of raw datafiles need to be `rbind`ed together before processing
-  - The output of this function is a list of integer vectors.  Most of the list elements are just a single file number, but some list elements are vectors of 2 file numbers that need to be processed together.
-- The function `process_file_set()` reads in the output from the previous step, and processes each raw banding file (or sometimes set of raw banding files).
-  - Multiple raw banding files are rbinded first, if necessary
-  - Next, basic QC/exclusions are performed using several helper functions
-    - These exclusions are based on what we want to use the data for, and the metadata explanations available on the USGS download website.
-  - Now a join is performed using the taxonomy crosswalk file and the RDS file is saved.
-  - More on the taxonomy crosswalk:
-    - USGS uses a different taxonomy than eBird, so need to do a taxonomic crosswalk
-      - see also the subspecies combining problem, addressed in `combine_together_list()`
-    - Caveat: some taxonomies are not even possible to reconcile.
-      - for example, old banding data for Canada Goose includes data for Cackling Goose because these were long considered the same species.
-        - pers. comm. with USGS staff
-    - Caveat #2: Currently (January 2024) the taxonomic crosswalk used is for the 2021 ebirdst taxonomy. ebirdst has now been bumped to use the 2022 taxonomy.  So the taxonomy crosswalk should be re-calculated.
-    - The taxonomy crosswalk is stored as an internal data object `taxonomy_crosswalk` in the BirdFlowPipeline package.
-      - The crosswalk was created during development by running the script `data-raw/create_taxonomy_crosswalk.R` and committing the results to the package.
-        - Upon looking at this script in January 2024, it is a bit rough. It's something I used to run this process once, and could use some code review/cleanup.
-        - The file `bbl_species_file` is the lookup file that comes with the USGS banding dataset. The other two starting files are in the repo.
-        - The file `taxonomic_join_overrides.csv` was created somewhat iteratively and manually, using Dave's knowledge of bird taxonomy changes, until all the conflicts were accounted for.
-  - Performing all these raw to RDS conversions serially took too long, because the dataset is fairly large (I think ~60 GB or so). The solution was to batch map these on the cluster using the function `batch_preprocess_raw_files_to_rds`.
-    - The default arguments for this function (and functions generally in this R file) should be updated, as needed to use the default paths in the package built-in `the` environment.
+# 
+# 
+# ## 9. Miscellaneous package components and comments
+# 
+# This package also contains some ancillary things that are a bit outside of the "standard pipeline"
+# - `data_availability.R` contains old functions (including a batch function) to assess how much banding data is available for all species in this large dataset
+# - `pit_calibration.R` contains functions related to PIT calibration. This is used in the standard pipeline `batch_flow()` with model_selection = `real_tracking` but could use a code review and re-write. It currently uses Benjamin's transitions files, but should be rewritten so that it uses the new `BirdFlowR` tracking data preprocessing, and probably a new function to create transitions data from that as well. Ideally, there could be a `the$` path for standardized tracking data similar to how banding data is currently handled, and the pipeline could always just look for tracking data there.
+# - `functions.R` mostly contains functions already covered in `batch_flow()` above, but also has some old functions at the top of the file related to preprocessing banding data, which should probably be moved to the banding.data.R file.
+# 
+# ## 10. Functions for preprocessing banding data from USGS BBL
+# 
+# The package file `R/banding_data.R`contains several functions for preprocessing raw banding data from USGS. Here's an overview of what these functions can accomplish:
+#   - Download raw banding data once (it's dozens of GB of data for hundreds of taxa)
+#   - Do basic preprocessing quality checks on the data
+#   - Crosswalk the USGS taxonomy to the eBird Status and Trends taxonomy (see details below)
+#   - Output a standardized RDS file for each eBird species
+#     - This goes into a special directory on Unity known to `BirdFlowPipeline` via the `the` environment within the package.
+#   - The output RDS file can then be consistently used downstream, e.g. by BirdFlowPipeline functions or other analyses.
+#   
+# The code is a bit old (circa spring 2023), but this is how it works:
+# - The package contains the HTML source (`data-raw/htmlpage.htm`) of the [USGS webpage](https://dx.doi.org/10.5066/P9BSM38F) that contains the URLs for downloading the actual raw banding data files . As of January 2024, looks like this DOI/webpage is no longer the most recent version, so this could probably use an update.
+# - During package development, the script `data-raw/banding_raw_data` was run. This script web scrapes the HTML file for the actual download URLs, and saves those URLs as package internal data object `BirdFlowPipeline::banding_raw_file_urls`. That object was then committed into the package.
+# - The function `download_banding_files()` reads that data object with the URLs, and then downloads the banding data files, with restarts, to the banding raw data path specified in the package-internal `the` environment (see `R/the_settings.R`)
+# - The function `combine_together_list()` allows you to specify which raw banding files need to be processed at the same time.  This is the case when 2 or more subspecies are in *different* raw banding files, and these subspecies need to be merged together into the same ebirdst species.
+#   - Some USGS banding data is reported as subspecies
+#   - need to merge multiple subspecies of data into one eBird species
+#   - need to specify which taxon combinations these are
+#       - sometimes, the taxa which need to be merged into one are even in separate raw datafiles
+#       - in other words, some groups of raw datafiles need to be `rbind`ed together before processing
+#   - The output of this function is a list of integer vectors.  Most of the list elements are just a single file number, but some list elements are vectors of 2 file numbers that need to be processed together.
+# - The function `process_file_set()` reads in the output from the previous step, and processes each raw banding file (or sometimes set of raw banding files).
+#   - Multiple raw banding files are rbinded first, if necessary
+#   - Next, basic QC/exclusions are performed using several helper functions
+#     - These exclusions are based on what we want to use the data for, and the metadata explanations available on the USGS download website.
+#   - Now a join is performed using the taxonomy crosswalk file and the RDS file is saved.
+#   - More on the taxonomy crosswalk:
+#     - USGS uses a different taxonomy than eBird, so need to do a taxonomic crosswalk
+#       - see also the subspecies combining problem, addressed in `combine_together_list()`
+#     - Caveat: some taxonomies are not even possible to reconcile.
+#       - for example, old banding data for Canada Goose includes data for Cackling Goose because these were long considered the same species.
+#         - pers. comm. with USGS staff
+#     - Caveat #2: Currently (January 2024) the taxonomic crosswalk used is for the 2021 ebirdst taxonomy. ebirdst has now been bumped to use the 2022 taxonomy.  So the taxonomy crosswalk should be re-calculated.
+#     - The taxonomy crosswalk is stored as an internal data object `taxonomy_crosswalk` in the BirdFlowPipeline package.
+#       - The crosswalk was created during development by running the script `data-raw/create_taxonomy_crosswalk.R` and committing the results to the package.
+#         - Upon looking at this script in January 2024, it is a bit rough. It's something I used to run this process once, and could use some code review/cleanup.
+#         - The file `bbl_species_file` is the lookup file that comes with the USGS banding dataset. The other two starting files are in the repo.
+#         - The file `taxonomic_join_overrides.csv` was created somewhat iteratively and manually, using Dave's knowledge of bird taxonomy changes, until all the conflicts were accounted for.
+#   - Performing all these raw to RDS conversions serially took too long, because the dataset is fairly large (I think ~60 GB or so). The solution was to batch map these on the cluster using the function `batch_preprocess_raw_files_to_rds`.
+#     - The default arguments for this function (and functions generally in this R file) should be updated, as needed to use the default paths in the package built-in `the` environment.
