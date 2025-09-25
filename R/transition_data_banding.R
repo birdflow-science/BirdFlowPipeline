@@ -107,22 +107,15 @@ process_file_set <- function(collapse_list_item, banding_raw_path, banding_rds_p
 }
 
 #' Batch preprocess banding data on the cluster
-#'
-#' @param banding_raw_path Custom path with raw banding CSV files
-#' @param banding_rds_path Custom path to output RDS banding files
 #' @return side effect, lots of rds files
 #' @export
-batch_preprocess_raw_files_to_rds <- function(banding_raw_path, banding_rds_path){
+preprocess_banding_data_to_rds <- function(){
   
   ### debug directories ... probably want to have both rds and raw directories here #
   
   # check if argument provided. if not, use from pkg environment preset
-  if (missing(banding_raw_path)){
-    banding_raw_path <- the$banding_raw_path
-  }
-  if (missing(banding_rds_path)){
-    banding_rds_path <- the$banding_rds_path
-  }
+  banding_raw_path <- the$banding_raw_path
+  banding_rds_path <- the$banding_rds_path
   
   # Some file sets need to be collapsed together for processing because same ebirdst taxa span multiple files
   
@@ -225,3 +218,33 @@ banding_data_to_linestring <- function(rds_file, ...) {
 # ravens. All bandings are released at a 1-degree block coordinate precision,
 # encounters are released at coordinate precisions as they were originally
 # provided.
+
+
+#' Load banding data
+#' @param banding_rds_path The banding RDS path of the species
+#' @export
+load_banding_df <- function(banding_rds_path){
+  
+  # Read data
+  # banding_rds_path = '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/banding/rds/amewoo.rds'
+  file_exists <- dplyr::if_else(file.exists(banding_rds_path), TRUE, FALSE)
+  if (!file_exists){
+    return(NULL)
+  }
+  df <- readRDS(banding_rds_path)
+  if (nrow(df) == 0){
+    return(NULL)
+  }
+  
+  band_df <- data.frame(
+    route_id = df$BAND,
+    date = as.Date(df$EVENT_DATE),
+    lon = df$LON_DD,
+    lat = df$LAT_DD,
+    route_type = c("banding")
+  )
+  
+  return(band_df)
+}
+
+

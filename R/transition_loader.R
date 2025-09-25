@@ -8,10 +8,10 @@ get_transitions <- function(loader) {
   validate_transition_loader(loader)
   
   ## 01. Combine data
-  banding_df <- load_banding_transitions_df(file.path(the$banding_rds_path, paste0(loader$params$species, '.rds')))
-  motus_df <- load_motus_transitions_df(file.path(the$motus_rds_path, paste0(loader$params$species, '.rds')))
-  track_birdflowroutes_obj <- get_real_track(loader$bf, loader$params, filter=FALSE) # Real track. Not filtered by season. All year round.
-  combined_data <- rbind(banding_df, motus_df, track_birdflowroutes_obj$data[,c('route_id','date','lon','lat','route_type')])
+  banding_df <- load_banding_df(file.path(the$banding_rds_path, paste0(loader$params$species, '.rds')))
+  motus_df <- load_motus_df(file.path(the$motus_rds_path, paste0(loader$params$species, '.rds')))
+  tracking_df <- load_tracking_df(file.path(the$tracking_rds_path, paste0(loader$params$species, '.rds')))
+  combined_data <- rbind(banding_df, motus_df, tracking_df)
   combined_data <- stats::na.omit(combined_data)
   
   ## 02. Dataframe to Routes

@@ -97,6 +97,76 @@ get_real_track <- function(bf, params, filter=FALSE){
     return(rts)
   }
 }
+
+
+clean_names_tracking_data <- function(df){
+  names(df) <- names(df) |> 
+    (\(x) gsub("\\.", "_", x))() |>
+    (\(x) gsub("-", "_", x))()
+  return(df)
+}
+
+preprocess_tracking_data_to_rds <- function() {
+  tracking_raw_path <- the$tracking_raw_path
+  tracking_rds_path <- the$tracking_rds_path
+  
+  output_path <- tracking_rds_path
+  tracking_files = list.files(tracking_raw_path)
+  names <- unique(sub("_.*", "", list.files(tracking_raw_path)))
+  # names <- names[!names %in% c("commur", "kitmur", "yebloo")]
+  
+  for (name in names){
+
+    print(name)
+    
+    # Get all matching file paths
+    new_tracking_files <- list.files(tracking_raw_path)
+    matching_files <- new_tracking_files[grepl(name, new_tracking_files)]
+    full_paths <- file.path(tracking_raw_path, matching_files)
+    
+    # Read, clean, and bind all matched files
+    new_tracking_data <- suppressWarnings(
+      purrr::map_dfr(full_paths, ~ {
+        read.csv(.x) |>
+          clean_names_tracking_data() |>
+          dplyr::filter(location_lat != 0 & location_long != 0) |>
+          dplyr::summarise(
+            date = lubridate::ymd_hms(timestamp),
+            lat = location_lat,
+            lon = location_long,
+            route_id = as.character(individual_local_identifier),
+            route_type = "tracking"
+          ) |>
+          dplyr::filter(dplyr::between(lon, -180, 180), dplyr::between(lat, -90, 90)) |>
+          stats::na.omit()
+      })
+    )
+    
+    saveRDS(new_tracking_data, file.path(output_path, paste0(name, ".rds")))
+  }
+}
+
+
+
+
+
+## Under developement
+load_tracking_df <- function(tracking_rds_path) {
+  
+  # Read data
+  file_exists <- dplyr::if_else(file.exists(tracking_rds_path), TRUE, FALSE)
+  if (!file_exists){
+    return(NULL)
+  }
+  df <- readRDS(tracking_rds_path)
+  if (nrow(df) == 0){
+    return(NULL)
+  }
+  
+  return(df)
+}
+
+
 # 
 # } else {
 #   return(list(straightness = NA_real_, length = NA_real_, displacement = NA_real_, 

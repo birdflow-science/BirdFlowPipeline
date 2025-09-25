@@ -18,7 +18,10 @@ the$banding_rds_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline
 the$motus_raw_path_tag_deployment_data <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/motus/raw/tag-deployments.csv'
 the$motus_raw_path_recovery_data <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/motus/raw/filtered_mbi_recoveries.csv'
 the$motus_rds_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/motus/rds'
+the$tracking_raw_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/tracking/raw'
+the$tracking_rds_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/tracking/rds'
 the$tracking_data_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/tracking'
+
 the$st_download_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/status_and_trends'
 
 ## About combined data
