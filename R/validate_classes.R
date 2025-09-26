@@ -1,8 +1,27 @@
 
-#' What a batch trainer should have:
-#' 1. params
+#' Validate a BatchBirdFlowTrainer object
+#'
+#' Ensures that the input is a [BatchBirdFlowTrainer()] and that it
+#' contains the required attributes.
+#'
+#' @param trainer An object to validate.
+#'
+#' @return Invisible `NULL`. Throws an error if validation fails.
+#' @details
+#' Checks:
+#' \itemize{
+#'   \item Class must include `"BatchBirdFlowTrainer"`.
+#'   \item Must contain element `"params"`.
+#' }
+#'
+#' @seealso [BatchBirdFlowTrainer()], [validate_BatchBirdFlowEvaluator()],
+#'   [validate_TransitionsLoader()]
 #' @export
-validate_batch_trainer <- function(trainer) {
+#' @examples
+#' \dontrun{
+#' validate_batch_trainer(batch_trainer("amewoo"))
+#' }
+validate_BatchBirdFlowTrainer <- function(trainer) {
   
   if (!'BatchBirdFlowTrainer' %in% class(trainer)) {
     stop(sprintf("Expecting BatchBirdFlowTrainer class as input; got '%s'", class(trainer)))
@@ -16,14 +35,37 @@ validate_batch_trainer <- function(trainer) {
   }
 }
 
+
+
+#' Validate a TransitionsLoader object
+#'
+#' Ensures that the input is a [TransitionsLoader()] and that it
+#' contains the required attributes.
+#'
+#' @param loader An object to validate.
+#'
+#' @return Invisible `NULL`. Throws an error if validation fails.
+#' @details
+#' Checks:
+#' \itemize{
+#'   \item Class must include `"TransitionsLoader"`.
+#'   \item Must contain element `"batch_trainer"`.
+#' }
+#'
+#' @seealso [TransitionsLoader()], [validate_split_data()]
 #' @export
-validate_transition_loader <- function(loader) {
+#' @examples
+#' \dontrun{
+#' tl <- transitions_loader(BatchBirdFlowTrainer("amewoo"))
+#' validate_TransitionsLoader(tl)
+#' }
+validate_TransitionsLoader <- function(loader) {
   
   if (!'TransitionsLoader' %in% class(loader)) {
     stop(sprintf("Expecting TransitionsLoader class as input; got '%s'", class(loader)))
   }
   
-  names <- c("bf", "params")
+  names <- c("batch_trainer")
   for (name in names) {
     if (!name %in% names(loader)) {
       stop(sprintf("'%s' attribute is not found in the input loader", name))
@@ -33,7 +75,28 @@ validate_transition_loader <- function(loader) {
 }
 
 
+#' Validate split data structure
+#'
+#' Ensures that a split dataset produced by [split.TransitionsLoader()]
+#' or [train_test_split()] has the expected form.
+#'
+#' @param split_data A list object to validate.
+#'
+#' @return Invisible `NULL`. Throws an error if validation fails.
+#' @details
+#' Checks:
+#' \itemize{
+#'   \item Must be a list.
+#'   \item Must contain elements `"training_data"` and `"test_data"`.
+#' }
+#'
+#' @seealso [split.TransitionsLoader()], [train_test_split()]
 #' @export
+#' @examples
+#' \dontrun{
+#' parts <- train_test_split(load(transitions_loader(trainer)))
+#' validate_split_data(parts)
+#' }
 validate_split_data <- function(split_data) {
   if (!inherits(split_data, 'list')) {
     stop(sprintf("The split_data should be a list! Got '%s'", class(split_data)))
@@ -46,8 +109,30 @@ validate_split_data <- function(split_data) {
   }
 }
 
+
+#' Validate a BatchBirdFlowEvaluator object
+#'
+#' Ensures that the input is a [BatchBirdFlowEvaluator()] and that it
+#' contains the required attributes.
+#'
+#' @param evaluator An object to validate.
+#'
+#' @return Invisible `NULL`. Throws an error if validation fails.
+#' @details
+#' Checks:
+#' \itemize{
+#'   \item Must inherit from both `"list"` and `"BatchBirdFlowEvaluator"`.
+#'   \item Must contain element `"batch_trainer"`.
+#' }
+#'
+#' @seealso [BatchBirdFlowEvaluator()], [validate_BatchBirdFlowTrainer()]
 #' @export
-validate_batch_evaluator <- function(evaluator) {
+#' @examples
+#' \dontrun{
+#' ev <- BatchBirdFlowEvaluator(batch_trainer("amewoo"))
+#' validate_BatchBirdFlowEvaluator(ev)
+#' }
+validate_BatchBirdFlowEvaluator <- function(evaluator) {
   if (!inherits(evaluator, c('list', 'BatchBirdFlowEvaluator'))) {
     stop(sprintf("The evaluator should be a list and BatchBirdFlowEvaluator! Got '%s'", class(evaluator)))
   }

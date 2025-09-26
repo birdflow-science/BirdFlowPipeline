@@ -1,14 +1,44 @@
-#' evaluator
+#' Construct a batch evaluator
+#'
+#' Validates a [BatchBirdFlowTrainer()] and returns a corresponding
+#' [BatchBirdFlowEvaluator()] ready to evaluate all fitted HDF5 models for that species.
+#'
+#' @param trainer A [BatchBirdFlowTrainer()].
+#'
+#' @return A [BatchBirdFlowEvaluator()] object (invisible).
+#' @seealso [new_BatchBirdFlowEvaluator()], [evaluate.BatchBirdFlowEvaluator()],
+#'   [BatchBirdFlowTrainer()], [fit.BatchBirdFlowTrainer()]
 #' @export
-batch_evaluator <- function(trainer){
-  validate_batch_trainer(trainer)
-  evaluator <- new_batch_evaluator(trainer)
+#' @examples
+#' \dontrun{
+#' trainer <- BatchBirdFlowTrainer("amewoo", res = 150)
+#' trainer <- fit(trainer)
+#' ev <- BatchBirdFlowEvaluator(trainer)
+#' }
+BatchBirdFlowEvaluator <- function(trainer){
+  validate_BatchBirdFlowTrainer(trainer)
+  evaluator <- new_BatchBirdFlowEvaluator(trainer)
   
-  validate_batch_evaluator(evaluator)
+  validate_BatchBirdFlowEvaluator(evaluator)
   return(evaluator)
 }
 
-new_batch_evaluator <- function(trainer) {
+
+#' Initialize a batch evaluator (low-level constructor)
+#'
+#' Creates a [BatchBirdFlowEvaluator()] that carries a reference to the
+#' underlying [BatchBirdFlowTrainer()].
+#'
+#' @param trainer A [BatchBirdFlowTrainer()].
+#'
+#' @return A [BatchBirdFlowEvaluator()] with field `batch_trainer`.
+#' @seealso [BatchBirdFlowEvaluator()], [evaluate.BatchBirdFlowEvaluator()]
+#' @export
+#' @examples
+#' \dontrun{
+#' ev <- new_BatchBirdFlowEvaluator(BatchBirdFlowTrainer("amewoo"))
+#' }
+new_BatchBirdFlowEvaluator <- function(trainer) {
   obj <- list(
     batch_trainer = trainer
   )
@@ -17,16 +47,47 @@ new_batch_evaluator <- function(trainer) {
 }
 
 
+
+#' Evaluate a set of BirdFlow HDF5 models (S3 method)
+#'
+#' Submits evaluation jobs (one per HDF5) via **batchtools** using the provided
+#' `evaluation_function` (defaults to [evaluate_model()]). Retries failed/expired
+#' jobs up to two times. Returns a list of results gathered with
+#' [batchtools::reduceResultsList()].
+#'
+#' @param evaluator A [BatchBirdFlowEvaluator()].
+#' @param data A list or object containing evaluation data. Typically
+#'   `split_data$training_data` or `split_data$test_data`, where index `[[1]]`
+#'   is interval data and `[[2]]` is 1-week data used for PIT calibration.
+#' @param evaluation_function Function of signature
+#'   `function(bf_path, data, params)` returning a result per model (defaults to
+#'   [evaluate_model()]).
+#'
+#' @details
+#' HDF5 models are discovered in `evaluator$batch_trainer$params$hdf_dir`
+#' matching the current species and resolution. A **batchtools** registry is
+#' created under `output_path` with a timestamped suffix.
+#'
+#' @return A list as returned by [batchtools::reduceResultsList()] (often a list
+#'   of per-model lists/data frames produced by `evaluation_function`).
+#'   Side effects: writes PIT objects to disk (if done by `evaluation_function`),
+#'   prints job status.
+#'
+#' @seealso [evaluate_model()], [BatchBirdFlowEvaluator()], [batchtools::reduceResultsList()]
 #' @method evaluate BatchBirdFlowEvaluator
-#' @param data Data can be split_data$training_data or split_data$test_data
 #' @export
+#' @examples
+#' \dontrun{
+#' ev <- BatchBirdFlowEvaluator(trainer)
+#' res <- evaluate(ev, split_data$test_data)
+#' }
 evaluate.BatchBirdFlowEvaluator <- function(evaluator, data, evaluation_function=evaluate_model) {
-  validate_batch_evaluator(evaluator)
+  validate_BatchBirdFlowEvaluator(evaluator)
   
   files <- list.files(path = evaluator$batch_trainer$params$hdf_dir,
                       pattern = paste0('^', evaluator$batch_trainer$params$species, '.*', evaluator$batch_trainer$params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
-  evaluation_resources <- list(walltime = 1000, memory = 10)
+  evaluation_resources <- list(walltime = 1000, memory = 10, measure.memory = TRUE)
   success <- FALSE
   batchtools::batchMap(evaluation_function,
                        files,
@@ -72,9 +133,43 @@ evaluate.BatchBirdFlowEvaluator <- function(evaluator, data, evaluation_function
 
 
 
-#' Evaluate a BirdFlow model
-#' This function could be user-customized
+#' Evaluate a single BirdFlow model (default evaluation function)
+#'
+#' Loads a fitted BirdFlow HDF5, computes interval-based metrics, optional
+#' route statistics (both conditional on observed tracks and unconditional
+#' synthetic routes by season), and PIT calibration diagnostics. Also extracts
+#' key hyperparameters and distribution-level correlations.
+#'
+#' @param bf_path Path to a fitted BirdFlow HDF5 file.
+#' @param data A list where `[[1]]` holds interval data and `[[2]]` holds
+#'   one-week interval data used for PIT calibration.
+#' @param params Parameter list (usually `evaluator$batch_trainer$params`)
+#'   providing `output_path`, `season`, and other configuration used by helpers.
+#'
+#' @details
+#' Side effects:
+#' \itemize{
+#'   \item Saves a PIT calibration RDS to `<output_path>/pit_data/`.
+#'   \item Prints a compact tibble of derived metrics.
+#' }
+#'
+#' @return A list with elements:
+#' \describe{
+#'   \item{df}{A one-row tibble of summary metrics and hyperparameters.}
+#'   \item{obs}{The interval data object passed in `data[[1]]`.}
+#'   \item{metric_for_each_transition}{Per-transition metrics table.}
+#' }
+#'
+#' @seealso [evaluate.BatchBirdFlowEvaluator()], [BirdFlowR::calc_interval_metrics()],
+#'   [BirdFlowR::distribution_performance()], [BirdFlowR::route()]
 #' @export
+#' @examples
+#' \dontrun{
+#' one <- split_data$training_data
+#' two <- split_data$training_data_one_week
+#' out <- evaluate_model(".../amewoo_150km_xyz.hdf5", data = list(one, two), params = trainer$params)
+#' out$df
+#' }
 evaluate_model <- function(bf_path, data, params){
   
   # Load bf
@@ -239,8 +334,21 @@ evaluate_model <- function(bf_path, data, params){
 }
 
 
-#' @param object The object to evaluate
+
+#' Generic evaluation S3
+#'
+#' Dispatches to class-specific `evaluate()` methods (e.g.,
+#' [evaluate.BatchBirdFlowEvaluator()]).
+#'
+#' @param object The object to evaluate.
+#' @param ... Passed to methods.
+#'
+#' @return Method-dependent; see specific methods.
 #' @export
+#' @examples
+#' \dontrun{
+#' res <- evaluate(BatchBirdFlowEvaluator(trainer), split_data$test_data)
+#' }
 evaluate <- function(object, ...) {
   UseMethod("evaluate")
 }

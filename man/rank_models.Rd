@@ -8,7 +8,7 @@ rank_models(eval_metrics, params)
 }
 \arguments{
 \item{eval_metrics}{The eval_metrics data frame often produced by
-recombining results from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+recombining results from \code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}}
 
 \item{params}{The standard params list, which includes \code{model_selection} method}
 }

@@ -1,25 +1,84 @@
+#' Construct a batch BirdFlow trainer
+#'
+#' Creates and validates a [BatchBirdFlowTrainer()] object for a single species,
+#' bundling preprocessed eBird Status & Trends inputs and all parameters required
+#' for downstream grid search and model fitting.
+#'
+#' @param species Character scalar. eBird species code or name resolvable by
+#'   [ebirdst::get_species()].
+#' @param ... Additional arguments forwarded to [new_BatchBirdFlowTrainer()] (and
+#'   ultimately to [set_pipeline_params()] and preprocessing).
+#'
+#' @return A [BatchBirdFlowTrainer()] object (invisible).
+#' @seealso [new_BatchBirdFlowTrainer()], [fit.BatchBirdFlowTrainer()],
+#'   [preprocess_species_wrapper()]
 #' @export
-batch_trainer <- function(species, ...){
+#' @examples
+#' \dontrun{
+#' trainer <- BatchBirdFlowTrainer("amewoo", res = 150, truncate_season = TRUE)
+#' }
+BatchBirdFlowTrainer <- function(species, ...){
   if(!length(species) == 1){
     stop("batch_flow() only works with one species. ", 
          "Use multiple_species_batch()")
   }
   
-  trainer <- new_batch_trainer(species, ...)
-  validate_batch_trainer(trainer)
+  trainer <- new_BatchBirdFlowTrainer(species, ...)
+  validate_BatchBirdFlowTrainer(trainer)
   
   return(trainer)
 }
 
-new_batch_trainer <- function(species, ...){
-
+#' Initialize a batch trainer (low-level constructor)
+#'
+#' Builds a [BatchBirdFlowTrainer()] by (1) collecting pipeline parameters,
+#' (2) preprocessing species inputs via [BirdFlowR::preprocess_species()],
+#' and (3) assembling the trainer object.
+#'
+#' @param species Character scalar, species code or name.
+#' @param ... Passed to [set_pipeline_params()] (e.g., `res`, `season`,
+#'   `clip`, `crs`, `skip_quality_checks`, etc.).
+#'
+#' @details Preprocessing is performed in a session temp directory and the
+#'   resulting HDF5 is moved into the final `hdf_dir` computed from params.
+#'
+#' @return A [BatchBirdFlowTrainer()] object with elements:
+#'   \itemize{
+#'     \item `bf` – result of [BirdFlowR::preprocess_species()]
+#'     \item `params` – enriched parameter list produced by
+#'       [preprocess_species_wrapper()]
+#'   }
+#' @seealso [BatchBirdFlowTrainer()], [preprocess_species_wrapper()],
+#'   [BirdFlowR::preprocess_species()]
+#' @export
+#' @examples
+#' \dontrun{
+#' new_BatchBirdFlowTrainer("amewoo", res = 100)
+#' }
+new_BatchBirdFlowTrainer <- function(species, ...){
+  
   params <- set_pipeline_params(species = species, ...)
   
   # preprocess species and set up directories
   params <- preprocess_species_wrapper(params)
   
+  pp_dir <- tempdir()
+  bf <- BirdFlowR::preprocess_species(
+    species = params$species,
+    out_dir = pp_dir,
+    gpu_ram = params$gpu_ram,
+    res = params$res,
+    season = dplyr::if_else(params$truncate_season, params$season, 'all'),
+    clip = params$clip,
+    crs = params$crs,
+    skip_quality_checks = params$skip_quality_checks, 
+    trim_quantile = params$trim_quantile
+  )
+  bf$metadata <- params$metadata
+  
   # Make the object
   obj <- list(
+    bf = bf,
     params = params
   )
   
@@ -27,50 +86,93 @@ new_batch_trainer <- function(species, ...){
   return(obj)
 }
 
+#' Fit a BatchBirdFlowTrainer
+#'
+#' @description
+#' Fits one or more BirdFlow models determined by the trainer's parameter grid,
+#' submitting jobs via **batchtools** and retrying failed or expired jobs.
+#'
+#' @param trainer A [BatchBirdFlowTrainer()].
+#' @param auto_calculate_gpu_ram Logical; if `TRUE` (default), sets
+#'   `gpu_ram := max(gpu_ram(trainer$bf), 8)` before fitting.
+#' @param force_refit Logical; if `TRUE`, refit models even if identical HDF5s
+#'   already exist.
+#' @param ... Additional arguments forwarded to the model fitting pipeline.
+#'
+#' @return The input `trainer` (invisible). Side effects: submits cluster jobs,
+#'   writes HDF5 model files, and prunes extra preexisting fits when appropriate.
+#' @seealso [birdflow_modelfit_args_df()], [batch_modelfit_wrapper()],
+#'   [birdflow_modelfit()]
 #' @importFrom generics fit
 #' @method fit BatchBirdFlowTrainer
 #' @export
-fit.BatchBirdFlowTrainer <- function(trainer, force_refit=FALSE, ...) {
+#' @examples
+#' \dontrun{
+#' trainer <- BatchBirdFlowTrainer("amewoo", res = 150)
+#' fit(trainer, force_refit = FALSE)
+#' }
+fit.BatchBirdFlowTrainer <- function(trainer, auto_calculate_gpu_ram = TRUE, force_refit=FALSE, ...) {
+  
   fitting_params <- c(trainer$params, list(force_refit=force_refit), list(...))
+  
+  if (auto_calculate_gpu_ram) {
+    fitting_params$gpu_ram <- max(gpu_ram(trainer$bf), 8)
+    print(paste0('Auto-calculating gpu_ram based on no. parameters: ', fitting_params$gpu_ram, ' GB'))
+  } else {
+    print(paste0('Not auto-calculating gpu_ram, falling back to default setting: ', fitting_params$gpu_ram, ' GB'))
+  }
+  
   batch_modelfit_wrapper(fitting_params)
   print(paste0('Finished batch training for species: ', trainer$params$species))
   invisible(trainer)
 }
 
-#' @method save_metadata BatchBirdFlowTrainer
-#' @export
-save_metadata.BatchBirdFlowTrainer <- function(trainer, ...) {
-  # Save finalized parameters
-  saveRDS(trainer$params, file.path(trainer$params$output_path, 'params.rds'))
-  invisible(NULL)
-}
-
-#' @param object The object to save meta data
-#' @export
-save_metadata <- function(object, ...) {
-  UseMethod("save_metadata")
-}
-
-
-
-
 
 ####### Detailed functions
-# make timestamp
+
+#' Make a timestamp string
+#'
+#' Create a filesystem-friendly timestamp using the package/session timezone.
+#'
+#' @param tz Timezone string. Defaults to `the$tz`.
+#'
+#' @return Character timestamp in the form `YYYY-mm-dd_HH-MM-SS`.
+#' @keywords internal
+#' @examples
+#' make_timestamp("UTC")
 make_timestamp <- function(tz = the$tz){
   datetime <- Sys.time()
   datetime <- `attr<-`(datetime, "tzone", tz)
   format(datetime, "%Y-%m-%d_%H-%M-%S")
 }
 
-#' Wrapper for [BirdFlowR::preprocess_species()] that also prepares batch parameters
-#' @param params A list of starting parameters, currently set up in [batch_flow()]
-#' @returns The starting params list, modified to include additional information calculated during preprocessing. Also has side effects:
-#'  * create directories as needed
-#'  * write preprocessed hdf5 file
-#' @seealso [batch_flow()]
+
+#' Preprocess species and enrich batch parameters
 #'
+#' Wrapper around [BirdFlowR::preprocess_species()] that also derives output
+#' paths, writes/moves the preprocessed HDF5, and returns an augmented `params`
+#' list.
+#'
+#' @param params A parameter list, typically from [set_pipeline_params()].
+#'
+#' @details
+#' Side effects:
+#' \itemize{
+#'   \item Resolves `params$species` with [ebirdst::get_species()].
+#'   \item Creates `hdf_dir` and `output_path` if missing.
+#'   \item Copies (or renames) the preprocessed HDF5 from `tempdir()` into `hdf_dir`.
+#' }
+#'
+#' @return The modified `params` containing, among others:
+#'   `res`, `ebirdst_year`, `output_fullname`, `hdf_dir`, `output_path`,
+#'   `geom`, and `metadata`.
+#' @seealso [BirdFlowR::preprocess_species()], [BatchBirdFlowTrainer()]
 #' @export
+#' @examples
+#' \dontrun{
+#' p <- set_pipeline_params(species = "amewoo", res = 150)
+#' p2 <- preprocess_species_wrapper(p)
+#' }
 preprocess_species_wrapper <- function(params) {
   
   params$species <- ebirdst::get_species(params$species)

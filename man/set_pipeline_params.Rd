@@ -27,7 +27,8 @@ set_pipeline_params(
   fit_only = FALSE,
   ebirdst_year = NULL,
   trim_quantile = 0.99,
-  min_season_quality = 3
+  min_season_quality = 3,
+  force_refit = FALSE
 )
 }
 \arguments{
@@ -148,6 +149,8 @@ be set by users and any supplied value will be ignored.}
 \item{min_season_quality}{The minimum score of any season. If the score of
 any season of the eBird Status and Trends product does not reach the score,
 not fitting the model.}
+
+\item{force_refit}{Force refitting the models. Default to \code{FALSE}.}
 }
 \value{
 A parameter list to be used for \code{batch_flow()} and related functions

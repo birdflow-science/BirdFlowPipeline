@@ -11,7 +11,7 @@ make_3d_plot(color_column, suffix, eval_metrics, params)
 
 \item{suffix}{suffix to use for output filenames}
 
-\item{eval_metrics}{data.frame produced from rbindlist-ing output from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{eval_metrics}{data.frame produced from rbindlist-ing output from \code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}}
 
 \item{params}{the standard params list object, see \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}}
 }
@@ -22,5 +22,5 @@ side-effect is a plot file created
 3d plot function
 }
 \seealso{
-\code{\link[=batch_evaluate_models]{batch_evaluate_models()}}, \code{\link[=evaluate_model]{evaluate_model()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}
+\code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}, \code{\link[=evaluate_model]{evaluate_model()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}
 }

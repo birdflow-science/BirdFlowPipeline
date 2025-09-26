@@ -111,6 +111,7 @@ NULL
 #' @param min_season_quality The minimum score of any season. If the score of 
 #' any season of the eBird Status and Trends product does not reach the score,
 #' not fitting the model.
+#' @param force_refit Force refitting the models. Default to `FALSE`.
 #' @return A parameter list to be used for `batch_flow()` and related functions
 #' @export
 #' @examples
@@ -149,7 +150,8 @@ set_pipeline_params <- function(
     fit_only = FALSE, 
     ebirdst_year = NULL,
     trim_quantile = 0.99,
-    min_season_quality = 3
+    min_season_quality = 3,
+    force_refit = FALSE
 ){
   params <- as.list(environment())
   

@@ -58,23 +58,24 @@ combine_and_save_ground_truth_data <- function(species) {
   )
 
   # Combine all the data
-  banding_df <- load_banding_transitions_df(file.path(
+  banding_df <- load_banding_df(file.path(
     the$banding_rds_path,
     paste0(params$species, '.rds')
   ))
-  motus_df <- load_motus_transitions_df(file.path(
+  motus_df <- load_motus_df(file.path(
     the$motus_rds_path,
     paste0(params$species, '.rds')
   ))
-  track_birdflowroutes_obj <- get_real_track(bf, params, filter = FALSE) 
+  tracking_df <- load_tracking_df(file.path(
+    the$tracking_rds_path,
+    paste0(params$species, '.rds')
+  ))
   # Real track. Not filtered by season. All year round.
   
   combined_data <- rbind(
     banding_df, 
     motus_df, 
-    track_birdflowroutes_obj$data[
-      , c('route_id', 'date', 'lon', 'lat', 'route_type')
-      ]
+    tracking_df
     )
   combined_data <- stats::na.omit(combined_data)
 
@@ -150,9 +151,7 @@ combine_data_for_all_sp <- function() {
   unique_names <- c(
     gsub('.rds','',list.files(the$motus_rds_path)),
     gsub('.rds','',list.files(the$banding_rds_path)),
-    sub("_.*", "", list.files(the$tracking_data_path, recursive = F, 
-                              include.dirs=F, pattern = "\\.csv$", 
-                              full.names = FALSE))
+    gsub('.rds','',list.files(the$tracking_rds_path))
   ) |> unique()
   
   n <- length(unique_names)

@@ -64,9 +64,9 @@ safe_numeric <- function(x){
 #' 3d plot function
 #' @param color_column column to use for the colors
 #' @param suffix suffix to use for output filenames
-#' @param eval_metrics data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
+#' @param eval_metrics data.frame produced from rbindlist-ing output from [evaluate.BatchBirdFlowEvaluator()]
 #' @param params the standard params list object, see [preprocess_species_wrapper()]
-#' @seealso [batch_evaluate_models()], [evaluate_model()], [preprocess_species_wrapper()]
+#' @seealso [evaluate.BatchBirdFlowEvaluator()], [evaluate_model()], [preprocess_species_wrapper()]
 #' @returns side-effect is a plot file created
 #' @export
 make_3d_plot <- function(color_column, suffix, eval_metrics, params){
@@ -178,9 +178,9 @@ rts_stats <- function(rts, remove_head_and_tail_stationaries = FALSE){
 
 
 #' PCA biplot hyperparameters evaluation
-#' @param eval_metrics data.frame produced from rbindlist-ing output from [batch_evaluate_models()]
+#' @param eval_metrics data.frame produced from rbindlist-ing output from [evaluate.BatchBirdFlowEvaluator()]
 #' @param params the standard params list object, see [preprocess_species_wrapper()]
-#' @seealso [batch_evaluate_models()], [preprocess_species_wrapper()]
+#' @seealso [evaluate.BatchBirdFlowEvaluator()], [preprocess_species_wrapper()]
 #' @returns side effect is a plot written to file
 #' @export
 model_evaluation_biplot <- function(eval_metrics, params){
@@ -237,9 +237,9 @@ model_evaluation_biplot <- function(eval_metrics, params){
 #' @param i row number in `df` from which to extract model
 #' @param n number of routes to simulate for visualization
 #' @param season season for which to simulate route, parseable by [BirdFlowR::lookup_season_timesteps()]
-#' @param df a `eval_metrics` produced by [batch_evaluate_models()]
+#' @param df a `eval_metrics` produced by [evaluate.BatchBirdFlowEvaluator()]
 #' @param dir hdf5 directory from `params` list.  Need to refactor some of these arguments
-#' @seealso [BirdFlowR::lookup_season_timesteps()], [batch_evaluate_models()]
+#' @seealso \code{BirdFlowR::lookup_season_timesteps()}, [evaluate.BatchBirdFlowEvaluator()]
 #' @returns side effect is an interactive plot
 #' @export
 quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = eval_metrics, dir = hdf_dir){
@@ -261,7 +261,7 @@ quick_visualize_routes <- function(i, n = 10, season = 'prebreeding', df = eval_
 #' Rank the models in an eval_metrics data frame
 #'
 #' @param eval_metrics The eval_metrics data frame often produced by 
-#' recombining results from [batch_evaluate_models()]
+#' recombining results from [evaluate.BatchBirdFlowEvaluator()]
 #' @param params The standard params list, which includes `model_selection` method
 #' @returns Updated eval_metrics including desirability columns
 #' @export

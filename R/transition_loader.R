@@ -1,16 +1,62 @@
-#' Functions to get ground truth routes and transitions for model tuning and validation, combining tracking, Motus, and banding.
-#' @param loader TransitionsLoader class
-#' @returns list of combined_routes_data, interval_obj, interval_one_week_obj
+#' Get ground-truth transitions for tuning and validation
+#'
+#' Functions to get ground truth routes and transitions for model tuning and
+#' validation by combining tracking, Motus, and banding sources, then converting
+#' to [BirdFlowR::BirdFlowIntervals()] objects (full intervals and 1-week intervals).
+#'
+#' @param loader A [TransitionsLoader()] object.
+#'
+#' @return A list with:
+#' \describe{
+#'   \item{combined_routes_data}{`data.frame` of stacked banding, Motus, and tracking rows (NA-dropped).}
+#'   \item{interval_obj}{[BirdFlowR::BirdFlowIntervals()] with 1–180 day / 0–8000 km constraints, filtered to migration seasons.}
+#'   \item{interval_one_week_obj}{[BirdFlowR::BirdFlowIntervals()] with exactly 1-day steps (weekly objects), filtered to migration seasons.}
+#' }
+#'
+#' @details
+#' Side effects:
+#' \itemize{
+#'   \item Resolves/prints a `source` string reflecting which datasets were found.
+#'   \item Errors if no transitions are available or if fewer than \eqn{10/0.7} intervals remain for tuning.
+#' }
+#'
+#' @seealso [TransitionsLoader()], [split.TransitionsLoader()], [train_test_split()],
+#'   [BirdFlowR::Routes()], [BirdFlowR::as_BirdFlowRoutes()], [BirdFlowR::as_BirdFlowIntervals()]
 #' @export
-get_transitions <- function(loader) {
+#' @examples
+#' \dontrun{
+#' tl <- TransitionsLoader(trainer)
+#' gt <- get_transitions(tl)
+#' str(gt$interval_obj$data)
+#' }
+get_transitions <- function(loader, max_n_intervals=10000) {
   
   ## 00.Validate
-  validate_transition_loader(loader)
+  validate_TransitionLoader(loader)
   
   ## 01. Combine data
-  banding_df <- load_banding_df(file.path(the$banding_rds_path, paste0(loader$params$species, '.rds')))
-  motus_df <- load_motus_df(file.path(the$motus_rds_path, paste0(loader$params$species, '.rds')))
-  tracking_df <- load_tracking_df(file.path(the$tracking_rds_path, paste0(loader$params$species, '.rds')))
+  banding_rds_path <- file.path(the$banding_rds_path, paste0(loader$batch_trainer$params$species, '.rds'))
+  motus_rds_path <- file.path(the$motus_rds_path, paste0(loader$batch_trainer$params$species, '.rds'))
+  tracking_rds_path <- file.path(the$tracking_rds_path, paste0(loader$batch_trainer$params$species, '.rds'))
+
+  if (file.exists(banding_rds_path)) {
+    banding_df <- load_banding_df(banding_rds_path)
+  } else {
+    banding_df <- NULL
+  }
+  
+  if (file.exists(motus_rds_path)) {
+    motus_df <- load_motus_df(motus_rds_path)
+  } else {
+    motus_df <- NULL
+  }
+  
+  if (file.exists(tracking_rds_path)) {
+    tracking_df <- load_tracking_df(tracking_rds_path)
+  } else {
+    tracking_df <- NULL
+  }
+  
   combined_data <- rbind(banding_df, motus_df, tracking_df)
   combined_data <- stats::na.omit(combined_data)
   
@@ -39,16 +85,16 @@ get_transitions <- function(loader) {
   if (source==''){
     source <- 'No Data'
   }
-  
-  routes_obj <- BirdFlowR::Routes(combined_data, species=loader$bf$species, source=source)
+
+  routes_obj <- BirdFlowR::Routes(combined_data, species=loader$batch_trainer$bf$species, source=source)
   if (nrow(routes_obj$data)==0){
     stop("No Transition data available")
   }
-  birdflow_routes_obj <- routes_obj |> BirdFlowR::as_BirdFlowRoutes(bf=loader$bf)
+  birdflow_routes_obj <- routes_obj |> BirdFlowR::as_BirdFlowRoutes(bf=loader$batch_trainer$bf)
   
   ## 03. Extract transitions from BirdFlowRoutes
   interval_obj <- birdflow_routes_obj |>
-    BirdFlowR::as_BirdFlowIntervals(max_n=10000,
+    BirdFlowR::as_BirdFlowIntervals(max_n=max_n_intervals,
                                     min_day_interval=1,
                                     max_day_interval=180,
                                     min_km_interval=0,
@@ -58,8 +104,8 @@ get_transitions <- function(loader) {
   }
   
   # Filter intervals to ask at least one leg in the migration season
-  target_timesteps <- c(BirdFlowR::lookup_season_timesteps(loader$bf, season='prebreeding'), 
-                        BirdFlowR::lookup_season_timesteps(loader$bf, season='postbreeding'))
+  target_timesteps <- c(BirdFlowR::lookup_season_timesteps(loader$batch_trainer$bf, season='prebreeding'), 
+                        BirdFlowR::lookup_season_timesteps(loader$batch_trainer$bf, season='postbreeding'))
   interval_obj$data <- interval_obj$data[(interval_obj$data$timestep1 %in% target_timesteps) | (interval_obj$data$timestep2 %in% target_timesteps),]
   
   if (nrow(interval_obj$data) <= 10*(1/0.7)) {
@@ -67,9 +113,9 @@ get_transitions <- function(loader) {
   }
   
   ## 04. Extract one week samples from BirdFlowRoutes
-  routes_one_week_obj <- BirdFlowR::Routes(combined_data, species=loader$bf$species, source=source)
-  interval_one_week_obj <- routes_one_week_obj |> BirdFlowR::as_BirdFlowRoutes(bf=loader$bf) |>
-    BirdFlowR::as_BirdFlowIntervals(max_n=10000,
+  routes_one_week_obj <- BirdFlowR::Routes(combined_data, species=loader$batch_trainer$bf$species, source=source)
+  interval_one_week_obj <- routes_one_week_obj |> BirdFlowR::as_BirdFlowRoutes(bf=loader$batch_trainer$bf) |>
+    BirdFlowR::as_BirdFlowIntervals(max_n=max_n_intervals,
                                     min_day_interval=1,
                                     max_day_interval=13,
                                     min_km_interval=0,
@@ -83,63 +129,114 @@ get_transitions <- function(loader) {
               interval_one_week_obj=interval_one_week_obj))
 }
 
+
+#' Create a transitions loader
+#'
+#' Validates a [BatchBirdFlowTrainer()] and constructs a [TransitionsLoader()]
+#' that can load and split combined movement data for evaluation/tuning.
+#'
+#' @param batch_trainer A [BatchBirdFlowTrainer()].
+#'
+#' @return A [TransitionsLoader()] object (invisible).
+#' @seealso [new_transitions_loader()], [load.TransitionsLoader()], [split.TransitionsLoader()]
 #' @export
-transitions_loader <- function(batch_trainer) {
-  validate_batch_trainer(batch_trainer)
+#' @examples
+#' \dontrun{
+#' tl <- TransitionsLoader(trainer)
+#' }
+TransitionsLoader <- function(batch_trainer) {
+  validate_BatchBirdFlowTrainer(batch_trainer)
   
   obj <- new_transitions_loader(batch_trainer)
-  validate_transition_loader(obj)
+  validate_TransitionLoader(obj)
   
   return(obj)
 }
 
+#' Initialize a transitions loader (low-level constructor)
+#'
+#' Builds a [TransitionsLoader()] that carries a reference to the associated
+#' [BatchBirdFlowTrainer()].
+#'
+#' @param batch_trainer A [BatchBirdFlowTrainer()].
+#'
+#' @return A [TransitionsLoader()] with field `batch_trainer`.
+#' @seealso [TransitionsLoader()], [load.TransitionsLoader()]
+#' @export
+#' @examples
+#' \dontrun{
+#' tl <- new_transitions_loader(trainer)
+#' }
 new_transitions_loader <- function(batch_trainer) {
   # Get bf object (for converting to BirdFlowIntervals)
-  pp_dir <- tempdir()
-  bf <- BirdFlowR::preprocess_species(
-    species = batch_trainer$params$species,
-    out_dir = pp_dir,
-    gpu_ram = batch_trainer$params$gpu_ram,
-    res = batch_trainer$params$res,
-    season = dplyr::if_else(batch_trainer$params$truncate_season, batch_trainer$params$season, 'all'),
-    clip = batch_trainer$params$clip,
-    crs = batch_trainer$params$crs,
-    skip_quality_checks = batch_trainer$params$skip_quality_checks, 
-    trim_quantile = batch_trainer$params$trim_quantile
-  )
-  bf$metadata <- batch_trainer$params$metadata
   
   obj <- list(
-    bf = bf,
-    params = batch_trainer$params
+    batch_trainer = batch_trainer
   )
   class(obj) <- c("TransitionsLoader", class(obj))
   return(obj)
 }
 
+
+#' Load transitions into a TransitionsLoader (S3 method)
+#'
+#' Loads/combines banding, Motus, and tracking data via a `loading_function`
+#' (default [get_transitions()]) and attaches the result to `loader$transitions`.
+#'
+#' @param loader A [TransitionsLoader()].
+#' @param loading_function A function with signature `function(loader)` that
+#'   returns the list described in [get_transitions()].
+#'
+#' @return The modified `loader` (invisible) with `loader$transitions` populated.
+#' @seealso [get_transitions()], [split.TransitionsLoader()]
 #' @method load TransitionsLoader
 #' @export
+#' @examples
+#' \dontrun{
+#' tl <- transitions_loader(trainer)
+#' tl <- load(tl)  # populates tl$transitions
+#' }
 load.TransitionsLoader <- function(loader, loading_function=get_transitions) {
   
   # Validate
-  validate_transition_loader(loader)
+  validate_TransitionLoader(loader)
   
   # Routes to BirdFlowRoutes to BirdFlowIntervals
   # Load and save transition info
   # Here should combine banding and motus data and tracking and convert to BirdFlowIntervals class
   transitions <- loading_function(loader)
   
-  # combined_routes_data <- res[['combined_routes_data']]
-  # interval_obj <- res[['interval_obj']]
-  # interval_one_week_obj <- res[['interval_one_week_obj']]
-  
   loader$transitions <- transitions
   invisible(loader)
 }
 
 
+#' Split transitions into training and test sets (S3 method)
+#'
+#' Uses a `splitting_function` (default [train_test_split()]) to create
+#' training/test splits for interval data and 1-week interval data. Returns a
+#' list containing both training and test bundles.
+#'
+#' @param loader A [TransitionsLoader()] that has been loaded (see [load.TransitionsLoader()]).
+#' @param splitting_function Function with signature `function(loader, seed, ...)`
+#'   that returns the list described in [train_test_split()].
+#' @param seed Optional integer to make the split reproducible.
+#' @param ... Passed through to `splitting_function`.
+#'
+#' @return A list with two elements:
+#' \describe{
+#'   \item{training_data}{List with `train_data` and `train_data_one_week` (both [BirdFlowR::BirdFlowIntervals()]).}
+#'   \item{test_data}{List with `test_data` and `test_data_one_week` (both [BirdFlowR::BirdFlowIntervals()]).}
+#' }
+#' @seealso [train_test_split()], [load.TransitionsLoader()]
 #' @method split TransitionsLoader
 #' @export
+#' @examples
+#' \dontrun{
+#' tl <- load(transitions_loader(trainer))
+#' parts <- split(tl, seed = 42)
+#' names(parts)
+#' }
 split.TransitionsLoader <- function(loader, splitting_function=train_test_split, seed=NULL, ...) {
   
   split_data <- splitting_function(loader, seed, ...)
@@ -148,10 +245,34 @@ split.TransitionsLoader <- function(loader, splitting_function=train_test_split,
   return(split_data)
 }
 
-#' @param loader TransitionsLoader class
-#' @param seed Random seed
-#' @param training_n_transitions minimum n_transitions for training. Useful for learning curve analysis
+
+#' Train/test split helper for transitions
+#'
+#' Creates a random 70/30 split of interval transitions and one-week transitions,
+#' with optional downsampling of the training set to a fixed number of transitions
+#' (useful for learning-curve experiments). Returns four
+#' [BirdFlowR::BirdFlowIntervals()] objects grouped into training/test lists.
+#'
+#' @param loader A loaded [TransitionsLoader()] (contains `$transitions`).
+#' @param seed Optional integer for reproducibility (`set.seed()`).
+#' @param training_n_transitions Optional integer. If supplied, subsamples the
+#'   training intervals to exactly this number (errors if insufficient data).
+#'
+#' @return A list:
+#' \describe{
+#'   \item{training_data}{List with `train_data`, `train_data_one_week`.}
+#'   \item{test_data}{List with `test_data`, `test_data_one_week`.}
+#' }
+#' @details
+#' Side effects: none (beyond RNG if `seed` is provided).
+#'
+#' @seealso [split.TransitionsLoader()], [get_transitions()]
 #' @export
+#' @examples
+#' \dontrun{
+#' tl <- load(transitions_loader(trainer))
+#' parts <- train_test_split(tl, seed = 1, training_n_transitions = 1000)
+#' }
 train_test_split <- function(loader, seed=NULL, training_n_transitions=NULL) {
   if (!is.null(seed)) {
     set.seed(seed)
@@ -209,15 +330,39 @@ train_test_split <- function(loader, seed=NULL, training_n_transitions=NULL) {
 }
 
 
-#' @param object The object to load data for
+#' Generic loader S3
+#'
+#' Dispatches to class-specific `load()` methods (e.g.,
+#' [load.TransitionsLoader()]).
+#'
+#' @param object The object to load data for.
+#' @param ... Passed to methods.
+#'
+#' @return Method-dependent; see specific methods.
 #' @export
+#' @examples
+#' \dontrun{
+#' tl <- load(transitions_loader(trainer))
+#' }
 load <- function(object, ...) {
   UseMethod("load")
 }
 
 
-#' @param object The object to split the data into training and test set
+#' Generic split S3
+#'
+#' Dispatches to class-specific `split()` methods (e.g.,
+#' [split.TransitionsLoader()]).
+#'
+#' @param object The object to split the data for.
+#' @param ... Passed to methods.
+#'
+#' @return Method-dependent; see specific methods.
 #' @export
+#' @examples
+#' \dontrun{
+#' parts <- split(load(transitions_loader(trainer)), seed = 123)
+#' }
 split <- function(object, ...) {
   UseMethod("split")
 }
