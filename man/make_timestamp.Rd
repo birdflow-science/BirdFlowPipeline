@@ -15,7 +15,4 @@ Character timestamp in the form \code{YYYY-mm-dd_HH-MM-SS}.
 \description{
 Create a filesystem-friendly timestamp using the package/session timezone.
 }
-\examples{
-make_timestamp("UTC")
-}
 \keyword{internal}

@@ -1,8 +1,9 @@
 test_that("train-validation framework works", {
 
-  # # test fails using devtools::check(), for confusing reasons
-  # # this line makes this test run with devtools::test() but not devtools::check()
-  # skip_if_not(interactive())
+  # test fails using devtools::check(), for confusing reasons
+  # this line makes this test run with devtools::test() but not devtools::check()
+  skip_if_not(interactive())
+  
   # # skip if not linux
   # skip_on_os(
   #   c("windows", "mac", "solaris")
@@ -17,14 +18,24 @@ test_that("train-validation framework works", {
   test_species <- ebirdst::get_species(test_species)
   
   test_res <- 700
-  tempdir1 <- system('mktemp -d --tmpdir=$HOME .tmpdir-XXXXXXXX', intern = TRUE)
-  tempdir2 <- system('mktemp -d --tmpdir=$HOME .tmpdir-XXXXXXXX', intern = TRUE)
+  # tempdir1 <- system('mktemp -d --tmpdir=$HOME .tmpdir-XXXXXXXX', intern = TRUE)
+  # tempdir2 <- system('mktemp -d --tmpdir=$HOME .tmpdir-XXXXXXXX', intern = TRUE)
+  # on.exit({
+  #   if (file.exists(tempdir1)) unlink(tempdir1, recursive = TRUE)
+  #   if (file.exists(tempdir2)) unlink(tempdir2, recursive = TRUE)
+  # })
+  # test_hdf_dir <- tempdir1
+  # test_output_path <- tempdir2
+  
+  tmp_root <- file.path(Sys.getenv("HOME"), "birdflow_tests")
+  test_hdf_dir <- file.path(tmp_root, "hdf")
+  test_output_path <- file.path(tmp_root, "out")
+  dir.create(test_hdf_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(test_output_path, recursive = TRUE, showWarnings = FALSE)
+  
   on.exit({
-    if (file.exists(tempdir1)) unlink(tempdir1, recursive = TRUE)
-    if (file.exists(tempdir2)) unlink(tempdir2, recursive = TRUE)
-  })
-  test_hdf_dir <- tempdir1
-  test_output_path <- tempdir2
+    unlink(tmp_root, recursive = TRUE, force = TRUE)
+  }, add = TRUE)
   
   ## 02. Fit batch models
   my_batch_trainer <- BatchBirdFlowTrainer(test_species,

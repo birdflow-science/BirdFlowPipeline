@@ -92,7 +92,7 @@ new_BatchBirdFlowTrainer <- function(species, ...){
 #' Fits one or more BirdFlow models determined by the trainer's parameter grid,
 #' submitting jobs via **batchtools** and retrying failed or expired jobs.
 #'
-#' @param trainer A [BatchBirdFlowTrainer()].
+#' @param object A [BatchBirdFlowTrainer()].
 #' @param auto_calculate_gpu_ram Logical; if `TRUE` (default), sets
 #'   `gpu_ram := max(gpu_ram(trainer$bf), 8)` before fitting.
 #' @param force_refit Logical; if `TRUE`, refit models even if identical HDF5s
@@ -111,9 +111,10 @@ new_BatchBirdFlowTrainer <- function(species, ...){
 #' trainer <- BatchBirdFlowTrainer("amewoo", res = 150)
 #' fit(trainer, force_refit = FALSE)
 #' }
-fit.BatchBirdFlowTrainer <- function(trainer, auto_calculate_gpu_ram = TRUE, force_refit=FALSE, ...) {
-  
-  fitting_params <- c(trainer$params, list(force_refit=force_refit), list(...))
+fit.BatchBirdFlowTrainer <- function(object, auto_calculate_gpu_ram = TRUE, force_refit=FALSE, ...) {
+  trainer <- object
+  fitting_params <- c(trainer$params, list(...))
+  fitting_params$force_refit <- force_refit
   
   if (auto_calculate_gpu_ram) {
     fitting_params$gpu_ram <- max(gpu_ram(trainer$bf), 8)
@@ -121,7 +122,7 @@ fit.BatchBirdFlowTrainer <- function(trainer, auto_calculate_gpu_ram = TRUE, for
   } else {
     print(paste0('Not auto-calculating gpu_ram, falling back to default setting: ', fitting_params$gpu_ram, ' GB'))
   }
-  
+
   batch_modelfit_wrapper(fitting_params)
   print(paste0('Finished batch training for species: ', trainer$params$species))
   invisible(trainer)
@@ -138,8 +139,6 @@ fit.BatchBirdFlowTrainer <- function(trainer, auto_calculate_gpu_ram = TRUE, for
 #'
 #' @return Character timestamp in the form `YYYY-mm-dd_HH-MM-SS`.
 #' @keywords internal
-#' @examples
-#' make_timestamp("UTC")
 make_timestamp <- function(tz = the$tz){
   datetime <- Sys.time()
   datetime <- `attr<-`(datetime, "tzone", tz)
@@ -425,14 +424,27 @@ batch_modelfit_wrapper <- function(params){
     
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
                            resources = modelfit_resources)
+    
     success <- batchtools::waitForJobs()
     if (! isTRUE(success)) {
+      
+      job_status_df <- as.data.frame(batchtools::getJobStatus())
+      print('Tasks with issues: ')
+      print(job_status_df)
+      print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
+      
       message('Requeuing jobs that expired or had an error, attempt 1 of 2')
       batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                              resources = modelfit_resources)
       success <- batchtools::waitForJobs()
     }
     if (! isTRUE(success)) {
+      
+      job_status_df <- as.data.frame(batchtools::getJobStatus())
+      print('Tasks with issues: ')
+      print(job_status_df)
+      print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
+      
       message('Requeuing jobs that expired or had an error, attempt 2 of 2')
       batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                              resources = modelfit_resources)

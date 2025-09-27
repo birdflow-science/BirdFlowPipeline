@@ -4,10 +4,10 @@
 \alias{split.TransitionsLoader}
 \title{Split transitions into training and test sets (S3 method)}
 \usage{
-\method{split}{TransitionsLoader}(loader, splitting_function = train_test_split, seed = NULL, ...)
+\method{split}{TransitionsLoader}(object, splitting_function = train_test_split, seed = NULL, ...)
 }
 \arguments{
-\item{loader}{A \code{\link[=TransitionsLoader]{TransitionsLoader()}} that has been loaded (see \code{\link[=load.TransitionsLoader]{load.TransitionsLoader()}}).}
+\item{object}{A \code{\link[=TransitionsLoader]{TransitionsLoader()}} that has been loaded (see \code{\link[=load.TransitionsLoader]{load.TransitionsLoader()}}).}
 
 \item{splitting_function}{Function with signature \verb{function(loader, seed, ...)}
 that returns the list described in \code{\link[=train_test_split]{train_test_split()}}.}

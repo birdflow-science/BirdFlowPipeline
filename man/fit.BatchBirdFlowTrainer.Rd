@@ -4,10 +4,10 @@
 \alias{fit.BatchBirdFlowTrainer}
 \title{Fit a BatchBirdFlowTrainer}
 \usage{
-\method{fit}{BatchBirdFlowTrainer}(trainer, auto_calculate_gpu_ram = TRUE, force_refit = FALSE, ...)
+\method{fit}{BatchBirdFlowTrainer}(object, auto_calculate_gpu_ram = TRUE, force_refit = FALSE, ...)
 }
 \arguments{
-\item{trainer}{A \code{\link[=BatchBirdFlowTrainer]{BatchBirdFlowTrainer()}}.}
+\item{object}{A \code{\link[=BatchBirdFlowTrainer]{BatchBirdFlowTrainer()}}.}
 
 \item{auto_calculate_gpu_ram}{Logical; if \code{TRUE} (default), sets
 \code{gpu_ram := max(gpu_ram(trainer$bf), 8)} before fitting.}

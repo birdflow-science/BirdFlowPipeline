@@ -4,10 +4,10 @@
 \alias{evaluate.BatchBirdFlowEvaluator}
 \title{Evaluate a set of BirdFlow HDF5 models (S3 method)}
 \usage{
-\method{evaluate}{BatchBirdFlowEvaluator}(evaluator, data, evaluation_function = evaluate_model)
+\method{evaluate}{BatchBirdFlowEvaluator}(object, data, evaluation_function = evaluate_model, ...)
 }
 \arguments{
-\item{evaluator}{A \code{\link[=BatchBirdFlowEvaluator]{BatchBirdFlowEvaluator()}}.}
+\item{object}{A \code{\link[=BatchBirdFlowEvaluator]{BatchBirdFlowEvaluator()}}.}
 
 \item{data}{A list or object containing evaluation data. Typically
 \code{split_data$training_data} or \code{split_data$test_data}, where index \verb{[[1]]}

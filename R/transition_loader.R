@@ -5,7 +5,7 @@
 #' to [BirdFlowR::BirdFlowIntervals()] objects (full intervals and 1-week intervals).
 #'
 #' @param loader A [TransitionsLoader()] object.
-#'
+#' @param max_n_intervals the maximum intervals to sample.
 #' @return A list with:
 #' \describe{
 #'   \item{combined_routes_data}{`data.frame` of stacked banding, Motus, and tracking rows (NA-dropped).}
@@ -32,7 +32,7 @@
 get_transitions <- function(loader, max_n_intervals=10000) {
   
   ## 00.Validate
-  validate_TransitionLoader(loader)
+  validate_TransitionsLoader(loader)
   
   ## 01. Combine data
   banding_rds_path <- file.path(the$banding_rds_path, paste0(loader$batch_trainer$params$species, '.rds'))
@@ -148,7 +148,7 @@ TransitionsLoader <- function(batch_trainer) {
   validate_BatchBirdFlowTrainer(batch_trainer)
   
   obj <- new_transitions_loader(batch_trainer)
-  validate_TransitionLoader(obj)
+  validate_TransitionsLoader(obj)
   
   return(obj)
 }
@@ -183,7 +183,7 @@ new_transitions_loader <- function(batch_trainer) {
 #' Loads/combines banding, Motus, and tracking data via a `loading_function`
 #' (default [get_transitions()]) and attaches the result to `loader$transitions`.
 #'
-#' @param loader A [TransitionsLoader()].
+#' @param object A [TransitionsLoader()].
 #' @param loading_function A function with signature `function(loader)` that
 #'   returns the list described in [get_transitions()].
 #'
@@ -196,10 +196,10 @@ new_transitions_loader <- function(batch_trainer) {
 #' tl <- transitions_loader(trainer)
 #' tl <- load(tl)  # populates tl$transitions
 #' }
-load.TransitionsLoader <- function(loader, loading_function=get_transitions) {
-  
+load.TransitionsLoader <- function(object, loading_function=get_transitions, ...) {
+  loader <- object
   # Validate
-  validate_TransitionLoader(loader)
+  validate_TransitionsLoader(loader)
   
   # Routes to BirdFlowRoutes to BirdFlowIntervals
   # Load and save transition info
@@ -217,7 +217,7 @@ load.TransitionsLoader <- function(loader, loading_function=get_transitions) {
 #' training/test splits for interval data and 1-week interval data. Returns a
 #' list containing both training and test bundles.
 #'
-#' @param loader A [TransitionsLoader()] that has been loaded (see [load.TransitionsLoader()]).
+#' @param object A [TransitionsLoader()] that has been loaded (see [load.TransitionsLoader()]).
 #' @param splitting_function Function with signature `function(loader, seed, ...)`
 #'   that returns the list described in [train_test_split()].
 #' @param seed Optional integer to make the split reproducible.
@@ -237,8 +237,8 @@ load.TransitionsLoader <- function(loader, loading_function=get_transitions) {
 #' parts <- split(tl, seed = 42)
 #' names(parts)
 #' }
-split.TransitionsLoader <- function(loader, splitting_function=train_test_split, seed=NULL, ...) {
-  
+split.TransitionsLoader <- function(object, splitting_function=train_test_split, seed=NULL, ...) {
+  loader <- object
   split_data <- splitting_function(loader, seed, ...)
   validate_split_data(split_data) # The split_data should always be a list with names training_data and test_data
   
@@ -270,7 +270,7 @@ split.TransitionsLoader <- function(loader, splitting_function=train_test_split,
 #' @export
 #' @examples
 #' \dontrun{
-#' tl <- load(transitions_loader(trainer))
+#' tl <- load(TransitionsLoader(trainer))
 #' parts <- train_test_split(tl, seed = 1, training_n_transitions = 1000)
 #' }
 train_test_split <- function(loader, seed=NULL, training_n_transitions=NULL) {

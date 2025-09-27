@@ -8,6 +8,8 @@ get_transitions(loader, max_n_intervals = 10000)
 }
 \arguments{
 \item{loader}{A \code{\link[=TransitionsLoader]{TransitionsLoader()}} object.}
+
+\item{max_n_intervals}{the maximum intervals to sample.}
 }
 \value{
 A list with:

@@ -4,10 +4,10 @@
 \alias{load.TransitionsLoader}
 \title{Load transitions into a TransitionsLoader (S3 method)}
 \usage{
-\method{load}{TransitionsLoader}(loader, loading_function = get_transitions)
+\method{load}{TransitionsLoader}(object, loading_function = get_transitions, ...)
 }
 \arguments{
-\item{loader}{A \code{\link[=TransitionsLoader]{TransitionsLoader()}}.}
+\item{object}{A \code{\link[=TransitionsLoader]{TransitionsLoader()}}.}
 
 \item{loading_function}{A function with signature \verb{function(loader)} that
 returns the list described in \code{\link[=get_transitions]{get_transitions()}}.}

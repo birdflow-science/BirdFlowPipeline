@@ -55,7 +55,7 @@ new_BatchBirdFlowEvaluator <- function(trainer) {
 #' jobs up to two times. Returns a list of results gathered with
 #' [batchtools::reduceResultsList()].
 #'
-#' @param evaluator A [BatchBirdFlowEvaluator()].
+#' @param object A [BatchBirdFlowEvaluator()].
 #' @param data A list or object containing evaluation data. Typically
 #'   `split_data$training_data` or `split_data$test_data`, where index `[[1]]`
 #'   is interval data and `[[2]]` is 1-week data used for PIT calibration.
@@ -81,7 +81,8 @@ new_BatchBirdFlowEvaluator <- function(trainer) {
 #' ev <- BatchBirdFlowEvaluator(trainer)
 #' res <- evaluate(ev, split_data$test_data)
 #' }
-evaluate.BatchBirdFlowEvaluator <- function(evaluator, data, evaluation_function=evaluate_model) {
+evaluate.BatchBirdFlowEvaluator <- function(object, data, evaluation_function=evaluate_model, ...) {
+  evaluator <- object
   validate_BatchBirdFlowEvaluator(evaluator)
   
   files <- list.files(path = evaluator$batch_trainer$params$hdf_dir,
@@ -101,13 +102,22 @@ evaluate.BatchBirdFlowEvaluator <- function(evaluator, data, evaluation_function
   
   
   if (! isTRUE(success)) {
+    
+    job_status_df <- batchtools::getJobStatus()
+    print('Tasks with issues: ')
+    print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
+    
     message('Requeuing jobs that expired or had an error, attempt 1 of 2')
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = evaluation_resources)
     success <- batchtools::waitForJobs()
   }
   if (! isTRUE(success)) {
-    print(batchtools::getJobTable())
+    
+    job_status_df <- batchtools::getJobStatus()
+    print('Tasks with issues: ')
+    print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
+    
     message('Requeuing jobs that expired or had an error, attempt 2 of 2')
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), chunk = 1L),
                            resources = evaluation_resources)
