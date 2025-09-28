@@ -62,7 +62,8 @@ new_BatchBirdFlowEvaluator <- function(trainer) {
 #' @param evaluation_function Function of signature
 #'   `function(bf_path, data, params)` returning a result per model (defaults to
 #'   [evaluate_model()]).
-#'
+#' @param test_one_evaluate Logical; if `TRUE`, just do some test on this local 
+#' session instead of submitting it to slurm
 #' @details
 #' HDF5 models are discovered in `evaluator$batch_trainer$params$hdf_dir`
 #' matching the current species and resolution. A **batchtools** registry is
@@ -81,13 +82,24 @@ new_BatchBirdFlowEvaluator <- function(trainer) {
 #' ev <- BatchBirdFlowEvaluator(trainer)
 #' res <- evaluate(ev, split_data$test_data)
 #' }
-evaluate.BatchBirdFlowEvaluator <- function(object, data, evaluation_function=evaluate_model, ...) {
+evaluate.BatchBirdFlowEvaluator <- function(object, 
+                                            data, 
+                                            evaluation_function=evaluate_model, 
+                                            test_one_evaluate=FALSE,
+                                            ...) {
   evaluator <- object
   validate_BatchBirdFlowEvaluator(evaluator)
   
   files <- list.files(path = evaluator$batch_trainer$params$hdf_dir,
                       pattern = paste0('^', evaluator$batch_trainer$params$species, '.*', evaluator$batch_trainer$params$res, 'km_.*\\.hdf5$'),
                       full.names = TRUE)
+  
+  if (test_one_evaluate) {
+    the_file <- sample(files, 1)
+    evaluation_res <- evaluation_function(the_file, data=data, params = evaluator$batch_trainer$params)
+    return(evaluation_res)
+  }
+  
   evaluation_resources <- list(walltime = 1000, memory = 10, measure.memory = TRUE)
   success <- FALSE
   batchtools::batchMap(evaluation_function,

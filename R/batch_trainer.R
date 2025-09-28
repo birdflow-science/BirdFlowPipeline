@@ -97,8 +97,9 @@ new_BatchBirdFlowTrainer <- function(species, ...){
 #'   `gpu_ram := max(gpu_ram(trainer$bf), 8)` before fitting.
 #' @param force_refit Logical; if `TRUE`, refit models even if identical HDF5s
 #'   already exist.
+#' @param test_one_fit Logical; if `TRUE`, just do some test on this local 
+#' session instead of submitting it to slurm
 #' @param ... Additional arguments forwarded to the model fitting pipeline.
-#'
 #' @return The input `trainer` (invisible). Side effects: submits cluster jobs,
 #'   writes HDF5 model files, and prunes extra preexisting fits when appropriate.
 #' @seealso [birdflow_modelfit_args_df()], [batch_modelfit_wrapper()],
@@ -111,10 +112,15 @@ new_BatchBirdFlowTrainer <- function(species, ...){
 #' trainer <- BatchBirdFlowTrainer("amewoo", res = 150)
 #' fit(trainer, force_refit = FALSE)
 #' }
-fit.BatchBirdFlowTrainer <- function(object, auto_calculate_gpu_ram = TRUE, force_refit=FALSE, ...) {
+fit.BatchBirdFlowTrainer <- function(object, 
+                                     auto_calculate_gpu_ram = TRUE, 
+                                     force_refit=FALSE, 
+                                     test_one_fit=FALSE, 
+                                     ...) {
   trainer <- object
   fitting_params <- c(trainer$params, list(...))
   fitting_params$force_refit <- force_refit
+  fitting_params$test_one_fit <- test_one_fit
   
   if (auto_calculate_gpu_ram) {
     fitting_params$gpu_ram <- max(gpu_ram(trainer$bf), 8)
@@ -409,6 +415,25 @@ batch_modelfit_wrapper <- function(params){
                              measure.memory = TRUE)
   modelfit_args_df <- birdflow_modelfit_args_df(params)
   print(paste0('Using py script: ', the$python_repo_path))
+  
+  if (params$test_one_fit) {
+    print('Randomly fit one model to test on this R session...')
+    the_row <- modelfit_args_df[sample(nrow(modelfit_args_df), 1), , drop = FALSE]
+    one_shot_args <- list()
+    if ("dir" %in% names(the_row)) {args$dir<- the_row$dir}
+    if ("species" %in% names(the_row)) {args$species <- the_row$species}
+    if ("res" %in% names(the_row)) { args$res <- the_row$res }
+    if ("dist_weight" %in% names(the_row)) { args$dist_weight <- the_row$dist_weight }
+    if ("obs_weight" %in% names(the_row)) { args$obs_weight <- the_row$obs_weight }
+    if ("obs_weight" %in% names(the_row)) { args$obs_weight <- the_row$obs_weight }
+    if ("learning_rate" %in% names(the_row)) { args$learning_rate <- the_row$learning_rate }
+    if ("training_steps" %in% names(the_row)) { args$training_steps <- the_row$training_steps }
+    if ("rng_seed" %in% names(the_row)) { args$rng_seed <- the_row$rng_seed }
+    if ("ebirdst_year" %in% names(the_row)) { args$ebirdst_year <- the_row$ebirdst_year }
+    
+    do.call(birdflow_modelfit, one_shot_args)
+    return()
+  }
   
   if (nrow(modelfit_args_df) > 0){
     success <- FALSE
