@@ -32,10 +32,10 @@ Side effects: none (beyond RNG if \code{seed} is provided).
 }
 \examples{
 \dontrun{
-tl <- load(TransitionsLoader(trainer))
+tl <- load_data(TransitionsLoader(trainer))
 parts <- train_test_split(tl, seed = 1, training_n_transitions = 1000)
 }
 }
 \seealso{
-\code{\link[=split.TransitionsLoader]{split.TransitionsLoader()}}, \code{\link[=get_transitions]{get_transitions()}}
+\code{\link[=split_data.TransitionsLoader]{split_data.TransitionsLoader()}}, \code{\link[=get_transitions]{get_transitions()}}
 }

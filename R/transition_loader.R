@@ -20,7 +20,7 @@
 #'   \item Errors if no transitions are available or if fewer than \eqn{10/0.7} intervals remain for tuning.
 #' }
 #'
-#' @seealso [TransitionsLoader()], [split.TransitionsLoader()], [train_test_split()],
+#' @seealso [TransitionsLoader()], [split_data.TransitionsLoader()], [train_test_split()],
 #'   [BirdFlowR::Routes()], [BirdFlowR::as_BirdFlowRoutes()], [BirdFlowR::as_BirdFlowIntervals()]
 #' @export
 #' @examples
@@ -138,7 +138,7 @@ get_transitions <- function(loader, max_n_intervals=10000) {
 #' @param batch_trainer A [BatchBirdFlowTrainer()].
 #'
 #' @return A [TransitionsLoader()] object (invisible).
-#' @seealso [new_transitions_loader()], [load.TransitionsLoader()], [split.TransitionsLoader()]
+#' @seealso [new_transitions_loader()], [load_data.TransitionsLoader()], [split_data.TransitionsLoader()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -161,7 +161,7 @@ TransitionsLoader <- function(batch_trainer) {
 #' @param batch_trainer A [BatchBirdFlowTrainer()].
 #'
 #' @return A [TransitionsLoader()] with field `batch_trainer`.
-#' @seealso [TransitionsLoader()], [load.TransitionsLoader()]
+#' @seealso [TransitionsLoader()], [load_data.TransitionsLoader()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -188,15 +188,15 @@ new_transitions_loader <- function(batch_trainer) {
 #'   returns the list described in [get_transitions()].
 #'
 #' @return The modified `loader` (invisible) with `loader$transitions` populated.
-#' @seealso [get_transitions()], [split.TransitionsLoader()]
-#' @method load TransitionsLoader
+#' @seealso [get_transitions()], [split_data.TransitionsLoader()]
+#' @method load_data TransitionsLoader
 #' @export
 #' @examples
 #' \dontrun{
-#' tl <- transitions_loader(trainer)
-#' tl <- load(tl)  # populates tl$transitions
+#' tl <- TransitionsLoader(trainer)
+#' tl <- load_data(tl)  # populates tl$transitions
 #' }
-load.TransitionsLoader <- function(object, loading_function=get_transitions, ...) {
+load_data.TransitionsLoader <- function(object, loading_function=get_transitions, ...) {
   loader <- object
   # Validate
   validate_TransitionsLoader(loader)
@@ -217,7 +217,7 @@ load.TransitionsLoader <- function(object, loading_function=get_transitions, ...
 #' training/test splits for interval data and 1-week interval data. Returns a
 #' list containing both training and test bundles.
 #'
-#' @param object A [TransitionsLoader()] that has been loaded (see [load.TransitionsLoader()]).
+#' @param object A [TransitionsLoader()] that has been loaded (see [load_data.TransitionsLoader()]).
 #' @param splitting_function Function with signature `function(loader, seed, ...)`
 #'   that returns the list described in [train_test_split()].
 #' @param seed Optional integer to make the split reproducible.
@@ -228,16 +228,16 @@ load.TransitionsLoader <- function(object, loading_function=get_transitions, ...
 #'   \item{training_data}{List with `train_data` and `train_data_one_week` (both [BirdFlowR::BirdFlowIntervals()]).}
 #'   \item{test_data}{List with `test_data` and `test_data_one_week` (both [BirdFlowR::BirdFlowIntervals()]).}
 #' }
-#' @seealso [train_test_split()], [load.TransitionsLoader()]
-#' @method split TransitionsLoader
+#' @seealso [train_test_split()], [load_data.TransitionsLoader()]
+#' @method split_data TransitionsLoader
 #' @export
 #' @examples
 #' \dontrun{
-#' tl <- load(transitions_loader(trainer))
-#' parts <- split(tl, seed = 42)
+#' tl <- load_data(TransitionsLoader(trainer))
+#' parts <-split_data(tl, seed = 42)
 #' names(parts)
 #' }
-split.TransitionsLoader <- function(object, splitting_function=train_test_split, seed=NULL, ...) {
+split_data.TransitionsLoader <- function(object, splitting_function=train_test_split, seed=NULL, ...) {
   loader <- object
   split_data <- splitting_function(loader, seed, ...)
   validate_split_data(split_data) # The split_data should always be a list with names training_data and test_data
@@ -266,11 +266,11 @@ split.TransitionsLoader <- function(object, splitting_function=train_test_split,
 #' @details
 #' Side effects: none (beyond RNG if `seed` is provided).
 #'
-#' @seealso [split.TransitionsLoader()], [get_transitions()]
+#' @seealso [split_data.TransitionsLoader()], [get_transitions()]
 #' @export
 #' @examples
 #' \dontrun{
-#' tl <- load(TransitionsLoader(trainer))
+#' tl <- load_data(TransitionsLoader(trainer))
 #' parts <- train_test_split(tl, seed = 1, training_n_transitions = 1000)
 #' }
 train_test_split <- function(loader, seed=NULL, training_n_transitions=NULL) {
@@ -332,8 +332,8 @@ train_test_split <- function(loader, seed=NULL, training_n_transitions=NULL) {
 
 #' Generic loader S3
 #'
-#' Dispatches to class-specific `load()` methods (e.g.,
-#' [load.TransitionsLoader()]).
+#' Dispatches to class-specific `load_data()` methods (e.g.,
+#' [load_data.TransitionsLoader()]).
 #'
 #' @param object The object to load data for.
 #' @param ... Passed to methods.
@@ -342,17 +342,17 @@ train_test_split <- function(loader, seed=NULL, training_n_transitions=NULL) {
 #' @export
 #' @examples
 #' \dontrun{
-#' tl <- load(transitions_loader(trainer))
+#' tl <- load_data(TransitionsLoader(trainer))
 #' }
-load <- function(object, ...) {
-  UseMethod("load")
+load_data <- function(object, ...) {
+  UseMethod("load_data")
 }
 
 
 #' Generic split S3
 #'
-#' Dispatches to class-specific `split()` methods (e.g.,
-#' [split.TransitionsLoader()]).
+#' Dispatches to class-specific `split_data()` methods (e.g.,
+#' [split_data.TransitionsLoader()]).
 #'
 #' @param object The object to split the data for.
 #' @param ... Passed to methods.
@@ -361,10 +361,10 @@ load <- function(object, ...) {
 #' @export
 #' @examples
 #' \dontrun{
-#' parts <- split(load(transitions_loader(trainer)), seed = 123)
+#' parts <-split_data(load_data(TransitionsLoader(trainer)), seed = 123)
 #' }
-split <- function(object, ...) {
-  UseMethod("split")
+split_data <- function(object, ...) {
+  UseMethod("split_data")
 }
 
 

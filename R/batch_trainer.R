@@ -484,5 +484,22 @@ batch_modelfit_wrapper <- function(params){
 }
 
 
+#' Generic fit S3
+#'
+#' Dispatches to class-specific `fit()` methods (e.g.,
+#' [fit.BatchBirdFlowTrainer()]).
+#'
+#' @param object The object to fit.
+#' @param ... Passed to methods.
+#'
+#' @return Method-dependent; see specific methods.
+#' @export
+#' @examples
+#' \dontrun{
+#' fitted <- fit(BatchBirdFlowTrainer(species), seed = 123)
+#' }
+fit <- function(object, ...) {
+  UseMethod("fit")
+}
 
 

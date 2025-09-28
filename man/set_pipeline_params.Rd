@@ -21,7 +21,7 @@ set_pipeline_params(
   season = "prebreeding",
   truncate_season = FALSE,
   model_selection = "distance_metric",
-  clip = NULL,
+  clip = "default",
   crs = NULL,
   skip_quality_checks = FALSE,
   fit_only = FALSE,
@@ -128,7 +128,8 @@ case no model selection is performed.}
 
 \item{clip}{This is passed to BirdFlowR::preprocess_species() to define a
 clipping polygon to use while preprocessing - only areas within the polygon
-are included in the model.}
+are included in the model. If the clip is set to \code{default}, \code{clip} and \code{crs}
+defined in \code{the} will be used.}
 
 \item{crs}{Passed to BirdFlowR::preprocess_species() to define the coordinate
 reference system for the model. With the default of \code{NULL} the CRS

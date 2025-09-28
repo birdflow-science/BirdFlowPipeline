@@ -35,7 +35,7 @@ library(BirdFlowR)
 resolution <- 150
 sp = 'amewoo'
 
-sp_output_path <- glue::glue('./birdflow/batch_model_validation/test_resolution_{resolution}km/{sp}')
+sp_output_path <- glue::glue('~/birdflow_test/batch_model_validation/test_resolution_{resolution}km/{sp}')
 if (!dir.exists(sp_output_path)){dir.create(sp_output_path, recursive = TRUE)}
 
 ```
@@ -55,14 +55,14 @@ my_batch_trainer <- fit(my_batch_trainer)
 # use force_refit=TRUE if want to force refitting existing models
 # use test_one_fit=TRUE if don't want to submit to slurm but just do some test on this local session
 saveRDS(my_batch_trainer$params, file.path(my_batch_trainer$params$output_path, 'params.rds'))
-write.csv(as.data.frame(batchtools::getJobStatus()), paste0(sp_output_path, '/', 'training_JobStatus.csv'))
+# write.csv(as.data.frame(batchtools::getJobStatus()), paste0(sp_output_path, '/', 'training_JobStatus.csv'))
   
 ```
 
 ```{r}
 ## 03. Import transition data
 data_loader <- TransitionsLoader(my_batch_trainer)
-data_loader <- data_loader |> load(loading_function=get_transitions) # Here you can customize the loading_function for the transition data
+data_loader <- data_loader |> load_data(loading_function=get_transitions) # Here you can customize the loading_function for the transition data
 # Save the transition data
 saveRDS(data_loader$transitions, file.path(data_loader$batch_trainer$params$output_path, 'transitions.rds'))
   
@@ -70,15 +70,15 @@ saveRDS(data_loader$transitions, file.path(data_loader$batch_trainer$params$outp
 
 ```{r}
 ## 04. Train test split
-split_data <- data_loader |> 
-  split(splitting_function=train_test_split, seed=42) # Here you can customize the train_test_split function
+train_test_data <- data_loader |> 
+  split_data(splitting_function=train_test_split, seed=42) # Here you can customize the train_test_split function
 ```
 
 ```{r}
 ## 05. Evaluate training set
 my_evaluator <- BatchBirdFlowEvaluator(my_batch_trainer)
 eval_res_train <- evaluate(my_evaluator, 
-                           data=split_data$training_data, 
+                           data=train_test_data$training_data, 
                            evaluation_function=evaluate_model)
 # Use test_one_evaluate=TRUE if want to test your evaluation_function on this local session and not pushing it to slurm. In that case the function will return your validation result of a single model.
 
@@ -104,7 +104,7 @@ saveRDS(eval_res_train, file.path(my_evaluator$batch_trainer$params$output_path,
 
 ```{r}
 ## 06. Evaluate test set
-eval_res_test <- evaluate(my_evaluator, data=split_data$test_data, evaluation_function=evaluate_model)
+eval_res_test <- evaluate(my_evaluator, data=train_test_data$test_data, evaluation_function=evaluate_model)
 
 # Save metrics for each transition each model
 all_transitions <- list()

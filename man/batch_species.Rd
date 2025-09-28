@@ -12,6 +12,7 @@ batch_species(
   dist_pow = 0.4167,
   dist_weight = 0.008177,
   ent_weight = 0.001924,
+  show_progress = TRUE,
   ...
 )
 }
@@ -34,6 +35,10 @@ coverage and performance of the "grid" search.}
 
 \item{de_ratio, obs_prop, dist_pow, dist_weight, ent_weight}{loss function
 parameters see definition in \code{grid_search_list} below under \code{...}}
+
+\item{show_progress}{If \code{TRUE} \code{batch_species()} will display a progress bar
+and wait for all the launched jobs to finish. If \code{FALSE} \code{batch_species()}
+will exit immediately after launching.}
 
 \item{...}{
   Arguments passed on to \code{\link[=set_pipeline_params]{set_pipeline_params}}
@@ -106,7 +111,8 @@ case no model selection is performed.}
 }}
     \item{\code{clip}}{This is passed to BirdFlowR::preprocess_species() to define a
 clipping polygon to use while preprocessing - only areas within the polygon
-are included in the model.}
+are included in the model. If the clip is set to \code{default}, \code{clip} and \code{crs}
+defined in \code{the} will be used.}
     \item{\code{crs}}{Passed to BirdFlowR::preprocess_species() to define the coordinate
 reference system for the model. With the default of \code{NULL} the CRS
 is set to the CRS assigned to the species by eBird status and trends.}

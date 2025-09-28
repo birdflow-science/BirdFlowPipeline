@@ -77,7 +77,7 @@ validate_TransitionsLoader <- function(loader) {
 
 #' Validate split data structure
 #'
-#' Ensures that a split dataset produced by [split.TransitionsLoader()]
+#' Ensures that a split dataset produced by [split_data.TransitionsLoader()]
 #' or [train_test_split()] has the expected form.
 #'
 #' @param split_data A list object to validate.
@@ -90,7 +90,7 @@ validate_TransitionsLoader <- function(loader) {
 #'   \item Must contain elements `"training_data"` and `"test_data"`.
 #' }
 #'
-#' @seealso [split.TransitionsLoader()], [train_test_split()]
+#' @seealso [split_data.TransitionsLoader()], [train_test_split()]
 #' @export
 #' @examples
 #' \dontrun{

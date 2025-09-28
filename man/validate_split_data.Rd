@@ -13,7 +13,7 @@ validate_split_data(split_data)
 Invisible \code{NULL}. Throws an error if validation fails.
 }
 \description{
-Ensures that a split dataset produced by \code{\link[=split.TransitionsLoader]{split.TransitionsLoader()}}
+Ensures that a split dataset produced by \code{\link[=split_data.TransitionsLoader]{split_data.TransitionsLoader()}}
 or \code{\link[=train_test_split]{train_test_split()}} has the expected form.
 }
 \details{
@@ -30,5 +30,5 @@ validate_split_data(parts)
 }
 }
 \seealso{
-\code{\link[=split.TransitionsLoader]{split.TransitionsLoader()}}, \code{\link[=train_test_split]{train_test_split()}}
+\code{\link[=split_data.TransitionsLoader]{split_data.TransitionsLoader()}}, \code{\link[=train_test_split]{train_test_split()}}
 }

@@ -22,5 +22,5 @@ tl <- new_transitions_loader(trainer)
 }
 }
 \seealso{
-\code{\link[=TransitionsLoader]{TransitionsLoader()}}, \code{\link[=load.TransitionsLoader]{load.TransitionsLoader()}}
+\code{\link[=TransitionsLoader]{TransitionsLoader()}}, \code{\link[=load_data.TransitionsLoader]{load_data.TransitionsLoader()}}
 }

@@ -39,6 +39,6 @@ str(gt$interval_obj$data)
 }
 }
 \seealso{
-\code{\link[=TransitionsLoader]{TransitionsLoader()}}, \code{\link[=split.TransitionsLoader]{split.TransitionsLoader()}}, \code{\link[=train_test_split]{train_test_split()}},
+\code{\link[=TransitionsLoader]{TransitionsLoader()}}, \code{\link[=split_data.TransitionsLoader]{split_data.TransitionsLoader()}}, \code{\link[=train_test_split]{train_test_split()}},
 \code{\link[BirdFlowR:Routes]{BirdFlowR::Routes()}}, \code{\link[BirdFlowR:as_BirdFlowRoutes]{BirdFlowR::as_BirdFlowRoutes()}}, \code{\link[BirdFlowR:as_BirdFlowIntervals]{BirdFlowR::as_BirdFlowIntervals()}}
 }
