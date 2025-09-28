@@ -1,0 +1,6 @@
+url: https://birdflow-science.github.io/BirdFlowPipeline/
+template:
+  bootstrap: 5
+articles:
+- title: Getting started
+  contents: BirdFlowPipeline_examples
