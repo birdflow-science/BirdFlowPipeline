@@ -4,7 +4,13 @@
 \alias{fit.BatchBirdFlowTrainer}
 \title{Fit a BatchBirdFlowTrainer}
 \usage{
-\method{fit}{BatchBirdFlowTrainer}(object, auto_calculate_gpu_ram = TRUE, force_refit = FALSE, ...)
+\method{fit}{BatchBirdFlowTrainer}(
+  object,
+  auto_calculate_gpu_ram = TRUE,
+  force_refit = FALSE,
+  test_one_fit = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{A \code{\link[=BatchBirdFlowTrainer]{BatchBirdFlowTrainer()}}.}
@@ -14,6 +20,9 @@
 
 \item{force_refit}{Logical; if \code{TRUE}, refit models even if identical HDF5s
 already exist.}
+
+\item{test_one_fit}{Logical; if \code{TRUE}, just do some test on this local
+session instead of submitting it to slurm}
 
 \item{...}{Additional arguments forwarded to the model fitting pipeline.}
 }

@@ -52,6 +52,7 @@ Depends:
     R (>= 4.1.0)
 Suggests: 
     BirdFlowModels (>= 0.0.2.9001),
+    knitr,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
@@ -59,3 +60,5 @@ Remotes:
     birdflow-science/BirdFlowR,
     birdflow-science/BirdFlowModels
 LazyData: true
+VignetteBuilder: knitr
+URL: https://birdflow-science.github.io/BirdFlowPipeline/

@@ -25,7 +25,7 @@ A list:
 Creates a random 70/30 split of interval transitions and one-week transitions,
 with optional downsampling of the training set to a fixed number of transitions
 (useful for learning-curve experiments). Returns four
-\code{\link[BirdFlowR:BirdFlowIntervals]{BirdFlowR::BirdFlowIntervals()}} objects grouped into training/test lists.
+\code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowIntervals()}} objects grouped into training/test lists.
 }
 \details{
 Side effects: none (beyond RNG if \code{seed} is provided).

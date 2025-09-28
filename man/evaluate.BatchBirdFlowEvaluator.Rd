@@ -4,7 +4,13 @@
 \alias{evaluate.BatchBirdFlowEvaluator}
 \title{Evaluate a set of BirdFlow HDF5 models (S3 method)}
 \usage{
-\method{evaluate}{BatchBirdFlowEvaluator}(object, data, evaluation_function = evaluate_model, ...)
+\method{evaluate}{BatchBirdFlowEvaluator}(
+  object,
+  data,
+  evaluation_function = evaluate_model,
+  test_one_evaluate = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{A \code{\link[=BatchBirdFlowEvaluator]{BatchBirdFlowEvaluator()}}.}
@@ -16,6 +22,9 @@ is interval data and \verb{[[2]]} is 1-week data used for PIT calibration.}
 \item{evaluation_function}{Function of signature
 \verb{function(bf_path, data, params)} returning a result per model (defaults to
 \code{\link[=evaluate_model]{evaluate_model()}}).}
+
+\item{test_one_evaluate}{Logical; if \code{TRUE}, just do some test on this local
+session instead of submitting it to slurm}
 }
 \value{
 A list as returned by \code{\link[batchtools:reduceResultsList]{batchtools::reduceResultsList()}} (often a list

@@ -15,14 +15,14 @@ get_transitions(loader, max_n_intervals = 10000)
 A list with:
 \describe{
 \item{combined_routes_data}{\code{data.frame} of stacked banding, Motus, and tracking rows (NA-dropped).}
-\item{interval_obj}{\code{\link[BirdFlowR:BirdFlowIntervals]{BirdFlowR::BirdFlowIntervals()}} with 1–180 day / 0–8000 km constraints, filtered to migration seasons.}
-\item{interval_one_week_obj}{\code{\link[BirdFlowR:BirdFlowIntervals]{BirdFlowR::BirdFlowIntervals()}} with exactly 1-day steps (weekly objects), filtered to migration seasons.}
+\item{interval_obj}{\code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowIntervals()}} with 1–180 day / 0–8000 km constraints, filtered to migration seasons.}
+\item{interval_one_week_obj}{\code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowIntervals()}} with exactly 1-day steps (weekly objects), filtered to migration seasons.}
 }
 }
 \description{
 Functions to get ground truth routes and transitions for model tuning and
 validation by combining tracking, Motus, and banding sources, then converting
-to \code{\link[BirdFlowR:BirdFlowIntervals]{BirdFlowR::BirdFlowIntervals()}} objects (full intervals and 1-week intervals).
+to \code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowIntervals()}} objects (full intervals and 1-week intervals).
 }
 \details{
 Side effects:

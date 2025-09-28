@@ -19,8 +19,8 @@ that returns the list described in \code{\link[=train_test_split]{train_test_spl
 \value{
 A list with two elements:
 \describe{
-\item{training_data}{List with \code{train_data} and \code{train_data_one_week} (both \code{\link[BirdFlowR:BirdFlowIntervals]{BirdFlowR::BirdFlowIntervals()}}).}
-\item{test_data}{List with \code{test_data} and \code{test_data_one_week} (both \code{\link[BirdFlowR:BirdFlowIntervals]{BirdFlowR::BirdFlowIntervals()}}).}
+\item{training_data}{List with \code{train_data} and \code{train_data_one_week} (both \code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowIntervals()}}).}
+\item{test_data}{List with \code{test_data} and \code{test_data_one_week} (both \code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowIntervals()}}).}
 }
 }
 \description{

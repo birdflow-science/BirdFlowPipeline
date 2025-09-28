@@ -8,6 +8,13 @@
 \description{
 Tools for fitting, selecting, and evaluating BirdFlow models on Unity.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://birdflow-science.github.io/BirdFlowPipeline/}
+}
+
+}
 \author{
 \strong{Maintainer}: David Slager \email{slager@users.noreply.github.com} (\href{https://orcid.org/0000-0003-2525-2039}{ORCID})
 
