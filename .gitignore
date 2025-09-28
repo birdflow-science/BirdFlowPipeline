@@ -8,3 +8,7 @@ data-raw/banding_taxonomy/eBird_Taxonomy_v2021.csv
 scripts/
 *.pdf
 *.html
+# inst/doc
+docs
+/doc/
+/Meta/
