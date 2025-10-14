@@ -4,12 +4,12 @@
 #' @param species the species to process specified by species code 
 #'
 #' @export
-combine_and_save_ground_truth_data <- function(species) {
+combine_and_save_ground_truth_data <- function(species, resolution=100, max_n=10000) {
   
   tmp_dir <- system('mktemp -d --tmpdir=$HOME .tmpdir-XXXXXXXX', intern = TRUE)
   params <- set_pipeline_params(
     species = species,
-    res = 150,
+    res = resolution,
     gpu_ram = 10,
     hdf_path = tmp_dir,
     base_output_path = tmp_dir,
@@ -19,28 +19,40 @@ combine_and_save_ground_truth_data <- function(species) {
     min_season_quality = 1
   )
   params <- preprocess_species_wrapper(params)
+  parent1 <- paste0(
+    the$combined_data_path_routes,
+    '/', as.character(resolution), 'km'
+    )
+  parent2 <- paste0(
+    the$combined_data_path_birdflowroutes,
+    '/', as.character(resolution), 'km'
+  )
+  parent3 <- paste0(
+    the$combined_data_path_birdflowintervals,
+    '/', as.character(resolution), 'km'
+  )
   
   params$sp_output_path_routes <- paste0(
-    the$combined_data_path_routes,
-    '/', species, '.hdf5')
+    parent1, '/', species, '.hdf5')
   params$sp_output_path_birdflowroutes <- paste0(
-    the$combined_data_path_birdflowroutes,
-    '/', species, '.hdf5')
+    parent2, '/', species, '.hdf5')
   params$sp_output_path_birdflowintervals <- paste0(
-    the$combined_data_path_birdflowintervals,
-    '/', species, '.hdf5')
+    parent3, '/', species, '.hdf5')
   
-  if (!dir.exists(the$combined_data_path_routes)) {
-    dir.create(the$combined_data_path_routes,
-               recursive = TRUE)
+  if (file.exists(params$sp_output_path_routes) & 
+      file.exists(params$sp_output_path_birdflowroutes) & 
+      file.exists(params$sp_output_path_birdflowintervals)) {
+    return() # Already finished!
   }
-  if (!dir.exists(the$combined_data_path_birdflowroutes)) {
-    dir.create(the$combined_data_path_birdflowroutes,
-               recursive = TRUE)
+  
+  if (!dir.exists(parent1)) {
+    dir.create(parent1, recursive = TRUE)
   }
-  if (!dir.exists(the$combined_data_path_birdflowintervals)) {
-    dir.create(the$combined_data_path_birdflowintervals,
-               recursive = TRUE)
+  if (!dir.exists(parent2)) {
+    dir.create(parent2, recursive = TRUE)
+  }
+  if (!dir.exists(parent3)) {
+    dir.create(parent3, recursive = TRUE)
   }
   
   # Get bf object (for converting to BirdFlowIntervals)
@@ -87,13 +99,17 @@ combine_and_save_ground_truth_data <- function(species) {
     } else {
       source <- paste0(source, ' & ', 'Banding')
     }
-  } else if (!is.null(motus_df)) {
+  }
+  
+  if (!is.null(motus_df)) {
     if (source == '') {
       source <- 'MOTUS'
     } else {
       source <- paste0(source, ' & ', 'MOTUS')
     }
-  } else if (!is.null(track_birdflowroutes_obj)) {
+  }
+  
+  if (!is.null(tracking_df)) {
     if (source == '') {
       source <- 'Tracking'
     } else {
@@ -116,8 +132,7 @@ combine_and_save_ground_truth_data <- function(species) {
   routes_obj <- BirdFlowR::read_routes(params$sp_output_path_routes)
   
   # BirdFlowRoutes
-  birdflow_routes_obj <- routes_obj |> BirdFlowR::as_BirdFlowRoutes(bf =
-                                                                      bf)
+  birdflow_routes_obj <- routes_obj |> BirdFlowR::as_BirdFlowRoutes(bf = bf)
   if (nrow(birdflow_routes_obj$data) == 0) {
     stop("No BirdFlowRoutes data available")
   }
@@ -128,7 +143,7 @@ combine_and_save_ground_truth_data <- function(species) {
   # BirdFlowIntervals
   interval_obj <- birdflow_routes_obj |>
     BirdFlowR::as_BirdFlowIntervals(
-      max_n = 100000,
+      max_n = max_n,
       min_day_interval = 1,
       max_day_interval = 270,
       min_km_interval = 0,
@@ -142,33 +157,74 @@ combine_and_save_ground_truth_data <- function(species) {
   interval_obj <- BirdFlowR::read_intervals(params$sp_output_path_birdflowintervals)
 }
 
+check_files_exist <- function(species, resolution) {
+  parent1 <- paste0(
+    the$combined_data_path_routes,
+    '/', as.character(resolution), 'km'
+  )
+  parent2 <- paste0(
+    the$combined_data_path_birdflowroutes,
+    '/', as.character(resolution), 'km'
+  )
+  parent3 <- paste0(
+    the$combined_data_path_birdflowintervals,
+    '/', as.character(resolution), 'km'
+  )
+  
+  sp_output_path_routes <- paste0(
+    parent1, '/', species, '.hdf5')
+  sp_output_path_birdflowroutes <- paste0(
+    parent2, '/', species, '.hdf5')
+  sp_output_path_birdflowintervals <- paste0(
+    parent3, '/', species, '.hdf5')
+  
+  if (file.exists(sp_output_path_routes) & 
+      file.exists(sp_output_path_birdflowroutes) & 
+      file.exists(sp_output_path_birdflowintervals)) {
+    return(TRUE) # Already finished!
+  } else {
+    return(FALSE)
+  }
+}
+
 
 #' Combining the multsource data for all species
 #'
 #' @export
 #'
-combine_data_for_all_sp <- function() {
+combine_data_for_all_sp <- function(resolution=100, max_n=10000) {
   unique_names <- c(
     gsub('.rds','',list.files(the$motus_rds_path)),
     gsub('.rds','',list.files(the$banding_rds_path)),
     gsub('.rds','',list.files(the$tracking_rds_path))
   ) |> unique()
   
-  n <- length(unique_names)
-  pb <- txtProgressBar(min = 0, max = n, style = 3)
+  args_df <- data.frame(list(species=unique_names, 
+                             resolution=rep(resolution, length(unique_names)),
+                             max_n=rep(max_n, length(unique_names))
+                             ))
+  args_df$exists <- apply(args_df, 1, function(row) {
+    check_files_exist(row[["species"]], as.numeric(row[["resolution"]]))
+  })
+  args_df <- args_df[!args_df$exists,] |> dplyr::select(-exists)
   
-  for (i in seq_along(unique_names)) {
-    sp <- unique_names[i]
-    tryCatch({
-      combine_and_save_ground_truth_data(sp)
-    }, 
-    error = function(e) {
-      cat("ERROR:", conditionMessage(e), "\n")
-    })
-    
-    setTxtProgressBar(pb, i)
-  }
+  success <- FALSE
+  batchtools::batchMap(
+    fun = combine_and_save_ground_truth_data,
+    args = args_df,
+    reg = batchtools::makeRegistry(
+      file.path('./', paste0(make_timestamp())),
+      conf.file = system.file('batchtools.conf.R', 
+                              package = 'BirdFlowPipeline')
+    )
+  )
+  batchtools::submitJobs(dplyr::mutate(batchtools::findNotSubmitted(), chunk = 1L),
+                         resources = list(walltime = 100,
+                                          ncpu=1,
+                                          memory = 5,
+                                          measure.memory = TRUE))
   
-  close(pb)
+  success <- batchtools::waitForJobs()
+  
 }
 
