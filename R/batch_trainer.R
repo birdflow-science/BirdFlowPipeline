@@ -123,7 +123,7 @@ fit.BatchBirdFlowTrainer <- function(object,
   fitting_params$test_one_fit <- test_one_fit
   
   if (auto_calculate_gpu_ram) {
-    fitting_params$gpu_ram <- max(gpu_ram(trainer$bf), 8)
+    fitting_params$gpu_ram <- ceiling(max(gpu_ram(trainer$bf), 8)) + 1
     print(paste0('Auto-calculating gpu_ram based on no. parameters: ', fitting_params$gpu_ram, ' GB'))
   } else {
     print(paste0('Not auto-calculating gpu_ram, falling back to default setting: ', fitting_params$gpu_ram, ' GB'))
