@@ -20,13 +20,15 @@ set_pipeline_params(
   output_path = NULL,
   season = "prebreeding",
   truncate_season = FALSE,
-  model_selection = "real_tracking",
-  clip = NULL,
+  model_selection = "distance_metric",
+  clip = "default",
   crs = NULL,
   skip_quality_checks = FALSE,
   fit_only = FALSE,
   ebirdst_year = NULL,
-  trim_quantile = NULL
+  trim_quantile = 0.99,
+  min_season_quality = 3,
+  force_refit = FALSE
 )
 }
 \arguments{
@@ -34,7 +36,7 @@ set_pipeline_params(
 calling function.}
 
 \item{gpu_ram}{Set the GPU RAM allocation in GB when fitting
-the models.  It is also passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} and
+the models.  It is also passed to BirdFlowR::preprocess_species() and
 if \code{res} is set to \code{NULL} that function will set the \code{res} to the smallest
 round number that can be fit with the allocated ram.}
 
@@ -89,22 +91,19 @@ fitted models are stored.}
 preprocessed and fit models are stored. Set by
 \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}} to \verb{<hdf_path>/<species>_<res>km/}.}
 
-\item{base_output_path}{The base path for model stats, reports,
-and other output derived from the models.
-\code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}} to}
+\item{base_output_path}{The base path for fitted models, model reports,
+and other output.}
 
 \item{output_fullname}{Initially \code{NULL} this is set by
 \link{preprocess_species_wrapper} to \code{"<species>_<res>km<suffix>"}.}
 
 \item{output_path}{Initially \code{NULL} this is set by
-\link{preprocess_species_wrapper} to \code{"<base_output_path>/<output_fullname>"}.
-Note \code{output_path} is used to store model stats and reports but the model
-itself is stored in \code{hdf_dir}.}
+\link{preprocess_species_wrapper} to \code{"<base_output_dir>_<output_fullname>"}.}
 
 \item{season}{This is used in two ways:  (1) to filter movement data
 (I think just tracks? - ebp) before evaluating the model and (2)
 if \code{truncate_season} is \code{TRUE} it is passed to
-\code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}, producing a model that is truncated to
+BirdFlowR::preprocess_species(), producing a model that is truncated to
 just that season.}
 
 \item{truncate_season}{If \code{TRUE} the model will be truncated to \code{season} and
@@ -127,11 +126,12 @@ function parameters are fixed - typically to average values - in which
 case no model selection is performed.}
 }}
 
-\item{clip}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
+\item{clip}{This is passed to BirdFlowR::preprocess_species() to define a
 clipping polygon to use while preprocessing - only areas within the polygon
-are included in the model.}
+are included in the model. If the clip is set to \code{default}, \code{clip} and \code{crs}
+defined in \code{the} will be used.}
 
-\item{crs}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define the coordinate
+\item{crs}{Passed to BirdFlowR::preprocess_species() to define the coordinate
 reference system for the model. With the default of \code{NULL} the CRS
 is set to the CRS assigned to the species by eBird status and trends.}
 
@@ -146,6 +146,12 @@ model evaluation, model ranking, or model reports.}
 be set by users and any supplied value will be ignored.}
 
 \item{trim_quantile}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}}.}
+
+\item{min_season_quality}{The minimum score of any season. If the score of
+any season of the eBird Status and Trends product does not reach the score,
+not fitting the model.}
+
+\item{force_refit}{Force refitting the models. Default to \code{FALSE}.}
 }
 \value{
 A parameter list to be used for \code{batch_flow()} and related functions

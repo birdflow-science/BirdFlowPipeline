@@ -1,4 +1,13 @@
-This package contains functions to fit, select, and evaluate BirdFlow models on the Unity cluster. This README contains basic setup instructions, which should be sufficient for other users within the `pi_drsheldon_umass_edu` Unity group getting started using this package.
+# BirdFlowPipeline
+
+[![pkgdown](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://birdflow-science.github.io/BirdFlowPipeline/)
+
+This package contains functions to fit, select, and evaluate BirdFlow models on the Unity cluster. 
+
+This README contains basic setup instructions, which should be sufficient for other users within the `pi_drsheldon_umass_edu` Unity group getting started using this package.
+
+This package is mainly for internal use and is highly adapted to the Unity system. We do not expect outside users to apply it.
+
 
 ## 1. Setup a passwordless SSH connection to the Unity login node
 
@@ -15,6 +24,8 @@ ls -l ~/.ssh
 ```
 
 To create a new key, enter this command and hit enter. Hit enter again when asked if you want to create a passphrase. It's easier if we don't use one, and this is all occurring within Unity and within your home directory, which is already fairly secure, but your mileage may vary.
+
+Should note that before calling ssh-keygen, you should make sure you're on login1 and ssh login1 if not. Otherwise, you can end up creating a key for the wrong login node.
 
 ```
 ssh-keygen
@@ -36,8 +47,10 @@ IdentityFile ~/.ssh/<your_unity_private_key_filename_created_in_last_step>
 Now, copy over the SSH public key to the server with the following command, removing all angled brackets. You'll need to customize the command if you were not using the default key name.
 
 ```
-ssh-copy-id <yourusername_umass_edu>@login1
+ssh-copy-id i ~/.ssh/<your_unity_private_key_filename_created_in_last_step> <yourusername_umass_edu>@login1
 ```
+
+Try to make sure which key is the right one and copy the right one.
 
 Now, try SSHing into the login node from a compute node. First, get a command line on a compute node by entering this on a login node terminal:
 
@@ -88,7 +101,13 @@ Add the following to your `~/.Renviron` file so that the `ebirdst` package recog
 EBIRDST_KEY='your_ebirdst_api_key'
 ```
 
+Additionally, if you are on Unity, we have a common shared source of downloaded eBird Status and Trends data, so:
+```
+Sys.setenv(EBIRDST_DATA_DIR = BirdFlowPipeline:::the$st_download_path)
+```
+
 You may need to restart R and/or RStudio for this to start working.
+
 
 ## 4. Set up your [GitHub Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) 
 
@@ -162,6 +181,11 @@ Install BirdFlowPipeline and any necessary dependencies. Some restarts of R or t
 devtools::install(dependencies = TRUE)
 ```
 
+If you have the BirdFlowPipeline installed for the old version for whatever reasons. Consider removing them.
+```
+rm -rf /home/yc85_illinois_edu/R/x86_64-pc-linux-gnu-library/4.3/BirdFlowPipeline
+```
+
 When all packages are successfully installed, you should be able to load the package like this without error:
 
 ```
@@ -190,7 +214,7 @@ Go to [Unity OnDemand](https://ood.unity.rc.umass.edu/pun/sys/dashboard/batch_co
 2. partition: `gpu` (use `gpu,gpu-preempt` if under 2 hours walltime)
 3. memory: `11`
 4. gpu count: `1`
-5. [Advanced] Override Rstudio image location: `/work/pi_drsheldon_umass_edu/birdflow_modeling/BirdFlowContainer/BirdFlowContainer.sif`
+5. [Advanced] Override Rstudio image location: `/work/pi_drsheldon_umass_edu/birdflow_modeling/BirdFlowContainer45/BirdFlowContainer.sif`
 6. Use default or blank values for the other fields
 
 Once your session is active, click the blue button to connect to Rstudio server. Once in Rstudio, you can go to File > New Project, and select (or create) a directory in which to work. For example you might want to select the top level of a clone of Miguel's birdflow repo. The bottom right should now show the files in the directory you selected. The container should already include all the needed python libraries to run `update_hdf.py`.
@@ -199,64 +223,186 @@ You can get a python console by issuing the `reticulate::repl_python()` in the R
 
 Very soon, Unity OnDemand will offer a way to use Jupyter Lab instead of Rstudio to work interactively in Python on a container.
 
-## 8. Description of what happens when you run `batch_flow('amewoo')`
 
-This command kicks off the "standard pipeline" for fitting a BirdFlow model using tracking data, developed by Dave Slager in 2023. Much of the computation happens in parallel via batch jobs on the Unity cluster. See also: `?BirdFlowPipeline::batch_flow`
+## Usage example:
 
-The `batch_flow()` function has two arguments: 1) The species to use, and 2) a parameters list (`params`).  The `params` list gets carried forward throughout `batch_flow()`, mostly using the original params list given. The exception is that `params` is modified during the preprocessing step, because some new information is produced during preprocessing. Once `params` is fleshed out after preprocessing, it is written to file in the output directory as `params.rds`, which is useful for debugging intermediate steps and documenting what you did in a particular run. `params` gets used as input by most functions in `batch_flow`.
 
-### The default arguments for `params` exist as follows for the following reasons:
+### **See vignettes!**
+
+
+### Standard workflow:
+
+#### 1. Model fitting (training):
+
+```r
+my_batch_trainer <- BatchBirdFlowTrainer(sp,
+                                  res = resolution,
+                                  gpu_ram = 10, 
+                                  hdf_path = sp_output_path, 
+                                  base_output_path = sp_output_path, 
+                                  suffix='test_batch_model')
+```
+
+`BatchBirdFlowTrainer` is an object that setups up a training procedure, it stored most of the parameters, like RAM use, output path, species, crs.
+
+After initiation, `fit` function fit all the models specified in `BatchBirdFlowTrainer`:
+
+```r
+my_batch_trainer <- fit(my_batch_trainer) 
+# use test_one_fit=TRUE if don't want to submit to slurm but sample one model to test the fitting process on this local session
+```
+
+Now we have 225 models saved on Unity.
+
+#### 2. Loading transitions (general mark-resight data):
+
+Next, load the transition data (mark-resight data that combines tracking, banding, and Motus):
+
+```r
+data_loader <- TransitionsLoader(my_batch_trainer)
+data_loader <- data_loader |> load_data(loading_function=get_transitions) # Here you can customize the loading_function for the transition data
+```
+
+Train-test split:
+
+```r
+train_test_data <- data_loader |> 
+  split_data(splitting_function=train_test_split, seed=42) # Here you can customize the train_test_split function
+```
+
+#### 3. Calculate scores on training set
+
+Now we evaluate each model using the "training_data" saved in train_test_data:
+
+
+```r
+my_evaluator <- BatchBirdFlowEvaluator(my_batch_trainer)
+eval_res_train <- evaluate(my_evaluator, 
+                           data=train_test_data$training_data, 
+                           evaluation_function=evaluate_model)
+# Use test_one_evaluate=TRUE if want to test your evaluation_function on this local session and not pushing it to slurm. In that case the function will return your validation result of a single model.
+```
+
+If you want the metric for each transition:
+
+```r
+# Save metrics for each transition each model
+all_transitions <- list()
+for (this_model in eval_res_train) {
+  this_transition_df <- this_model$metric_for_each_transition
+  this_transition_df$model <- this_model$df$model
+  all_transitions[[length(all_transitions) + 1]] <- this_transition_df
+}
+
+all_transitions <- do.call(rbind, all_transitions)
+```
+This can be useful if you want to do additional evaluation based on a new dataset, and combine the result from different data sources to take an average.
+
+But usually we only care about one-value summary for each model:
+
+```r
+# Get one score summary for each model
+eval_res_train <- eval_res_train |> lapply(function(i){i$df}) |>
+  data.table::rbindlist(fill = TRUE) |>
+  tibble::as_tibble() |>
+  dplyr::arrange(dplyr::desc(.data$mean_ll)) # Here we sort by mean log-likelihood
+```
+
+#### 4. Calculate scores on test set
+
+Assuming now we have ranked models, we would also want to evaluate their performance on a test set, to prevent the case that the chosen best models are overfit to the training data but perform poorly on the hold-out dataset:
+
+```r
+eval_res_test <- evaluate(my_evaluator, data=train_test_data$test_data, evaluation_function=evaluate_model)
+
+eval_res_test <- eval_res_test |> lapply(function(i){i$df}) |>
+  data.table::rbindlist(fill = TRUE) |>
+  tibble::as_tibble() |>
+  dplyr::arrange(dplyr::desc(.data$mean_ll))
+```
+
+#### 5. Select one best model
+
+
+Now, we select a best model based on the training set metrics, and see it performances on the test set.
+
+```r
+best_model <- eval_res_train |> 
+  dplyr::filter(mean_dist_cor_whole_year>0.98) |> # Apply your own model selection criteria
+  dplyr::arrange(-weighted_mean_ll) |> 
+  dplyr::slice_head(n=1) |> 
+  dplyr::select(model)
+best_model <- best_model$model
+score_best_model <- eval_res_test[eval_res_test$model==best_model,]
+
+print(glue::glue('Best model: {best_model}, score: '))
+print(c(score_best_model))
+
+```
+
+#### 6. Customize this process
+
+##### 06.01: functions
+
+There are three functions that can be customized:
+
+1. `loading_function` (data loading function)
+2. `splitting_function` (data train-test split function)
+3. `evaluation_function` (the function to evaluate models)
+
+If you change the `loading_function`, you probably also need to accordingly change the `splitting_function` and `evaluation_function`
+
+##### 06.02: parameters
+
+The input for `BatchBirdFlowTrainer`:
+
+Some of the default arguments setup:
+
 - `gpu_ram` and `res` get passed to `BirdFlowR::preprocess_species` for determining the raster resolution.
   - The default is 150 km because it seems to accommodate even species that are widespread across the Western Hemisphere, while still maintaining a fairly high resolution
   - `res` overrides `gpu_ram` in `BirdFlowR::preprocess_species`, but setting `gpu_ram` at 10 or 11 would get it close to the upper limit of available Unity GPUs.
 - `season` is always (and usually only) used for model evaluation. For example, in the standard pipeline, if we're using 'prebreeding' we want to use spring tracking data, simulate spring tracks, and check status and trends end correlation for the spring season. This is related to the fact that BirdFlow is currently intended to be used within a single migration season. Full-year models are still generally produced, but when `truncate_season` is TRUE, then models are truncated to `season` during preprocessing. In other words, if `truncate_season` is FALSE and `season` is 'prebreeding', then season = 'all' will be passed to `BirdFlowR::preprocess_species` but a particular season will still be used for model selection and evaluation.
 - `clip` is passed to `BirdFlowR::preprocess_species`, and has been used for trimming all species to a Western Hemisphere shape object before preprocessing. Be careful about assumptions when doing this.  For example, Northern Wheatears cross hemispheres during migration, and Long-tailed Jaegers become pelagic during the non-breeding season. Both would be filtered out if cropping to the current Western Hemisphere shapefile.
 - `skip_quality_checks` is also passed to `BirdFlowR::preprocess_species`
-- When `fit_only` is set to TRUE, it will skip all the model evaluation and exit `batch_flow()` after doing the Python modelfit. This was implemented for doing a large run to fit single averaged hyperparameter models for all migratory species.
-- The `model_selection` argument controls the behavior of the model desirability rankings in the `rank_models()` function, which is run later in `batch_flow` when selecting among multiple models of a hyperparameter grid search. See `rank_models()` for current options. The standard pipeline as of January 2024 uses the `real_tracking` option. The `averaged_hyperparameters` option is being used as of January 2024 to mostly bypass model ranking when only 1 set of hyperparameters is available per model, like when averaged hyperparameters are specified directly (basically, a grid search of size 1)
 - The `*path` items control where files are stored and currently get pulled from the package internal environment `the`. See `R/the_settings.R` in the package for these defaults, which also include things like login node name to use (depending on your `~/.ssh/config`) and default time zone for naming model run directories. Some functions still need to have their default arguments updated to use the appropriate `the$` entry.
-- The `grid_search*` items control how hyperparameters are selected for a grid search. There are two grid search types supported.
-  - For `old`, you specify all the Python hyperparameters directly.
-  - For `new`, you supply dist_pow, obs_weight, and de_ratio. These are passed to the `refactor_hyperparameters` function, which recalculates dist_pow and ent_weight before passing these to Python as hyperparameters. 'new' is the current default behavior because the ratio between distance weight and entropy weight heavily determines the behavior of the model, and because these hyperparameters are highly sensitive, and refactoring them in this way makes it easier to intuit about and appears to create better coverage and performance of the "grid" search.
-  
-### Steps of `batch_flow`
 
-![](man/figures/Schema.png)
 
-The first thing that happens is preprocessing. The `preprocess_species_wrapper` function also sets up directories and updates the `res` and `ebirdst_year` items in `params`. The wrapper saves the `hdf` to a temporary directory before copying it over to the actual directory, because `res` needs to be calculated by preprocess_species before the final item can be named appropriately.
 
-The next thing that happens is the Python modelfits. These will happen in parallel on the cluster, which is all set up by `batch_modelfit_wrapper()`. The function `birdflow_modelfit_args_df()` does grid-expand of all the modelfit parameters for the grid search, checks the hdf directory to see if any hdf files are already present, and deletes unneeded hdf files and pares down the list of models yet to fit as necessary. This reduces the number of GPU jobs used, especially during troubleshooting and debugging of larger grid searches. The output of `birdflow_modelfit_args_df()` is mapped by row to `birdflow_modelfit()` by `batchtools::batchMap`, which maps the grid search entries to an Sbatch array job to be sent to the cluster. The `birdflow_modelfit()` function is just an R wrapper to call Python, with a little bit of error handling so that a Python error also throws an R error.
-  - During building this array job, `batchtools::batchMap` references the package configuration file `batchtools.conf.R` which specifies the best cluster resources to use as of January 2024, and also the package slurm template `slurm.tmpl` which is what will become the actual Sbatch script used for each job. The `slurm.tmpl` is set up to use different defaults depending on whether a GPU/Python job or a CPU/R job is requested, but it will use the same BirdFlowContainer image for both.
-The last part of `batch_modelfit_wrapper()` submits the Python modelfit jobs to the cluster, waits for the jobs to complete, retries any failed jobs up to 3 times, and throws an error if not all the jobs completed. If there are errors, troubleshooting can be accompolished by checking the `*_mf` directory (= batchtools registry) inside the output directory, particularly the `logs` and `jobs` subfolders.
+# Transition data saved on Unity
 
-The next step creates "tracks" from banding data for use in log likelihood calculations. This is an older part, since the log likelihood calculations from banding are not currently (January 2024) a main consideration in model desirability. It tries to pull the banding data from a default banding data path. This path is assumed to be populated by RDS files created earlier and interactively using the functions in `R/banding_data.R`. Those functions facilitate downloading raw banding data from USGS, crosswalking the USGS taxonomy to the eBird S&T taxonomy, and writing standardized RDS files of banding data. The taxonomy crosswalk is currently outdated and needs to be updated, because it's for eBird S&T v. 2021. The point of `combine_together_list()` and `process_file_set()` is to process certain sets of raw USGS files at the same time, because the taxonomy crosswalk needs to combine multiple taxa into 1 S&T taxon, and the target taxa unfortunately sometimes span >1 raw USGS file. If there's no banding data, you get a blank template object for later handling. The variable `track_info` is very confusing here because it is actually banding data, and this variable should be renamed. The `track_info` object will eventually get used by `BirdFlowR::interval_log_likelihood` within `evaluate_model`, creating likelihood-related columns in `eval_metrics`, which was originally just a "log likelihood data.frame", but became the data.frame for all model evaluation metrics.  Also a candidate for renaming!
+1. Most of the time, you should use the preprocessed combined dataset saved on the disk: `BirdFlowPipeline:::the$combined_data_path_routes`, `BirdFlowPipeline:::the$combined_data_path_birdflowroutes` and `BirdFlowPipeline:::the$combined_data_path_birdflowintervals`. These data are preprocessed using function `BirdFlowPipeline::combine_data_for_all_sp`. With these sources, you can create a function like 
 
-The next step is evaluating each of the models in the grid search. This happens in parallel on the cluster in an sbatch array job, just like for the python modelfit, except this time it's run on a CPU node and it's all in R. The function that does it all is `batch_evaluate_models()`, which starts by globbing the hdf directory for relevant hdf files. Then it batch-maps the fairly well named `import_birdflow_and_evaluate()` function to each of those hd5 files. It's just a wrapper that imports the birdflow object and then runs `evaluate_model()` on the birdflow object.  The overall `batch_evaluate_models()` function retries failed jobs a few times if necessary, and then if all the jobs returned results, consolidates those results into a data.frame, `eval_metrics`, which has 1 row for each model in the grid search, and columns for each model evaluation metric returned.
+```r
+  get_transitions_prepared <- function(loader) {
+    BirdFlowPipeline::validate_TransitionsLoader(loader)
+    
+    ## Read the combined data
+    combined_interval_path <- file.path('/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/combined_data/BirdFlowIntervals/100km', paste0(loader$batch_trainer$params$species, '.hdf5'))
+    interval_obj <- BirdFlowR::read_intervals(combined_interval_path)
+    # Filter intervals to ask at least one leg in the migration season
+    target_timesteps <- c(BirdFlowR::lookup_season_timesteps(loader$batch_trainer$bf, season='prebreeding'), 
+                          BirdFlowR::lookup_season_timesteps(loader$batch_trainer$bf, season='postbreeding'))
+    interval_obj$data <- interval_obj$data[(interval_obj$data$timestep1 %in% target_timesteps) | (interval_obj$data$timestep2 %in% target_timesteps),]
+    
+    ## Get the one-week transition
+    interval_one_week_obj <- interval_obj
+    interval_one_week_obj$data <-interval_one_week_obj$data[interval_one_week_obj$data$timestep2 - interval_one_week_obj$data$timestep1 == 1,]
+    interval_one_week_obj$data <- interval_one_week_obj$data[(interval_one_week_obj$data$timestep1 %in% target_timesteps) | (interval_one_week_obj$data$timestep2 %in% target_timesteps),]
+    
+    return(list(interval_obj=interval_obj,
+                interval_one_week_obj=interval_one_week_obj))
+  }
+```
 
-The `evaluate_model()` function itself calculates a bunch of things for each model. It runs `BirdFlowR::interval_log_likelihood()` using the banding data, simulates some routes, and calculates movement ecology metrics like straightness on those simulated routes. It also checks the tracking data path for a transitions file.  These files were provided by Benjamin via Benjamin's code, and include info on all the 1-week cell transitions represented in the tracking data available for a particular species. This needs to be cleaned up and scaled up, by using the new `BirdflowR` function to ingest raw tracking data, and an as yet unavailable (January 2024) function to convert from cleaned up tracking data to 1-week transitions data. If tracking transitions data is found, PIT calbiration is conducted. Otherwise, a default blank PIT result is returned. PIT data and PIT plots are stored in the output directory for use in model reports. It returns a data.frame and some log likelihood info, which goes through some final processing steps once returned to `batch_evaluate_models()`.
+and pass this function as the data loading function: `data_loader |> load_data(loading_function=get_transitions_prepared)`. For details of the data combination, see `/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/README.md`.
 
-Now the `eval_metrics` which contains all the model evaluation info gets passed to `rank_models` for model selection. First, any existing desirability columns are deleted. The model selection method depends on what was specified in `params`. For `avaraged_hyperparameters`, effectively there is no model selection because it's only 1 model. For `real_tracking` (the standard pipeline), the first thing that happens is that we calculate the movement ecology stats based o the real tracking data, using `real_track_stats()`.
-- `real_track_stats()` searches a default path for one of Benjamin's `*tracks*` files, but once there's more tracking data this needs to be updated to use tracking data cleaned by the new `BirdFlowR` function instead.
-- It then applies `tracks_to_rts()` to the tracking data, which creates a `BirdFlowR` routes-like object from the tracking data, from which tracking stats can be calculated in the same way as they were for the simulated routes.
-The last part of `rank_models()` for the `real_tracking` method calculates desirability scores for individual metrics, including trying to target models where BirdFlow simualted routes give similar metrics to real tracking routes, and models with good PIT calibration and with good end traverse correlation with the S&T weekly distributions, as calcualted via `BirdFlowR`. Regardless of model selection method, the very last part of `rank_models()` calculates the overall desirability score from the chosen single-metric desirability scores and arranges the data.frame so that the highest desirability models are at the top. This provides some flexibility in returning similar results structures regardless of which model selection criteria are used. For more info on desirability, see the manual for the `desirability2` R package.
+2. If you want to use data from separate data sources instead of using the combined one, never, ever, use raw CSV files for model tuning/validation. Read the rds instead. They are in `the$banding_rds_path`, `the$motus_rds_path`, and `the$tracking_rds_path`. They are standardized format with columns `[date, lat, lon, route_id, route_type]`, although the banding data rds has slightly different column names but contain all the information. But to load them easier, instead of querying the rds files manually, use `load_banding_df`, `load_motus_df`, and `load_tracking_df` functions so that the output is always `[date, lat, lon, route_id, route_type]`.
+3. If new data are included for banding, motus, or tracking, make sure to run the following functions correspondingly to generate those rds files: `preprocess_banding_data_to_rds()`, `preprocess_tracking_data_to_rds()`, `process_motus_data_to_rds()`
 
-The rest of `batch_flow()` (described below) is currently skipped if there's less than 2 models.
 
-The main thing that happens is that HTML model reports are rendered to the output folder for the top 5 models, using `model_report.Rmd`.
+# About banding data
 
-These model reports can then be examined for quality control prior to releasing a model to the public BirdFlow collection.
-- `stage_model_release()` is a helper to move a user-selected model report to the release staging folder to be put into the public model collection.
-- `rebuild_model_reports()` is a helper to rebuild the model reports, for example, if you've actively working on changing the model report RMD file.
-Ethan currently (January 2024) has another codebase that refreshes the Birdflow model collections website when the model_release_staging folder is changed.
-
-## 9. Miscellaneous package components and comments
-
-This package also contains some ancillary things that are a bit outside of the "standard pipeline"
-- `data_availability.R` contains old functions (including a batch function) to assess how much banding data is available for all species in this large dataset
-- `pit_calibration.R` contains functions related to PIT calibration. This is used in the standard pipeline `batch_flow()` with model_selection = `real_tracking` but could use a code review and re-write. It currently uses Benjamin's transitions files, but should be rewritten so that it uses the new `BirdFlowR` tracking data preprocessing, and probably a new function to create transitions data from that as well. Ideally, there could be a `the$` path for standardized tracking data similar to how banding data is currently handled, and the pipeline could always just look for tracking data there.
-- `functions.R` mostly contains functions already covered in `batch_flow()` above, but also has some old functions at the top of the file related to preprocessing banding data, which should probably be moved to the banding.data.R file.
-
-## 10. Functions for preprocessing banding data from USGS BBL
+## 1. Functions for preprocessing banding data from USGS BBL
 
 The package file `R/banding_data.R`contains several functions for preprocessing raw banding data from USGS. Here's an overview of what these functions can accomplish:
   - Download raw banding data once (it's dozens of GB of data for hundreds of taxa)
@@ -265,7 +411,7 @@ The package file `R/banding_data.R`contains several functions for preprocessing 
   - Output a standardized RDS file for each eBird species
     - This goes into a special directory on Unity known to `BirdFlowPipeline` via the `the` environment within the package.
   - The output RDS file can then be consistently used downstream, e.g. by BirdFlowPipeline functions or other analyses.
-  
+
 The code is a bit old (circa spring 2023), but this is how it works:
 - The package contains the HTML source (`data-raw/htmlpage.htm`) of the [USGS webpage](https://dx.doi.org/10.5066/P9BSM38F) that contains the URLs for downloading the actual raw banding data files . As of January 2024, looks like this DOI/webpage is no longer the most recent version, so this could probably use an update.
 - During package development, the script `data-raw/banding_raw_data` was run. This script web scrapes the HTML file for the actual download URLs, and saves those URLs as package internal data object `BirdFlowPipeline::banding_raw_file_urls`. That object was then committed into the package.

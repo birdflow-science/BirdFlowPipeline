@@ -1,6 +1,3 @@
-# probability integral transform (PIT) calibration (Gneiting et al., 2007)
-# See calibration section of
-# https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.14052
 pit_calibration <- function(bf, transitions, params) {
   
   # one_hot vector of starting cell
@@ -10,32 +7,22 @@ pit_calibration <- function(bf, transitions, params) {
     return(x)
   }
 
-  remove_invalid_transitions <- function(transitions, bf){
-    xy1 <- with(transitions,
-                BirdFlowR::latlon_to_xy(lat.1,lon.1,bf))
-    transitions$i1 <- with(xy1,
-                           BirdFlowR::xy_to_i(x, y, bf))
-    xy2 <- with(transitions,
-                BirdFlowR::latlon_to_xy(lat.2,lon.2,bf))
-    transitions$i2 <- with(xy2,
-               BirdFlowR::xy_to_i(x, y, bf))
-    transitions$i1_is_valid <- with(transitions,
-                                    BirdFlowR::is_location_valid(bf, i=i1, timestep=st_week.1))
-    transitions$i2_is_valid <- with(transitions,
-                                    BirdFlowR::is_location_valid(bf, i=i2, timestep=st_week.2))
-    transitions$valid_transitions <- transitions$i1_is_valid & transitions$i2_is_valid
-    out <- transitions[transitions$valid_transitions,]
-    out
-  }
-
-  transitions <- remove_invalid_transitions(transitions, bf)
+  # only from t to t+1
+  transitions <- transitions[transitions$timestep2 - transitions$timestep1 == 1,]
 
   # Remove out-of-season transitions
-
   my_season_timesteps <- BirdFlowR::lookup_season_timesteps(bf, season = params$season)
   transitions <- dplyr::filter(transitions,
-                               .data$st_week.1 %in% my_season_timesteps & .data$st_week.2 %in% my_season_timesteps)
-  
+                               .data$timestep1 %in% my_season_timesteps & .data$timestep2 %in% my_season_timesteps)
+  if (nrow(transitions)==0){
+    return(list(
+      res = NULL,
+      D_row = NA,
+      PIT_row_p = NA,
+      D_col = NA,
+      PIT_col_p = NA
+    ))
+  }
   # assign column names to the matrix
   my_colnames <- c("j", "wk1", "wk2", "i1", "i2", "x1", "x2", "y1", "y2", "p_cell", "p_95", "in_95_set", "max_cell_pred_value", "sum_leq", "pit_row", "pit_col", "i1_is_valid", "i2_is_valid")
   # initialize an empty matrix to store the results
@@ -45,34 +32,29 @@ pit_calibration <- function(bf, transitions, params) {
   # loop over the rows of transitions
   for (j in 1:nrow(transitions)) {
 
-    lon1 <- transitions$lon.1[j]
-    lat1 <- transitions$lat.1[j]
-    wk1 <- transitions$st_week.1[j]
+    lon1 <- transitions$lon1[j]
+    lat1 <- transitions$lat1[j]
+    i1 <- transitions$i1[j]
+    x1 <- transitions$x1[j]
+    y1 <- transitions$y1[j]
+    wk1 <- transitions$timestep1[j]
     
-    lon2 <- transitions$lon.2[j]
-    lat2 <- transitions$lat.2[j]
-    wk2 <- transitions$st_week.2[j]
-    
-    xy1 <- BirdFlowR::latlon_to_xy(lat1,lon1,bf)
-    i1 <- BirdFlowR::xy_to_i(xy1$x,xy1$y, bf)
-    # must be an easier way than to use my custom function through 3 lines...
-    stopifnot(!is.na(i1))
-    loc1 <- one_hot(i1,BirdFlowR::n_active(bf))
-    
-    xy2 <- BirdFlowR::latlon_to_xy(lat2,lon2,bf)
-    i2 <- BirdFlowR::xy_to_i(xy2$x,xy2$y, bf)
-    # if (is.na(i2)){
-    #   print(transitions[j,])
-    # }
-    stopifnot(!is.na(i2))
-    # loc2 <- one_hot(i2,BirdFlowR::n_active(bf))
-    
-    i1_is_valid <- BirdFlowR::is_location_valid(bf, i=i1, timestep=wk1)
-    i2_is_valid <- BirdFlowR::is_location_valid(bf, i=i2, timestep=wk2)
+    lon2 <- transitions$lon2[j]
+    lat2 <- transitions$lat2[j]
+    i2 <- transitions$i2[j]
+    x2 <- transitions$x2[j]
+    y2 <- transitions$y2[j]
+    wk2 <- transitions$timestep2[j]
 
+    point_df_initial <- data.frame(x = lon1, y = lat1)
+    point_df_final   <- data.frame(x = lon2, y = lat2)
+    
+    # birdflow one-hot distributions for banding and encounter locations
+    d_initial <- BirdFlowR::as_distr(x = point_df_initial, bf = bf, crs = 'EPSG:4326')
+    
     # Project forward from this location
     f <- stats::predict(bf,
-                 distr = loc1,
+                 distr = d_initial,
                  start = wk1,
                  end = wk2,
                  direction = "forward")
@@ -86,7 +68,6 @@ pit_calibration <- function(bf, transitions, params) {
     the_row <- BirdFlowR::i_to_row(i2,bf)
     # plot(y_rowsums); abline(v=the_row)
     pit_row <- sum(y_rowsums[1:(the_row-1)]) + stats::runif(1)*y_rowsums[the_row]
-    
     
     the_col <- BirdFlowR::i_to_col(i2,bf)
     # plot(x_colsums); abline(v=the_col)
@@ -111,10 +92,10 @@ pit_calibration <- function(bf, transitions, params) {
                wk2=wk2,
                i1=i1,
                i2=i2,
-               x1=xy1$x,
-               x2=xy2$x,
-               y1=xy1$y,
-               y2=xy2$y,
+               x1=x1,
+               x2=x2,
+               y1=y1,
+               y2=y2,
                p_cell=p2,
                p_95=p95,
                in_95_set=p2>=p95,
@@ -122,8 +103,8 @@ pit_calibration <- function(bf, transitions, params) {
                sum_leq=sum_leq,
                pit_row=pit_row,
                pit_col=pit_col,
-               i1_is_valid=i1_is_valid,
-               i2_is_valid=i2_is_valid)
+               i1_is_valid=TRUE,
+               i2_is_valid=TRUE)
     
     # store the result in the matrix
     res_matrix[j,] <- res_j
@@ -140,6 +121,7 @@ pit_calibration <- function(bf, transitions, params) {
   ks_row
   D_row <- ks_row$statistic 
   D_row # want to minimize this for given N
+  PIT_row_p <- ks_row$p.value
   
   ks_col <- suppressWarnings(
     stats::ks.test(res_matrix$pit_col,"punif",0,1)
@@ -147,17 +129,23 @@ pit_calibration <- function(bf, transitions, params) {
   ks_col
   D_col <- ks_col$statistic 
   D_col # want to minimize this for given N
+  PIT_col_p <- ks_col$p.value
   
   list(
     res = res_matrix,
     D_row = as.numeric(D_row),
-    D_col = as.numeric(D_col)
+    PIT_row_p = as.numeric(PIT_row_p),
+    D_col = as.numeric(D_col),
+    PIT_col_p = as.numeric(PIT_col_p)
   )
   
 }
 
 pit_plots <- function(pit_calibration_obj, params, modelname){
   res <- pit_calibration_obj$res
+  if (is.null(res)){
+    return()
+  }
   
   output_plot <- function(plot_function, object_to_plot, modelname, filename, ..., out_dir = params$output_path){
     dir.create(file.path(out_dir, 'pit_plots'), showWarnings = FALSE)

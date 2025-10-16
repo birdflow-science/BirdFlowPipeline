@@ -7,7 +7,7 @@
 model_evaluation_biplot(eval_metrics, params)
 }
 \arguments{
-\item{eval_metrics}{data.frame produced from rbindlist-ing output from \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{eval_metrics}{data.frame produced from rbindlist-ing output from \code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}}
 
 \item{params}{the standard params list object, see \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}}
 }
@@ -18,5 +18,5 @@ side effect is a plot written to file
 PCA biplot hyperparameters evaluation
 }
 \seealso{
-\code{\link[=batch_evaluate_models]{batch_evaluate_models()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}
+\code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}, \code{\link[=preprocess_species_wrapper]{preprocess_species_wrapper()}}
 }

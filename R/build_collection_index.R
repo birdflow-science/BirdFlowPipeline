@@ -31,33 +31,33 @@
 #'
 build_collection_index <- function(dir, collection_url, description = NULL, 
                                    title = "BirdFlowR Model Collection") {
-
+  
   if(is.null(description))
     description <- ""
   
   index_path <- file.path(dir, "index.Rds")
   index_md5_path <- file.path(dir, "index_md5.txt")
-
+  
   model_extension <- "Rds"
   cols <- c("model", "species_code", "scientific_name", "common_name",
             "file", "release_date", "md5", "version", "size")
   species_cols <- c("species_code", "scientific_name", "common_name")
-
+  
   # List model files in directory
   files <- list.files(dir, pattern = paste0("^.*\\.", model_extension, "$"),
                       ignore.case = TRUE)
   files <- files[!tolower(files) %in% "index.rds"]
-
+  
   if (length(files) == 0)
     stop("No model files detected.")
-
+  
   # Create an empty index table
   index <- matrix(nrow = length(files), ncol = length(cols),
                   dimnames = list(NULL, cols)) |>
     as.data.frame()
   index$file <- files
   index$model <- gsub("\\.Rds", "", files, ignore.case = TRUE)
-
+  
   # Merge in data (if any) from old index
   if (file.exists(index_path)) {
     old_index <- readRDS(index_path)
@@ -72,21 +72,21 @@ build_collection_index <- function(dir, collection_url, description = NULL,
         new_index <-
           rbind(old_index,
                 index[!index$files %in% old_index$files, , drop = FALSE])
-
+        
       }
       stopifnot(setequal(tolower(new_index$file), tolower(files)))
       index <- new_index
     }
   }
-
+  
   index <- index[order(tolower(index$file)), , drop = FALSE]
-
+  
   index$error <- FALSE # temporary col to track errors
-
+  
   for (i in seq_len(nrow(index))) {
     f <- file.path(dir, index$file[i])
     md5 <- as.character(tools::md5sum(f))
-
+    
     if (is.na(index$md5[i]) || index$md5[i] != md5) { # if new or changed model
       message("Reading metadata for ", index$model[i], "\n")
       index$md5[i] <- md5
@@ -110,27 +110,27 @@ build_collection_index <- function(dir, collection_url, description = NULL,
     index <- index[!index$error, , drop = FALSE]
   }
   index$error <- NULL # drop temporary column
-
+  
   index$version <- "beta"
-
-
+  
+  
   # Save index .Rds
   saveRDS(index, index_path)
-
+  
   # Download logo
   logo_file <-   file.path(dir, "logo.png")
   if (!file.exists(logo_file)) {
-
-  utils::download.file(
+    
+    utils::download.file(
       "https://birdflow-science.github.io/BirdFlowR/logo.png",
       destfile = logo_file, method = "libcurl", mode = "wb",
       quiet = TRUE)
   }
   # Save index.htm
   model <- index$model[1]
-
+  
   rmd_file <- file.path(dir, "index_template.Rmd")
-
+  
   # Edit text in rmd to reference this specific collection url and the first
   # model in it
   # I couldn't figure out how to do inline text within a code block - the
@@ -141,13 +141,13 @@ build_collection_index <- function(dir, collection_url, description = NULL,
   text <- gsub("[collection_url]", collection_url, text, fixed = TRUE)
   text <- gsub("[model]", model, text, fixed = TRUE)
   writeLines(text, rmd_file)
-
+  
   # Add information on whether the report exists to the index
   # Index is already saved so it won't persist in the file
   # but is used by the markdown document
   index$report_exists <- file.exists(
     file.path(dir, paste0(index$model, ".html")))
-
+  
   suppressMessages({
     rmarkdown::render(
       input = rmd_file,
@@ -159,7 +159,7 @@ build_collection_index <- function(dir, collection_url, description = NULL,
       quiet = TRUE)
   })
   file.remove(rmd_file)
-
+  
   # Write separate index.md5 file
   index_md5 <- as.character(tools::md5sum(index_path))
   writeLines(index_md5, index_md5_path)

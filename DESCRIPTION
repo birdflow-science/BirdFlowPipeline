@@ -6,16 +6,21 @@ Authors@R:
            comment = c(ORCID = "0000-0003-2525-2039")),
      person("Ethan", "Plunkett",  email = "plunkett@umass.edu", role = c("aut"),
            comment = c(ORCID = "0000-0003-4405-2251")),
+     person("Yangkang", "Chen",  email = "chenyangkang24@outlook.com", role = c("aut"),
+           comment = c(ORCID = "0000-0003-4996-0881")),
      person("BirdFlow-Science", role = "cph"),
      person("National Science Foundation", role = "fnd"))
 Description: Tools for fitting, selecting, and evaluating BirdFlow models on Unity.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
+    purrr,
+    tibble,
+    generics,
     batchtools,
-    BirdFlowR (>= 0.1.0.9014),
+    BirdFlowR (>= 0.1.0.9075),
     data.table,
     desirability2,
     dplyr,
@@ -39,14 +44,15 @@ Imports:
     sf,
     stats,
     terra,
-    tidyr,
     trajr,
     utils,
-    yaml
+    yaml,
+    glue
 Depends: 
     R (>= 4.1.0)
 Suggests: 
     BirdFlowModels (>= 0.0.2.9001),
+    knitr,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
@@ -54,3 +60,5 @@ Remotes:
     birdflow-science/BirdFlowR,
     birdflow-science/BirdFlowModels
 LazyData: true
+VignetteBuilder: knitr
+URL: https://birdflow-science.github.io/BirdFlowPipeline/

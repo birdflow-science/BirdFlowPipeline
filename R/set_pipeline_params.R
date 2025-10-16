@@ -1,3 +1,5 @@
+#' @import BirdFlowR
+NULL
 
 #' Function to set BirdFlowPipeline parameters
 #' 
@@ -14,7 +16,7 @@
 #' @param species The species to fit, it should be set by the user or the
 #' calling function.
 #' @param gpu_ram Set the GPU RAM allocation in GB when fitting 
-#'  the models.  It is also passed to [BirdFlowR::preprocess_species()] and 
+#'  the models.  It is also passed to BirdFlowR::preprocess_species() and 
 #'  if `res` is set to `NULL` that function will set the `res` to the smallest
 #'  round number that can be fit with the allocated ram.
 #' @param res The resolution of model. Specifically the height and width of 
@@ -62,19 +64,16 @@
 #' @param hdf_dir The path to the directory in which this run's hdf5 
 #' preprocessed and fit models are stored. Set by 
 #' [preprocess_species_wrapper()] to `<hdf_path>/<species>_<res>km/`.
-#' @param base_output_path  The base path for model stats, reports,
-#'  and other output derived from the models. 
-#'  [preprocess_species_wrapper()] to 
+#' @param base_output_path  The base path for fitted models, model reports,
+#'  and other output.
 #' @param output_fullname Initially `NULL` this is set by 
 #' [preprocess_species_wrapper] to `"<species>_<res>km<suffix>"`. 
 #' @param output_path Initially `NULL` this is set by
-#' [preprocess_species_wrapper] to `"<base_output_path>/<output_fullname>"`.
-#' Note `output_path` is used to store model stats and reports but the model 
-#' itself is stored in `hdf_dir`.
+#' [preprocess_species_wrapper] to `"<base_output_dir>_<output_fullname>"`.
 #' @param season This is used in two ways:  (1) to filter movement data
 #'  (I think just tracks? - ebp) before evaluating the model and (2) 
 #'  if `truncate_season` is `TRUE` it is passed to  
-#'  [BirdFlowR::preprocess_species()], producing a model that is truncated to 
+#'  BirdFlowR::preprocess_species(), producing a model that is truncated to 
 #'  just that season.
 #' @param truncate_season If `TRUE` the model will be truncated to `season` and
 #' marginals for transitions outside of the season won't be fit or included.
@@ -94,10 +93,11 @@
 #'  function parameters are fixed - typically to average values - in which
 #'  case no model selection is performed.}
 #' }
-#' @param clip This is passed to [BirdFlowR::preprocess_species()] to define a
+#' @param clip This is passed to BirdFlowR::preprocess_species() to define a
 #' clipping polygon to use while preprocessing - only areas within the polygon
-#' are included in the model.
-#' @param crs Passed to [BirdFlowR::preprocess_species()] to define the coordinate 
+#' are included in the model. If the clip is set to `default`, `clip` and `crs` 
+#' defined in `the` will be used.
+#' @param crs Passed to BirdFlowR::preprocess_species() to define the coordinate 
 #' reference system for the model. With the default of `NULL` the CRS
 #' is set to the CRS assigned to the species by eBird status and trends.
 #' @param skip_quality_checks Passed to [BirdFlowR::preprocess_species()] if `TRUE` an
@@ -109,6 +109,10 @@
 #' @param ebirdst_year The version year of the ebirdst package. This shouldn't 
 #' be set by users and any supplied value will be ignored. 
 #' @param trim_quantile Passed to [BirdFlowR::preprocess_species()].
+#' @param min_season_quality The minimum score of any season. If the score of 
+#' any season of the eBird Status and Trends product does not reach the score,
+#' not fitting the model.
+#' @param force_refit Force refitting the models. Default to `FALSE`.
 #' @return A parameter list to be used for `batch_flow()` and related functions
 #' @export
 #' @examples
@@ -140,13 +144,15 @@ set_pipeline_params <- function(
     output_path = NULL,
     season = 'prebreeding',
     truncate_season = FALSE,
-    model_selection = 'real_tracking',
-    clip = NULL,
+    model_selection = 'distance_metric',
+    clip = 'default',
     crs = NULL,
     skip_quality_checks = FALSE,
     fit_only = FALSE, 
-    ebirdst_year = NULL, 
-    trim_quantile = NULL
+    ebirdst_year = NULL,
+    trim_quantile = 0.99,
+    min_season_quality = 3,
+    force_refit = FALSE
 ){
   params <- as.list(environment())
   
@@ -174,7 +180,13 @@ set_pipeline_params <- function(
     stop("output_path should be NULL. Support for other values may be added later.")
   
   # Check crs and clip
-  
+  if(identical(params$clip, "default")){
+    params$clip <- readRDS(the$standard_range_clip)
+  }
+  if(is.null(params$crs)){
+    params$crs <- readLines(the$standard_crs) |> paste0(collapse = "\n") 
+  }
+
   # preprocess_species does this too. Checking here throws immediate error
   if(!is.null(params$crs)){
     params$crs <- terra::crs(params$crs)

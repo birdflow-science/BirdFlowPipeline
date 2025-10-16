@@ -62,14 +62,14 @@ batch_flux <- function(model_paths,
       file.dir = reg_dir,
       conf.file = system.file('batchtools.conf.R',
                               package = 'BirdFlowPipeline')))
-
+  
   
   
   max_retries <- 0  # set to 2 when everything is working, 0 for debugging
   
   # Ramp up memory and time with each retry
-#  memory <- c(12, 18, 24, rep(24, 4))
-#  walltime <- c(180, 240, 480, rep(600, 4) )
+  #  memory <- c(12, 18, 24, rep(24, 4))
+  #  walltime <- c(180, 240, 480, rep(600, 4) )
   
   retries <- 0
   success <- FALSE
@@ -77,7 +77,7 @@ batch_flux <- function(model_paths,
     if(retries > 0 )
       message("Requeuing jobs that expired or had an error, attempt ", 
               retries, " of ",  max_retries)
- #   modelfit_resources$memory <- memory[retries + 1]
+    #   modelfit_resources$memory <- memory[retries + 1]
     
     batchtools::submitJobs(dplyr::mutate(batchtools::findNotDone(), 
                                          chunk = 1L),

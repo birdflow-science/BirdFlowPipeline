@@ -19,7 +19,7 @@ quick_visualize_routes(
 
 \item{season}{season for which to simulate route, parseable by \code{\link[BirdFlowR:lookup_season_timesteps]{BirdFlowR::lookup_season_timesteps()}}}
 
-\item{df}{a \code{eval_metrics} produced by \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}}
+\item{df}{a \code{eval_metrics} produced by \code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}}
 
 \item{dir}{hdf5 directory from \code{params} list.  Need to refactor some of these arguments}
 }
@@ -30,5 +30,5 @@ side effect is an interactive plot
 Quick visualize a spring migration routes simulation from eval_metrics by row number
 }
 \seealso{
-\code{\link[BirdFlowR:lookup_season_timesteps]{BirdFlowR::lookup_season_timesteps()}}, \code{\link[=batch_evaluate_models]{batch_evaluate_models()}}
+\code{BirdFlowR::lookup_season_timesteps()}, \code{\link[=evaluate.BatchBirdFlowEvaluator]{evaluate.BatchBirdFlowEvaluator()}}
 }

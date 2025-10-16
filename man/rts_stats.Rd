@@ -4,11 +4,15 @@
 \alias{rts_stats}
 \title{Calculate route summary statistics}
 \usage{
-rts_stats(rts)
+rts_stats(rts, remove_head_and_tail_stationaries = FALSE)
 }
 \arguments{
 \item{rts}{BirdFlowRoutes object output from \code{BirdFlowR::route()} or
 a data frame with the same data.}
+
+\item{remove_head_and_tail_stationaries}{Whether to remove the head and tail
+Stationary period. Useful when the calculaton is across multiple seasons (
+e.g., From nonbreeding to breeding)}
 }
 \value{
 a list of mean summary statistics
@@ -17,5 +21,5 @@ a list of mean summary statistics
 Calculate route summary statistics
 }
 \seealso{
-\code{\link[BirdFlowR:route]{BirdFlowR::route()}}
+\code{\link[BirdFlowR:route]{BirdFlowR::route()}}, \code{\link[BirdFlowR:Routes-internal]{BirdFlowR::BirdFlowRoutes()}}
 }

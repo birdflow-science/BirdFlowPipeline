@@ -1,9 +1,7 @@
-
 #' Import a BirdFlow model, calculate flux, and save to an RDS file
 #' 
 #' `process_flux()` is a wrapper to [BirdFlowR::calc_flux()] that handles reading the input
 #' model and writing the resulting flux to disk.
-#'
 #' @param model_path Path to a BirdFlow model file, either an HDF5 
 #' to be read with [BirdFlowR::import_birdflow()] or and RDS handled by 
 #' [readRDS()].
