@@ -47,7 +47,7 @@ IdentityFile ~/.ssh/<your_unity_private_key_filename_created_in_last_step>
 Now, copy over the SSH public key to the server with the following command, removing all angled brackets. You'll need to customize the command if you were not using the default key name.
 
 ```
-ssh-copy-id i ~/.ssh/<your_unity_private_key_filename_created_in_last_step> <yourusername_umass_edu>@login1
+ssh-copy-id -i ~/.ssh/<your_unity_private_key_filename_created_in_last_step> <yourusername_umass_edu>@login1
 ```
 
 Try to make sure which key is the right one and copy the right one.
