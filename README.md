@@ -370,8 +370,34 @@ Some of the default arguments setup:
 
 # Transition data saved on Unity
 
-1. Never, ever, use raw CSV files for model tuning/validation. Read the rds instead. They are in `the$banding_rds_path`, `the$motus_rds_path`, and `the$tracking_rds_path`. They are standardized format with columns `[date, lat, lon, route_id, route_type]`, although the banding data rds has slightly different column names but contain all the information. But to load them easier, instead of querying the rds files manually, use `load_banding_df`, `load_motus_df`, and `load_tracking_df` functions so that the output is always `[date, lat, lon, route_id, route_type]`.
-2. If new data are included for banding, motus, or tracking, make sure to run the following functions correspondingly to generate those rds files: `preprocess_banding_data_to_rds()`, `preprocess_tracking_data_to_rds()`, `process_motus_data_to_rds()`
+1. Most of the time, you should use the preprocessed combined dataset saved on the disk: `BirdFlowPipeline:::the$combined_data_path_routes`, `BirdFlowPipeline:::the$combined_data_path_birdflowroutes` and `BirdFlowPipeline:::the$combined_data_path_birdflowintervals`. These data are preprocessed using function `BirdFlowPipeline::combine_data_for_all_sp`. With these sources, you can create a function like 
+
+```r
+  get_transitions_prepared <- function(loader) {
+    BirdFlowPipeline::validate_TransitionsLoader(loader)
+    
+    ## Read the combined data
+    combined_interval_path <- file.path('/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/combined_data/BirdFlowIntervals/100km', paste0(loader$batch_trainer$params$species, '.hdf5'))
+    interval_obj <- BirdFlowR::read_intervals(combined_interval_path)
+    # Filter intervals to ask at least one leg in the migration season
+    target_timesteps <- c(BirdFlowR::lookup_season_timesteps(loader$batch_trainer$bf, season='prebreeding'), 
+                          BirdFlowR::lookup_season_timesteps(loader$batch_trainer$bf, season='postbreeding'))
+    interval_obj$data <- interval_obj$data[(interval_obj$data$timestep1 %in% target_timesteps) | (interval_obj$data$timestep2 %in% target_timesteps),]
+    
+    ## Get the one-week transition
+    interval_one_week_obj <- interval_obj
+    interval_one_week_obj$data <-interval_one_week_obj$data[interval_one_week_obj$data$timestep2 - interval_one_week_obj$data$timestep1 == 1,]
+    interval_one_week_obj$data <- interval_one_week_obj$data[(interval_one_week_obj$data$timestep1 %in% target_timesteps) | (interval_one_week_obj$data$timestep2 %in% target_timesteps),]
+    
+    return(list(interval_obj=interval_obj,
+                interval_one_week_obj=interval_one_week_obj))
+  }
+```
+
+and pass this function as the data loading function: `data_loader |> load_data(loading_function=get_transitions_prepared)`. For details of the data combination, see `/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/README.md`.
+
+2. If you want to use data from separate data sources instead of using the combined one, never, ever, use raw CSV files for model tuning/validation. Read the rds instead. They are in `the$banding_rds_path`, `the$motus_rds_path`, and `the$tracking_rds_path`. They are standardized format with columns `[date, lat, lon, route_id, route_type]`, although the banding data rds has slightly different column names but contain all the information. But to load them easier, instead of querying the rds files manually, use `load_banding_df`, `load_motus_df`, and `load_tracking_df` functions so that the output is always `[date, lat, lon, route_id, route_type]`.
+3. If new data are included for banding, motus, or tracking, make sure to run the following functions correspondingly to generate those rds files: `preprocess_banding_data_to_rds()`, `preprocess_tracking_data_to_rds()`, `process_motus_data_to_rds()`
 
 
 # About banding data
