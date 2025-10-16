@@ -1,9 +1,6 @@
 
 #' Process and fit a single model with fixed parameters
 #' 
-#' This is primarily intended for use by [batch_species()] but could
-#' also be called directly to fit a single species. 
-#' 
 #' @param species A species code appropriate for [ebirdst::get_species()].
 #' @param params A parameter list similar to that returned by
 #' [set_pipeline_params()] but for this function each of the
