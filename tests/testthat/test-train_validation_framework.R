@@ -45,17 +45,17 @@ test_that("train-validation framework works", {
   
   my_batch_trainer <- fit(my_batch_trainer) #force_refit=TRUE) # Fit the model with parameter grid
   saveRDS(my_batch_trainer$params, file.path(my_batch_trainer$params$output_path, 'params.rds'))
-  write.csv(as.data.frame(batchtools::getJobStatus()), paste0(sp_output_path, 'training_JobStatus.csv'))
+  write.csv(as.data.frame(batchtools::getJobStatus()), paste0(my_batch_trainer$params$output_path, 'training_JobStatus.csv'))
   
   ## 03. Import transition data
   data_loader <- TransitionsLoader(my_batch_trainer)
-  data_loader <- data_loader |> load(loading_function=purrr::partial(get_transitions, max_n_intervals = 100)) # Here you can customize the loading_function for the transition data
+  data_loader <- data_loader |> load_data(loading_function=purrr::partial(get_transitions, max_n_intervals = 100)) # Here you can customize the loading_function for the transition data
   # Save the transition data
   saveRDS(data_loader$transitions, file.path(data_loader$batch_trainer$params$output_path, 'transitions.rds'))
   
   ## 04. Train test split
   split_data <- data_loader |> 
-    split(splitting_function=train_test_split, seed=42) # Here you can customize the train_test_split function
+    split_data(splitting_function=train_test_split, seed=42) # Here you can customize the train_test_split function
   
   ## 05. Evaluate training set
   my_evaluator <- BatchBirdFlowEvaluator(my_batch_trainer)

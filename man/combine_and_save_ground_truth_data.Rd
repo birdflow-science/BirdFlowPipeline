@@ -4,7 +4,7 @@
 \alias{combine_and_save_ground_truth_data}
 \title{Combining the multsource data for one species}
 \usage{
-combine_and_save_ground_truth_data(species)
+combine_and_save_ground_truth_data(species, resolution = 100, max_n = 10000)
 }
 \arguments{
 \item{species}{the species to process specified by species code}

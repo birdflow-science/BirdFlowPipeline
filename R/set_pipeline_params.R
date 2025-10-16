@@ -3,7 +3,7 @@ NULL
 
 #' Function to set BirdFlowPipeline parameters
 #' 
-#' This returns a parameter list as used by [batch_flow()] and related 
+#' This returns a parameter list as used by training+validation and related 
 #' functions.  If no arguments are set then the default values are returned.  
 #' It is primarily for internal use from other functions.
 #' 
@@ -38,7 +38,7 @@ NULL
 #'    coverage and performance of the "grid" search.
 #' @param grid_search_list These parameters are  used 
 #'   in  the loss function by [BirdFlowPy](https://github.com/birdflow-science/BirdFlowPy).
-#'   They are also used in the grid search when running [batch_flow()]. 
+#'   They are also used in the grid search when running training+validation. 
 #'   All six possible parameters are in the list even though two of them won't
 #'    be used  - which two depends on  `grid_search_type`. They are
 #'    the set of values that will be combined factorially in the grid 
@@ -78,7 +78,7 @@ NULL
 #' @param truncate_season If `TRUE` the model will be truncated to `season` and
 #' marginals for transitions outside of the season won't be fit or included.
 #' @param model_selection Set how model selection is performed within 
-#' [rank_models()] as called from [batch_flow()].  It should be one of: 
+#' [rank_models()] as called from training+validation.  It should be one of: 
 #' \describe{
 #'   \item{`"str_etc"`}{Straightness and traverse correlation only.}
 #'   \item{`"pit_etc"`}{PIT metrics and traverse correlation only.}

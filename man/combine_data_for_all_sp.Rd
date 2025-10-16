@@ -4,7 +4,7 @@
 \alias{combine_data_for_all_sp}
 \title{Combining the multsource data for all species}
 \usage{
-combine_data_for_all_sp()
+combine_data_for_all_sp(resolution = 100, max_n = 10000)
 }
 \description{
 Combining the multsource data for all species
