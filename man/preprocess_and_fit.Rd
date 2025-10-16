@@ -18,6 +18,5 @@ This function is called for the side affect of creating a fitted
 hdf5 model file.
 }
 \description{
-This is primarily intended for use by \code{\link[=batch_species]{batch_species()}} but could
-also be called directly to fit a single species.
+Process and fit a single model with fixed parameters
 }

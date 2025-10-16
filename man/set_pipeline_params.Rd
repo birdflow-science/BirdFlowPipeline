@@ -62,7 +62,7 @@ coverage and performance of the "grid" search.}
 
 \item{grid_search_list}{These parameters are  used
 in  the loss function by \href{https://github.com/birdflow-science/BirdFlowPy}{BirdFlowPy}.
-They are also used in the grid search when running \code{\link[=batch_flow]{batch_flow()}}.
+They are also used in the grid search when running training+validation.
 All six possible parameters are in the list even though two of them won't
 be used  - which two depends on  \code{grid_search_type}. They are
 the set of values that will be combined factorially in the grid
@@ -110,7 +110,7 @@ just that season.}
 marginals for transitions outside of the season won't be fit or included.}
 
 \item{model_selection}{Set how model selection is performed within
-\code{\link[=rank_models]{rank_models()}} as called from \code{\link[=batch_flow]{batch_flow()}}.  It should be one of:
+\code{\link[=rank_models]{rank_models()}} as called from training+validation.  It should be one of:
 \describe{
 \item{\code{"str_etc"}}{Straightness and traverse correlation only.}
 \item{\code{"pit_etc"}}{PIT metrics and traverse correlation only.}
@@ -157,7 +157,7 @@ not fitting the model.}
 A parameter list to be used for \code{batch_flow()} and related functions
 }
 \description{
-This returns a parameter list as used by \code{\link[=batch_flow]{batch_flow()}} and related
+This returns a parameter list as used by training+validation and related
 functions.  If no arguments are set then the default values are returned.
 It is primarily for internal use from other functions.
 }
