@@ -26,7 +26,7 @@ jobs:
       # Install dependencies needed to build the website
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: any::pkgdown, any::remotes, local::.
           needs: website
 
       # IMPORTANT: Install package without vignettes to avoid knitting on CI
