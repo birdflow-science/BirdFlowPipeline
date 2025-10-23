@@ -462,7 +462,6 @@ batch_modelfit_wrapper <- function(params){
       
       job_status_df <- as.data.frame(batchtools::getJobStatus())
       print('Tasks with issues: ')
-      print(job_status_df)
       print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
       
       message('Requeuing jobs that expired or had an error, attempt 1 of 2')
@@ -474,7 +473,6 @@ batch_modelfit_wrapper <- function(params){
       
       job_status_df <- as.data.frame(batchtools::getJobStatus())
       print('Tasks with issues: ')
-      print(job_status_df)
       print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
       
       message('Requeuing jobs that expired or had an error, attempt 2 of 2')
