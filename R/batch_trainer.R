@@ -391,6 +391,11 @@ birdflow_modelfit_args_df <- function(params){
     hdf_df <- sapply(hdf_path_vec, identify_hdf5_model, USE.NAMES = TRUE, simplify = FALSE) %>%
       purrr::compact() %>%
       (data.table::rbindlist)(idcol = 'hdf5_path') %>% dplyr::as_tibble()
+    
+    if (nrow(hdf_df)==0){
+      return(args)
+    }
+    
     # Deal with floating point issues before anti_join, which only uses `==`
     args <- args %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
     hdf_df <- hdf_df %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
