@@ -137,6 +137,9 @@ evaluate.BatchBirdFlowEvaluator <- function(object,
   }
   
   # stopifnot(isTRUE(success))
+  job_status_df <- batchtools::getJobStatus()
+  n_task_failed <- nrow(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
+  print(glue::glue('{n_task_failed} evaluation jobs failed...'))
   eval_metrics <- batchtools::reduceResultsList()
   
   
@@ -193,6 +196,12 @@ evaluate.BatchBirdFlowEvaluator <- function(object,
 #' out$df
 #' }
 evaluate_model <- function(bf_path, data, params){
+  
+  # Test loading it
+  loading_res <- identify_hdf5_model(bf_path) # And will remove the broken model file
+  if (is.null(loading_res)) {
+    return(NULL)
+  }
   
   # Load bf
   bf <- BirdFlowR::import_birdflow(bf_path)
