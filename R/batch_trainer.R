@@ -332,7 +332,8 @@ identify_hdf5_model <- function(hdf5_path){
                mysp = rhdf5::h5read(hdf5_path, '/species')$species_code
     )
   }, error = function(e) {
-    message("Failed to read ", hdf5_path, ": ", e$message)
+    message("Failed to read ", hdf5_path, ": ", e$message, "; Removing the file...")
+    file.remove(hdf5_path)
     NULL
   })
 }
