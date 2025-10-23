@@ -323,13 +323,18 @@ birdflow_modelfit <- function(
 #' @returns a one-row data.frame of hdf5 info
 #' @export
 identify_hdf5_model <- function(hdf5_path){
-  hypers <- rhdf5::h5read(hdf5_path, '/metadata/hyperparameters')[c('dist_pow', 'dist_weight', 'ent_weight')]
-  data.frame(dist_pow = hypers$dist_pow,
-             dist_weight = hypers$dist_weight,
-             ent_weight = hypers$ent_weight,
-             myres = rhdf5::h5read(hdf5_path, '/geom/res')[1]/1000,
-             mysp = rhdf5::h5read(hdf5_path, '/species')$species_code
-  )
+  tryCatch({
+    hypers <- rhdf5::h5read(hdf5_path, '/metadata/hyperparameters')[c('dist_pow', 'dist_weight', 'ent_weight')]
+    data.frame(dist_pow = hypers$dist_pow,
+               dist_weight = hypers$dist_weight,
+               ent_weight = hypers$ent_weight,
+               myres = rhdf5::h5read(hdf5_path, '/geom/res')[1]/1000,
+               mysp = rhdf5::h5read(hdf5_path, '/species')$species_code
+    )
+  }, error = function(e) {
+    message("Failed to read ", hdf5_path, ": ", e$message)
+    NULL
+  })
 }
 
 #' Create a grid-expanded data.frame of model fit arguments. Output designed to be passed to [batch_modelfit_wrapper()]
@@ -383,6 +388,7 @@ birdflow_modelfit_args_df <- function(params){
       paste('Found', length(hdf_path_vec), 'previously fitted models')
     )
     hdf_df <- sapply(hdf_path_vec, identify_hdf5_model, USE.NAMES = TRUE, simplify = FALSE) %>%
+      purrr::compact() %>%
       (data.table::rbindlist)(idcol = 'hdf5_path') %>% dplyr::as_tibble()
     # Deal with floating point issues before anti_join, which only uses `==`
     args <- args %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
