@@ -118,7 +118,8 @@ fit.BatchBirdFlowTrainer <- function(object,
                                      test_one_fit=FALSE, 
                                      ...) {
   trainer <- object
-  fitting_params <- c(trainer$params, list(...))
+  dots <- list(...)
+  fitting_params <- c(trainer$params, dots)
   fitting_params$force_refit <- force_refit
   fitting_params$test_one_fit <- test_one_fit
   
@@ -127,6 +128,14 @@ fit.BatchBirdFlowTrainer <- function(object,
     print(paste0('Auto-calculating gpu_ram based on no. parameters: ', fitting_params$gpu_ram, ' GB'))
   } else {
     print(paste0('Not auto-calculating gpu_ram, falling back to default setting: ', fitting_params$gpu_ram, ' GB'))
+  }
+  
+  if (fitting_params$gpu_ram < 10) {
+    print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is less than 10GB, so sending those jobs to the preferred GPU nodes so that we do not waste resources on slurm."))
+  } else {
+    print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is larger than 10GB, so sending those jobs to larger memory GPU nodes."))
+    fitting_params$constraint.gpu <- NULL
+    fitting_params$prefer.gpu <- NULL
   }
 
   batch_modelfit_wrapper(fitting_params)
@@ -425,6 +434,13 @@ batch_modelfit_wrapper <- function(params){
                              ngpus = 1,
                              memory = params$gpu_ram + 1,
                              measure.memory = TRUE)
+  if ("constraint.gpu" %in% names(params)) {
+    modelfit_resources$constraint.gpu <- params$constraint.gpu
+  }
+  if ("prefer.gpu" %in% names(params)) {
+    modelfit_resources$prefer.gpu <- params$prefer.gpu
+  }
+  
   modelfit_args_df <- birdflow_modelfit_args_df(params)
   print(paste0('Using py script: ', the$python_repo_path))
   
