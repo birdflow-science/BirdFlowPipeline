@@ -39,10 +39,13 @@ batch_flux <- function(model_paths,
                              ncpus = 1,
                              memory = memory)
   
-  # The "cpu" partition doesn't work for jobs over 24 hours.
+  # OLD: The "cpu" partition doesn't work for jobs over 24 hours.
   # Long jobs can run on cpu-preemt or cpu-long
-  if(walltime >= 1440)
-    modelfit_resources$partition.cpu <- 'cpu-preempt,cpu-long'
+  # NEW: (October 2025) we got rid of cpu-long and it's now cpu with --qos=long if you need more than 2 days.
+  if(walltime >= 2880) {
+    modelfit_resources$partition.cpu <- 'cpu'
+    modelfit_resources$is_long <- TRUE
+  }
   
   if(is.null(base_path)){
     base_path <- dirname(model_paths[1])
