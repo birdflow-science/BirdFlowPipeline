@@ -36,6 +36,7 @@ log.file = fs::path_expand(log.file)
 <% 
 # Define variables for gpu ram
 is_gpu <- !is.null(resources$ngpus) 
+is_long <- !is.null(resources$is_long) && as.logical(resources$is_long)
 # See https://docs.unity.rc.umass.edu/documentation/cluster_specs/features/
 # for vram levels  e.g. "#SBATCH --constraint vram16""
 vram_levels <- c(8,11,12,16,23,32,40,48,80) # 
@@ -50,6 +51,12 @@ has_prefer <- !is.null(resources$prefer.gpu) && !is.na(resources$prefer.gpu)
 <%= paste0("#SBATCH --partition=", if (is_gpu) resources$partition.gpu else resources$partition.cpu) %>
 <%= if (array.jobs && resources$chunks.as.arrayjobs) sprintf("#SBATCH --array=1-%i", nrow(jobs)) else "" %><%= if (array.jobs && resources$chunks.as.arrayjobs) {if (!is.null(resources$ngpus)) sprintf("%%%i", resources$max.arrayjobs.gpu) else sprintf("%%%i", resources$max.arrayjobs.cpu)} else "" %>
 <%= if (is_gpu) paste0("#SBATCH --constraint=vram", vram, '\n') -%>
+
+# As of Oct 2025 cpu-long partion no longer exists
+# instead use --qos=long not sure if this is for all partitions but
+# definitely is true for the "cpu" partition.
+<%= if (is_long) paste0("#SBATCH --qos=long", "\n") -%>
+
 
 ## Export value of DEBUGME environemnt var
 export DEBUGME=<%= Sys.getenv("DEBUGME") %>
