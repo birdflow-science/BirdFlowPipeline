@@ -1,0 +1,29 @@
+---
+title: "Default collection description"
+output: html_document
+---
+```{r setup description, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# This is the default description for a collection index. It is inserted into
+# a collection index  (rmd/collection_index.Rmd) if description is empty.
+# See collection_index.Rmd
+
+# If this document is edited changes won't take effect until after the package
+# is re-installed.  (devtools::load_all() is not sufficient)
+
+```
+
+
+## Overview
+
+This BirdFlow model collection contains fitted models of bird movement
+trained from 
+[eBird Status and Trends (S&T)](https://science.ebird.org/en/status-and-trends) 
+weekly distributions. They can be
+used with the 
+[BirdFlowR R Package](https://birdflow-science.github.io/BirdFlowR/) to generate
+synthetic migration routes or to 
+predict where birds at a known location and time are likely to be at another 
+point in time. 
+

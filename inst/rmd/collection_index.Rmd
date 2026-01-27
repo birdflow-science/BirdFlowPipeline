@@ -1,0 +1,142 @@
+---
+output: html_document
+params:
+  title: "BirdFlowR Model Collection"
+  index: ""
+  collection_url: "https:/example_url/"
+  collection_description: ""
+---
+
+---
+title: `r params$title`
+---
+
+
+```{r setup, include=FALSE, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+index <- params$index
+collection_url <- params$collection_url
+
+if (!is.data.frame(index)) {
+  index <- readRDS(system.file("markdown_templates/index_example.Rds",
+                               package = "BirdFlowR"))
+}
+
+# Add links to ebird species information e.g.:
+# https://science.ebird.org/en/status-and-trends/species
+#    /amewoo/abundance-map-weekly?week=1
+index$species_code <-
+  paste0("[", index$species_code,
+         "](https://science.ebird.org/en/status-and-trends/species/",
+         index$species_code, "/abundance-map-weekly?week=1)")
+
+# Add links to species reports (where they exist)
+if (is.null(index$report_exists))
+  sv <- rep(FALSE, nrow(index)) # fallback for development
+
+sv <- index$report_exists
+index$model[sv] <- paste0("[", index$model[sv], "](./",
+                          index$model[sv], ".html)")
+
+has_model_reports <- any(sv)
+
+# Round size in MB
+index$size <- round(index$size, 2)
+
+
+# List names are column names values are what we want to display them as
+# order here will be used
+displayed_columns <-  c(`Common name` = "common_name",
+                        Model = "model",
+                        `Release date` = "release_date",
+                        `Scientific name` = "scientific_name",
+                        `eBird S&T code` = "species_code",
+                        `Version` = "version",
+                        `Size (MB)` = "size")
+
+# Rename and reorder to match above
+index <- dplyr::rename(index, all_of(displayed_columns))
+index <- index[, names(displayed_columns), drop = FALSE]
+
+logo_url <- "./logo.png"
+
+
+# Alternate url for testing
+alt_logo_url <-  "../../man/figures/logo.png"
+if (!file.exists(logo_url) && file.exists(alt_logo_url))
+  logo_url <- alt_logo_url
+
+
+has_collection_description = params$collection_description != ""
+
+
+```
+
+<a href="https://birdflow-science.github.io/BirdFlowR/"><img src="`r logo_url`" align="right" height="139" /></a>
+
+<br><br><br>
+   
+----
+
+```{r collection description header, eval= has_collection_description, results = 'asis'}
+# User supplied description
+cat("\n\n")
+
+cat(params$collection_description, "\n\n")
+
+```
+
+```{r default description, child = system.file("rmd/collection_description.Rmd", package = "BirdFlowPipeline"), eval = !has_collection_description}
+# Default description
+## Note: the document is taken from the installed package 
+## devtools::load_all() is NOT sufficient to update it
+```
+
+
+**eBird S&T code** links to eBird information on the species.  
+`r ifelse(has_model_reports, "**Model** links to a report on the model.", "")`
+
+----
+
+## Models
+
+
+```{r table, echo = FALSE}
+knitr::kable(index)
+```
+
+
+## Usage
+
+```{r usage, eval = FALSE, echo = TRUE}
+
+if (!require("remotes"))
+  install.packages("remotes")
+if (!require("BirdFlowR"))
+  remotes::install_github("birdflow-science/BirdFlowR")
+
+library(BirdFlowR)
+
+# Set collection_url (only necessary if this isn't the default collection)
+birdflow_options(collection_url = "[collection_url]")
+
+# Print index
+index <- load_collection_index()
+print(index)
+
+# Select a model
+model <- "[model]"
+
+# Load and use the model
+bf <- load_model(model)
+rts <- route(bf, 5, season = "prebreeding")
+plot(rts)
+```
+
+
+```{r footer, child = system.file("rmd/footer.Rmd", package = "BirdFlowPipeline")}
+## Note footer document is taken from the installed package 
+## devtools::load_all() is NOT sufficient to update it
+```
+

@@ -12,3 +12,6 @@ scripts/
 docs
 /doc/
 /Meta/
+
+# rendered markdown files 
+/inst/rmd/*.html
