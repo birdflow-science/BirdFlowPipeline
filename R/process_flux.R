@@ -23,7 +23,8 @@ process_flux <- function(model_path, flux_path) {
   } else {
     bf <- BirdFlowR::import_birdflow(model_path)
   }
-  flux <- BirdFlowR::calc_flux(bf, batch_size = 1e5 )
+  # flux <- BirdFlowR::calc_flux(bf, batch_size = 1e5 )
+  flux <- BirdFlowR::calc_bmtr(bf, batch_size = 1e5, euclidean = T)
   saveRDS(flux, flux_path)
   gc()
 }
