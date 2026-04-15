@@ -53,7 +53,7 @@ batch_species <- function(
                              ngpus = 1,
                              memory = params$gpu_ram + 1,
                              prefer.gpu = NULL, 
-                             constraint.gpur = NULL)
+                             constraint.gpu = NULL)
   
   # Drop species from params  (will be passed separately)
   params$species <- NA
