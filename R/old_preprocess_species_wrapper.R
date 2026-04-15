@@ -7,7 +7,7 @@
 #' @seealso [batch_flow()]
 #'
 #' @export
-old_preprocess_species_wrapper <- function(params, return_format = "new") {
+old_preprocess_species_wrapper <- function(params, old_return_format = FALSE) {
   
   params$species <- ebirdst::get_species(params$species)
   
@@ -24,7 +24,8 @@ old_preprocess_species_wrapper <- function(params, return_format = "new") {
           clip = params$clip,
           crs = params$crs,
           skip_quality_checks = params$skip_quality_checks, 
-          trim_quantile = params$trim_quantile
+          trim_quantile = params$trim_quantile,
+          min_season_quality = params$min_season_quality
         )
       )
     )
@@ -37,6 +38,10 @@ old_preprocess_species_wrapper <- function(params, return_format = "new") {
   params$hdf_dir <- file.path(params$hdf_path, paste0(params$species, '_', params$res, 'km'))
   params$output_path <- file.path(params$base_output_path, params$output_fullname)
   
+  if (!old_return_format) {
+    params$geom <- bf$geom
+    params$metadata <- bf$metadata
+  }
   # Create directories
   
   dir.create(params$hdf_dir, showWarnings = FALSE, recursive = TRUE)
