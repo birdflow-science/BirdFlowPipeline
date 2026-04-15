@@ -1,10 +1,9 @@
 
 #' Wrapper for [BirdFlowR::preprocess_species()] that also prepares batch parameters
-#' @param params A list of starting parameters, currently set up in [batch_flow()]
+#' @param params A list of starting parameters, currently set up 
 #' @returns The starting params list, modified to include additional information calculated during preprocessing. Also has side effects:
 #'  * create directories as needed
 #'  * write preprocessed hdf5 file
-#' @seealso [batch_flow()]
 #'
 #' @export
 old_preprocess_species_wrapper <- function(params, old_return_format = FALSE) {
