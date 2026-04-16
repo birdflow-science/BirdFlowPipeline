@@ -16,7 +16,9 @@
 #' @inheritDotParams set_pipeline_params -species -grid_search_type 
 #' @importMethodsFrom terra crs
 #' @importMethodsFrom terra vect
-#' @return Nothing is returned.
+#' @return It returns invisibly the parameter list. Including a newly
+#' added item `batch_tools_registry` which is the path to the batch
+#' tools registry for the job.
 #' @export
 batch_species <- function(
     species,
@@ -104,4 +106,8 @@ batch_species <- function(
     diff <- end - start
     message("batch_species() completed successfully after ", format(diff, digits = 4), ".")
   }
+  
+  params$batch_tools_registry <- reg_dir
+  return(invisible(params))
+  
 }
