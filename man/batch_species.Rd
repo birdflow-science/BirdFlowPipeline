@@ -58,7 +58,7 @@ They are also used in the grid search when running training+validation.
 All six possible parameters are in the list even though two of them won't
 be used  - which two depends on  \code{grid_search_type}. They are
 the set of values that will be combined factorially in the grid
-search. The default values represent our currently prefered approach.
+search. The default values represent our currently preferred approach.
 
 \emph{New} and \emph{Old} below indicate which setting of \code{grid_search_type} they
 are used with.
@@ -131,7 +131,9 @@ not fitting the model.}
   }}
 }
 \value{
-Nothing is returned.
+It returns invisibly the parameter list. Including a newly
+added item \code{batch_tools_registry} which is the path to the batch
+tools registry for the job.
 }
 \description{
 Batch fit many species with fixed loss function parameters without

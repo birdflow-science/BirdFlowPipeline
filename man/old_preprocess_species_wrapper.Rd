@@ -7,7 +7,7 @@
 old_preprocess_species_wrapper(params, old_return_format = FALSE)
 }
 \arguments{
-\item{params}{A list of starting parameters, currently set up in \code{\link[=batch_flow]{batch_flow()}}}
+\item{params}{A list of starting parameters, currently set up}
 }
 \value{
 The starting params list, modified to include additional information calculated during preprocessing. Also has side effects:
