@@ -9,8 +9,10 @@ the$output_path <-      '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline
 the$hdf_path <-         '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/hdf'
 the$python_repo_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/BirdFlowPy'
 the$model_release_staging_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/model_release_staging'
-the$standard_crs <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/crs_and_clip/americas_crs.wkt'
-the$standard_range_clip <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/crs_and_clip/western_hemisphere.rds'
+utils::data("americas_crs", envir = environment()) # Make available here
+utils::data("americas_clip", envir = environment())
+the$standard_crs <- americas_crs$wkt
+the$standard_range_clip <- americas_clip
 
 ## About raw data
 the$banding_raw_path <- '/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/banding/raw'

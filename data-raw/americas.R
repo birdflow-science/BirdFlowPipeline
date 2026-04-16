@@ -143,7 +143,7 @@ crs <-
             LENGTHUNIT["metre",1,
                 ID["EPSG",9001]]]]') |> sf::st_crs()
 
-#------------------------------------------------------------------------------#gi
+#------------------------------------------------------------------------------#
 # Make Clipping polygon
 #------------------------------------------------------------------------------#
 
@@ -186,3 +186,5 @@ americas_crs <- crs
 
 usethis::use_data(americas_clip, overwrite = TRUE)
 usethis::use_data(americas_crs, overwrite = TRUE)
+
+

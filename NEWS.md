@@ -1,3 +1,11 @@
+# BirdFlowPipeline 0.0.0.9014
+2026-04-16
+
+* Restore `batch_species()` to package.  
+* Add `americas_crs` and `americas_clip` data objects to package and use them
+  as the default CRS and clip in `the` and `set_pipeline_params()`.
+* Fix errors and warnings produced by packagedown on Github.
+
 # BirdFlowPipeline 0.0.0.9013
 2025-05-23
 

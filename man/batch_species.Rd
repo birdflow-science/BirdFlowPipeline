@@ -109,13 +109,13 @@ targeted to observed values from real tracking, but no PIT scores.)}
 function parameters are fixed - typically to average values - in which
 case no model selection is performed.}
 }}
-    \item{\code{clip}}{This is passed to BirdFlowR::preprocess_species() to define a
+    \item{\code{clip}}{This is passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} to define a
 clipping polygon to use while preprocessing - only areas within the polygon
-are included in the model. If the clip is set to \code{default}, \code{clip} and \code{crs}
-defined in \code{the} will be used.}
+are included in the model. If the clip is set to \code{"default"}, \code{clip} the
+clip definined in \code{the} will be used which is currently \link{americas_clip}.}
     \item{\code{crs}}{Passed to BirdFlowR::preprocess_species() to define the coordinate
-reference system for the model. With the default of \code{NULL} the CRS
-is set to the CRS assigned to the species by eBird status and trends.}
+reference system for the model. With the default of \code{NULL} the CRS set in
+\code{the} is used which is currently \link{americas_crs}.}
     \item{\code{skip_quality_checks}}{Passed to \code{\link[BirdFlowR:preprocess_species]{BirdFlowR::preprocess_species()}} if \code{TRUE} an
 error will be thrown if season quality values in \link[ebirdst:ebirdst_runs]{ebirdst::ebirdst_runs} are
 below three.  If \code{TRUE} then attempt to fit the model regardless of quality.}

@@ -9,8 +9,8 @@
 
 A \code{sfc} object as used by the \strong{sf} package. This is used to define
 North and South America when constraining BirdFlow models to just the
-Americas.  It is made by mergin together all the Natural Earth countries
-that are in the Amercas, dropping Hawaii, and then buffering by 300 km.
+Americas.  It is made by merging together all the Natural Earth countries
+that are in the Americas, dropping Hawaii, and then buffering by 300 km.
 }
 }
 \usage{
