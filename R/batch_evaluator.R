@@ -64,6 +64,7 @@ new_BatchBirdFlowEvaluator <- function(trainer) {
 #'   [evaluate_model()]).
 #' @param test_one_evaluate Logical; if `TRUE`, just do some test on this local 
 #' session instead of submitting it to slurm
+#' @param ... not used
 #' @details
 #' HDF5 models are discovered in `evaluator$batch_trainer$params$hdf_dir`
 #' matching the current species and resolution. A **batchtools** registry is

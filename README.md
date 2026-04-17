@@ -442,3 +442,10 @@ The code is a bit old (circa spring 2023), but this is how it works:
         - The file `taxonomic_join_overrides.csv` was created somewhat iteratively and manually, using Dave's knowledge of bird taxonomy changes, until all the conflicts were accounted for.
   - Performing all these raw to RDS conversions serially took too long, because the dataset is fairly large (I think ~60 GB or so). The solution was to batch map these on the cluster using the function `batch_preprocess_raw_files_to_rds`.
     - The default arguments for this function (and functions generally in this R file) should be updated, as needed to use the default paths in the package built-in `the` environment.
+
+
+### Running with fixed hyperparameters
+
+Use `batch_species()` to fit models to one or more species with fixed
+hyperparmeters.  See `?batch_species()` for more information.
+

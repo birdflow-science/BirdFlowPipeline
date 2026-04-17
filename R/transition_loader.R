@@ -186,7 +186,7 @@ new_transitions_loader <- function(batch_trainer) {
 #' @param object A [TransitionsLoader()].
 #' @param loading_function A function with signature `function(loader)` that
 #'   returns the list described in [get_transitions()].
-#'
+#'@param ... Not used.
 #' @return The modified `loader` (invisible) with `loader$transitions` populated.
 #' @seealso [get_transitions()], [split_data.TransitionsLoader()]
 #' @method load_data TransitionsLoader

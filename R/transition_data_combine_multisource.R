@@ -2,7 +2,8 @@
 
 #' Combining the multsource data for one species
 #' @param species the species to process specified by species code 
-#'
+#' @param resolution the model resolution in km 
+#' @param max_n the maximum number of intervals to sample.
 #' @export
 combine_and_save_ground_truth_data <- function(species, resolution=100, max_n=10000) {
   
@@ -190,6 +191,8 @@ check_files_exist <- function(species, resolution) {
 
 #' Combining the multsource data for all species
 #'
+#' @param resolution the model resolution in km
+#' @param max_n the maximum number of intervals to sample.
 #' @export
 #'
 combine_data_for_all_sp <- function(resolution=100, max_n=10000) {
