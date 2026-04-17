@@ -25,6 +25,8 @@ is interval data and \verb{[[2]]} is 1-week data used for PIT calibration.}
 
 \item{test_one_evaluate}{Logical; if \code{TRUE}, just do some test on this local
 session instead of submitting it to slurm}
+
+\item{...}{not used}
 }
 \value{
 A list as returned by \code{\link[batchtools:reduceResultsList]{batchtools::reduceResultsList()}} (often a list

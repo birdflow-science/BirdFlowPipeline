@@ -42,7 +42,7 @@ NULL
 #'   All six possible parameters are in the list even though two of them won't
 #'    be used  - which two depends on  `grid_search_type`. They are
 #'    the set of values that will be combined factorially in the grid 
-#'    search. The default values represent our currently prefered approach.  
+#'    search. The default values represent our currently preferred approach.  
 #'    
 #'    *New* and *Old* below indicate which setting of `grid_search_type` they
 #'    are used with.
@@ -93,13 +93,13 @@ NULL
 #'  function parameters are fixed - typically to average values - in which
 #'  case no model selection is performed.}
 #' }
-#' @param clip This is passed to BirdFlowR::preprocess_species() to define a
+#' @param clip This is passed to [BirdFlowR::preprocess_species()] to define a
 #' clipping polygon to use while preprocessing - only areas within the polygon
-#' are included in the model. If the clip is set to `default`, `clip` and `crs` 
-#' defined in `the` will be used.
+#' are included in the model. If the clip is set to `"default"`, `clip` the
+#' clip definined in `the` will be used which is currently [americas_clip]. 
 #' @param crs Passed to BirdFlowR::preprocess_species() to define the coordinate 
-#' reference system for the model. With the default of `NULL` the CRS
-#' is set to the CRS assigned to the species by eBird status and trends.
+#' reference system for the model. With the default of `NULL` the CRS set in
+#' `the` is used which is currently [americas_crs].
 #' @param skip_quality_checks Passed to [BirdFlowR::preprocess_species()] if `TRUE` an
 #' @param skip_quality_checks Passed to [BirdFlowR::preprocess_species()] if `TRUE` an
 #' error will be thrown if season quality values in [ebirdst::ebirdst_runs] are
@@ -181,10 +181,10 @@ set_pipeline_params <- function(
   
   # Check crs and clip
   if(identical(params$clip, "default")){
-    params$clip <- readRDS(the$standard_range_clip)
+    params$clip <- the$standard_range_clip
   }
   if(is.null(params$crs)){
-    params$crs <- readLines(the$standard_crs) |> paste0(collapse = "\n") 
+    params$crs <- the$standard_crs |> paste0(collapse = "\n") 
   }
 
   # preprocess_species does this too. Checking here throws immediate error

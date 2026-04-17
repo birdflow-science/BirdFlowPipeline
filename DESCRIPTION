@@ -1,6 +1,6 @@
 Package: BirdFlowPipeline
 Title: Tools for fitting, selecting, and evaluating BirdFlow models on Unity
-Version: 0.0.0.9013
+Version: 0.0.0.9014
 Authors@R: 
    c(person("David", "Slager", , "slager@users.noreply.github.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2525-2039")),
@@ -17,7 +17,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
     purrr,
-    tibble,
     generics,
     batchtools,
     BirdFlowR (>= 0.1.0.9075),
@@ -54,6 +53,7 @@ Suggests:
     BirdFlowModels (>= 0.0.2.9001),
     knitr,
     testthat (>= 3.0.0),
+    tibble,
     withr
 Config/testthat/edition: 3
 Remotes: 

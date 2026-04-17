@@ -11,6 +11,8 @@
 
 \item{loading_function}{A function with signature \verb{function(loader)} that
 returns the list described in \code{\link[=get_transitions]{get_transitions()}}.}
+
+\item{...}{Not used.}
 }
 \value{
 The modified \code{loader} (invisible) with \code{loader$transitions} populated.

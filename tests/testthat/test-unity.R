@@ -11,7 +11,7 @@ test_that("unity configuration works if on unity", {
   test_ssh_command <- paste('ssh -q', the$login_node, 'exit')
   expect_equal(system(test_ssh_command), 0)
   # repos are set to install binary packages from PPPM
-  # and otherwise install source packes from CRAN, from ~/.Rprofile
+  # and otherwise install source packages from CRAN, from ~/.Rprofile
   skip_if_not(interactive())
   repos_option <- getOption('repos')
   repos_expected <- c(

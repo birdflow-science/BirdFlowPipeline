@@ -24,30 +24,5 @@ there is none.}
 Nothing is returned, a report is created at \code{html}
 }
 \description{
-Note: I ran this on unity after using \code{devtools::load_all()} it
-seemed to be writing temporary files to the inst/rmd directory.  This
-suggests that it might not work with an installed version of BirdFlowPipeline.
-If that's the case we'd have to copy the Rmd from the package to a temorary
-location before knitting.
-}
-\examples{
-\dontrun{
-base <- "/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline"
-dir <- file.path(base, "/americas/acafly_100km")
-html_dir <-file.path(base, "model_release_staging/flux/")
-hdf <- file.path(
-  dir, 
-  "acafly_2022_100km_obs1.0_ent0.001924_dist0.008177_pow0.4167.hdf5")
-flux <- file.path(dir, "acafly_flux.rds")
-anim <- file.path(dir, "acafly_anim.gif")
-html <- file.path(html_dir, "acafly.html")
-prevlink <- NULL
-nextlink <- "./adafly.html"
-make_flux_report(hdf = hdf), 
-                flux = flux, 
-                anim = anim, 
-                html = html,
-                prevlink = prevlink, 
-                nextlink = nextlink)
-}
+Make flux report
 }

@@ -2,3 +2,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+_pkgdown.yml
+Make_package_diagram.R
+.github

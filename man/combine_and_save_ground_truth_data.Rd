@@ -8,6 +8,10 @@ combine_and_save_ground_truth_data(species, resolution = 100, max_n = 10000)
 }
 \arguments{
 \item{species}{the species to process specified by species code}
+
+\item{resolution}{the model resolution in km}
+
+\item{max_n}{the maximum number of intervals to sample.}
 }
 \description{
 Combining the multsource data for one species
