@@ -1,0 +1,315 @@
+---
+title: temp_title
+output: html_document
+params:
+  model: NA
+  bmtr: NA
+  anim: NA
+  html: NA
+  routes: NA
+  prevlink: NA
+  nextlink: NA
+  test_metrics: NA
+  train_metrics: NA
+  selection_criteria: NA
+  mean_rating: NA
+  title: NA
+  cor_metric: NA
+  cor_threshold: NA
+  include: NA 
+
+
+---
+
+~~~{=comment}
+This report created spring 2026
+It includes a side by side abundance and flux animation, 
+several plotted routes, and if metrics are available tuning plots.
+
+Previously it was in BirdFlowWork/flux/rmd/flux_model_report.Rmd
+
+It expects the non-tuning plots to be pre-rendered and passed as 
+file paths.
+
+If you change it you should re-install the package. Load all may not be enough.
+~~~
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+use_example_data <- sapply(params[1:4], FUN = function(x) is.na(x) || x[[1]] == "NA") |> all()
+
+
+p <- params
+
+if(use_example_data){
+  p$model <-  system.file("rmd/example_data/sstspa_model.hdf5", package = "BirdFlowPipeline") 
+  p$bmtr <-  system.file("rmd/example_data/sstspa_bmtr.Rds", package = "BirdFlowPipeline") 
+  p$anim <-  system.file("rmd/example_data/sstspa_anim.gif", package = "BirdFlowPipeline") 
+  p$html <-  tempfile(fileext = ".html", pattern = "report")
+  p$routes <-  system.file("rmd/example_data/sstspa_routes.hdf5", package = "BirdFlowPipeline") 
+  p$prevlink <-  NA
+  p$nextlink <-  NA
+  p$test_metrics <-  system.file("rmd/example_data/sstspa_test_metrics.rds", package = "BirdFlowPipeline") |> readRDS()                             
+  p$train_metrics <-  system.file("rmd/example_data/sstspa_train_metrics.rds", package = "BirdFlowPipeline")   |> readRDS()
+  p$selection_criteria <- "Best distance gained"
+  p$title <- "Example Species Report"
+  p$cor_threshold <- 0.9
+  p$cor_metric <- "min_dist_cor"  
+  p$mean_rating <- 4
+}
+
+# What metrics are plotted in tuning section
+if(is.na(p$include) || p$include == "NA")
+   p$include <-  c("mean_dist_cor",
+                                      "mean_ll", 
+                                      "mean_energy_improvement",
+                                      "weighted_mean_win_prob", 
+                                      "weighted_mean_win_distance", 
+                                      "weighted_mean_win_distance_fraction", 
+                                      "weighted_mean_ll", 
+                                      "weighted_energy_improvement", 
+                                      "pit_row",
+                                      "pit_col")
+
+ included_metrics <- p$include 
+  
+# fix issue of tables not being formatted properly in html
+# https://github.com/STAT545-UBC/Discussion/issues/136
+options(knitr.table.format = 'markdown')
+options(rgl.useNULL = TRUE) # Suppress the separate window
+
+## Ethan's code addition
+# is_html flag will be TRUE if knitting to html and FALSE if knitting to 
+# other formats or using RStudio preview
+is_html <- TRUE
+
+library(BirdFlowR)
+library(BirdFlowPipeline)
+library(dplyr)
+bf <- import_birdflow(p$model)
+
+performance <- distribution_performance(bf)  #### Subset to reqiured metrics
+
+si <- bf$species
+
+month_day <- function(x){
+  x <- lubridate::as_date(x) 
+  paste(lubridate::month(x, label = TRUE, abbr = FALSE), lubridate::mday(x))
+}
+
+# using local path if it exists so you don't have to rebuild the package
+# to incorporate changes when developing
+dev_tuning_section_path <- "inst/rmd/tuning_section.Rmd"
+tuning_section_path <- ifelse(file.exists(dev_tuning_section_path), 
+                              dev_tuning_section_path,
+                              system.file("rmd/tuning_section.Rmd", 
+                                   package = "BirdFlowPipeline"))
+
+test_metrics <- p$test_metrics
+train_metrics <- p$train_metrics
+selection_criteria <- p$selection_criteria
+mean_rating <- p$mean_rating
+
+include_tuning <- inherits(test_metrics, "data.frame") # tibble or data.frame
+
+included_metrics <- p$include
+
+title <- ifelse(is.na(p$title) || p$title == "NA", species(bf), p$title)
+
+
+credit_move_data <- TRUE # include move data acknowledgement in footer
+
+```
+---
+title: `r title`
+---
+
+
+```{asis ethan_code_block_logo_rel_link, eval = is_html}
+
+<a href="https://birdflow-science.github.io/BirdFlowR/">
+<img src="https://birdflow-science.github.io/BirdFlowR/logo.png" align="right" height="139" />
+</a>
+
+<br>
+
+<a href = "./index.html"><< Species Index</a><br>
+```
+
+
+
+```{r prev_next, echo = FALSE}
+# This adds < prev | next > navigation.  
+# as long as at least one of prev and next is not NULL
+# If one of them is null then the corresponding link is dropped.
+has_prev <- !is.null(p$prevlink)  && !is.na(p$prevlink)
+has_next <- !is.null(p$nextlink)  && !is.na(p$nextlink)
+
+if(!has_prev && !has_next){
+  prevnext <- ""
+} else {
+  prevnext <- paste0(
+    ifelse(has_prev, 
+           paste0("<a href = \"", p$prevlink, "\">"),
+           ""),
+    "< prev", 
+    ifelse(has_prev, "</a>", ""),
+    " | ", 
+    ifelse(has_next, 
+           paste0("<a href = \"", p$nextlink, "\">"),
+           ""),
+    "next >", 
+    ifelse(has_next, "</a>", ""), 
+    "\n<br>\n"
+  )
+}
+
+
+if (is_html) knitr::raw_html({
+  paste0(prevnext, "<hr>")  
+})
+```
+
+## Species
+Species: `r species(bf)`  (`r species(bf, "scientific")`)  
+Prebreeding migration: `r month_day(si$prebreeding_migration_start)` to 
+`r month_day(si$prebreeding_migration_end)`  
+Postbreeding migration: `r month_day(si$postbreeding_migration_start)` to 
+`r month_day(si$postbreeding_migration_end)`)  
+
+## Abundance and BirdFlow Migration Traffic Rate (BMTR)
+
+**Abundance**: Abundance data provided by 
+[Cornell Lab of Ornithology | eBird](to science.ebird.org/science/status-and-trends),
+resampled to `r res(bf)[1]/1000` km cells. The highest values are truncated 
+down to the 99th percentile of the values to eliminate extreme outliers.
+BirdFlow models are trained on abundance.
+
+**BMTR**: BirdFlow Migration Traffic Rate (BMTR) represents 
+the relative number of birds migrating through
+each part of the landscape in a week given the model parameters and the
+assumption that the bird follow a straight path for each transition.
+To calculate BMTR the probability of each
+movement in the model (excluding stationary birds) is assigned to a line that
+connects the start and end of the movement. The probability of each line is
+then added to all the cells within `r res(bf)[1]/2000` km of the line.
+
+```{r animation, echo=FALSE}
+ knitr::include_graphics(p$anim)
+```
+
+
+```{r route setup, echo = FALSE}
+route_image_exists <- !is.null(p$routes) && 
+  !is.na(p$routes)  &&
+  file.exists(p$routes)
+
+if(route_image_exists) { 
+  route_paths <- get_route_paths(p$routes, n = 3, check = TRUE)
+} else {
+  route_paths <- rep(NA, 3)
+}
+```
+
+
+```{asis route text, eval = route_image_exists}
+
+## Routes
+
+These stochastic routes are generated from the BirdFlow model 
+(see 
+[`BirdFlowR::route`](https://birdflow-science.github.io/BirdFlowR/reference/route.html)
+) and can be used to 
+assess performance.  Each step of the route is created by sampling the 
+probabilities assigned to the bird's next location given a starting date and 
+location. The initial locations are sampled from the probability 
+distribution for the species at the start of the migration. 
+The stay length is one if the bird moves on immediately and longer when the bird
+stays in the location for multiple steps.
+
+```
+
+```{r routes 1, echo = FALSE}
+i <- 1
+if(!is.na(route_paths[i])){
+   knitr::include_graphics(route_paths[i])
+}
+```
+
+```{r routes 2, echo = FALSE}
+i <- 2
+if(!is.na(route_paths[i])){
+   knitr::include_graphics(route_paths[i])
+}
+```
+
+```{r routes 3, echo = FALSE}
+i <- 3
+if(!is.na(route_paths[i])){
+   knitr::include_graphics(route_paths[i])
+}
+```
+
+## eBird
+
+The metadata here comes from eBird via 
+[`ebirdst::ebirdst_runs`](https://ebird.github.io/ebirdst/reference/ebirdst_runs.html).
+Data quality ranges from 0 to 3, with 3 being the highest quality. 
+
+Data quality: `r si$prebreeding_migration_quality`, 
+`r si$breeding_quality`, 
+`r si$postbreeding_migration_quality`, 
+`r si$nonbreeding_quality`
+(prebreeding, breeding, postbreeding, and nonbeeding)  
+Version year: `r get_metadata(bf, "ebird_version_year")`   
+Release year: `r get_metadata(bf, "ebird_release_year")`   
+
+## BirdFlow
+
+
+```{asis rating description, eval = !is.na(mean_rating)}
+Birdflow model ratings range from 1 to 5, with 5 being the highest rating.
+
+```
+
+Model date: `r lubridate::as_date(get_metadata(bf, "birdflow_model_date"))`  
+Traverse correlation: `r round(performance$st_traverse_cor, 4)`  
+Mean step correlation: `r round(performance$mean_step_cor, 4)`  
+Min step correlation: `r round(performance$min_step_cor, 4)`  
+```{r, results='asis', eval = !is.na(mean_rating), echo=FALSE}
+cat("Mean rating: ", round(mean_rating, 1), "   \n", sep = "")
+```
+```{r model_links , results='asis', echo = FALSE}
+# Insert relative links to models if they exist in the same folder 
+# This is likely true for collection reports but not otherwise
+html <- p$html
+hdf <- gsub(".html$", ".hdf5", html)
+rds <-  gsub(".html$", ".Rds", html)
+has_hdf <- file.exists(hdf)
+has_rds <- file.exists(rds)
+rel_hdf <- paste0("./", basename(hdf))
+rel_rds <- paste0("./", basename(rds))
+if(has_hdf || has_rds)
+cat("Model Files: ")
+if(has_rds) cat("[Rds](", rel_rds, ") ")
+if(has_rds && has_hdf) cat(", ")
+if(has_hdf) cat("[hdf5](", rel_hdf, ")")
+if(has_hdf || has_rds)
+  cat("  \n")
+```
+
+
+```{r tuning, child = tuning_section_path, eval = include_tuning}
+```
+
+
+```{r footer, child = system.file("rmd/footer.Rmd", package = "BirdFlowPipeline")}
+```
+
+~~~{=comment}
+Note footer and tuning documents are taken from the installed package and
+`devtools::load_all()` is NOT sufficient to update them. 
+Run `devtools::install()` after updating.
+~~~
+

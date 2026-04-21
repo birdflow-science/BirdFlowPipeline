@@ -1,3 +1,13 @@
+# BirdFlowPipeline 0.0.0.9015
+2026-04-21
+
+* Add optional credit section to footer for sources of tracking data 
+* Move species reports from BirdFlowWork to BirdFlowPipeline invoke with 
+  `make_new_report()`.
+* Add `plot_grid_search_metrics()` and `plot_tuning` to plot grid search metrics
+  from the parameter tuning along with some helper functions and objects 
+  to set symbology.
+
 # BirdFlowPipeline 0.0.0.9014
 2026-04-16
 
