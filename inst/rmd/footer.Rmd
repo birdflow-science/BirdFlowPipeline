@@ -12,6 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 has_species <- exists("focal_species")
 has_url <- exists("doc_url")
 
+
+# Set credit_move_data = TRUE in parent to add section acknowledging
+# sources of movement data
+if(!exists("credit_move_data")) 
+  credit_move_data <- FALSE
+
 # is_html should be defined in parent document but is patched here
 # for test rendering the child independently
 if(!exists("is_html"))
@@ -102,12 +108,27 @@ cat("\n", license, "\n", sep ="")
 
 ----
 
-#### Disclaimer
+```{r disclaimer header, echo= FALSE, results='asis'} 
+if(credit_move_data) {
+  cat("#### Disclaimer and acknowledgments")
+} else {
+  cat("#### Disclaimer\n")
+}
+```
+
 This material uses data from the eBird Status and Trends Project at the Cornell
 Lab of Ornithology, [eBird.org](eBird.org). 
 Any opinions, findings, and conclusions or 
 recommendations expressed in this material are those of the author(s) and do 
 not necessarily reflect the views of the Cornell Lab of Ornithology.
+
+```{asis acknowledge movement, echo = credit_move_data}
+We thank the USGS bird banding lab for the bird banding data collection,
+Birds Canada for preparing and sharing the data of
+the Motus Wildlife Tracking System, and the many individual
+contributors to these projects for collecting and 
+compiling data on bird movement.  
+```
 
 ----
 

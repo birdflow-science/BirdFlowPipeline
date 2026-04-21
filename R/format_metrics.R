@@ -36,6 +36,7 @@ format_metrics <- function(train_metrics, test_metrics, cor_threshold, cor_metri
     special <- rbind(special, data.frame(type = "this", model = this_model))
   }
   
+  
   # Set type of standard models as either "candidate" or "low_cor"
   # Assess using training data regardless of whether we are plotting test
   # or training data
@@ -52,6 +53,9 @@ format_metrics <- function(train_metrics, test_metrics, cor_threshold, cor_metri
     metrics <- test_metrics
   }
 
+  if (!cor_metric %in% names(metrics)) 
+    stop("cor_metric: ", cor_metric, " is not in the metrics table")
+  
   # Add copies of the special models to metrics and then delete the version
   # with the standard type.
   # Note, this deliberately allows duplication of special models.

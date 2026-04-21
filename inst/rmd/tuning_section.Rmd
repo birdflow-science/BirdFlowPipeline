@@ -1,0 +1,80 @@
+---
+title: "Tuning"
+output: html_document
+---
+
+~~~{=comment}
+This report created spring 2026
+It shows a scatter plot of two performance metrics with points for each
+model in the grid search and density plots showing the distribution 
+of a number of performance metrics.
+
+It relies on plot_tuning(), plot_gridsearch_metrics(), format_metrics(),
+identify_best_model, tuning_n_best, tuning_best_colors, and tuning_symbology 
+defined in BirdFlowPipeline.
+
+If you edit this doc you should re-install the package. Load all may not be enough.
+~~~
+
+
+```{r setup tuning, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# This document exists to provide an optional section in the species reports
+# on model tuning.
+
+if(!exists("train_metrics") | !exists("bf") | !exists("test_metrics"))  
+  stop("Parent document should define bf, test_metrics, and train_metrics")
+
+if (!all(c("cor_threshold", "cor_metric") %in% names(p)) && !is.na(p$cor_threshold) & !is.na(p$cor_metric))
+  stop("Parent document should define cor_metric and cor_threshold")
+
+cor_threshold <- p$cor_threshold
+cor_metric <- p$cor_metric
+
+hp <- bf$metadata$hyperparameters
+
+
+```
+
+
+## Model Tuning
+
+### Selected hyper parameters
+
+```{r selection_criteria, results='asis', echo = FALSE}
+if(!is.na(selection_criteria))
+  cat("Selection criteria: ", selection_criteria, "  \n")
+```
+Distance weight: `r hp$dist_weight`  
+Entropy weight: `r hp$ent_weight`  
+Observation weight: `r hp$obs_weight`  
+Distance power: `r hp$dist_pow`  
+
+### Performance metric trade offs 
+
+
+```{r tuning plot, echo = FALSE}
+
+plot_tuning(train = train_metrics, test = test_metrics, bf = bf, use = "train", cor_threshold = cor_threshold, cor_metric = cor_metric)
+
+```
+
+The candidate and best models plotted against two possible selection criteria:
+log likelihood and relative distance gain.
+
+### Candidate model performance for other metrics
+
+The distribution of each metric across grid search runs where the 
+distribution correlation was above `r cor_threshold`.  The metric values for this model,
+the best log likelihood, and the best distance gained model are shown as 
+vertical lines.  Each x axis represents values for the metric while the 
+y axis is the density of values across the grid search results
+which represented the training S&T Distributions with high fidelity 
+(`r cor_metric`  above `r cor_threshold`).
+
+```{r metrics, echo = FALSE, fig.height= 10}
+plot_grid_search_metrics(train_metrics = train_metrics, test_metrics = test_metrics, bf = bf, cor_threshold = cor_threshold, cor_metric = cor_metric, include = included_metrics)
+```
+
+
