@@ -101,7 +101,12 @@ evaluate.BatchBirdFlowEvaluator <- function(object,
     return(evaluation_res)
   }
   
-  evaluation_resources <- list(walltime = 1000, memory = 10, measure.memory = TRUE)
+  dots <- list(...)
+  evaluation_resources <- list(walltime = 300, memory = 10, measure.memory = TRUE)
+  for (name in names(dots)){
+    evaluation_resources$name <- dots[name]
+  }
+  
   success <- FALSE
   batchtools::batchMap(evaluation_function,
                        files,

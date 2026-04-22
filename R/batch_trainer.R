@@ -115,7 +115,9 @@ new_BatchBirdFlowTrainer <- function(species, ...){
 fit.BatchBirdFlowTrainer <- function(object, 
                                      auto_calculate_gpu_ram = TRUE, 
                                      force_refit=FALSE, 
-                                     test_one_fit=FALSE, 
+                                     test_one_fit=FALSE,
+                                     constraint.gpu=NULL,
+                                     prefer.gpu=NULL,
                                      ...) {
   trainer <- object
   dots <- list(...)
@@ -130,12 +132,19 @@ fit.BatchBirdFlowTrainer <- function(object,
     print(paste0('Not auto-calculating gpu_ram, falling back to default setting: ', fitting_params$gpu_ram, ' GB'))
   }
   
-  if (fitting_params$gpu_ram < 10) {
-    print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is less than 10GB, so sending those jobs to the preferred GPU nodes so that we do not waste resources on slurm."))
+  if (is.null(constraint.gpu) & is.null(prefer.gpu)) {
+    if (fitting_params$gpu_ram < 10) {
+      print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is less than 10GB, so sending those jobs to the preferred GPU nodes so that we do not waste resources on slurm."))
+    } else {
+      print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is larger than 10GB, so sending those jobs to larger memory GPU nodes."))
+      fitting_params$constraint.gpu <- NULL
+      fitting_params$prefer.gpu <- NULL
+    }
   } else {
-    print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is larger than 10GB, so sending those jobs to larger memory GPU nodes."))
-    fitting_params$constraint.gpu <- NULL
-    fitting_params$prefer.gpu <- NULL
+    print(glue::glue('Setting constraint.gpu to {constraint.gpu}'))
+    print(glue::glue('Setting prefer.gpu to {prefer.gpu}'))
+    fitting_params$constraint.gpu <- constraint.gpu
+    fitting_params$prefer.gpu <- prefer.gpu
   }
 
   batch_modelfit_wrapper(fitting_params)
