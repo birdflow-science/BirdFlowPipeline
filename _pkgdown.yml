@@ -3,4 +3,4 @@ template:
   bootstrap: 5
 articles:
 - title: Getting started
-  contents: BirdFlowPipeline_examples
+  contents: BirdFlowPipeline_gridsearch_examples
