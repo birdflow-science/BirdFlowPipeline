@@ -16,6 +16,36 @@
   as the default CRS and clip in `the` and `set_pipeline_params()`.
 * Fix errors and warnings produced by packagedown on Github.
 
+
+# BirdFlowPipeline 2025-05 to 2026-01
+
+Pipeline & orchestration
+- BatchBirdFlowTrainer / fit.BatchBirdFlowTrainer: builds grid of fits, auto-calculates GPU RAM, supports test_one_fit to run one local fit instead of submitting to Slurm.
+- batch_modelfit_wrapper & birdflow_modelfit_args_df: construct grid, skip/clean existing HDF5s, submit batchtools jobs, resubmit failures.
+
+Model fitting & GPU/job handling
+- birdflow_modelfit: calls Python update_hdf.py to run a single fit.
+- GPU logic: small (<10GB) requests favor preferred GPUs; large requests clear constraints to use high-memory GPUs; resource fields (constraint.gpu/prefer.gpu) propagated.
+
+Robust HDF5 handling
+- identify_hdf5_model & loaders: added try/catch, remove unreadable HDF5s, compact() previous-results, and tolerate broken files when evaluating.
+- batch_evaluator / evaluate.BatchBirdFlowEvaluator: test_one_evaluate flag, job-failure counting, reduceResultsList use.
+
+Data loading & splits
+- TransitionsLoader (new S3), new_transitions_loader, load.TransitionsLoader, split.TransitionsLoader, train_test_split: centralize combining banding/Motus/tracking into transitions, produce training/test (including one-week) bundles.
+
+Validation & API cleanup
+- validate_* functions renamed/strengthened (validate_BatchBirdFlowTrainer, validate_TransitionsLoader, validate_split_data, validate_BatchBirdFlowEvaluator).
+- NAMESPACE updated: removed deprecated exports (batch_flow, batch_species, multiple_species_batch).
+
+Utilities & helpers
+- refactor_hyperparams: convert de_ratio/obs_prop → dist_weight/ent_weight.
+- identify_hdf5_model/birdflow_modelfit_args_df: numeric-signif fixes to avoid FP mismatch and remove extra hdf5s.
+
+Docs, tests, vignettes
+- Many man pages, vignettes, and example Rmd/html added/updated; tests adjusted to renamed methods (load_data, split_data) and paths.
+
+
 # BirdFlowPipeline 0.0.0.9013
 2025-05-23
 

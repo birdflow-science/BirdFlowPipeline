@@ -1,8 +1,8 @@
 ---
-title: "BirdFlowPipeline_examples"
+title: "BirdFlowPipeline_gridsearch_examples"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{BirdFlowPipeline_examples}
+  %\VignetteIndexEntry{BirdFlowPipeline_gridsearch_examples}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,8 +10,10 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
+
 ```
 
 # Fit, validate, and select BirdFlow models
