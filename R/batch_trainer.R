@@ -118,7 +118,8 @@ fit.BatchBirdFlowTrainer <- function(object,
                                      test_one_fit=FALSE, 
                                      ...) {
   trainer <- object
-  fitting_params <- c(trainer$params, list(...))
+  dots <- list(...)
+  fitting_params <- c(trainer$params, dots)
   fitting_params$force_refit <- force_refit
   fitting_params$test_one_fit <- test_one_fit
   
@@ -127,6 +128,14 @@ fit.BatchBirdFlowTrainer <- function(object,
     print(paste0('Auto-calculating gpu_ram based on no. parameters: ', fitting_params$gpu_ram, ' GB'))
   } else {
     print(paste0('Not auto-calculating gpu_ram, falling back to default setting: ', fitting_params$gpu_ram, ' GB'))
+  }
+  
+  if (fitting_params$gpu_ram < 10) {
+    print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is less than 10GB, so sending those jobs to the preferred GPU nodes so that we do not waste resources on slurm."))
+  } else {
+    print(glue::glue("The memory requested is {fitting_params$gpu_ram}, which is larger than 10GB, so sending those jobs to larger memory GPU nodes."))
+    fitting_params$constraint.gpu <- NULL
+    fitting_params$prefer.gpu <- NULL
   }
 
   batch_modelfit_wrapper(fitting_params)
@@ -323,13 +332,19 @@ birdflow_modelfit <- function(
 #' @returns a one-row data.frame of hdf5 info
 #' @export
 identify_hdf5_model <- function(hdf5_path){
-  hypers <- rhdf5::h5read(hdf5_path, '/metadata/hyperparameters')[c('dist_pow', 'dist_weight', 'ent_weight')]
-  data.frame(dist_pow = hypers$dist_pow,
-             dist_weight = hypers$dist_weight,
-             ent_weight = hypers$ent_weight,
-             myres = rhdf5::h5read(hdf5_path, '/geom/res')[1]/1000,
-             mysp = rhdf5::h5read(hdf5_path, '/species')$species_code
-  )
+  tryCatch({
+    hypers <- rhdf5::h5read(hdf5_path, '/metadata/hyperparameters')[c('dist_pow', 'dist_weight', 'ent_weight')]
+    data.frame(dist_pow = hypers$dist_pow,
+               dist_weight = hypers$dist_weight,
+               ent_weight = hypers$ent_weight,
+               myres = rhdf5::h5read(hdf5_path, '/geom/res')[1]/1000,
+               mysp = rhdf5::h5read(hdf5_path, '/species')$species_code
+    )
+  }, error = function(e) {
+    message("Failed to read ", hdf5_path, ": ", e$message, "; Removing the file...")
+    file.remove(hdf5_path)
+    NULL
+  })
 }
 
 #' Create a grid-expanded data.frame of model fit arguments. Output designed to be passed to [batch_modelfit_wrapper()]
@@ -383,7 +398,13 @@ birdflow_modelfit_args_df <- function(params){
       paste('Found', length(hdf_path_vec), 'previously fitted models')
     )
     hdf_df <- sapply(hdf_path_vec, identify_hdf5_model, USE.NAMES = TRUE, simplify = FALSE) %>%
+      purrr::compact() %>%
       (data.table::rbindlist)(idcol = 'hdf5_path') %>% dplyr::as_tibble()
+    
+    if (nrow(hdf_df)==0){
+      return(args)
+    }
+    
     # Deal with floating point issues before anti_join, which only uses `==`
     args <- args %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
     hdf_df <- hdf_df %>% dplyr::mutate_if(is.numeric, ~ signif(., 10))
@@ -413,6 +434,13 @@ batch_modelfit_wrapper <- function(params){
                              ngpus = 1,
                              memory = params$gpu_ram + 1,
                              measure.memory = TRUE)
+  if ("constraint.gpu" %in% names(params)) {
+    modelfit_resources$constraint.gpu <- params$constraint.gpu
+  }
+  if ("prefer.gpu" %in% names(params)) {
+    modelfit_resources$prefer.gpu <- params$prefer.gpu
+  }
+  
   modelfit_args_df <- birdflow_modelfit_args_df(params)
   print(paste0('Using py script: ', the$python_repo_path))
   
@@ -455,7 +483,6 @@ batch_modelfit_wrapper <- function(params){
       
       job_status_df <- as.data.frame(batchtools::getJobStatus())
       print('Tasks with issues: ')
-      print(job_status_df)
       print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
       
       message('Requeuing jobs that expired or had an error, attempt 1 of 2')
@@ -467,7 +494,6 @@ batch_modelfit_wrapper <- function(params){
       
       job_status_df <- as.data.frame(batchtools::getJobStatus())
       print('Tasks with issues: ')
-      print(job_status_df)
       print(job_status_df[!is.na(job_status_df$error), , drop = FALSE])
       
       message('Requeuing jobs that expired or had an error, attempt 2 of 2')
