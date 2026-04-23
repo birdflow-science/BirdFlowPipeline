@@ -36,7 +36,7 @@ jobs:
 
       # IMPORTANT: Install package without vignettes to avoid knitting on CI
       - name: Install package (no vignettes)
-        run: Rscript -e 'remotes::install_local(".", build_vignettes = FALSE, upgrade = "never")'
+        run: Rscript -e 'remotes::install_local(".", dependencies = FALSE, build_vignettes = FALSE, upgrade = "never")'
 
       # Build the pkgdown site. We rely on prebuilt inst/doc/ for Articles.
       - name: Build site
