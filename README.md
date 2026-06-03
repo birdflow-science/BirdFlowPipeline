@@ -105,6 +105,10 @@ Additionally, if you are on Unity, we have a common shared source of downloaded 
 ```
 Sys.setenv(EBIRDST_DATA_DIR = BirdFlowPipeline:::the$st_download_path)
 ```
+Alternatively, if you want the shared data directory to load automatically every time without needing to run the command above, you can add this explicit path directly to your `~/.Renviron` file:
+```
+EBIRDST_DATA_DIR="/work/pi_drsheldon_umass_edu/birdflow_modeling/pipeline/ground_truth_data/raw_data/status_and_trends"
+```
 
 You may need to restart R and/or RStudio for this to start working.
 
