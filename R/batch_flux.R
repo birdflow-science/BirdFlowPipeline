@@ -18,6 +18,7 @@
 #' @param show_progress If `TRUE` `batch_flux()` will display a progress bar 
 #' and wait for all the launched jobs to finish. If `FALSE` `batch_flux()` 
 #' will exit immediately after launching.
+#' @inheritParams BirdFlowR::calc_bmtr
 #' @return Nothing is returned.
 #' @export
 batch_flux <- function(model_paths, 
@@ -25,7 +26,9 @@ batch_flux <- function(model_paths,
                        base_path = NULL,
                        memory = 12, 
                        walltime = 180, 
-                       show_progress = TRUE) {
+                       show_progress = TRUE,
+                       method = c("binary","continuous","continuous-spherical"),
+                       ...) {
   
   start <- Sys.time()
   
@@ -52,21 +55,31 @@ batch_flux <- function(model_paths,
   }
   
   
-  
   reg_dir <- file.path(base_path, 
                        paste0("batch_flux_", make_timestamp(), '_mf'))
   
+  dots = list(...)
   
-  batchtools::batchMap(
-    fun = process_flux,
-    model_path = model_paths, # will be vectorized over
-    flux_path = flux_paths, # will be vectorized over
-    reg = batchtools::makeRegistry(
-      file.dir = reg_dir,
-      conf.file = system.file('batchtools.conf.R',
-                              package = 'BirdFlowPipeline')))
-  
-  
+  # batchtools::batchMap doesn't take ... natively so we need to append the dots 
+  #   in the following way. We can then use do.call with args. This allows 
+  #   process_flux to keep the ... notation in its function definition.
+  args <- c(
+    list(
+      fun = process_flux,
+      model_path = model_paths,
+      flux_path = flux_paths,
+      method = method,
+      reg = batchtools::makeRegistry(
+        file.dir = reg_dir,
+        conf.file = system.file(
+          "batchtools.conf.R",
+          package = "BirdFlowPipeline"
+        )
+      )
+    ),
+    dots
+  )
+  do.call(batchtools::batchMap, args)
   
   max_retries <- 0  # set to 2 when everything is working, 0 for debugging
   
