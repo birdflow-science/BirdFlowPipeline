@@ -65,6 +65,14 @@ ssh login1
 
 You might need to enter your Unity password the first time. If your prompt now changes again to say you're on the login node, it means your compute nodes should now be able to submit jobs to the login node in an automated fashion, with keys only and no passwords required.
 
+It is also possible that your ssh key will be denied with the following error:
+
+```
+<yourusername_umass_edu>@login1.unity.rc.umass.edu: Permission denied (publickey,hostbased)
+```
+If this happens, go to the [Account Sessions Page](https://account.unityhpc.org/panel/account.php) in the UnityHPC Platform Account Portal. You will click the large + button to add your public SSH key. Copy the entire contents from the public key file ('<your_unity_private_key_filename_created_in_last_step>.pub'). Then you'll paste it in the account portal and add the key.
+
+
 ## 2. Setup binary R package installation on Unity
 
 Ensure that your `~/.Rprofile` file contains the following lines, so that binary packages are attempted to be installed first via [Posit Public Package Manger](https://packagemanager.posit.co/client/#/repos/cran/setup), followed by installing source packages on CRAN. This will greatly speed up package installs. The last line avoids a warning about X11 from the rgl package in Rstudio.

@@ -8,10 +8,14 @@
 #' 
 #' @param flux_path The path to and RDS file (ending in `".rds"`) to write the
 #' result to.
+#' @inheritParams BirdflowR::calc_bmtr
 #' 
 #' @return Flux is written to disk nothing is returned.
 #' @export
-process_flux <- function(model_path, flux_path) {
+process_flux <- function(model_path, flux_path, 
+                         method = c("binary","continuous", 
+                                    "continuous-spherical"), 
+                         ...) {
   
   if (!grepl("\\.rds$", flux_path, ignore.case = TRUE)) {
     stop("flux_path should end in \".rds\"")
@@ -23,7 +27,20 @@ process_flux <- function(model_path, flux_path) {
   } else {
     bf <- BirdFlowR::import_birdflow(model_path)
   }
-  flux <- BirdFlowR::calc_flux(bf, batch_size = 1e5 )
+  
+  batch_size <- switch(method,
+                       "binary" = 1e5,
+                       "continuous" = 1e4,
+                       "continuous-spherical" = 5e3,
+                       5e5
+  )
+  flux <- BirdFlowR::calc_bmtr(bf, batch_size = batch_size, method = method, ...)
+  
+  if (!dir.exists(dirname(flux_path))){
+    message("Creating directory for BMTR file at:", dirname(flux_path))
+    dir.create(dirname(flux_path), recursive = TRUE)
+  }
   saveRDS(flux, flux_path)
+  
   gc()
 }
